@@ -7,6 +7,9 @@ Texture2D g_metalRoughTex : register(t1);	// メタリック/ラフネステク�
 Texture2D g_emissiveTex : register(t2);		// 発光テクスチャ
 Texture2D g_normalTex : register(t3);		// 法線マップ
 
+//追加
+Texture2D g_ditherTex : register(t9); //アルファディザ用
+
 // 特殊処理用テクスチャ
 Texture2D g_dirShadowMap : register(t10);	// 平行光シャドウマップ
 Texture2D g_dissolveTex : register(t11);	// ディゾルブマップ
@@ -15,6 +18,7 @@ Texture2D g_environmentTex : register(t12); // 反射景マップ
 // サンプラ
 SamplerState g_ss : register(s0);				// 通常のテクスチャ描画用
 SamplerComparisonState g_ssCmp : register(s1);	// 補間用比較機能付き
+
 
 float BlinnPhong(float3 lightDir, float3 vCam, float3 normal, float specPower)
 {
@@ -25,6 +29,20 @@ float BlinnPhong(float3 lightDir, float3 vCam, float3 normal, float specPower)
 	// 正規化Blinn-Phong
 	return spec * ((specPower + 2) / (2 * 3.1415926535));
 }
+
+//追加
+static const int spraMatrix[8][8] =
+{
+	{ 0, 1, 1, 0, 0, 1, 1, 0 },
+	{ 1, 2, 1, 2, 1, 2, 1, 1 },
+	{ 0, 1, 1, 2, 2, 1, 1, 0 },
+	{ 2, 1, 2, 1, 1, 2, 1, 2 },
+	{ 1, 2, 3, 0, 3, 0, 2, 1 },
+	{ 0, 1, 1, 2, 2, 1, 1, 0 },
+	{ 1, 0, 1, 1, 1, 1, 0, 1 },
+	{ 0, 1, 1, 0, 0, 1, 1, 0 }
+};
+
 
 //================================
 // ピクセルシェーダ
@@ -53,6 +71,53 @@ float4 main(VSOutput In) : SV_Target0
 	float3 vCam = g_CamPos - In.wPos;
 	float camDist = length(vCam); // カメラ - ピクセル距離
 	vCam = normalize(vCam);
+
+	//アルファディザ
+	{
+		//fmod :　「%」余りを求める演算子
+		// In : ピクセルの情報　Pos : 2D座標
+		// 今から書こうとしているピクセルのx座標が200 = 0
+		// 今から書こうとしているピクセルのy座標が103 = 3
+
+		int x = (int) fmod(In.Pos.x, 8);
+		int y = (int) fmod(In.Pos.y, 8);
+		float dither = spraMatrix[y][x] / 64.0f;
+		//bayerMatrixには0～15の数字が入っている
+		//これを0～1にする
+
+		////テクスチャを使う場合
+		//float w = 0, h = 0;
+		//g_ditherTex.GetDimensions(w, h);
+		////↑ここで取れた値は幅と高さ
+		////テクセルサイズを取得
+		//float tw = 1 / w;
+		//float th = 1 / h;
+	
+		//読み込んだ画像の色情報を取得
+		//float dither = g_ditherTex.Sample(
+		//	g_ss,
+		//	float2(tw * fmod(In.Pos.x, w), th * fmod(In.Pos.y, h))
+		//).r;
+		
+		
+		//ディザ抜きするカメラからの距離
+		float ditherDist = 6;
+
+		// max(x,y) : 大きい方を返す
+		float range = max(0 , camDist - ditherDist);
+		//float range = max(0, In.wvPos.z - ditherDist);
+
+		//割合算出
+		float rate = 1 - min(1, range);
+		
+		//ディザ抜き
+		clip(dither - 1 * rate);
+		/*if(dither - 1 * rate < 0)
+		{
+			//ピクセル破棄
+			discard;	
+		}*/
+	}
 
 	// 法線マップから法線ベクトル取得
 	float3 wN = g_normalTex.Sample(g_ss, In.UV).rgb;

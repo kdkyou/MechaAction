@@ -39,6 +39,8 @@ struct VSOutput
 {
 	float4 Pos	 : SV_Position;	// 射影座標
 	float3 wPos  : TEXCOORD0;	// ワールド3D座標
+	float3 wvPos : TEXCOORD6;	//ビュー座標 追加
+	
 
 	float2 UV	 : TEXCOORD1;	// UV座標
 	float4 Color : TEXCOORD2;	// 色
