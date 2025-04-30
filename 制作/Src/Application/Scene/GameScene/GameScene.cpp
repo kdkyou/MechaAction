@@ -52,11 +52,11 @@ void GameScene::Init()
 	//===================================================================
 //	std::shared_ptr<FPSCamera>		_camera = std::make_shared<FPSCamera>();
 //	std::shared_ptr<TPSCamera>		_camera = std::make_shared<TPSCamera>();
-//	std::shared_ptr<TrackingCamera>		_camera = std::make_shared<TrackingCamera>();
-	std::shared_ptr<RockCamera>		_camera = std::make_shared<RockCamera>();
+	std::shared_ptr<TrackingCamera>		_camera = std::make_shared<TrackingCamera>();
+//	std::shared_ptr<RockCamera>		_camera = std::make_shared<RockCamera>();
 	_camera->Init();
 	_camera->SetTarget(_character);
-	_camera->SetRock(enemy);
+//	_camera->SetRock(enemy);
 	_camera->RegistHitObject(_terrain);
 	_character->SetCamera(_camera);
 	AddObject(_camera);

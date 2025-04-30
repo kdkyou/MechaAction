@@ -66,7 +66,7 @@ void Character::DrawLit()
 
 	Math::Color colr = { 1,1,1 };
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, colr,emis);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, colr, emis);
 }
 
 void Character::DrawBright()
@@ -323,7 +323,6 @@ void Character::ActionJump::Update(Character& owner)
 		owner.ChangeActionState(std::make_shared<ActionBoostNow>());
 		return;
 	}
-
 }
 
 void Character::ActionJump::Exit(Character& owner)
@@ -401,9 +400,60 @@ void Character::ActionBoostNow::Enter(Character& owner)
 
 void Character::ActionBoostNow::Update(Character& owner)
 {
+	Checkkey(owner);
+
+	if (m_isMove)
+	{
+
+		Math::Vector3	direction = owner.m_vMove;
+		const std::shared_ptr<const CameraBase> _spCamera = owner.m_wpCamera.lock();
+
+		if (_spCamera)
+		{
+			//もし何も移動キーの入力が無かったら
+			if (direction.LengthSquared() == 0) {
+				//プレイヤーの正面のベクトルを取る
+				direction = owner.m_mWorld.Forward();
+			}
+			else
+			{
+				direction = direction.TransformNormal(direction, _spCamera->GetRotationYMatrix());
+			}
+		}
+		direction.Normalize();
+
+		Math::Vector3 _move;
+		Math::Vector3 _nowPos = owner.GetPos();
+		float _moveSpd = 0.3f;
+
+		bool isMove = owner.IsMove();
+		_move = direction;
+
+		_move *= _moveSpd;
+		_move.y += 0.2f;
+		_nowPos += _move;
+
+		Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(owner.m_worldRot.y));
+		owner.m_mWorld = owner.m_scale * _rotation * Math::Matrix::CreateTranslation(_nowPos);
+
+	}
+	
+
 	if (owner.m_isGround)
 	{
 		owner.ChangeActionState(std::make_shared<ActionBoostEnd>());
+		return;
+	}
+
+	if (m_isBoost)
+	{
+		owner.ChangeActionState(std::make_shared<ActionBoost>());
+		return;
+	}
+
+	if (m_isLeftAttack)
+	{
+		owner.ChangeActionState(std::make_shared<ActionLeftAttack>());
 		return;
 	}
 
@@ -628,6 +678,7 @@ void Character::ActionBoost::Update(Character& owner)
 				owner.ChangeActionState(std::make_shared<ActionBoostNow>());
 				return;
 			}
+
 		}
 	}
 }
