@@ -48,13 +48,16 @@ class KdAnimator
 {
 public:
 
-	inline void SetAnimation(const std::shared_ptr<KdAnimationData>& rData, bool isLoop = true)
+	inline void SetAnimation(const std::shared_ptr<KdAnimationData>& rData, bool isLoop = true) 
 	{
 		m_spAnimation = rData;
 		m_isLoop = isLoop;
-
 		m_time = 0.0f;
+		m_spNextAnimation = nullptr;
+		m_blendTime = 0.0f;
+		m_blendDuration = 0.0f;
 	}
+
 
 	// アニメーションが終了してる？
 	bool IsAnimationEnd() const
@@ -64,9 +67,12 @@ public:
 
 		return false;
 	}
+	
 
 	// アニメーションの更新
 	void AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed = 1.0f);
+
+	void BlendToAnimation(const std::shared_ptr<KdAnimationData>& nextAnim, float duration=0.0f,bool isLoop=true);
 
 private:
 
@@ -75,4 +81,11 @@ private:
 	float m_time = 0.0f;
 
 	bool m_isLoop = false;
+
+	//次のアニメーション
+	std::shared_ptr<KdAnimationData> m_spNextAnimation = nullptr;
+	//アニメーションのblend時間
+	float m_blendTime = 0.0f;
+	float m_blendDuration = 0.0f;
+
 };

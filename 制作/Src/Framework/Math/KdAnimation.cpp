@@ -159,22 +159,75 @@ void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed
 {
 	if (!m_spAnimation) { return; }
 
+	bool isBlending = (m_spNextAnimation && m_blendTime < m_blendDuration);
+
 	// 全てのアニメーションノード（モデルの行列を補間する情報）の行列補間を実行する
 	for (auto& rAnimNode : m_spAnimation->m_nodes)
 	{
 		// 対応するモデルノードのインデックス
 		UINT idx = rAnimNode.m_nodeOffset;
 
-		auto prev = rNodes[idx].m_localTransform;
+		
 
-		// アニメーションデータによる行列補間
-		rAnimNode.Interpolate(rNodes[idx].m_localTransform, m_time);
+		Math::Matrix matA = Math::Matrix::Identity;
+		Math::Matrix matB = Math::Matrix::Identity;
 
-		prev = rNodes[idx].m_localTransform;
+		//現在のアニメーションのボーンのマトリックス情報
+		if (idx < m_spAnimation->m_nodes.size())
+			m_spAnimation->m_nodes[idx].Interpolate(matA, m_time);
+
+		//次のアニメーションのボーンのマトリックス情報
+		if (isBlending && idx < m_spNextAnimation->m_nodes.size())
+		{
+			m_spNextAnimation->m_nodes[idx].Interpolate(matB, 0.0f);
+		}
+		else
+		{
+			matB = matA;
+		}
+
+		if (isBlending)
+		{
+			float t = m_blendTime / m_blendDuration;
+			Math::Vector3 sA, sB, pA, pB;
+			Math::Quaternion rA, rB;
+
+			matA.Decompose(sA, rA, pA);
+			matB.Decompose(sB, rB, pB);
+
+			Math::Vector3 s = sA+((sB-Math::Vector3::One)*t);
+			Math::Vector3 p = XMVectorLerp(pA, pB, t);
+			Math::Quaternion r = XMQuaternionSlerp(rA, rB, t);
+
+			rNodes[idx].m_localTransform =
+				Math::Matrix::CreateScale(s) *
+				Math::Matrix::CreateFromQuaternion(r) *
+				Math::Matrix::CreateTranslation(p);
+		}
+		else
+		{
+			auto prev = rNodes[idx].m_localTransform;
+
+			// アニメーションデータによる行列補間
+			rAnimNode.Interpolate(rNodes[idx].m_localTransform, m_time);
+
+			prev = rNodes[idx].m_localTransform;
+		}
 	}
-
 	// アニメーションのフレームを進める
 	m_time += speed;
+
+	if (isBlending)
+	{
+		m_blendTime += speed;
+		//ブレンド完了
+		if (m_blendTime >= m_blendDuration)
+		{
+			m_spAnimation = m_spNextAnimation;
+			m_spNextAnimation = nullptr;
+			m_time = 0.0f;
+		}
+	}
 
 	// アニメーションデータの最後のフレームを超えたら
 	if (m_time >= m_spAnimation->m_maxLength)
@@ -186,7 +239,16 @@ void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed
 		}
 		else
 		{
+			//アニメーションの最後の時間に設定
 			m_time = m_spAnimation->m_maxLength;
 		}
 	}
+}
+
+void KdAnimator::BlendToAnimation(const std::shared_ptr<KdAnimationData>& nextAnim, float duration,bool isLoop)
+{
+	m_spNextAnimation = nextAnim;
+	m_blendDuration = duration;
+	m_blendTime = 0.0f;
+	m_isLoop = isLoop;
 }

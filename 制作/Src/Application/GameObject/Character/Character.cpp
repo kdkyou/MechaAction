@@ -264,7 +264,7 @@ void Character::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 
 void Character::ActionIdle::Enter(Character& owner)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"));
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"),3.0f);
 }
 
 void Character::ActionIdle::Update(Character& owner)
@@ -308,7 +308,7 @@ void Character::ActionJump::Enter(Character& owner)
 {
 	owner.m_Gravity += -0.5f;
 
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"));
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"),3.0f);
 }
 
 void Character::ActionJump::Update(Character& owner)
@@ -331,7 +331,7 @@ void Character::ActionJump::Exit(Character& owner)
 
 void Character::ActionMove::Enter(Character& owner)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Walk"));
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Walk"),3.0f);
 }
 
 void Character::ActionMove::Update(Character& owner)
@@ -395,7 +395,7 @@ void Character::ActionMove::Exit(Character& owner)
 
 void Character::ActionBoostNow::Enter(Character& owner)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Hoboor"));
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Hoboor"),3.0f);
 }
 
 void Character::ActionBoostNow::Update(Character& owner)
@@ -465,7 +465,7 @@ void Character::ActionBoostNow::Exit(Character& owner)
 
 void Character::ActionBoostEnd::Enter(Character& owner)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("BoostEnd"), false);
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("BoostEnd"), 2.0f,false);
 }
 
 void Character::ActionBoostEnd::Update(Character& owner)
@@ -498,7 +498,7 @@ void Character::ActionBoostEnd::Exit(Character& owner)
 
 void Character::ActionLeftAttack::Enter(Character& owner)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("LeftArmAction"), false);
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("LeftArmAction"),2.0f ,false);
 }
 
 void Character::ActionLeftAttack::Update(Character& owner)
@@ -523,7 +523,7 @@ void Character::ActionLeftAttack::Exit(Character& owner)
 
 void Character::ActionStandUp::Enter(Character& owner)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("StandUp"), false);
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("StandUp"), 3.0f ,false);
 }
 
 void Character::ActionStandUp::Update(Character& owner)
@@ -555,7 +555,7 @@ void Character::ActionStandUp::Exit(Character& owner)
 
 void Character::ActionBoostDush::Enter(Character& owner)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("BoostDush"), false);
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("BoostDush"), 3.0f);
 }
 
 void Character::ActionBoostDush::Update(Character& owner)
@@ -624,7 +624,7 @@ void Character::ActionBoostDush::Exit(Character& owner)
 
 void Character::ActionBoost::Enter(Character& owner)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Boost"), false);
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Boost"),2.0f, false);
 	const std::shared_ptr<const CameraBase> _spCamera = owner.m_wpCamera.lock();
 	m_direction = owner.m_vMove;
 	if (_spCamera)
