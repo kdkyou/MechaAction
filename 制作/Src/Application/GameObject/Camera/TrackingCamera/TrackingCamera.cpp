@@ -23,8 +23,6 @@ void TrackingCamera::PostUpdate()
 	if (_spTarget == nullptr) { return; }
 
 	Math::Vector3 targetPos = _spTarget->GetMatrix().Translation();
-	Math::Vector3 difference = targetPos - m_pos;
-
 
 	//----------------------------------------------------------------
 	// ⓵　現在のカメラの注視点と視点を使って、XZ平面上での、

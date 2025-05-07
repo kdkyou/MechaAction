@@ -7,9 +7,6 @@ public:
 	CharacterBase() {}
 	~CharacterBase()			override {}
 
-	void GenerateDepthMapFromLight() override;
-	void DrawLit()			override;
-
 	void SetCamera(const std::shared_ptr<CameraBase>& camera)
 	{
 		m_wpCamera = camera;
@@ -30,8 +27,7 @@ protected:
 	// 衝突判定とそれに伴う座標の更新
 	void UpdateCollision();
 
-	std::shared_ptr<KdModelWork>				m_spModel = nullptr;
-	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
+
 
 	std::weak_ptr<CameraBase>					m_wpCamera;
 	std::vector<std::weak_ptr<KdGameObject>>	m_wpHitObjectList{};
@@ -61,10 +57,8 @@ protected:
 		virtual void Exit(CharacterBase& owner) {}
 
 	protected:
-
-
 	};
 
-	void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction);
+	virtual void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction){}
 	std::shared_ptr<ActionStateBase>		m_nowAction = nullptr;
 };

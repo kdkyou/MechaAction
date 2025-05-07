@@ -42,6 +42,8 @@ private:
 	// 衝突判定とそれに伴う座標の更新
 	void UpdateCollision();
 
+	bool  RayCast(const Math::Vector3&startPos,const Math::Vector3& vec,const float length=1.0f);
+
 	std::shared_ptr<KdModelWork>				m_spModel = nullptr;
 	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
 

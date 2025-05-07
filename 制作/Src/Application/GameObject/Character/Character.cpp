@@ -253,6 +253,58 @@ void Character::UpdateCollision()
 	}
 }
 
+bool  Character::RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length)
+{
+	KdCollider::RayInfo rayInfo;
+	
+	rayInfo.m_pos = startPos;		// レイの発射位置を設定
+	rayInfo.m_dir = vec;				// レイの発射方向を設定
+	rayInfo.m_range = length;		// レイの長さ
+
+	// 当たり判定をしたいタイプを設定
+	rayInfo.m_type = KdCollider::TypeGround;
+
+	// ②HIT判定対象オブジェクトに総当たり
+	for (std::weak_ptr<KdGameObject> wpGameObj : SceneManager::Instance().GetObjList())
+	{
+		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
+		if (spGameObj)
+		{
+			std::list<KdCollider::CollisionResult> retRayList;
+			spGameObj->Intersects(rayInfo, &retRayList);
+
+			// ③結果を使って座標を補完する
+			// レイに当たったリストから一番近いオブジェクトを検出
+			float maxOverLap = 0;
+			Math::Vector3 hitPos = Math::Vector3::Zero;
+			bool hit = false;
+			for (auto& ret : retRayList)
+			{
+				// レイを遮断しオーバーした長さが
+				// 一番長いものを探す
+				if (maxOverLap < ret.m_overlapDistance)
+				{
+					maxOverLap = ret.m_overlapDistance;
+					hitPos = ret.m_hitPos;
+					hit = true;
+				}
+			}
+			// 何かしらの上に乗ってる
+			if (hit)
+			{
+				SetPos(hitPos);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	
+	return false;
+}
+
 
 //ここからステートパターン関係
 void Character::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
@@ -650,14 +702,20 @@ void Character::ActionBoost::Update(Character& owner)
 	float _moveSpd = 0.8f;
 
 	bool isMove = owner.IsMove();
+	
 	_move = m_direction;
 
-	_move *= _moveSpd;
-	_move.y += 0.2f;
-	_nowPos += _move;
+	bool flg = owner.RayCast(_nowPos, _move, _moveSpd);
 
-	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(owner.m_worldRot.y));
-	owner.m_mWorld = owner.m_scale * _rotation * Math::Matrix::CreateTranslation(_nowPos);
+	if (flg == false)
+	{
+		_move *= _moveSpd;
+		_move.y += 0.2f;
+		_nowPos += _move;
+
+		Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(owner.m_worldRot.y));
+		owner.m_mWorld = owner.m_scale * _rotation * Math::Matrix::CreateTranslation(_nowPos);
+	}
 
 	if (owner.m_spAnimator->IsAnimationEnd())
 	{

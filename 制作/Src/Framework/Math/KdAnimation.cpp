@@ -174,7 +174,9 @@ void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed
 
 		//現在のアニメーションのボーンのマトリックス情報
 		if (idx < m_spAnimation->m_nodes.size())
+		{
 			m_spAnimation->m_nodes[idx].Interpolate(matA, m_time);
+		}
 
 		//次のアニメーションのボーンのマトリックス情報
 		if (isBlending && idx < m_spNextAnimation->m_nodes.size())
@@ -186,6 +188,7 @@ void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed
 			matB = matA;
 		}
 
+		//アニメーション遷移時
 		if (isBlending)
 		{
 			float t = m_blendTime / m_blendDuration;
