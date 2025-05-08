@@ -176,6 +176,16 @@ private:
 		void Exit(Character& owner)override;
 	};
 
+	class ActionLeftAttackAf :public ActionStateBase
+	{
+	public:
+		virtual ~ActionLeftAttackAf() {}
+
+		void Enter(Character& owner) override;
+		void Update(Character& owner)override;
+		void Exit(Character& owner)override;
+	};
+
 
 
 	void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction);

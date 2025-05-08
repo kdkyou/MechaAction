@@ -23,10 +23,7 @@ protected:
 
 
 	// キャラクターの回転行列を作成する
-	void UpdateRotate(const Math::Vector3& srcMoveVec);
-	// 衝突判定とそれに伴う座標の更新
-	void UpdateCollision();
-
+	
 
 
 	std::weak_ptr<CameraBase>					m_wpCamera;
@@ -59,6 +56,6 @@ protected:
 	protected:
 	};
 
-	virtual void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction){}
-	std::shared_ptr<ActionStateBase>		m_nowAction = nullptr;
+	/*virtual void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction){}
+	std::shared_ptr<ActionStateBase>		m_nowAction = nullptr;*/
 };

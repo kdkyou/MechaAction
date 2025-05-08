@@ -45,6 +45,7 @@ void GameScene::Init()
 	//エネミー
 	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
 	enemy->Init();
+	enemy->SetTarget(_character);
 	AddObject(enemy);
 
 	//===================================================================

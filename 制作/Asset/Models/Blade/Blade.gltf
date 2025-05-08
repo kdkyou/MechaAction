@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.1.63",
+		"generator":"Khronos glTF Blender I/O v4.4.56",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -8,8 +8,7 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				11,
-				12
+				11
 			]
 		}
 	],
@@ -131,7 +130,7 @@
 		},
 		{
 			"mesh":4,
-			"name":"Core",
+			"name":"BodyCore",
 			"skin":0
 		},
 		{
@@ -149,14 +148,6 @@
 				-0.6525536775588989,
 				0.08664907515048981,
 				-0.006525177508592606
-			]
-		},
-		{
-			"name":"\u30a8\u30f3\u30d7\u30c6\u30a3",
-			"translation":[
-				0,
-				-0.7484474182128906,
-				0
 			]
 		}
 	],
@@ -675,8 +666,8 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"blue_metal_plate_nor_gl_4k",
-			"uri":"blue_metal_plate_nor_gl_4k.png"
+			"name":"rubber_tiles_nor_gl_4k",
+			"uri":"rubber_tiles_nor_gl_4k.png"
 		},
 		{
 			"mimeType":"image/png",
@@ -685,8 +676,8 @@
 		},
 		{
 			"mimeType":"image/png",
-			"name":"blue_metal_plate_rough_4k",
-			"uri":"blue_metal_plate_rough_4k.png"
+			"name":"blue_metal_plate_rough_4k.exr",
+			"uri":"blue_metal_plate_rough_4k_exr.png"
 		}
 	],
 	"skins":[

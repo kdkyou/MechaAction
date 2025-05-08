@@ -550,7 +550,7 @@ void Character::ActionBoostEnd::Exit(Character& owner)
 
 void Character::ActionLeftAttack::Enter(Character& owner)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("LeftArmAction"),2.0f ,false);
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("LeftBladeAttackBef"),2.0f ,false);
 }
 
 void Character::ActionLeftAttack::Update(Character& owner)
@@ -564,9 +564,24 @@ void Character::ActionLeftAttack::Update(Character& owner)
 
 	if (owner.m_spAnimator->IsAnimationEnd())
 	{
-		owner.ChangeActionState(std::make_shared<ActionIdle>());
+		owner.ChangeActionState(std::make_shared<ActionLeftAttackAf>());
 		return;
 	}
+
+	//座標更新
+	Math::Vector3 _move;
+	Math::Vector3 _nowPos = owner.GetPos();
+	float _moveSpd = 1.5f;
+
+	_move = owner.GetMatrix().Forward();
+	_move.Normalize();
+
+	_move *= _moveSpd;
+	_nowPos += _move;
+
+	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(owner.m_worldRot.y));
+	owner.m_mWorld = owner.m_scale * _rotation * Math::Matrix::CreateTranslation(_nowPos);
+
 }
 
 void Character::ActionLeftAttack::Exit(Character& owner)
@@ -752,4 +767,50 @@ void Character::ActionStateBase::Checkkey(Character& owner)
 	m_isBoost = owner.IsBoost();
 	m_isLeftAttack = owner.IsLeftAttack();
 
+}
+
+void Character::ActionLeftAttackAf::Enter(Character& owner)
+{
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("LeftBladeAttack"),false );
+}
+
+void Character::ActionLeftAttackAf::Update(Character& owner)
+{
+
+	if (owner.m_spAnimator->GetAnimationTime()<0.6f)
+	{
+		//座標更新
+		Math::Vector3 _move;
+		Math::Vector3 _nowPos = owner.GetPos();
+		float _moveSpd = 1.5f;
+
+		_move = owner.GetMatrix().Forward();
+		_move.Normalize();
+
+		_move *= _moveSpd;
+		_nowPos += _move;
+
+		Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(owner.m_worldRot.y));
+		owner.m_mWorld = owner.m_scale * _rotation * Math::Matrix::CreateTranslation(_nowPos);
+	}
+
+	if (owner.m_spAnimator->IsAnimationEnd() == true)
+	{
+		Checkkey(owner);
+
+		if (m_isBoost)
+		{
+			owner.ChangeActionState(std::make_shared<ActionBoost>());
+			return;
+		}
+		
+			owner.ChangeActionState(std::make_shared<ActionIdle>());
+			return;
+
+	}
+
+}
+
+void Character::ActionLeftAttackAf::Exit(Character& owner)
+{
 }

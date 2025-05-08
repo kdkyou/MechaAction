@@ -74,6 +74,8 @@ public:
 
 	void BlendToAnimation(const std::shared_ptr<KdAnimationData>& nextAnim, float duration=0.0f,bool isLoop=true);
 
+	const float GetAnimationTime() { return m_time; }
+
 private:
 
 	std::shared_ptr<KdAnimationData>	m_spAnimation = nullptr;	// 再生するアニメーションデータ
