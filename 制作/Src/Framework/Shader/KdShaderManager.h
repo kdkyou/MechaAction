@@ -136,7 +136,9 @@ public:
 	//
 	//==========================
 	KdStandardShader		m_StandardShader;		// 標準描画シェーダ
-	KdPostProcessShader		m_postProcessShader;	// ポストプロセスシェーダ
+	
+	
+	KdPostProcessShader     m_postProcessShader;	// ポストプロセスシェーダ
 	KdSpriteShader			m_spriteShader;			// 2Dテクスチャ描画シェーダ
 
 	//==========================

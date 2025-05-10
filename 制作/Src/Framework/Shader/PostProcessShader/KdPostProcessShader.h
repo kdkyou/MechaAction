@@ -34,14 +34,24 @@ public:
 	void PostEffectProcess();
 
 	void GenerateBlurTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP, int blurRadius);
+	
+	//放射ブラー用
+	void GenerateRadialBlurTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP);
 
 private:
 
 	void BlurProcess();
+	
+	//放射ブラー用
+	void RadialBlurProcess();
+
 	void LightBloomProcess();
 	void DepthOfFieldProcess();
 
 	void CreateBlurOffsetList(std::vector<Math::Vector3>& dstInfo, const std::shared_ptr<KdTexture>& spSrcTex, int samplingSize, const Math::Vector2& dir);
+	
+	//放射ブラー用
+	void CreateRadialBlurOffsetList(std::vector<Math::Vector3>& dstInfo, const std::shared_ptr<KdTexture>& spSrcTex, int samplingSize, float strength);
 
 	void DrawTexture(std::shared_ptr<KdTexture>* spSrcTex, int srcTexSize, std::shared_ptr<KdTexture> spDstTex, D3D11_VIEWPORT* pVP);
 
@@ -49,6 +59,12 @@ private:
 	void SetBlurInfo(const std::vector<Math::Vector3>& srcInfo);
 
 	void SetBlurToDevice();
+	
+	//放射ブラー用
+	void SetRadialBlurInfo(const std::shared_ptr<KdTexture>& spSrcTex,int samlingSize,float strength, const Math::Vector2&center){}
+	void SetRadialBlurInfo(int samlingSize,float strength, const Math::Vector2&center);
+	void SetRadialBlurToDevice();
+
 	void SetDoFToDevice();
 	void SetBrightToDevice();
 
@@ -56,6 +72,7 @@ private:
 	ID3D11InputLayout* m_inputLayout = nullptr;
 
 	ID3D11PixelShader* m_PS_Blur = nullptr;
+	ID3D11PixelShader* m_PS_RBlur = nullptr;
 	ID3D11PixelShader* m_PS_DoF = nullptr;
 	ID3D11PixelShader* m_PS_Bright = nullptr;
 
@@ -71,6 +88,21 @@ private:
 		int _blank[3] = { 0, 0 ,0 };
 	};
 	KdConstantBuffer<cbBlur>	m_cb0_BlurInfo;
+
+	//放射ブラー用
+	int m_radialBlurSamplingNum = 2;
+	struct cbRadialBlur
+	{
+		int samples =0;
+		float strength = 0.0f;
+		float mask = 0.0f;
+		bool  dither = false;
+		
+		Math::Vector2 center = { 0.5f,0.5f };
+		int _blank[2] = { 0,0 };
+	};
+	KdConstantBuffer<cbRadialBlur> m_cb0_RadialBlurInfo;
+	
 
 	struct cbDepthOfField
 	{
@@ -95,6 +127,9 @@ private:
 
 	KdRenderTargetPack	m_blurRTPack;
 	KdRenderTargetPack	m_strongBlurRTPack;
+
+	//放射ブラー用
+	KdRenderTargetPack m_radialBlurRTPack;
 
 	KdRenderTargetPack	m_depthOfFieldRTPack;
 

@@ -136,7 +136,7 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 	if (srcMoveVec.LengthSquared() == 0.0f) { return; }
 
 	// キャラの正面方向のベクトル
-	Math::Vector3 _nowDir = GetMatrix().Forward();
+	Math::Vector3 _nowDir = GetMatrix().Backward();
 
 	// 移動方向のベクトル
 	Math::Vector3 _targetDir = srcMoveVec;
@@ -465,7 +465,7 @@ void Character::ActionBoostNow::Update(Character& owner)
 			//もし何も移動キーの入力が無かったら
 			if (direction.LengthSquared() == 0) {
 				//プレイヤーの正面のベクトルを取る
-				direction = owner.m_mWorld.Forward();
+				direction = owner.m_mWorld.Backward();
 			}
 			else
 			{
@@ -573,7 +573,7 @@ void Character::ActionLeftAttack::Update(Character& owner)
 	Math::Vector3 _nowPos = owner.GetPos();
 	float _moveSpd = 1.5f;
 
-	_move = owner.GetMatrix().Forward();
+	_move = owner.GetMatrix().Backward();
 	_move.Normalize();
 
 	_move *= _moveSpd;
@@ -699,7 +699,7 @@ void Character::ActionBoost::Enter(Character& owner)
 		//もし何も移動キーの入力が無かったら
 		if (m_direction.LengthSquared() == 0) {
 			//プレイヤーの正面のベクトルを取る
-			m_direction = owner.m_mWorld.Forward();
+			m_direction = owner.m_mWorld.Backward();
 		}
 		else
 		{
@@ -784,7 +784,7 @@ void Character::ActionLeftAttackAf::Update(Character& owner)
 		Math::Vector3 _nowPos = owner.GetPos();
 		float _moveSpd = 1.5f;
 
-		_move = owner.GetMatrix().Forward();
+		_move = owner.GetMatrix().Backward();
 		_move.Normalize();
 
 		_move *= _moveSpd;

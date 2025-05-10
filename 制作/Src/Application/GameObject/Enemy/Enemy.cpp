@@ -63,6 +63,9 @@ void Enemy::Stand::Enter(Enemy& owner, const  std::shared_ptr<KdGameObject>& spO
 
 void Enemy::Stand::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	//if()
+	
+
 }
 
 void Enemy::Stand::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)

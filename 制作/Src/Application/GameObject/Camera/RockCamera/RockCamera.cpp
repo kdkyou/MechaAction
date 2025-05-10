@@ -10,6 +10,8 @@ void RockCamera::Init()
 	m_mLocalPos = Math::Matrix::CreateTranslation(0, 12.5f, -10.0f);
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
+
+
 }
 
 void RockCamera::PostUpdate()
