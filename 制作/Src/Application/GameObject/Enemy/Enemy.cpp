@@ -5,10 +5,10 @@ void Enemy::Init()
 	if (!m_spModel)
 	{
 		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Grint/grint.gltf");	
+		m_spModel->SetModelData("Asset/Models/Leg/Leg.gltf");	
 		// 初期のアニメーションをセットする
 		m_spAnimator = std::make_shared<KdAnimator>();
-		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Stand"));
+		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("FLeaning"),false);
 	}
 
 	//初期状態を「待機状態」へ設定
@@ -74,7 +74,7 @@ void Enemy::Stand::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spOb
 
 void Enemy::MoveForward::Enter(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("BoostDush"));
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("FLeaning"),false);
 }
 
 void Enemy::MoveForward::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
@@ -84,24 +84,56 @@ void Enemy::MoveForward::Update(Enemy& owner, const  std::shared_ptr<KdGameObjec
 	float speed = 0.4f;
 
 	Math::Vector3 nowPos = owner.GetMatrix().Translation();
+	Math::Vector3 nowVec = owner.GetMatrix().Backward();
+
 	Math::Vector3 targetPos = spObj->GetMatrix().Translation();
+	Math::Vector3 targetVec = spObj->GetMatrix().Backward();
 
 	Math::Vector3 difference = targetPos - nowPos;
 
-	if (difference.Length() > 30.0f)
+
+	nowVec.Normalize();
+	targetVec.Normalize();
+
+	float _nowAng = atan2(nowVec.x, nowVec.z);
+	_nowAng = DirectX::XMConvertToDegrees(_nowAng);
+
+	float _targetAng = atan2(targetVec.x, targetVec.z);
+	_targetAng = DirectX::XMConvertToDegrees(_targetAng);
+
+	// 角度の差分を求める
+	float _betweenAng = _targetAng - _nowAng;
+	if (_betweenAng > 180)
+	{
+		_betweenAng -= 360;
+	}
+	else if (_betweenAng < -180)
+	{
+		_betweenAng += 360;
+	}
+
+	float rotateAng = std::clamp(_betweenAng, -owner.m_angle, -owner.m_angle);
+	owner.m_worldRot.y += rotateAng;
+	
+	Math::Matrix rotMat = Math::Matrix::CreateFromYawPitchRoll(owner.m_worldRot);
+
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
+
+	if (difference.Length() > 30.0f &&  _betweenAng<3.0f)
 	{
 
 		vec = difference;
 
 		vec.Normalize();
 
-		static Math::Vector3 pos = {};
+		nowPos += vec * speed;
 
-		pos += vec * speed;
-
-		owner.SetPos(pos);
+		 transMat = Math::Matrix::CreateTranslation(nowPos);
 
 	}
+
+	owner.m_mWorld = rotMat * transMat;
+
 }
 
 void Enemy::MoveForward::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)

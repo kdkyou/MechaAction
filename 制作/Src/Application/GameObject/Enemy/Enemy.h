@@ -21,6 +21,10 @@ private:
 
 	std::weak_ptr<KdGameObject>				m_wpTarget;
 
+	float									m_angle = 6.0f;
+	Math::Vector3 m_worldRot = Math::Vector3::Zero;
+
+
 	class ActionStateBase
 	{
 	public:
