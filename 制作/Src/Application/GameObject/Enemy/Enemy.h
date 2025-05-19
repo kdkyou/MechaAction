@@ -24,13 +24,15 @@ private:
 	float									m_angle = 6.0f;
 	Math::Vector3 m_worldRot = Math::Vector3::Zero;
 
+	bool									m_isForWard = false;
+
 
 	class ActionStateBase
 	{
 	public:
 		virtual ~ActionStateBase() {}
 
-		virtual void Enter(Enemy& owner,const std::shared_ptr<KdGameObject>& spObj) {}
+		virtual void Enter(Enemy& owner, const std::shared_ptr<KdGameObject>& spObj) {}
 		virtual void Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj) {}
 		virtual void Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj) {}
 
@@ -40,7 +42,7 @@ private:
 
 	class Stand :public ActionStateBase
 	{
-	public :
+	public:
 		void Enter(Enemy& owner, const std::shared_ptr<KdGameObject>& spObj)override;
 		void Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
 		void Exit(Enemy& owner, const std::shared_ptr<KdGameObject>& spObj)override;
@@ -65,7 +67,7 @@ private:
 	private:
 	};
 
-	class Attack:public  ActionStateBase
+	class Attack :public  ActionStateBase
 	{
 	public:
 		void Enter(Enemy& owner, const std::shared_ptr<KdGameObject>& spObj)override;

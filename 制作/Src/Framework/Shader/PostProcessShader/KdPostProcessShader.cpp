@@ -217,8 +217,8 @@ void KdPostProcessShader::PostEffectProcess()
 
 	DepthOfFieldProcess();
 
-	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
-//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_radialBlurRTPack.m_RTTexture.get(), 0, 0);
+//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
+	KdShaderManager::Instance().m_spriteShader.DrawTex(m_radialBlurRTPack.m_RTTexture.get(), 0, 0);
 }
 
 
@@ -368,7 +368,7 @@ void KdPostProcessShader::GenerateRadialBlurTexture(std::shared_ptr<KdTexture>& 
 	KdRenderTargetPack tmpRadialBlurRTPack;
 	tmpRadialBlurRTPack.CreateRenderTarget(spDstTex->GetWidth(), spDstTex->GetHeight());
 
-	SetRadialBlurInfo( 2, 0.2f, { 0.5f,0.5f });
+	SetRadialBlurInfo( 5, 0.2f, { 0.5f,0.5f });
 
 	DrawTexture(&spSrcTex, 1, tmpRadialBlurRTPack.m_RTTexture, &tmpRadialBlurRTPack.m_viewPort);
 
