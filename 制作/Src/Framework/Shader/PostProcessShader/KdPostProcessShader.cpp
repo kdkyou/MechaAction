@@ -217,8 +217,8 @@ void KdPostProcessShader::PostEffectProcess()
 
 	DepthOfFieldProcess();
 
-//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
-	KdShaderManager::Instance().m_spriteShader.DrawTex(m_radialBlurRTPack.m_RTTexture.get(), 0, 0);
+	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
+//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_radialBlurRTPack.m_RTTexture.get(), 0, 0);
 }
 
 
@@ -280,7 +280,7 @@ void KdPostProcessShader::RadialBlurProcess()
 
 	GenerateRadialBlurTexture(m_postEffectRTPack.m_RTTexture, m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_viewPort);
 
-//	GenerateRadialBlurTexture(m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_viewPort, kBlurSamplingRadius);
+//	GenerateRadialBlurTexture(m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_viewPort);
 }
 
 void KdPostProcessShader::DepthOfFieldProcess()
@@ -368,27 +368,15 @@ void KdPostProcessShader::GenerateRadialBlurTexture(std::shared_ptr<KdTexture>& 
 	KdRenderTargetPack tmpRadialBlurRTPack;
 	tmpRadialBlurRTPack.CreateRenderTarget(spDstTex->GetWidth(), spDstTex->GetHeight());
 
-	SetRadialBlurInfo( 5, 0.2f, { 0.5f,0.5f });
+	SetRadialBlurInfo( 2, 0.2f, { 0.5f,0.5f },0.3f,0);
 
 	DrawTexture(&spSrcTex, 1, tmpRadialBlurRTPack.m_RTTexture, &tmpRadialBlurRTPack.m_viewPort);
-
-	// 横にぼかした画像を更に縦にぼかす
-	/*std::vector<Math::Vector3> verticalBlurInfo;
-	CreateBlurOffsetList(verticalBlurInfo, spDstTex, blurRadius, { 0, 1.0f });
-	SetBlurInfo(verticalBlurInfo);*/
 
 	DrawTexture(&tmpRadialBlurRTPack.m_RTTexture, 1, spDstTex, &VP);
 
 	KdShaderManager::Instance().UndoSamplerState();
 }
 
-
-void KdPostProcessShader::CreateRadialBlurOffsetList(std::vector<Math::Vector3>& dstInfo, const std::shared_ptr<KdTexture>& spSrcTex, int samplingSize, float strength)
-{
-	
-
-
-}
 
 void KdPostProcessShader::DrawTexture(std::shared_ptr<KdTexture>* spSrcTex, int srcTexSize, std::shared_ptr<KdTexture> spDstTex, D3D11_VIEWPORT* pVP)
 {
@@ -477,15 +465,24 @@ void KdPostProcessShader::SetBlurToDevice()
 }
 
 //放射ブラー用
-void KdPostProcessShader::SetRadialBlurInfo(int samlingSize, float strength, const Math::Vector2& center)
+void KdPostProcessShader::SetRadialBlurInfo(int samlingSize, float strength, const Math::Vector2& center, float mask, int dither)
 {
 	KdPostProcessShader::cbRadialBlur& radialInfo = m_cb0_RadialBlurInfo.Work();
 
 	radialInfo.samples = samlingSize;
 	radialInfo.strength = strength;
 	radialInfo.center = center;
-	radialInfo.mask = 0.3f;
-	radialInfo.dither = false;
+	radialInfo.mask = mask;
+	radialInfo.dither = dither;
+
+	static float vor = 3.f;
+	radialInfo.vortex = vor;
+	/*vor += 0.0001f;
+	if (vor > 20.0f)
+	{
+		vor = 0;
+	}*/
+
 
 	m_cb0_RadialBlurInfo.Write();
 

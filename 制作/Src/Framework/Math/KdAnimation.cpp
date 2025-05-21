@@ -195,17 +195,30 @@ void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed
 			Math::Vector3 sA, sB, pA, pB;
 			Math::Quaternion rA, rB;
 
+			////	現在のQuate
+			//Math::Quaternion rA = Math::Quaternion::CreateFromRotationMatrix(matA);
+			////	次のQuate
+			//Math::Quaternion rB = Math::Quaternion::CreateFromRotationMatrix(matB);
+
+			//// 座標の補完
+			//pA;
+			
+			//二つのQuaternionを合成
+
+
 			matA.Decompose(sA, rA, pA);
 			matB.Decompose(sB, rB, pB);
 
-			Math::Vector3 s = sA+((sB-Math::Vector3::One)*t);
-			Math::Vector3 p = XMVectorLerp(pA, pB, t);
+			Math::Vector3 s = sA;
+		//	Math::Vector3 p = XMVectorLerp(pA, pB, t);
+			Math::Vector3 p = pA;
 			Math::Quaternion r = XMQuaternionSlerp(rA, rB, t);
 
 			rNodes[idx].m_localTransform =
 				Math::Matrix::CreateScale(s) *
 				Math::Matrix::CreateFromQuaternion(r) *
 				Math::Matrix::CreateTranslation(p);
+
 		}
 		else
 		{
@@ -226,6 +239,7 @@ void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed
 		//ブレンド完了
 		if (m_blendTime >= m_blendDuration)
 		{
+			//次のアニメーションを今のアニメーションにセット
 			m_spAnimation = m_spNextAnimation;
 			m_spNextAnimation = nullptr;
 			m_time = 0.0f;

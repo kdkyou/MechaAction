@@ -12,7 +12,9 @@ void Enemy::Init()
 	}
 
 	//初期状態を「待機状態」へ設定
-	ChangeActionState(std::make_shared<Destoroy>());
+	ChangeActionState(std::make_shared<Stand>());
+
+	m_dist = { 20.0f,40.0f };
 }
 
 void Enemy::Update()
@@ -63,7 +65,29 @@ void Enemy::Stand::Enter(Enemy& owner, const  std::shared_ptr<KdGameObject>& spO
 
 void Enemy::Stand::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
-	//if()
+	auto difference = spObj->GetMatrix().Translation() - owner.m_mWorld.Translation();
+
+	
+	int rando = rand()%10 ;
+
+	if (rando < 7)
+	{
+
+		if (difference.Length() < owner.m_dist.y)
+		{
+			owner.ChangeActionState(std::make_shared<MoveForward>());
+			return;
+		}
+	}
+	else if (rando < 9)
+	{
+		owner.ChangeActionState(std::make_shared<Hited>());
+		return;
+	}
+	else {
+		owner.ChangeActionState(std::make_shared<Destoroy>());
+		return;
+	}
 
 
 }
@@ -145,7 +169,7 @@ void Enemy::MoveForward::Update(Enemy& owner, const  std::shared_ptr<KdGameObjec
 		DirectX::XMConvertToRadians(owner.m_worldRot.x),
 		DirectX::XMConvertToRadians(owner.m_worldRot.z));
 
-	if (difference.Length() > 30.0f)
+	if (difference.Length() > owner.m_dist.x)
 	{
 		Math::Vector3 vec = {};
 
@@ -160,6 +184,7 @@ void Enemy::MoveForward::Update(Enemy& owner, const  std::shared_ptr<KdGameObjec
 	else
 	{
 		owner.ChangeActionState(std::make_shared<Attack>());
+		return;
 	}
 
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
@@ -189,13 +214,14 @@ void Enemy::Attack::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spO
 {
 }
 
-void Enemy::Destoroy::Enter(Enemy& owner, const std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Hited::Enter(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Hited"), false);
 }
 
-void Enemy::Destoroy::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Hited::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	//攻撃をくらったとき
 	if (owner.m_spAnimator->IsAnimationEnd())
 	{
 		owner.ChangeActionState(std::make_shared<Stand>());
@@ -203,6 +229,27 @@ void Enemy::Destoroy::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>&
 	}
 }
 
+void Enemy::Hited::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+{
+}
+
+void Enemy::Destoroy::Enter(Enemy& owner, const std::shared_ptr<KdGameObject>& spObj)
+{
+	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Destroyed"), false);
+}
+
+void Enemy::Destoroy::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+{
+	//死亡時
+	if (owner.m_spAnimator->IsAnimationEnd())
+	{
+		owner.ChangeActionState(std::make_shared<Stand>());
+		return;
+	}
+
+}
+
 void Enemy::Destoroy::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+
 }

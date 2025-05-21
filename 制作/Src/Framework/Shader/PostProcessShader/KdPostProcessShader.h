@@ -50,9 +50,6 @@ private:
 
 	void CreateBlurOffsetList(std::vector<Math::Vector3>& dstInfo, const std::shared_ptr<KdTexture>& spSrcTex, int samplingSize, const Math::Vector2& dir);
 	
-	//放射ブラー用
-	void CreateRadialBlurOffsetList(std::vector<Math::Vector3>& dstInfo, const std::shared_ptr<KdTexture>& spSrcTex, int samplingSize, float strength);
-
 	void DrawTexture(std::shared_ptr<KdTexture>* spSrcTex, int srcTexSize, std::shared_ptr<KdTexture> spDstTex, D3D11_VIEWPORT* pVP);
 
 	void SetBlurInfo(const std::shared_ptr<KdTexture>& spSrcTex, int samplingSize, const Math::Vector2& dir);
@@ -62,7 +59,7 @@ private:
 	
 	//放射ブラー用
 	void SetRadialBlurInfo(const std::shared_ptr<KdTexture>& spSrcTex,int samlingSize,float strength, const Math::Vector2&center){}
-	void SetRadialBlurInfo(int samlingSize,float strength, const Math::Vector2&center);
+	void SetRadialBlurInfo(int samlingSize,float strength, const Math::Vector2&center,float mask, int dither);
 	void SetRadialBlurToDevice();
 
 	void SetDoFToDevice();
@@ -95,11 +92,12 @@ private:
 	{
 		int samples =0;
 		float strength = 0.0f;
-		float mask = 0.0f;
-		bool  dither = false;
-		
 		Math::Vector2 center = { 0.5f,0.5f };
-		int _blank[2] = { 0,0 };
+		
+		float mask = 0.0f;
+		int  dither = 1;
+		float vortex = 0;
+		int _blank = { 0};
 	};
 	KdConstantBuffer<cbRadialBlur> m_cb0_RadialBlurInfo;
 	
