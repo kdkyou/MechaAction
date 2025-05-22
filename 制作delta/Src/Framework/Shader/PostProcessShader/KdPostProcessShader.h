@@ -21,6 +21,14 @@ public:
 	void SetRadialBlurInfo(int samlingSize, float strength, const Math::Vector2& center, float mask, int dither,float vor);
 	void UndoRadialBlur();
 
+	//グリッチ用
+	//有効無効	0無効、1有効
+	void GlitchEnable(int enable) { m_cb0_GlitchInfo.Work().enable = enable; }
+	//									グリッド		発生時間	フレームレート絶対0.0にしない　	頻度
+	void SetGlitch(const Math::Vector2& resolu,float time,float frameRate = 0.01f,float frequency =0.1f,int useGrid=0);
+	void UndoGlitch();
+
+
 	struct Vertex
 	{
 		Math::Vector3 Pos;
@@ -43,12 +51,17 @@ public:
 	//放射ブラー用
 	void GenerateRadialBlurTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP);
 
+	//グリッチ用
+	void GenerateGlitchTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP);
+
 private:
 
 	void BlurProcess();
 	
 	//放射ブラー用
 	void RadialBlurProcess();
+	//グリッチ用
+	void GlicthProcess();
 
 	void LightBloomProcess();
 	void DepthOfFieldProcess();
@@ -63,8 +76,11 @@ private:
 	void SetBlurToDevice();
 	
 	//放射ブラー用
-	void SetRadialBlurInfo(const std::shared_ptr<KdTexture>& spSrcTex,int samlingSize,float strength, const Math::Vector2&center){}
 	void SetRadialBlurToDevice();
+
+	//グリッチ用
+	void SetGlitchToDevice();
+
 
 	void SetDoFToDevice();
 	void SetBrightToDevice();
@@ -73,7 +89,8 @@ private:
 	ID3D11InputLayout* m_inputLayout = nullptr;
 
 	ID3D11PixelShader* m_PS_Blur = nullptr;
-	ID3D11PixelShader* m_PS_RBlur = nullptr;
+	ID3D11PixelShader* m_PS_RBlur = nullptr;		//放射ブラー用
+	ID3D11PixelShader* m_PS_Glitch = nullptr;		//グリッチ用
 	ID3D11PixelShader* m_PS_DoF = nullptr;
 	ID3D11PixelShader* m_PS_Bright = nullptr;
 
@@ -91,7 +108,6 @@ private:
 	KdConstantBuffer<cbBlur>	m_cb0_BlurInfo;
 
 	//放射ブラー用
-	int m_radialBlurSamplingNum = 2;
 	struct cbRadialBlur
 	{
 		int samples =0;
@@ -104,6 +120,21 @@ private:
 		int _blank = 0;
 	};
 	KdConstantBuffer<cbRadialBlur> m_cb0_RadialBlurInfo;
+
+	//グリッチ用
+	struct cbGlitch
+	{
+		Math::Vector2 resolution = { 0.0f,0.0f };
+		float time = 0.0f;
+		float frameRate = 0.0f;
+
+		float frequency =0.0f;
+		int useGrid = 0;
+		int enable = 0;
+		int _blank = 0;
+	};
+	KdConstantBuffer<cbGlitch> m_cb0_GlitchInfo;
+
 	
 
 	struct cbDepthOfField
@@ -132,6 +163,9 @@ private:
 
 	//放射ブラー用
 	KdRenderTargetPack m_radialBlurRTPack;
+	//グリッチ用
+	KdRenderTargetPack m_glitchRTPack;
+	
 
 	KdRenderTargetPack	m_depthOfFieldRTPack;
 

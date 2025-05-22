@@ -162,6 +162,7 @@ private:
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
 	class ActionBoostEnd :public ActionStateBase
@@ -172,6 +173,7 @@ private:
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
 	class ActionBoostDush :public ActionStateBase
@@ -182,6 +184,7 @@ private:
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
 	class ActionRightAttack :public ActionStateBase
@@ -192,6 +195,7 @@ private:
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
 	class ActionRightAttackAf :public ActionStateBase
@@ -202,9 +206,19 @@ private:
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
+	class ActionHited :public ActionStateBase
+	{
+	public:
+		virtual ~ActionHited() {}
 
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
 
 	void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction);
 	std::shared_ptr<ActionStateBase>		m_nowAction = nullptr;

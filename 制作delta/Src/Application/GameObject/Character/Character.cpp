@@ -187,6 +187,8 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 	// 何も入力が無い場合は処理しない
 	if (srcMoveVec.LengthSquared() == 0.0f) { return; }
 
+	if (srcMoveVec.y < 0.0f) { return; }
+
 	// キャラの正面方向のベクトル
 	Math::Vector3 nowDir = GetMatrix().Backward();
 
@@ -496,6 +498,13 @@ void Character::ActionIdle::Update(std::weak_ptr<Character>& owner)
 		return;
 	}
 
+	if (GetAsyncKeyState('T') & 0x8000)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionHited>());
+		return;
+
+	}
+
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 }
 
@@ -657,7 +666,7 @@ void Character::ActionMove::Exit(std::weak_ptr<Character>& owner)
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-//ブースト状態
+//ブースト開始状態
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 {
@@ -716,8 +725,9 @@ void Character::ActionBoost::Exit(std::weak_ptr<Character>& owner)
 	KdShaderManager::Instance().m_postProcessShader.UndoRadialBlur();
 }
 
-
-
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//ブースト中状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 void Character::ActionBoostNow::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
@@ -779,6 +789,9 @@ void Character::ActionBoostNow::Exit(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 }
 
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//ブースト終わり状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 void Character::ActionBoostEnd::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
@@ -824,6 +837,9 @@ void Character::ActionBoostEnd::Exit(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 }
 
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//ブースト移動状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
@@ -877,7 +893,9 @@ void Character::ActionBoostDush::Exit(std::weak_ptr<Character>& owner)
 }
 
 
-
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//攻撃状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
@@ -926,6 +944,10 @@ void Character::ActionRightAttack::Exit(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 }
 
+
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//攻撃後状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
@@ -973,4 +995,64 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 void Character::ActionRightAttackAf::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
+}
+
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//ヒット状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+void Character::ActionHited::Enter(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Hited"), 3.0f, false);
+
+	m_speed = 12.0f;
+
+	m_direction = spOwner->m_mWorld.Forward();
+
+	KdShaderManager::Instance().m_postProcessShader.GlitchEnable(1);
+	KdShaderManager::Instance().m_postProcessShader.SetGlitch({ 0,0 }, 2.0f, 30.0f, 0.05f, 0);
+
+}
+
+void Character::ActionHited::Update(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+	
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
+
+	
+
+	if (spOwner->m_spAnimator->IsAnimationEnd() == true)
+	{
+		Checkkey(owner);
+
+		if (m_isBoost)
+		{
+			spOwner->ChangeActionState(std::make_shared<ActionBoost>());
+			return;
+		}
+		if (m_isLeftAttack)
+		{
+			spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+			return;
+		}
+
+		if (m_isMove)
+		{
+			spOwner->ChangeActionState(std::make_shared<ActionMove>());
+			return;
+		}
+
+		spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+		return;
+
+	}
+
+}
+
+void Character::ActionHited::Exit(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	KdShaderManager::Instance().m_postProcessShader.UndoGlitch();
 }
