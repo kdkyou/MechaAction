@@ -33,20 +33,23 @@ void GameScene::Init()
 	// キャラクター初期化
 	//===================================================================
 	std::shared_ptr<Character> _character = std::make_shared<Character>();
+	_character->SetThis(_character);
 	_character->Init();
 	_character->RegistHitObject(_terrain);
 	AddObject(_character);
 
-	std::shared_ptr<Blade> _blade = std::make_shared<Blade>();
-	_blade->Init();
-	_blade->SetParent(_character);
-	AddObject(_blade);
+	//std::shared_ptr<Blade> _blade = std::make_shared<Blade>();
+	//_blade->Init();
+	//_blade->SetParent(_character);
+	//AddObject(_blade);
 
-	//エネミー
-	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
-	enemy->Init();
-	enemy->SetTarget(_character);
-	AddObject(enemy);
+	////エネミー
+	//std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
+	//enemy->Init();
+	//enemy->SetTarget(_character);
+	//AddObject(enemy);
+
+	//_character->RegistHitObject(enemy);
 
 	//===================================================================
 	// カメラ初期化
@@ -61,6 +64,9 @@ void GameScene::Init()
 	_camera->RegistHitObject(_terrain);
 	_character->SetCamera(_camera);
 	AddObject(_camera);
+
+
+	
 }
 
 void GameScene::Event()

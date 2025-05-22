@@ -11,6 +11,12 @@ void Enemy::Init()
 		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("StandUp"),10.0f ,true);
 	}
 
+	if (!m_pCollider)
+	{
+		m_pCollider = std::make_unique<KdCollider>();
+		m_pCollider->RegisterCollisionShape("Enemy", m_spModel, KdCollider::TypeDamage);
+	}
+
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Stand>());
 

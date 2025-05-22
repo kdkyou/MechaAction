@@ -16,6 +16,11 @@ public:
 
 	void SetBrightThreshold(float threshold) { m_cb0_BrightInfo.Work().Threshold = threshold; }
 
+	//放射ブラー用
+	//サンプリング回数　長さ 中心 反映しない範囲 ディザリング 回転角度
+	void SetRadialBlurInfo(int samlingSize, float strength, const Math::Vector2& center, float mask, int dither,float vor);
+	void UndoRadialBlur();
+
 	struct Vertex
 	{
 		Math::Vector3 Pos;
@@ -59,7 +64,6 @@ private:
 	
 	//放射ブラー用
 	void SetRadialBlurInfo(const std::shared_ptr<KdTexture>& spSrcTex,int samlingSize,float strength, const Math::Vector2&center){}
-	void SetRadialBlurInfo(int samlingSize,float strength, const Math::Vector2&center,float mask, int dither);
 	void SetRadialBlurToDevice();
 
 	void SetDoFToDevice();

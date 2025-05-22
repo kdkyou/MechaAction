@@ -17,6 +17,6 @@ private:
 	Math::Vector3 m_basePos;	//トラッキング時の始点
 	Math::Vector3 m_pos;		//カメラの座標
 	Math::Vector3 m_target;		//注視点
-	float m_speed=10.0f;
+	float m_speed = 5.0f;
 
 };

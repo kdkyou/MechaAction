@@ -280,7 +280,7 @@ void KdPostProcessShader::RadialBlurProcess()
 
 	GenerateRadialBlurTexture(m_postEffectRTPack.m_RTTexture, m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_viewPort);
 
-//	GenerateRadialBlurTexture(m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_viewPort);
+	GenerateRadialBlurTexture(m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_viewPort);
 }
 
 void KdPostProcessShader::DepthOfFieldProcess()
@@ -367,8 +367,6 @@ void KdPostProcessShader::GenerateRadialBlurTexture(std::shared_ptr<KdTexture>& 
 
 	KdRenderTargetPack tmpRadialBlurRTPack;
 	tmpRadialBlurRTPack.CreateRenderTarget(spDstTex->GetWidth(), spDstTex->GetHeight());
-
-	SetRadialBlurInfo( 2, 0.2f, { 0.5f,0.5f },0.3f,0);
 
 	DrawTexture(&spSrcTex, 1, tmpRadialBlurRTPack.m_RTTexture, &tmpRadialBlurRTPack.m_viewPort);
 
@@ -465,24 +463,31 @@ void KdPostProcessShader::SetBlurToDevice()
 }
 
 //放射ブラー用
-void KdPostProcessShader::SetRadialBlurInfo(int samlingSize, float strength, const Math::Vector2& center, float mask, int dither)
+void KdPostProcessShader::SetRadialBlurInfo(int samlingSize, float strength, const Math::Vector2& center, float mask, int dither, float vor)
+{
+	
+	m_cb0_RadialBlurInfo.Work().samples = samlingSize;
+	m_cb0_RadialBlurInfo.Work().strength = strength;
+	m_cb0_RadialBlurInfo.Work().center = center;
+	m_cb0_RadialBlurInfo.Work().mask = mask;
+	m_cb0_RadialBlurInfo.Work().dither = dither;
+
+	m_cb0_RadialBlurInfo.Work().vortex = vor;
+	
+	m_cb0_RadialBlurInfo.Write();
+
+}
+
+void KdPostProcessShader::UndoRadialBlur()
 {
 	KdPostProcessShader::cbRadialBlur& radialInfo = m_cb0_RadialBlurInfo.Work();
 
-	radialInfo.samples = samlingSize;
-	radialInfo.strength = strength;
-	radialInfo.center = center;
-	radialInfo.mask = mask;
-	radialInfo.dither = dither;
-
-	static float vor = 0.0f;
-	radialInfo.vortex = vor;
-	/*vor += 0.0001f;
-	if (vor > 20.0f)
-	{
-		vor = 0;
-	}*/
-
+	radialInfo.samples = 0;
+	radialInfo.strength = 0.0f;
+	radialInfo.center = {0.5f,0.5f};
+	radialInfo.mask = 0.0f;
+	radialInfo.dither = 0;
+	radialInfo.vortex = 0.0f;
 
 	m_cb0_RadialBlurInfo.Write();
 

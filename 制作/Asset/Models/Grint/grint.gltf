@@ -2068,7 +2068,7 @@
 		},
 		{
 			"mesh":0,
-			"name":"Arm_lup.001",
+			"name":"Arm_lup",
 			"skin":0
 		},
 		{
@@ -148671,7 +148671,7 @@
 	"buffers":[
 		{
 			"byteLength":1884268,
-			"uri":"grint.bin"
+			"uri":"Grint.bin"
 		}
 	]
 }

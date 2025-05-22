@@ -26,6 +26,11 @@ float4 main(VSOutput input) : SV_Target0
 	//リターンさせる色
 	float4 color = { 0.0f, 0.0f, 0.0f, 0.0f };
 
+	if(g_samples<2)
+	{
+		color = g_inputTex.Sample(g_ss, input.UV);
+		return color;
+	}
 	
 	//中心を基準に
 	float2 pos = input.UV - g_center;

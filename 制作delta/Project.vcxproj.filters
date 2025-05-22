@@ -549,5 +549,8 @@
     <FxCompile Include="Src\Framework\Shader\PostProcessShader\KdPostProcessShader_PS_RadialBlur.hlsl">
       <Filter>Src\Framework\Shader\PostProcessShader</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Framework\Shader\PostProcessShader\KdPostProcessShader_PS_Gritch.hlsl">
+      <Filter>Src\Framework\Shader\PostProcessShader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

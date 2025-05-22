@@ -26,6 +26,8 @@ public:
 
 	const std::weak_ptr<KdModelWork>GetModelWork()const;
 
+	void SetThis(const std::shared_ptr<Character>& _this) { m_wpThis = _this; }
+
 private:
 
 	//WASDの入力があったかどうか
@@ -57,7 +59,7 @@ private:
 
 	Math::Vector3								m_worldRot;
 
-	float										m_clampSize = 5.0f;
+	float										m_clampSize = 10.0f;
 
 	Math::Matrix 								m_scale;
 
@@ -67,7 +69,9 @@ private:
 
 	Math::Vector3 m_vMove = Math::Vector3::Zero;
 
-	Math::Vector3 m_emissive = { 10,10,10 };
+	std::weak_ptr<Character>					m_wpThis;
+
+	std::weak_ptr<KdGameObject>					m_wpRockTarget;
 
 	//ステートパターン管理系!
 private:
@@ -77,15 +81,15 @@ private:
 	public:
 		virtual ~ActionStateBase() {}
 
-		virtual void Enter(Character& owner) {}
-		virtual void Update(Character& owner) {}
-		virtual void Exit(Character& owner) {}
+		virtual void Enter(std::weak_ptr<Character>& owner) {}
+		virtual void Update(std::weak_ptr<Character>& owner) {}
+		virtual void Exit(std::weak_ptr<Character>& owner) {}
 
-		void Checkkey(Character& owner);
+		void Checkkey(std::weak_ptr<Character>& owner);
 
 	protected:
 
-		void Direct(Character& owner);
+		const Math::Vector3 Direct(std::weak_ptr<Character>& owner,bool isCamera);
 
 		bool m_isBoost = false;
 		bool m_isMove = false;
@@ -101,9 +105,9 @@ private:
 	public:
 		virtual ~ActionIdle() {}
 
-		void Enter(Character& owner) override;
-		void Update(Character& owner)override;
-		void Exit(Character& owner)override;
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
 	class ActionStandUp :public ActionStateBase
@@ -111,9 +115,9 @@ private:
 	public:
 		virtual ~ActionStandUp() {}
 
-		void Enter(Character& owner) override;
-		void Update(Character& owner)override;
-		void Exit(Character& owner)override;
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
 	class ActionJump :public ActionStateBase
@@ -121,9 +125,9 @@ private:
 	public:
 		virtual ~ActionJump() {}
 
-		void Enter(Character& owner) override;
-		void Update(Character& owner)override;
-		void Exit(Character& owner)override;
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
 	class ActionMove :public ActionStateBase
@@ -131,9 +135,9 @@ private:
 	public:
 		virtual ~ActionMove() {}
 
-		void Enter(Character& owner) override;
-		void Update(Character& owner)override;
-		void Exit(Character& owner)override;
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
 	class ActionBoost :public ActionStateBase
@@ -141,9 +145,9 @@ private:
 	public:
 		virtual ~ActionBoost(){}
 
-		void Enter(Character& owner) override;
-		void Update(Character& owner)override;
-		void Exit(Character& owner)override;
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 
 	private:
 
@@ -155,9 +159,9 @@ private:
 	public:
 		virtual ~ActionBoostNow() {}
 
-		void Enter(Character& owner) override;
-		void Update(Character& owner)override;
-		void Exit(Character& owner)override;
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
 	class ActionBoostEnd :public ActionStateBase
@@ -165,9 +169,9 @@ private:
 	public:
 		virtual ~ActionBoostEnd() {}
 
-		void Enter(Character& owner) override;
-		void Update(Character& owner)override;
-		void Exit(Character& owner)override;
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
 	class ActionBoostDush :public ActionStateBase
@@ -175,29 +179,29 @@ private:
 	public:
 		virtual ~ActionBoostDush() {}
 
-		void Enter(Character& owner) override;
-		void Update(Character& owner)override;
-		void Exit(Character& owner)override;
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
-	class ActionLeftAttack :public ActionStateBase
+	class ActionRightAttack :public ActionStateBase
 	{
 	public:
-		virtual ~ActionLeftAttack() {}
+		virtual ~ActionRightAttack() {}
 
-		void Enter(Character& owner) override;
-		void Update(Character& owner)override;
-		void Exit(Character& owner)override;
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
-	class ActionLeftAttackAf :public ActionStateBase
+	class ActionRightAttackAf :public ActionStateBase
 	{
 	public:
-		virtual ~ActionLeftAttackAf() {}
+		virtual ~ActionRightAttackAf() {}
 
-		void Enter(Character& owner) override;
-		void Update(Character& owner)override;
-		void Exit(Character& owner)override;
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
 
