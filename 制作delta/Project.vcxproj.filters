@@ -97,9 +97,6 @@
     <Filter Include="Src\Application\GameObject\Weapon\Blade">
       <UniqueIdentifier>{0819f680-86e3-4336-9ac6-34abf3e696e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\Gun">
-      <UniqueIdentifier>{efe8f9fd-8939-4c9c-9a21-daa800990f41}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Camera\TrackingCamera">
       <UniqueIdentifier>{d762179f-3487-4f21-9b56-99bf7bc9716f}</UniqueIdentifier>
     </Filter>
@@ -108,6 +105,9 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Enemy">
       <UniqueIdentifier>{72fca871-dacf-48e0-9897-4e7b070934b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Shield">
+      <UniqueIdentifier>{efe8f9fd-8939-4c9c-9a21-daa800990f41}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -315,6 +315,12 @@
     <ClInclude Include="Src\Application\GameObject\Character\CharacterBase.h">
       <Filter>Src\Application\GameObject\Character</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Shield\Shield.h">
+      <Filter>Src\Application\GameObject\Weapon\Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\CameraManager.h">
+      <Filter>Src\Application\GameObject\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -494,6 +500,12 @@
     <ClCompile Include="Src\Application\GameObject\Character\CharacterBase.cpp">
       <Filter>Src\Application\GameObject\Character</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Shield\Shield.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\CameraManager.cpp">
+      <Filter>Src\Application\GameObject\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Framework\Shader\inc_KdCommon.hlsli">
@@ -550,6 +562,9 @@
       <Filter>Src\Framework\Shader\PostProcessShader</Filter>
     </FxCompile>
     <FxCompile Include="Src\Framework\Shader\PostProcessShader\KdPostProcessShader_PS_Glitch.hlsl">
+      <Filter>Src\Framework\Shader\PostProcessShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Framework\Shader\PostProcessShader\KdPostProcessShader_PS_Combine.hlsl">
       <Filter>Src\Framework\Shader\PostProcessShader</Filter>
     </FxCompile>
   </ItemGroup>

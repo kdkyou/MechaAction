@@ -4,6 +4,7 @@
 #include "../../GameObject/Terrain/Terrain.h"
 #include "../../GameObject/Character/Character.h"
 #include"../../GameObject/Weapon/Blade/Blade.h"
+#include"../../GameObject/Weapon/Shield/Shield.h"
 
 #include"../../GameObject/Enemy/Enemy.h"
 
@@ -42,6 +43,11 @@ void GameScene::Init()
 	_blade->Init();
 	_blade->SetParent(_character);
 	AddObject(_blade);
+
+	/*std::shared_ptr<Shield> _shield = std::make_shared<Shield>();
+	_shield->Init();
+	_shield->SetParent(_character);
+	AddObject(_shield);*/
 
 	//エネミー
 	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();

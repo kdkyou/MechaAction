@@ -144,7 +144,7 @@ const bool Character::IsFlow()
 	return false;
 }
 
-bool Character::Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray)
+bool Character::Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray,bool camera)
 {
 	auto direction = dir;
 	direction.Normalize();
@@ -173,7 +173,10 @@ bool Character::Move(float speed, const Math::Vector3& dir, const KdCollider::Ty
 		pos += move;
 	}
 
-	UpdateRotate(direction);
+	if (camera == true)
+	{
+		UpdateRotate(direction);
+	}
 
 	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_worldRot.y));
 	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(pos);
@@ -215,7 +218,7 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 		}
 
 		//外積を求める（どっっちに回転するのか調べる）
-		Math::Vector3 c =targetDir.Cross(nowDir);
+		Math::Vector3 c = targetDir.Cross(nowDir);
 
 		if (c.y >= 0)
 		{
@@ -291,7 +294,6 @@ void Character::UpdateCollision()
 				SetPos(hitPos);
 				m_Gravity = 0;
 
-				m_isGround = true;
 			}
 			else
 			{
@@ -340,7 +342,7 @@ void Character::UpdateCollision()
 		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
 		if (spGameObj)
 		{
-			if(spGameObj->Intersects(spherInfo, nullptr))
+			if (spGameObj->Intersects(spherInfo, nullptr))
 			{
 				m_wpRockTarget = spGameObj;
 			}
@@ -389,9 +391,21 @@ bool Character::RayCast(const Math::Vector3& startPos, const Math::Vector3& vec,
 					resultPos = ret.m_hitPos;
 
 					hit = true;
+
 				}
 			}
 
+			if (type & KdCollider::TypeGround)
+			{
+				if (hit == true)
+				{
+					m_isGround = true;
+				}
+				else
+				{
+					m_isGround = false;
+				}
+			}
 		}
 	}
 
@@ -407,7 +421,7 @@ const Math::Vector3 Character::ActionStateBase::Direct(std::weak_ptr<Character>&
 
 	const std::shared_ptr<const CameraBase> _spCamera = spOwner->m_wpCamera.lock();
 
-	Math::Vector3 direction  = spOwner->m_vMove;
+	Math::Vector3 direction = spOwner->m_vMove;
 
 	//もし何も移動キーの入力が無かったら
 	if (direction.LengthSquared() == 0.0f) {
@@ -512,7 +526,7 @@ void Character::ActionIdle::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->IsAnimationEnd();
+
 }
 
 
@@ -580,7 +594,7 @@ void Character::ActionJump::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction = Math::Vector3::Up;
 
-	m_speed = 5.0f;
+	m_speed = 10.0f;
 }
 
 void Character::ActionJump::Update(std::weak_ptr<Character>& owner)
@@ -650,7 +664,7 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 	else
 	{
 
-		m_direction = ActionStateBase::Direct(owner,true);
+		m_direction = ActionStateBase::Direct(owner, true);
 
 
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
@@ -666,7 +680,7 @@ void Character::ActionMove::Exit(std::weak_ptr<Character>& owner)
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-//ブースト開始状態
+//ブースト状態
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 {
@@ -674,11 +688,11 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Boost"), 20.0f, false);
 
-	m_direction = ActionStateBase::Direct(owner,false);
+	m_direction = ActionStateBase::Direct(owner, false);
 
 	m_speed = 100.0f;
 
-	KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(6, 0.6f, { 0.5f,0.5f }, 0.2f, 0, 0.01f);
+	KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(4, 0.6f, { 0.5f,0.5f }, 0.4f, 0, 0.01f);
 }
 
 void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
@@ -687,6 +701,10 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 	Checkkey(owner);
 
 	//owner.Move(m_speed, m_direction, KdCollider::TypeDamage, true);
+
+	if (spOwner->m_spAnimator->GetProgress()>0.4f) {
+		KdShaderManager::Instance().m_postProcessShader.UndoRadialBlur();
+	}
 
 	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
@@ -702,18 +720,13 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 		}
 		else
 		{
-			if (m_isMove)
-			{
-				spOwner->ChangeActionState(std::make_shared<ActionBoostNow>());
-				return;
-			}
-
+			spOwner->ChangeActionState(std::make_shared<ActionBoostNow>());
+			return;
 		}
-
 
 	}
 
-	
+
 
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 
@@ -722,7 +735,6 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 void Character::ActionBoost::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	KdShaderManager::Instance().m_postProcessShader.UndoRadialBlur();
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -776,8 +788,7 @@ void Character::ActionBoostNow::Update(std::weak_ptr<Character>& owner)
 	else
 	{
 
-		m_direction = ActionStateBase::Direct(owner,true);
-
+		m_direction = ActionStateBase::Direct(owner, true);
 
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 	}
@@ -795,7 +806,7 @@ void Character::ActionBoostNow::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionBoostEnd::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	
+
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostEnd"), 9.0f, false);
 
 	m_speed = 5.0f;
@@ -816,6 +827,18 @@ void Character::ActionBoostEnd::Update(std::weak_ptr<Character>& owner)
 	if (m_isLeftAttack)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+		return;
+	}
+
+	if (m_isBoost)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoost>());
+		return;
+	}
+
+	if (m_isFlow)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionJump>());
 		return;
 	}
 
@@ -844,7 +867,7 @@ void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostDush"), 10.0f);
-	m_speed = 90.0f;
+	m_speed = 50.0f;
 }
 
 void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
@@ -873,14 +896,13 @@ void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
 	}
 
 	//移動中に何も入力がなければ待機に移行
-	if (m_isMove == false) {
+	if (!m_isMove) {
 		spOwner->ChangeActionState(std::make_shared<ActionStandUp>());
 		return;
 	}
 	else
 	{
-
-		m_direction=ActionStateBase::Direct(owner,false);
+		m_direction = ActionStateBase::Direct(owner, false);
 
 	}
 
@@ -902,7 +924,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("RightBladeAttackBef"), 10.0f, false);
 
-	m_direction=ActionStateBase::Direct(owner,false);
+	m_direction = ActionStateBase::Direct(owner, false);
 
 	m_speed = 120.0f;
 }
@@ -923,7 +945,7 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 		return;
 	}
 
-		
+
 
 	//敵が一定範囲内なら敵のほうに向いて敵に
 	auto target = spOwner->m_wpRockTarget.lock();
@@ -953,9 +975,9 @@ void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("RightBladeAttack"), 10.0f, false);
 
-	m_speed =120.0f;
+	m_speed = 120.0f;
 
-	m_direction =ActionStateBase::Direct(owner,false);
+	m_direction = ActionStateBase::Direct(owner, false);
 
 }
 
@@ -969,8 +991,10 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 	}
 
-	if (spOwner->m_spAnimator->IsAnimationEnd() == true)
+	if (spOwner->m_spAnimator->IsAnimationEnd() == false)
 	{
+		return;
+	}
 		Checkkey(owner);
 
 		if (m_isBoost)
@@ -988,7 +1012,6 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 		spOwner->ChangeActionState(std::make_shared<ActionIdle>());
 		return;
 
-	}
 
 }
 
@@ -1009,44 +1032,45 @@ void Character::ActionHited::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction = spOwner->m_mWorld.Forward();
 
-	KdShaderManager::Instance().m_postProcessShader.GlitchEnable(1);
-	KdShaderManager::Instance().m_postProcessShader.SetGlitch({ 0,0 }, 2.0f, 30.0f, 0.05f, 0);
 
 }
 
 void Character::ActionHited::Update(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	
-	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 
-	
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false,false);
 
-	if (spOwner->m_spAnimator->IsAnimationEnd() == true)
+	//グリッチ表現
+	auto time = KdFPSController::GetInstance().GetTime();
+
+	KdShaderManager::Instance().m_postProcessShader.
+		SetGlitch({ 10,10 }, time, 40.0f, 0.05f, 0, 1,{0.5f,0.5f});
+
+	if (spOwner->m_spAnimator->IsAnimationEnd() == false) { return; }
+
+	Checkkey(owner);
+
+	if (m_isBoost)
 	{
-		Checkkey(owner);
-
-		if (m_isBoost)
-		{
-			spOwner->ChangeActionState(std::make_shared<ActionBoost>());
-			return;
-		}
-		if (m_isLeftAttack)
-		{
-			spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
-			return;
-		}
-
-		if (m_isMove)
-		{
-			spOwner->ChangeActionState(std::make_shared<ActionMove>());
-			return;
-		}
-
-		spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+		spOwner->ChangeActionState(std::make_shared<ActionBoost>());
 		return;
-
 	}
+	if (m_isLeftAttack)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+		return;
+	}
+
+	if (m_isMove)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionMove>());
+		return;
+	}
+
+	spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+	return;
+
 
 }
 

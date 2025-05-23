@@ -22,10 +22,9 @@ public:
 	void UndoRadialBlur();
 
 	//グリッチ用
-	//有効無効	0無効、1有効
-	void GlitchEnable(int enable) { m_cb0_GlitchInfo.Work().enable = enable; }
-	//									グリッド		発生時間	フレームレート絶対0.0にしない　	頻度
-	void SetGlitch(const Math::Vector2& resolu,float time,float frameRate = 0.01f,float frequency =0.1f,int useGrid=0);
+	//	グリッド	発生時間	フレームレート絶対0.0にしない	頻度	グリッドするか
+	//				↑動く時間	↑滑らかに↓粗く			↑発生しやすい↓たまに
+	void SetGlitch(const Math::Vector2& resolu,float time,float frameRate,float frequency,int useGrid,int playerHit,const Math::Vector2& center);
 	void UndoGlitch();
 
 
@@ -63,8 +62,11 @@ private:
 	//グリッチ用
 	void GlicthProcess();
 
+	void AddProcess();
+
 	void LightBloomProcess();
 	void DepthOfFieldProcess();
+
 
 	void CreateBlurOffsetList(std::vector<Math::Vector3>& dstInfo, const std::shared_ptr<KdTexture>& spSrcTex, int samplingSize, const Math::Vector2& dir);
 	
@@ -131,7 +133,10 @@ private:
 		float frequency =0.0f;
 		int useGrid = 0;
 		int enable = 0;
-		int _blank = 0;
+		int playerHit = 0;
+
+		Math::Vector2 center = {0.0f,0.0f};
+		int _blank2[2] = { 0,0};
 	};
 	KdConstantBuffer<cbGlitch> m_cb0_GlitchInfo;
 
@@ -165,6 +170,8 @@ private:
 	KdRenderTargetPack m_radialBlurRTPack;
 	//グリッチ用
 	KdRenderTargetPack m_glitchRTPack;
+	//二枚を合成する
+	KdRenderTargetPack m_compositedRTPack;
 	
 
 	KdRenderTargetPack	m_depthOfFieldRTPack;

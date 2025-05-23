@@ -243,8 +243,9 @@ void KdPostProcessShader::PostEffectProcess()
 	DepthOfFieldProcess();
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_radialBlurRTPack.m_RTTexture.get(), 0, 0);
-	KdShaderManager::Instance().m_spriteShader.DrawTex(m_glitchRTPack.m_RTTexture.get(), 0, 0);
-	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
+//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_glitchRTPack.m_RTTexture.get(), 0, 0);
+//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
+//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_postEffectRTPack.m_RTTexture.get(), 0, 0);
 }
 
 
@@ -318,6 +319,12 @@ void KdPostProcessShader::GlicthProcess()
 	GenerateGlitchTexture(m_postEffectRTPack.m_RTTexture, m_glitchRTPack.m_RTTexture, m_glitchRTPack.m_viewPort);
 
 	GenerateGlitchTexture(m_glitchRTPack.m_RTTexture, m_glitchRTPack.m_RTTexture, m_glitchRTPack.m_viewPort);
+
+}
+
+//シェーダーのテクスチャを合成
+void KdPostProcessShader::AddProcess()
+{
 
 }
 
@@ -416,7 +423,7 @@ void KdPostProcessShader::GenerateRadialBlurTexture(std::shared_ptr<KdTexture>& 
 //グリッチ用
 void KdPostProcessShader::GenerateGlitchTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP)
 {
-	KdShaderManager::Instance().ChangeSamplerState(KdSamplerState::Anisotropic_Wrap);
+	KdShaderManager::Instance().ChangeSamplerState(KdSamplerState::Linear_Clamp);
 
 	KdRenderTargetPack tmpGlitchRTPack;
 	tmpGlitchRTPack.CreateRenderTarget(spDstTex->GetWidth(), spDstTex->GetHeight());
@@ -547,26 +554,40 @@ void KdPostProcessShader::UndoRadialBlur()
 
 }
 
-void KdPostProcessShader::SetGlitch(const Math::Vector2& resolu, float time, float frameRate, float frequency, int useGrid)
+//グリッチ用
+//	グリッド	発生時間	フレームレート絶対0.0にしない	頻度	グリッドするか
+//				↑動く時間	↑滑らかに↓粗く
+void KdPostProcessShader::SetGlitch(const Math::Vector2& resolu, float time, float frameRate, float frequency, int useGrid, int playerHit, const Math::Vector2& center)
 {
 	m_cb0_GlitchInfo.Work().resolution = resolu;
 	m_cb0_GlitchInfo.Work().time = time;
 	m_cb0_GlitchInfo.Work().frameRate = frameRate;
 	m_cb0_GlitchInfo.Work().frequency = frequency;
 	m_cb0_GlitchInfo.Work().useGrid = useGrid;
+	m_cb0_GlitchInfo.Work().playerHit = playerHit;
+	m_cb0_GlitchInfo.Work().center = center;
+
+	m_cb0_GlitchInfo.Work().enable = 1;
+
 
 	m_cb0_GlitchInfo.Write();
 }
 
 void KdPostProcessShader::UndoGlitch()
 {
-	m_cb0_GlitchInfo.Work().enable = 0;
+	KdPostProcessShader::cbGlitch& glitchInfo = m_cb0_GlitchInfo.Work();
 
+	
 	m_cb0_GlitchInfo.Work().resolution = Math::Vector2::Zero;
 	m_cb0_GlitchInfo.Work().time = 0.0f;
 	m_cb0_GlitchInfo.Work().frameRate = 0.0f;
 	m_cb0_GlitchInfo.Work().frequency = 0.0f;
 	m_cb0_GlitchInfo.Work().useGrid = 0;
+	m_cb0_GlitchInfo.Work().playerHit = 0;
+	m_cb0_GlitchInfo.Work().center = {0.5f,0.5f};
+
+	m_cb0_GlitchInfo.Work().enable = 0;
+
 	
 	m_cb0_GlitchInfo.Write();
 

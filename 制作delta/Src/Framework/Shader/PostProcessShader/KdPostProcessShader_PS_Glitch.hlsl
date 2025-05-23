@@ -6,11 +6,13 @@ SamplerState g_ss : register(s0);
 cbuffer cb : register(b0)
 {
 	float2  g_resolution;	//分割数
-	float g_time;		//時間
-	float g_frameRate;	//フレームレート相当値
-	float g_frequency;	//頻度
-	int g_useGrid;		//グリッド処理をするか
-	int g_enable;		//0=無効　1＝有効
+	float g_time;			//時間
+	float g_frameRate;		//フレームレート相当値
+	float g_frequency;		//頻度
+	int g_useGrid;			 //グリッド処理をするか
+	int g_enable;			//0=無効　1＝有効
+	int g_playerHit;		//プレイヤーが受けたかどうか
+	float2 g_center;		//範囲の中心
 };
 
 //ランダムな値を返す
@@ -40,7 +42,7 @@ float4 main(VSOutput In) : SV_TARGET
 {
 	float2 uv = In.UV;
 
-	float4 color = { 0.0f, 0.0f, 0.0f, 1.0f, };
+	float4 color;;
 
 	if(g_enable == 0)
 	{
@@ -48,11 +50,11 @@ float4 main(VSOutput In) : SV_TARGET
 		return color;
 	}
 
-
+	
 	if(g_useGrid == 1)
 	{
 		// === グリッド演出 ===
-		float2 gridSize = float2(20, 20); // 20x20のグリッド
+		float2 gridSize = g_resolution;
 		float2 uvGrid = floor(uv * gridSize) / gridSize;
 
         // ランダムにグリッド内を点滅させる（ノイズ演出）
@@ -63,7 +65,7 @@ float4 main(VSOutput In) : SV_TARGET
 		color = g_inputTex.Sample(g_ss, uvGrid);
 		color.rgb *= r; // チカチカ演出
 	}
-	else
+	else if(g_useGrid == 0 )
 	{
 		//時間ベースのノイズ生成
 		float2 noiseTime1 = perlinNoise(float2(sin(g_time), cos(g_time)) * 10.0f);
@@ -77,23 +79,63 @@ float4 main(VSOutput In) : SV_TARGET
 		float noiseX = (2.0f * rand(float2(posterize1, posterize2)) - 0.5f) * 0.1f;
 
 		//step(t.x)はxがtより大きい場合1を返す
-		float f = step(rand(float2(posterize2, posterize1)), g_frequency);
+		//float f = step(rand(float2(posterize2, posterize1)), g_frequency);
+		float f = step(rand(posterize2), g_frequency);
 		noiseX *= f;
 
 		//uv.y方向のノイズ計算　-1 < noiseY < 1
-		float noiseY = (2.0 * rand(float2(posterize1, posterize1))) - 0.5;
+		//float noiseY = (2.0 * rand(float2(posterize1, posterize1))) - 0.5;
+		float noiseY = (2.0 * rand(posterize1)) - 0.5;
 
 		//グリッチの高さの補間値計算　どの高さに出現するかは時間変化でランダム
-		float glitchLine1 = step(uv.y - noiseY, rand(float2(noiseY, noiseY)));
+		//float glitchLine1 = step(uv.y - noiseY, rand(float2(noiseY, noiseY)));
+		float glitchLine1 = step(uv.y - noiseY, rand(noiseY));
 		float glitchLine2 = step(uv.y + noiseY, noiseY);
 		float glitch = saturate(glitchLine1 - glitchLine2);
 
+		if(g_playerHit==1)
+		{
+			
+			//指定範囲にのみグリッチ
+			float2 center = g_center;
+			float dist = distance(uv, center);
+			float effectRadius = 0.4; // 半径40%
+			float glitchMask = smoothstep(effectRadius-0.2, effectRadius + 0.05, dist);
+			glitch *= 1.0 - glitchMask;
+
 		//速度調整
-		uv.x = lerp(uv.x, uv.x + noiseX, glitch);
+			uv.x = lerp(uv.x, uv.x + noiseX, glitch);
 
 		//テクスチャのサンプリング
-		color = g_inputTex.Sample(g_ss, uv);
+			color = g_inputTex.Sample(g_ss, uv);
+
+			float glitchOffset = noiseX * glitch;
+
+			// チャンネルごとにずらしてサンプリング
+			float r = g_inputTex.Sample(g_ss, uv + float2(glitchOffset, 0)).r;
+			float g = g_inputTex.Sample(g_ss, uv).g;
+			float b = g_inputTex.Sample(g_ss, uv - float2(glitchOffset, 0)).b;
+		
+			color.rgb = (r, g, b);
+
+			//狂わした色を反転
+			//color.rgb = lerp(color.rgb, 1.0 - color.rgb, glitch);
+
+			//color.r = 0.5f;
+			
+		}
+		else
+		{
+			//速度調整
+			uv.x = lerp(uv.x, uv.x + noiseX, glitch);
+
+			//テクスチャのサンプリング
+			color = g_inputTex.Sample(g_ss, uv);
+		}
+
+
 	}
+	
 	
 	return color;
 }

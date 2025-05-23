@@ -96,6 +96,7 @@ public:
 
 	//現在のアニメーション位置を返す
 	const float GetAdvanceTime() const { return m_time; }
+	const float GetProgress()const { return m_time / m_spAnimation->m_maxLength; }
 	void SetAdvanceTime(const float advanceTime) { m_time = advanceTime; }
 	//現在のanimation名を返す
 	const std::string GetAnimName() {

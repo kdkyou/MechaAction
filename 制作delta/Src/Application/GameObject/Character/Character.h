@@ -42,7 +42,7 @@ private:
 	//スペース入力
 	const bool IsFlow();
 
-	bool Move(float speed,const Math::Vector3& dir,const KdCollider::Type type ,bool ray = true );
+	bool Move(float speed,const Math::Vector3& dir,const KdCollider::Type type ,bool ray = true,bool camera=true );
 
 	// キャラクターの回転行列を作成する
 	void UpdateRotate(const Math::Vector3& srcMoveVec);

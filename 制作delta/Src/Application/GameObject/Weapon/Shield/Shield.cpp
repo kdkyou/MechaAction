@@ -1,26 +1,24 @@
-﻿#include "Blade.h"
+﻿#include "Shield.h"
 #include"../../Character/Character.h"
 
-void Blade::Init()
+void Shield::Init()
 {
 	if (!m_spModelWork)
 	{
 		m_spModelWork = std::make_shared<KdModelWork>();
-		m_spModelWork->SetModelData("Asset/Models/Blade/Blade.gltf");
-	//	m_spModelWork->SetModelData("Asset/Models/Leg/Leg.gltf");
-
+		m_spModelWork->SetModelData("Asset/Models/Shield/Shield.gltf");
 	}
 
 	if (!m_spAnimator)
 	{
 		m_spAnimator = std::make_shared<KdAnimator>();
-		m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Normal"),10.0f);
+		m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Normal"), 10.0f);
 	}
 	Math::Vector3 pos = { 0.0f,5.0f,0.0f };
 	SetPos(pos);
 }
 
-void Blade::Update()
+void Shield::Update()
 {
 	//親(プレイヤー)の行列を取得
 	const std::shared_ptr<const Character> _spParent = m_wpParent.lock();
@@ -29,7 +27,7 @@ void Blade::Update()
 
 	if (_spParent)
 	{
-		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode("RightWeapon");
+		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode("LeftWeapon");
 		if (_pNode)
 		{
 			m_parentAttachMat = _pNode->m_worldTransform;
@@ -39,8 +37,7 @@ void Blade::Update()
 
 	}
 
-	
-	m_mWorld =  m_parentAttachMat * _parentMat;
+	m_mWorld = m_parentAttachMat * _parentMat;
 
 
 	WeaponBase::Update();
@@ -49,12 +46,12 @@ void Blade::Update()
 
 }
 
-void Blade::SetParent(std::weak_ptr<Character> _parent)
+void Shield::SetParent(std::weak_ptr<Character> _parent)
 {
 	m_wpParent = _parent;
 }
 
-void Blade::DrawBright()
+void Shield::DrawBright()
 {
 	Math::Color colr = { 1,1,1 };
 
