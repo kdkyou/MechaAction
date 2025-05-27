@@ -42,13 +42,7 @@ float4 main(VSOutput In) : SV_TARGET
 {
 	float2 uv = In.UV;
 
-	float4 color;;
-
-	if(g_enable == 0)
-	{
-		color = g_inputTex.Sample(g_ss, uv);
-		return color;
-	}
+	float3 color = 0;
 
 	
 	if(g_useGrid == 1)
@@ -62,10 +56,10 @@ float4 main(VSOutput In) : SV_TARGET
 		float id = dot(cellID, float2(12.9898, 78.233));
 		float r = frac(sin(id + g_time) * 43758.5453);
 
-		color = g_inputTex.Sample(g_ss, uvGrid);
+		color += g_inputTex.Sample(g_ss, uvGrid).rgb;
 		color.rgb *= r; // チカチカ演出
 	}
-	else if(g_useGrid == 0 )
+	else
 	{
 		//時間ベースのノイズ生成
 		float2 noiseTime1 = perlinNoise(float2(sin(g_time), cos(g_time)) * 10.0f);
@@ -100,14 +94,14 @@ float4 main(VSOutput In) : SV_TARGET
 			float2 center = g_center;
 			float dist = distance(uv, center);
 			float effectRadius = 0.4; // 半径40%
-			float glitchMask = smoothstep(effectRadius-0.2, effectRadius + 0.05, dist);
+			float glitchMask = smoothstep(effectRadius - 0.2, effectRadius + 0.05, dist);
 			glitch *= 1.0 - glitchMask;
 
 		//速度調整
 			uv.x = lerp(uv.x, uv.x + noiseX, glitch);
 
 		//テクスチャのサンプリング
-			color = g_inputTex.Sample(g_ss, uv);
+			color += g_inputTex.Sample(g_ss, uv).rgb;
 
 			float glitchOffset = noiseX * glitch;
 
@@ -116,12 +110,12 @@ float4 main(VSOutput In) : SV_TARGET
 			float g = g_inputTex.Sample(g_ss, uv).g;
 			float b = g_inputTex.Sample(g_ss, uv - float2(glitchOffset, 0)).b;
 		
-			color.rgb = (r, g, b);
+			color += (r, g, b);
 
 			//狂わした色を反転
-			//color.rgb = lerp(color.rgb, 1.0 - color.rgb, glitch);
+			color.rgb = lerp(color.rgb, 1.0 - color.rgb, glitch);
 
-			//color.r = 0.5f;
+			color.r += 0.5f;
 			
 		}
 		else
@@ -130,12 +124,12 @@ float4 main(VSOutput In) : SV_TARGET
 			uv.x = lerp(uv.x, uv.x + noiseX, glitch);
 
 			//テクスチャのサンプリング
-			color = g_inputTex.Sample(g_ss, uv);
+			color += g_inputTex.Sample(g_ss, uv).rgb;
 		}
 
 
 	}
 	
 	
-	return color;
+	return float4(color, 1);
 }

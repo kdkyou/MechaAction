@@ -27,6 +27,14 @@ public:
 	void SetGlitch(const Math::Vector2& resolu,float time,float frameRate,float frequency,int useGrid,int playerHit,const Math::Vector2& center);
 	void UndoGlitch();
 
+	enum TextureKind
+	{
+		Normal,
+		RadialBlur,
+		Glitch,
+		Add,
+	};
+	void SetCombine(UINT kind) { m_cb0_CombineInfo.Work().Switch = kind; }
 
 	struct Vertex
 	{
@@ -52,6 +60,8 @@ public:
 
 	//グリッチ用
 	void GenerateGlitchTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP);
+	//合成用
+	void GenerateCombineTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP);
 
 private:
 
@@ -61,8 +71,8 @@ private:
 	void RadialBlurProcess();
 	//グリッチ用
 	void GlicthProcess();
-
-	void AddProcess();
+	//合成用
+	void CombineProcess();
 
 	void LightBloomProcess();
 	void DepthOfFieldProcess();
@@ -82,7 +92,8 @@ private:
 
 	//グリッチ用
 	void SetGlitchToDevice();
-
+	//合成用
+	void SetCombineToDevice();
 
 	void SetDoFToDevice();
 	void SetBrightToDevice();
@@ -93,6 +104,7 @@ private:
 	ID3D11PixelShader* m_PS_Blur = nullptr;
 	ID3D11PixelShader* m_PS_RBlur = nullptr;		//放射ブラー用
 	ID3D11PixelShader* m_PS_Glitch = nullptr;		//グリッチ用
+	ID3D11PixelShader* m_PS_Combine = nullptr;		//合成用
 	ID3D11PixelShader* m_PS_DoF = nullptr;
 	ID3D11PixelShader* m_PS_Bright = nullptr;
 
@@ -140,6 +152,14 @@ private:
 	};
 	KdConstantBuffer<cbGlitch> m_cb0_GlitchInfo;
 
+	//合成用
+	struct cbCombine
+	{
+		int Switch = 0;
+		int _blank[3] = { 0,0,0 };
+	};
+	KdConstantBuffer<cbCombine>	m_cb0_CombineInfo;
+
 	
 
 	struct cbDepthOfField
@@ -170,8 +190,8 @@ private:
 	KdRenderTargetPack m_radialBlurRTPack;
 	//グリッチ用
 	KdRenderTargetPack m_glitchRTPack;
-	//二枚を合成する
-	KdRenderTargetPack m_compositedRTPack;
+	//合成用
+	KdRenderTargetPack m_combineRTPack;
 	
 
 	KdRenderTargetPack	m_depthOfFieldRTPack;

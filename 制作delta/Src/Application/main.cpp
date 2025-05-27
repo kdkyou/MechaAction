@@ -309,7 +309,7 @@ void Application::Execute()
 
 		KdFPSController::GetInstance().Update();
 
-		std::string titleBar = "Mecha fps=" + std::to_string(1.0f/KdFPSController::GetInstance().GetDeltaTime());
+		std::string titleBar = "Mecha fps=" + std::to_string(1/KdFPSController::GetInstance().GetDeltaTime());
 		SetWindowTextA(m_window.GetWndHandle(), titleBar.c_str());
 	}
 

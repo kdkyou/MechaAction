@@ -17,9 +17,14 @@ void Character::Init()
 		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Stand"), 1.0f, true, true);
 	}
 
-	m_Gravity = 0;
-	SetPos({ 0, 5.0f, 0 });
+	m_gravity = 0;
+	SetPos({ 0, 2.0f, 0 });
 
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+	m_pCollider = std::make_unique<KdCollider>();
+
+	InitTrail();
+	UnEnableTrail();
 
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<ActionIdle>());
@@ -28,10 +33,14 @@ void Character::Init()
 void Character::Update()
 {
 	// 重力の更新()
-	m_Gravity += 0.16f * KdFPSController::GetInstance().GetDeltaTime();
-	Move(m_Gravity, Math::Vector3::Down, KdCollider::TypeGround, false);
+	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
+	Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false);
 
 	auto spThis = m_wpThis.lock();
+
+	color = { 0,1,0,1 };
+
+	AddTrail();
 
 	if (spThis)
 	{
@@ -41,6 +50,7 @@ void Character::Update()
 			m_nowAction->Update(m_wpThis);
 		}
 	}
+
 
 	//1m_pCollider->RegisterCollisionShape(KdCollider::TypeBump)
 
@@ -74,9 +84,16 @@ void Character::DrawLit()
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, colr, emis);
 }
 
-void Character::DrawBright()
+void Character::DrawUnLit()
 {
-	if (!m_spModel) return;
+	if (m_spTrails.size() == 0) { return; }
+
+//		KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
+	for (auto& trail : m_spTrails)
+	{
+		KdShaderManager::Instance().m_StandardShader.DrawPolygon(*trail->trail);
+	}
+//		KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
 
 	//	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
@@ -144,12 +161,19 @@ const bool Character::IsFlow()
 	return false;
 }
 
-bool Character::Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray,bool camera)
+bool Character::Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool camera, bool step)
 {
 	auto direction = dir;
 	direction.Normalize();
 
 	auto pos = m_mWorld.Translation();
+
+	if (step == true)
+	{
+		pos.y += m_stepHigh.y;
+	}
+
+
 
 	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
 
@@ -171,6 +195,11 @@ bool Character::Move(float speed, const Math::Vector3& dir, const KdCollider::Ty
 	{
 		move = dir * deltaSpeed;
 		pos += move;
+	}
+
+	if (step == true)
+	{
+		pos.y -= m_stepHigh.y;
 	}
 
 	if (camera == true)
@@ -245,63 +274,7 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 
 void Character::UpdateCollision()
 {
-	// 地面判定
 
-	// ①当たり判定(レイ判定)用の情報作成
-	KdCollider::RayInfo rayInfo;
-	// レイの発射位置を設定
-	rayInfo.m_pos = GetPos();
-	// 少し高い所から飛ばす(段差の許容範囲)
-	rayInfo.m_pos.y += 0.2f;
-
-	// レイの発射方向を設定
-	rayInfo.m_dir = Math::Vector3::Down;
-
-	// レイの長さ
-	rayInfo.m_range = m_Gravity + 0.2f;
-
-	// 当たり判定をしたいタイプを設定
-	rayInfo.m_type = KdCollider::TypeGround;
-
-	// ②HIT判定対象オブジェクトに総当たり
-	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
-	{
-		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
-		if (spGameObj)
-		{
-			std::list<KdCollider::CollisionResult> retRayList;
-			spGameObj->Intersects(rayInfo, &retRayList);
-
-			// ③結果を使って座標を補完する
-			// レイに当たったリストから一番近いオブジェクトを検出
-			float maxOverLap = 0;
-			Math::Vector3 hitPos = Math::Vector3::Zero;
-			bool hit = false;
-			for (auto& ret : retRayList)
-			{
-				// レイを遮断しオーバーした長さが
-				// 一番長いものを探す
-				if (maxOverLap < ret.m_overlapDistance)
-				{
-					maxOverLap = ret.m_overlapDistance;
-					hitPos = ret.m_hitPos;
-					hit = true;
-				}
-			}
-			// 何かしらの上に乗ってる
-			if (hit)
-			{
-				SetPos(hitPos);
-				m_Gravity = 0;
-
-			}
-			else
-			{
-
-				m_isGround = false;
-			}
-		}
-	}
 
 	// その他球による衝突判定
 	// ---- ---- ---- ---- ---- ----
@@ -309,7 +282,7 @@ void Character::UpdateCollision()
 	KdCollider::SphereInfo spherInfo;
 	spherInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 0.5f, 0);
 	spherInfo.m_sphere.Radius = 0.5f;
-	spherInfo.m_type = KdCollider::TypeGround;
+	spherInfo.m_type = KdCollider::TypeBump;
 
 	// ②HIT対象オブジェクトに総当たり
 	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
@@ -350,6 +323,28 @@ void Character::UpdateCollision()
 	}
 
 
+	DirectX::BoundingOrientedBox box;
+	box.Center = m_mWorld.Translation() + Math::Vector3(0.0f, 5.0f, 0.0f);
+	box.Extents = { 3.0f,10.0f,3.0f };
+	UINT type = KdCollider::TypeDamage;
+	KdCollider::BoxInfo boxInfo(type, box);
+
+	auto mat = Math::Matrix::CreateTranslation(boxInfo.m_Obox.Center);
+
+
+	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
+	{
+		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
+		if (spGameObj)
+		{
+			if (spGameObj->Intersects(boxInfo, nullptr))
+			{
+				color = { 0,0,1,1 };
+			}
+		}
+	}
+
+	m_pDebugWire->AddDebugBox(mat, box.Extents, {}, true, color);
 
 }
 
@@ -400,6 +395,7 @@ bool Character::RayCast(const Math::Vector3& startPos, const Math::Vector3& vec,
 				if (hit == true)
 				{
 					m_isGround = true;
+					m_gravity = 0.0f;
 				}
 				else
 				{
@@ -410,6 +406,164 @@ bool Character::RayCast(const Math::Vector3& startPos, const Math::Vector3& vec,
 	}
 
 	return hit;
+}
+
+bool Character::SphereCast(const Math::Vector3& center, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos)
+{
+	// その他球による衝突判定
+	// ---- ---- ---- ---- ---- ----
+	// ①当たり判定(球判定)用の情報を作成
+	KdCollider::SphereInfo spherInfo;
+	spherInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 0.5f, 0);
+	spherInfo.m_sphere.Radius = 0.5f;
+	spherInfo.m_type = KdCollider::TypeGround;
+
+	// ②HIT対象オブジェクトに総当たり
+	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
+	{
+		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
+		if (spGameObj)
+		{
+			std::list<KdCollider::CollisionResult> retBumpList;
+			spGameObj->Intersects(spherInfo, &retBumpList);
+
+			// ③結果を使って座標を補完する
+			for (auto& ret : retBumpList)
+			{
+				Math::Vector3 newPos = GetPos() + (ret.m_hitDir * ret.m_overlapDistance);
+				SetPos(newPos);
+			}
+		}
+	}
+
+	return false;
+}
+
+void Character::InitTrail()
+{
+	std::shared_ptr<TrailParam> newObj = nullptr;
+	std::string name = LEFTUP;
+	newObj = std::make_shared<TrailParam>();
+	newObj->name = name;
+	 newObj->trail = std::make_shared<KdTrailPolygon>();
+	 newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail.png"));
+	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
+	 newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
+	 newObj->trail->SetWidth(0.4f);
+	 newObj->trail->ClearPoints();
+	 m_spTrails.push_back(newObj);
+
+	 name = RIGHTUP;
+	 newObj = std::make_shared<TrailParam>();
+	newObj->name = name;
+	 newObj->trail = std::make_shared<KdTrailPolygon>();
+	 newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail.png"));
+	 //	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
+	 newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
+	 newObj->trail->SetWidth(0.4f);
+	 newObj->trail->ClearPoints();
+	 m_spTrails.push_back(newObj);
+
+	 name = LEFTDOWN;
+	 newObj = std::make_shared<TrailParam>();
+	 newObj->name = name;
+	 newObj->trail = std::make_shared<KdTrailPolygon>();
+	 newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail.png"));
+	 //	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
+	 newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
+	 newObj->trail->SetWidth(0.4f);
+	 newObj->trail->ClearPoints();
+	 m_spTrails.push_back(newObj);
+
+	 name = RIGHTDOWN;
+	 newObj = std::make_shared<TrailParam>();
+	 newObj->name = name;
+	 newObj->trail = std::make_shared<KdTrailPolygon>();
+	 newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail.png"));
+	 //	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
+	 newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
+	 newObj->trail->SetWidth(0.4f);
+	 newObj->trail->ClearPoints();
+	 m_spTrails.push_back(newObj);
+
+}
+
+bool Character::EnableTrail()
+{
+	for (auto& trail:m_spTrails)
+	{
+		trail->trail->SetEnable(true);
+	}
+	if (m_spTrails.size() != 0)
+		return	true;
+	else
+		return false;
+}
+
+bool Character::UnEnableTrail()
+{
+	for (auto& trail : m_spTrails)
+	{
+		trail->trail->SetEnable(false);
+		trail->trail->ClearPoints();
+	}
+	if (m_spTrails.size() != 0)
+		return	true;
+	else
+		return false;
+}
+
+bool Character::AddTrail()
+{
+	for (auto& trail : m_spTrails)
+	{
+		if (trail->name == LEFTUP)
+		{
+			const KdModelWork::Node* _pNode = m_spModel->FindWorkNode("LSUBP");
+			if (_pNode)
+			{
+				auto mat = _pNode->m_worldTransform * m_mWorld;
+				trail->trail->AddPoint(mat);
+			}
+			else
+				return false;
+		}
+		else if (trail->name == LEFTDOWN)
+		{
+			const KdModelWork::Node* _pNode = m_spModel->FindWorkNode("LSDBP");
+			if (_pNode)
+			{
+				auto mat = _pNode->m_worldTransform * m_mWorld;
+				trail->trail->AddPoint(mat);
+			}
+			else
+				return false;
+		}
+		else if (trail->name == RIGHTUP)
+		{
+			const KdModelWork::Node* _pNode = m_spModel->FindWorkNode("RSUBP");
+			if (_pNode)
+			{
+				auto mat = _pNode->m_worldTransform * m_mWorld;
+				trail->trail->AddPoint(mat);
+			}
+			else
+				return false;
+		}
+		else if (trail->name == RIGHTDOWN)
+		{
+			const KdModelWork::Node* _pNode = m_spModel->FindWorkNode("RSDBP");
+			if (_pNode)
+			{
+				auto mat = _pNode->m_worldTransform * m_mWorld;
+				trail->trail->AddPoint(mat);
+			}
+			else
+				return false;
+		}
+	}
+
+	return true;
 }
 
 
@@ -584,35 +738,54 @@ void Character::ActionStandUp::Exit(std::weak_ptr<Character>& owner)
 
 }
 
-
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//飛行状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 void Character::ActionJump::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 	spOwner->
 		m_spAnimator->SetAnimation(spOwner->
-			m_spModel->GetData()->GetAnimation("Stand"), 8.0f);
+			m_spModel->GetData()->GetAnimation("Stand"), 1.0f);
 
 	m_direction = Math::Vector3::Up;
+	m_speed = spOwner->m_jumpSpeed;
 
-	m_speed = 10.0f;
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false,true);
 }
 
 void Character::ActionJump::Update(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->
-		Move(m_speed, m_direction, KdCollider::TypeGround, false);
 
+	Checkkey(owner);
+
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false, true);
+
+	if (m_isBoost)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoost>());
+		return;
+	}
+
+	if (m_isLeftAttack)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+		return;
+	}
+	
 	if (spOwner->m_isGround)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionBoostEnd>());
 		return;
 	}
-	else
+	
+
+	if (m_isFlow)
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionBoostNow>());
 		return;
 	}
+
 }
 
 void Character::ActionJump::Exit(std::weak_ptr<Character>& owner)
@@ -627,7 +800,7 @@ void Character::ActionMove::Enter(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Walk"), 4.0f);
 
-	m_speed = 5.0f;
+	m_speed = spOwner->m_walkSpeed;
 
 }
 
@@ -690,9 +863,11 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
-	m_speed = 100.0f;
+	m_speed = spOwner->m_boostSpeed;
 
-	KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(4, 0.6f, { 0.5f,0.5f }, 0.4f, 0, 0.01f);
+	KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(4, 0.6f, { 0.5f,0.5f }, 0.45f, 0, 0.01f);
+	UINT kind = KdShaderManager::Instance().m_postProcessShader.RadialBlur;
+	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 }
 
 void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
@@ -702,8 +877,10 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 
 	//owner.Move(m_speed, m_direction, KdCollider::TypeDamage, true);
 
-	if (spOwner->m_spAnimator->GetProgress()>0.4f) {
+	if (spOwner->m_spAnimator->GetProgress() > 0.4f) {
 		KdShaderManager::Instance().m_postProcessShader.UndoRadialBlur();
+		auto kind = KdShaderManager::Instance().m_postProcessShader.Normal;
+		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	}
 
 	if (spOwner->m_spAnimator->IsAnimationEnd())
@@ -712,6 +889,8 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 			spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
 			return;
 		}
+
+
 
 		if (spOwner->m_isGround)
 		{
@@ -745,7 +924,7 @@ void Character::ActionBoostNow::Enter(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Hoboor"), 4.0f);
 
-	m_speed = 5.0f;
+	m_speed = spOwner->m_boostEndSpeed;
 
 }
 
@@ -809,7 +988,7 @@ void Character::ActionBoostEnd::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostEnd"), 9.0f, false);
 
-	m_speed = 5.0f;
+	m_speed = spOwner->m_bladeAttackSpeed;
 
 }
 
@@ -867,7 +1046,9 @@ void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostDush"), 10.0f);
-	m_speed = 50.0f;
+	m_speed = spOwner->m_boostDushSpeed;
+
+	spOwner->EnableTrail();
 }
 
 void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
@@ -912,6 +1093,8 @@ void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
 void Character::ActionBoostDush::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
+
+	spOwner->UnEnableTrail();
 }
 
 
@@ -926,7 +1109,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
-	m_speed = 120.0f;
+	m_speed = spOwner->m_bladeAttackSpeed;
 }
 
 void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
@@ -975,7 +1158,7 @@ void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("RightBladeAttack"), 10.0f, false);
 
-	m_speed = 120.0f;
+	m_speed = spOwner->m_bladeAttackSpeed;
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
@@ -995,22 +1178,22 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 	{
 		return;
 	}
-		Checkkey(owner);
+	Checkkey(owner);
 
-		if (m_isBoost)
-		{
-			spOwner->ChangeActionState(std::make_shared<ActionBoost>());
-			return;
-		}
-
-		if (m_isMove)
-		{
-			spOwner->ChangeActionState(std::make_shared<ActionMove>());
-			return;
-		}
-
-		spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+	if (m_isBoost)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoost>());
 		return;
+	}
+
+	if (m_isMove)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionMove>());
+		return;
+	}
+
+	spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+	return;
 
 
 }
@@ -1028,10 +1211,9 @@ void Character::ActionHited::Enter(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Hited"), 3.0f, false);
 
-	m_speed = 12.0f;
+	m_speed = spOwner->m_hitedSpeed;
 
 	m_direction = spOwner->m_mWorld.Forward();
-
 
 }
 
@@ -1039,13 +1221,15 @@ void Character::ActionHited::Update(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false,false);
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false);
 
 	//グリッチ表現
 	auto time = KdFPSController::GetInstance().GetTime();
 
+	UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
+	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	KdShaderManager::Instance().m_postProcessShader.
-		SetGlitch({ 10,10 }, time, 40.0f, 0.05f, 0, 1,{0.5f,0.5f});
+		SetGlitch({ 10,10 }, time, 5.0f, 0.8f, 0, 1, { 0.5f,0.5f });
 
 	if (spOwner->m_spAnimator->IsAnimationEnd() == false) { return; }
 
@@ -1078,5 +1262,51 @@ void Character::ActionHited::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
+	UINT kind = KdShaderManager::Instance().m_postProcessShader.Normal;
+	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+	KdShaderManager::Instance().m_postProcessShader.UndoGlitch();
+}
+
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//破壊状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+void Character::ActionDestroyed::Enter(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Destroyed"), 10.0f, false);
+
+	m_speed = spOwner->m_stopSpeed;
+
+	m_direction = spOwner->m_mWorld.Forward();
+
+}
+
+void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	//グリッチ表現
+	auto time = KdFPSController::GetInstance().GetTime();
+
+	UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
+	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+	KdShaderManager::Instance().m_postProcessShader.
+		SetGlitch({ 30,30 }, time, 5.0f, 0.8f, 1, 1, { 0.5f,0.5f });
+
+if (spOwner->m_spAnimator->IsAnimationEnd() == false) { return; }
+
+	
+	spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+	return;
+
+
+}
+
+void Character::ActionDestroyed::Exit(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	UINT kind = KdShaderManager::Instance().m_postProcessShader.Normal;
+	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	KdShaderManager::Instance().m_postProcessShader.UndoGlitch();
 }

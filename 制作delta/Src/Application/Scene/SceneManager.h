@@ -34,6 +34,8 @@ public :
 	// 現在のシーンにオブジェクトを追加
 	void AddObject(const std::shared_ptr<KdGameObject>& obj);
 
+	void ImGui();
+
 private :
 
 	// マネージャーの初期化

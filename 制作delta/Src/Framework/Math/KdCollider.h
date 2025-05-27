@@ -17,12 +17,12 @@ public:
 	// 衝突タイプBitフラグ：用途によって使い分ける・Bitフラグなので複数のタイプを付与可能
 	enum Type
 	{
-		TypeGround		= 1 << 0,	// 地形：上に乗れるオブジェクトに対して付与する
-		TypeBump		= 1 << 1,	// 衝突：横方向で重なりを防止したいオブジェクトに対して付与する
-		TypeDamage		= 1 << 2,	// 攻撃：球形の攻撃判定を受けるオブジェクトに対して付与する
-		TypeDamageLine	= 1 << 3,	// 攻撃：線形の攻撃判定を受けるオブジェクトに対して付与する
-		TypeSight		= 1 << 4,	// 視界：敵がプレイヤーを発見するかどうかなど視界判定を受けるオブジェクトに付与する
-		TypeEvent		= 1 << 5	// イベント：イベント特有の判定形状が欲しい場合にイベントを所有しているオブジェクトに付与する
+		TypeGround = 1 << 0,	// 地形：上に乗れるオブジェクトに対して付与する
+		TypeBump = 1 << 1,	// 衝突：横方向で重なりを防止したいオブジェクトに対して付与する
+		TypeDamage = 1 << 2,	// 攻撃：球形の攻撃判定を受けるオブジェクトに対して付与する
+		TypeDamageLine = 1 << 3,	// 攻撃：線形の攻撃判定を受けるオブジェクトに対して付与する
+		TypeSight = 1 << 4,	// 視界：敵がプレイヤーを発見するかどうかなど視界判定を受けるオブジェクトに付与する
+		TypeEvent = 1 << 5	// イベント：イベント特有の判定形状が欲しい場合にイベントを所有しているオブジェクトに付与する
 	};
 
 	// 球形の当たり判定情報：当たる側専用
@@ -32,7 +32,8 @@ public:
 
 		// BoundingSphereを直接指定
 		SphereInfo(UINT type, const DirectX::BoundingSphere sphere)
-			: m_type(type), m_sphere(sphere) {}
+			: m_type(type), m_sphere(sphere) {
+		}
 
 		// 座標と半径からBoundingSphereを指定
 		SphereInfo(UINT type, const Math::Vector3& pos, float radius)
@@ -54,18 +55,22 @@ public:
 		enum class BoxType
 		{
 			BoxAABB = 1 << 0,	// 回転を考慮しないBOX
-			BoxOBB	= 1 << 1,	// 回転を考慮するBOX
+			BoxOBB = 1 << 1,	// 回転を考慮するBOX
 		};
 
 		BoxInfo() {}
 
 		// BoundingBOXを直接指定(AABB)
 		BoxInfo(UINT type, const DirectX::BoundingBox box)
-			: m_type(type), m_Abox(box) { m_boxType = static_cast<UINT>(BoxType::BoxAABB); }
+			: m_type(type), m_Abox(box) {
+			m_boxType = static_cast<UINT>(BoxType::BoxAABB);
+		}
 
 		// BoundingBOXを直接指定(OBB)
 		BoxInfo(UINT type, const DirectX::BoundingOrientedBox box)
-			: m_type(type), m_Obox(box) { m_boxType = static_cast<UINT>(BoxType::BoxOBB); }
+			: m_type(type), m_Obox(box) {
+			m_boxType = static_cast<UINT>(BoxType::BoxOBB);
+		}
 
 		// 座標とオフセットとサイズからBoundingBOXを指定
 		BoxInfo(UINT type, const Math::Matrix& matrix, const Math::Vector3& offset, const Math::Vector3& size, const bool isOriented)
@@ -73,20 +78,20 @@ public:
 		{
 			if (!isOriented)
 			{
-				m_Abox.Center	= matrix.Translation() + offset;
-				m_Abox.Extents	= size;
-				m_boxType		= static_cast<UINT>(BoxType::BoxAABB);
+				m_Abox.Center = matrix.Translation() + offset;
+				m_Abox.Extents = size;
+				m_boxType = static_cast<UINT>(BoxType::BoxAABB);
 			}
 			else
 			{
 				Math::Matrix createMat = matrix;
 				createMat.Translation(createMat.Translation() + offset);
 				m_Obox.Transform(m_Obox, createMat);
-				m_Obox.Extents	= size;
-				m_boxType		= static_cast<UINT>(BoxType::BoxOBB);
+				m_Obox.Extents = size;
+				m_boxType = static_cast<UINT>(BoxType::BoxOBB);
 			}
 		}
-public:
+	public:
 		const bool CheckBoxType(BoxType type) const
 		{
 			return (m_boxType == (UINT)type);
@@ -95,7 +100,7 @@ public:
 		DirectX::BoundingBox			m_Abox;
 		DirectX::BoundingOrientedBox	m_Obox;
 
-		UINT m_type		= 0;
+		UINT m_type = 0;
 
 	private:
 
@@ -108,8 +113,8 @@ public:
 		RayInfo() {}
 
 		// レイの情報を全て指定：自動的に方向ベクトルは正規化
-		RayInfo(UINT type, const Math::Vector3& pos, const Math::Vector3& dir, float range) 
-			: m_type(type), m_pos(pos), m_dir(dir),m_range(range)
+		RayInfo(UINT type, const Math::Vector3& pos, const Math::Vector3& dir, float range)
+			: m_type(type), m_pos(pos), m_dir(dir), m_range(range)
 		{
 			m_dir.Normalize();
 		}
@@ -140,7 +145,7 @@ public:
 	};
 
 	KdCollider() {}
-	
+
 	~KdCollider() {}
 
 	// 当たり判定形状形状登録
@@ -211,9 +216,12 @@ class KdSphereCollision : public KdCollisionShape
 {
 public:
 	KdSphereCollision(const DirectX::BoundingSphere& sphere, UINT type) :
-		KdCollisionShape(type), m_shape(sphere) {}
+		KdCollisionShape(type), m_shape(sphere) {
+	}
 	KdSphereCollision(const Math::Vector3& localPos, float radius, UINT type) :
-		KdCollisionShape(type) { m_shape.Center = localPos; m_shape.Radius = radius; }
+		KdCollisionShape(type) {
+		m_shape.Center = localPos; m_shape.Radius = radius;
+	}
 
 	virtual ~KdSphereCollision() {}
 
@@ -234,23 +242,25 @@ class KdBoxCollision : public KdCollisionShape
 {
 public:
 	KdBoxCollision(const DirectX::BoundingBox& box, UINT type) :
-		KdCollisionShape(type), m_Abox(box) {}
+		KdCollisionShape(type), m_Abox(box) {
+	}
 	KdBoxCollision(const DirectX::BoundingOrientedBox& box, UINT type) :
-		KdCollisionShape(type), m_Obox(box) {}
+		KdCollisionShape(type), m_Obox(box) {
+	}
 
 	KdBoxCollision(UINT type, const Math::Matrix& matrix, const Math::Vector3& offset, const Math::Vector3& size, const bool isOriented) :
 		KdCollisionShape(type) {
 		if (!isOriented)
 		{
-			m_Abox.Center	= matrix.Translation() + offset;
-			m_Abox.Extents	= size;
+			m_Abox.Center = matrix.Translation() + offset;
+			m_Abox.Extents = size;
 		}
 		else
 		{
 			Math::Matrix createMat = matrix;
 			createMat.Translation(createMat.Translation() + offset);
 			m_Obox.Transform(m_Obox, createMat);
-			m_Obox.Extents	= size;
+			m_Obox.Extents = size;
 		}
 	}
 
@@ -264,6 +274,34 @@ public:
 private:
 	DirectX::BoundingBox			m_Abox;
 	DirectX::BoundingOrientedBox	m_Obox;
+
+	// OBBのローカル3軸（ワールド空間）を取得
+	void GetOBBAxes(const DirectX::BoundingOrientedBox& obb, DirectX::XMVECTOR axes[3])
+	{
+		DirectX::XMMATRIX rotMat = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&obb.Orientation));
+		axes[0] = rotMat.r[0]; // X軸
+		axes[1] = rotMat.r[1]; // Y軸
+		axes[2] = rotMat.r[2]; // Z軸
+	}
+
+	// OBBを任意の軸に投影して、min/maxを返す
+	void ProjectOBB(const DirectX::XMVECTOR& center, const DirectX::XMVECTOR axes[3], const DirectX::XMVECTOR& extents, const DirectX::XMVECTOR& axis, float& outMin, float& outMax)
+	{
+		float centerProj = DirectX::XMVectorGetX(DirectX::XMVector3Dot(center, axis));
+
+		float radius = 0.0f;
+		for (int i = 0; i < 3; ++i)
+		{
+			float axisProj = DirectX::XMVectorGetX(DirectX::XMVector3Dot(axes[i], axis));
+			float extent = DirectX::XMVectorGetByIndex(extents, i);
+			radius += std::abs(axisProj * extent);
+		}
+
+		outMin = centerProj - radius;
+		outMax = centerProj + radius;
+	}
+
+
 };
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -274,9 +312,11 @@ class KdModelCollision : public KdCollisionShape
 {
 public:
 	KdModelCollision(const std::shared_ptr<KdModelData>& model, UINT type) :
-		KdCollisionShape(type), m_shape(std::make_shared<KdModelWork>(model)) {}
+		KdCollisionShape(type), m_shape(std::make_shared<KdModelWork>(model)) {
+	}
 	KdModelCollision(const std::shared_ptr<KdModelWork>& model, UINT type) :
-		KdCollisionShape(type), m_shape(model) {}
+		KdCollisionShape(type), m_shape(model) {
+	}
 
 	virtual ~KdModelCollision() { m_shape.reset(); }
 
@@ -298,7 +338,8 @@ class KdPolygonCollision : public KdCollisionShape
 {
 public:
 	KdPolygonCollision(const std::shared_ptr<KdPolygon>& polygon, UINT type) :
-		KdCollisionShape(type), m_shape(polygon) {}
+		KdCollisionShape(type), m_shape(polygon) {
+	}
 
 	virtual ~KdPolygonCollision() { m_shape.reset(); }
 

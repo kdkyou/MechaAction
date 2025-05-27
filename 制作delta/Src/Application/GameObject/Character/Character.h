@@ -12,7 +12,7 @@ public:
 	void PostUpdate()		override;
 	void GenerateDepthMapFromLight() override;
 	void DrawLit()			override;
-	void DrawBright()override;
+	void DrawUnLit()		override;
 
 	void SetCamera(const std::shared_ptr<CameraBase>& camera)
 	{
@@ -42,7 +42,8 @@ private:
 	//スペース入力
 	const bool IsFlow();
 
-	bool Move(float speed,const Math::Vector3& dir,const KdCollider::Type type ,bool ray = true,bool camera=true );
+	bool Move(float speed,const Math::Vector3& dir,const KdCollider::Type type, bool ray = true, bool camera = true,bool step =false);
+	//bool Move(float speed,const Math::Vector3& dir,const Math::Vector3& step={}, const KdCollider::Type type=KdCollider::TypeGround, bool ray = true, bool sphere = true, bool camera = true);
 
 	// キャラクターの回転行列を作成する
 	void UpdateRotate(const Math::Vector3& srcMoveVec);
@@ -50,6 +51,8 @@ private:
 	void UpdateCollision();
 
 	bool  RayCast(const Math::Vector3&startPos,const Math::Vector3& vec,const float length,const KdCollider::Type& type,Math::Vector3& resultPos);
+
+	bool  SphereCast(const Math::Vector3&pos,const Math::Vector3& vec,const float radius,const KdCollider::Type& type,Math::Vector3& resultPos);
 
 	std::shared_ptr<KdModelWork>				m_spModel = nullptr;
 	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
@@ -63,9 +66,44 @@ private:
 
 	Math::Matrix 								m_scale;
 
-	float										m_Gravity = 0;
+	float										m_gravity = 0;
+	const float									m_gravityPow = 9.16f;
 
 	bool										m_isGround = false;
+
+
+	//パラメータ
+	Math::Vector3								m_stepHigh = { 0.0f,0.2f,0.0f };
+	float										m_stopSpeed = 0.0f;
+	float										m_walkSpeed = 10.0f;
+	float										m_jumpSpeed = 15.0f;
+	float										m_boostSpeed = 120.0f;
+	float										m_boostEndSpeed = 20.0f;
+	float										m_boostDushSpeed = 100.0f;
+	float										m_bladeAttackSpeed = 200.0f;
+	float										m_hitedSpeed = 15.0f;
+
+	Math::Color color = { 0,1,0,1 };
+
+	//トレイル
+	void InitTrail();
+	bool EnableTrail();
+	bool UnEnableTrail();
+	bool AddTrail();
+
+std::string LEFTUP = "LeftUp";
+std::string LEFTDOWN  = "LeftDown";
+std::string RIGHTUP = "RightUp";
+std::string RIGHTDOWN  = "RightDown";
+
+	struct TrailParam
+	{
+		std::string								name;
+		std::shared_ptr<KdTrailPolygon>			trail;
+		Math::Matrix							mat;
+	};
+	std::vector<std::shared_ptr<TrailParam>>								m_spTrails;
+
 
 	Math::Vector3 m_vMove = Math::Vector3::Zero;
 
@@ -103,7 +141,7 @@ private:
 	class ActionIdle :public ActionStateBase
 	{
 	public:
-		virtual ~ActionIdle() {}
+		virtual ~ActionIdle() override{}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
@@ -113,7 +151,7 @@ private:
 	class ActionStandUp :public ActionStateBase
 	{
 	public:
-		virtual ~ActionStandUp() {}
+		virtual ~ActionStandUp()  override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
@@ -123,7 +161,7 @@ private:
 	class ActionJump :public ActionStateBase
 	{
 	public:
-		virtual ~ActionJump() {}
+		virtual ~ActionJump() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
@@ -133,7 +171,7 @@ private:
 	class ActionMove :public ActionStateBase
 	{
 	public:
-		virtual ~ActionMove() {}
+		virtual ~ActionMove()  override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
@@ -143,7 +181,7 @@ private:
 	class ActionBoost :public ActionStateBase
 	{
 	public:
-		virtual ~ActionBoost(){}
+		virtual ~ActionBoost() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
@@ -157,7 +195,7 @@ private:
 	class ActionBoostNow :public ActionStateBase
 	{
 	public:
-		virtual ~ActionBoostNow() {}
+		virtual ~ActionBoostNow()  override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
@@ -168,7 +206,7 @@ private:
 	class ActionBoostEnd :public ActionStateBase
 	{
 	public:
-		virtual ~ActionBoostEnd() {}
+		virtual ~ActionBoostEnd() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
@@ -179,7 +217,7 @@ private:
 	class ActionBoostDush :public ActionStateBase
 	{
 	public:
-		virtual ~ActionBoostDush() {}
+		virtual ~ActionBoostDush() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
@@ -190,7 +228,7 @@ private:
 	class ActionRightAttack :public ActionStateBase
 	{
 	public:
-		virtual ~ActionRightAttack() {}
+		virtual ~ActionRightAttack() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
@@ -201,24 +239,47 @@ private:
 	class ActionRightAttackAf :public ActionStateBase
 	{
 	public:
-		virtual ~ActionRightAttackAf() {}
+		virtual ~ActionRightAttackAf()  override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
+	};
+
+	class ActionShield :public ActionStateBase
+	{
+	public:
+		virtual ~ActionShield() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
 	class ActionHited :public ActionStateBase
 	{
 	public:
-		virtual ~ActionHited() {}
+		virtual ~ActionHited() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
+
+	class ActionDestroyed :public ActionStateBase
+	{
+	public:
+		virtual ~ActionDestroyed() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+
+
 
 	void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction);
 	std::shared_ptr<ActionStateBase>		m_nowAction = nullptr;

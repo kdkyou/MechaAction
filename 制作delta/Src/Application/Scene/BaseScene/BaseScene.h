@@ -29,6 +29,8 @@ public :
 		m_objList.push_back(obj);
 	}
 
+	void Edit_ImGui();
+
 protected :
 
 	// 継承先シーンで必要ならオーバーライドする

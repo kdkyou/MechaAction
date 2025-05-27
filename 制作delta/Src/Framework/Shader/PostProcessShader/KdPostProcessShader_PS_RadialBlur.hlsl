@@ -24,12 +24,12 @@ float InterleavedGradientNoise(float2 pixCoord, int frameCount)
 float4 main(VSOutput input) : SV_Target0
 {
 	//リターンさせる色
-	float4 color = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float3 color = 0;
 
 	if(g_samples<2)
 	{
-		color = g_inputTex.Sample(g_ss, input.UV);
-		return color;
+		color += g_inputTex.Sample(g_ss, input.UV).rgb;
+		return float4(color,1);
 	}
 	
 	//中心を基準に
@@ -65,17 +65,17 @@ float4 main(VSOutput input) : SV_Target0
 		{
 			uvOffset = (i + dither) * srcSampleCount ;
 			//サンプリング回数分中心点に向かって位置を変えながらテクスチャをサンプリング
-			color += g_inputTex.Sample(g_ss, pos * lerp(1,1-g_strength,uvOffset) + g_center);
+			color += g_inputTex.Sample(g_ss, pos * lerp(1,1-g_strength,uvOffset) + g_center).rgb;
 		}
 		else
 		{
 			uvOffset = 1.0 - factor * float(i);
 			float2 ofs = float2(dist * cos(angle + g_vortex * uvOffset), dist * sin(angle + g_vortex * uvOffset));
-			color += g_inputTex.Sample(g_ss, ofs * uvOffset + g_center);
+			color += g_inputTex.Sample(g_ss, ofs * uvOffset + g_center).rgb;
 		}
 	}
 		color /= float(g_samples);
 	
-		return color;
+	return float4(color, 1);
 }
 

@@ -14,13 +14,23 @@ void Enemy::Init()
 	if (!m_pCollider)
 	{
 		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape("Enemy", m_spModel, KdCollider::TypeDamage);
+
+		DirectX::BoundingOrientedBox box;
+
+		box.Center = m_mWorld.Translation();
+		box.Extents = { 3,10,3 };
+
+		m_pCollider->RegisterCollisionShape("Enemy",box, KdCollider::TypeDamage);
 	}
+
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+	SetPos({ 15.0f,0.0f,10.0f });
 
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Stand>());
 
-	m_dist = { 20.0f,40.0f };
+	m_dist = { 10.0f,40.0f };
 }
 
 void Enemy::Update()
@@ -39,6 +49,9 @@ void Enemy::Update()
 void Enemy::PostUpdate()
 {
 	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+
+	m_pDebugWire->AddDebugBox(m_mWorld, {3,10,3}, {}, true, {1,0,0,1});
+
 }
 
 void Enemy::GenerateDepthMapFromLight()
@@ -76,7 +89,7 @@ void Enemy::Stand::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& sp
 	
 	int rando = rand()%10 ;
 
-	if (rando < 7)
+	/*if (rando < 7)
 	{
 
 		if (difference.Length() < owner.m_dist.y)
@@ -93,7 +106,7 @@ void Enemy::Stand::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& sp
 	else {
 		owner.ChangeActionState(std::make_shared<Destoroy>());
 		return;
-	}
+	}*/
 
 
 }
@@ -110,7 +123,9 @@ void Enemy::MoveForward::Enter(Enemy& owner, const  std::shared_ptr<KdGameObject
 void Enemy::MoveForward::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 
-	float speed = 0.4f;
+	float speed = 30.0f;
+
+	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
 
 	//現在の座標
 	Math::Vector3 nowPos = owner.GetMatrix().Translation();
@@ -185,7 +200,7 @@ void Enemy::MoveForward::Update(Enemy& owner, const  std::shared_ptr<KdGameObjec
 
 		vec.Normalize();
 
-		nowPos += vec * speed;
+		nowPos += vec * speed*deltaTime;
 	}
 	else
 	{
