@@ -15,7 +15,7 @@ void Enemy::Init()
 	{
 		m_pCollider = std::make_unique<KdCollider>();
 
-		DirectX::BoundingOrientedBox box;
+		DirectX::BoundingBox box;
 
 		box.Center = m_mWorld.Translation();
 		box.Extents = { 3,10,3 };

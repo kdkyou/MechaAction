@@ -41,8 +41,8 @@ private:
 
 	//スペース入力
 	const bool IsFlow();
-
-	bool Move(float speed,const Math::Vector3& dir,const KdCollider::Type type, bool ray = true, bool camera = true,bool step =false);
+	//				移動量　　方向		当たり判定するタイプ（基本地面） キャラが回転するか　レイに補正をかけるか
+	bool Move(float speed,const Math::Vector3& dir,const KdCollider::Type type, bool ray=false, bool camera = true,bool step =false);
 	//bool Move(float speed,const Math::Vector3& dir,const Math::Vector3& step={}, const KdCollider::Type type=KdCollider::TypeGround, bool ray = true, bool sphere = true, bool camera = true);
 
 	// キャラクターの回転行列を作成する
@@ -131,7 +131,7 @@ private:
 
 		bool m_isBoost = false;
 		bool m_isMove = false;
-		bool m_isLeftAttack = false;
+		bool m_isRightAttack = false;
 		bool m_isFlow = false;
 
 		float m_speed = 0.0f;

@@ -272,6 +272,7 @@ public:
 	bool Intersects(const KdCollider::RayInfo& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes) override;
 
 private:
+
 	DirectX::BoundingBox			m_Abox;
 	DirectX::BoundingOrientedBox	m_Obox;
 

@@ -44,10 +44,10 @@ void GameScene::Init()
 	_blade->SetParent(_character);
 	AddObject(_blade);
 
-	/*std::shared_ptr<Shield> _shield = std::make_shared<Shield>();
+	std::shared_ptr<Shield> _shield = std::make_shared<Shield>();
 	_shield->Init();
 	_shield->SetParent(_character);
-	AddObject(_shield);*/
+	AddObject(_shield);
 
 	//エネミー
 	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();

@@ -287,9 +287,48 @@ bool KdSphereCollision::Intersects(const DirectX::BoundingBox& target, const Mat
 
 	m_shape.Transform(myShape, world);
 
+	bool isHit = myShape.Intersects(target);
+
+	if (!pRes) { return isHit; }
+
+	if (isHit)
+	{
+		
+		// 自身から相手に向かう方向ベクトル
+		pRes->m_hitDir = (Math::Vector3(target.Center) - Math::Vector3(myShape.Center));
+		float betweenDistance = pRes->m_hitDir.Length();
+
+		// お互いに当たらない最小距離
+		float needDistance = 0.0f;
+
+		//どの方向か確認用
+		float x = pRes->m_hitDir.x;
+		float y = pRes->m_hitDir.y;
+		float z = pRes->m_hitDir.z;
+
+		if (x >= y && x >= z) {
+			needDistance = target.Extents.x + myShape.Radius;
+		}
+		else if (y >= x && y >= z) {
+			needDistance = target.Extents.y + myShape.Radius;
+		}
+		else {
+			needDistance = target.Extents.z + myShape.Radius;
+		}
+
+		// 重なり量 = お互い当たらない最小距離 - お互いの実際距離
+		pRes->m_overlapDistance = needDistance - betweenDistance;
+
+		//正規化
+		pRes->m_hitDir.Normalize();
+
+		// 当たった座標はお互いの球とBoxAABBの衝突の中心点
+		pRes->m_hitPos = myShape.Center + pRes->m_hitDir * (myShape.Radius + pRes->m_overlapDistance * 0.5f);
+	}
+
 
 	// TODO: 当たり計算は各自必要に応じて拡張して下さい
-	return false;
+	return isHit;
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -297,10 +336,57 @@ bool KdSphereCollision::Intersects(const DirectX::BoundingBox& target, const Mat
 // 判定回数は 1 回　計算自体も軽く最も軽量な当たり判定　計算回数も固定なので処理効率は安定
 // 片方の球の判定を0にすれば単純な距離判定も作れる
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-bool KdSphereCollision::Intersects(const DirectX::BoundingOrientedBox& /*target*/, const Math::Matrix& /*world*/, KdCollider::CollisionResult* /*pRes*/)
+bool KdSphereCollision::Intersects(const DirectX::BoundingOrientedBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
+	if (!m_enable) { return false; }
+
+	DirectX::BoundingSphere myShape;
+
+	m_shape.Transform(myShape, world);
+
+	bool isHit = myShape.Intersects(target);
+
+	if (!pRes) { return isHit; }
+
+	//回転によるズレ分を加味してない
+	if (isHit)
+	{
+
+		// 自身から相手に向かう方向ベクトル
+		pRes->m_hitDir = (Math::Vector3(target.Center) - Math::Vector3(myShape.Center));
+		float betweenDistance = pRes->m_hitDir.Length();
+
+		// お互いに当たらない最小距離
+		float needDistance = 0.0f;
+
+		//どの方向か確認用
+		float x = pRes->m_hitDir.x;
+		float y = pRes->m_hitDir.y;
+		float z = pRes->m_hitDir.z;
+
+		if (x >= y && x >= z) {
+			needDistance = target.Extents.x + myShape.Radius;
+		}
+		else if (y >= x && y >= z) {
+			needDistance = target.Extents.y + myShape.Radius;
+		}
+		else {
+			needDistance = target.Extents.z + myShape.Radius;
+		}
+
+		// 重なり量 = お互い当たらない最小距離 - お互いの実際距離
+		pRes->m_overlapDistance = needDistance - betweenDistance;
+
+		//正規化
+		pRes->m_hitDir.Normalize();
+
+		// 当たった座標はお互いの球とBoxOBBの衝突の中心点
+		pRes->m_hitPos = myShape.Center + pRes->m_hitDir * (myShape.Radius + pRes->m_overlapDistance * 0.5f);
+	}
+
+
 	// TODO: 当たり計算は各自必要に応じて拡張して下さい
-	return false;
+	return isHit;
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -343,41 +429,165 @@ bool KdSphereCollision::Intersects(const KdCollider::RayInfo& target, const Math
 // BOXCollision
 // BOXの形状
 // ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-bool KdBoxCollision::Intersects(const DirectX::BoundingSphere& /*target*/, const Math::Matrix& /*world*/, KdCollider::CollisionResult* /*pRes*/)
+bool KdBoxCollision::Intersects(const DirectX::BoundingSphere& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
-	// TODO: 当たり計算は各自必要に応じて拡張して下さい
-	return false;
+	if (!m_enable) { return false; }
+
+	Math::Vector3 vec = Math::Vector3::Zero;
+	bool isHit = false;
+	if (m_Abox.Extents.x == 0.0f) {
+
+		//判定用のボックスを作り出す
+		DirectX::BoundingOrientedBox myBox;
+		m_Obox.Transform(myBox, world);
+
+		//当たったかどうか
+		isHit = myBox.Intersects(target);
+
+		if (!isHit || !pRes)return isHit;
+
+
+
+
+	}
+	else
+	{
+		//判定用のボックスを作り出す
+		DirectX::BoundingBox myBox;
+		m_Abox.Transform(myBox, world);
+
+		//当たったかどうか
+		isHit = myBox.Intersects(target);
+
+		if (!isHit || !pRes)return isHit;
+
+		// 自身から相手に向かう方向ベクトル
+		pRes->m_hitDir = (Math::Vector3(target.Center) - Math::Vector3(myBox.Center));
+		float betweenDistance = pRes->m_hitDir.Length();
+
+		// お互いに当たらない最小距離
+		float needDistance = 0.0f;
+
+		//どの方向か確認用
+		float x = pRes->m_hitDir.x;
+		float y = pRes->m_hitDir.y;
+		float z = pRes->m_hitDir.z;
+
+		if (x >= y && x >= z) {
+			needDistance = target.Radius + myBox.Extents.x;
+
+			// 重なり量 = お互い当たらない最小距離 - お互いの実際距離
+			pRes->m_overlapDistance = needDistance - betweenDistance;
+
+			//正規化
+			pRes->m_hitDir.Normalize();
+
+			// 当たった座標はお互いのBoxAABBと球の衝突の中心点
+			pRes->m_hitPos = myBox.Center + pRes->m_hitDir * (myBox.Extents.x + pRes->m_overlapDistance * 0.5f);
+
+		}
+		else if (y >= x && y >= z) {
+			needDistance = target.Radius + myBox.Extents.y;
+			// 重なり量 = お互い当たらない最小距離 - お互いの実際距離
+			pRes->m_overlapDistance = needDistance - betweenDistance;
+
+			//正規化
+			pRes->m_hitDir.Normalize();
+
+			// 当たった座標はお互いのBoxAABBと球の衝突の中心点
+			pRes->m_hitPos = myBox.Center + pRes->m_hitDir * (myBox.Extents.y + pRes->m_overlapDistance * 0.5f);
+
+		}
+		else {
+			needDistance = target.Radius + myBox.Extents.z;
+			// 重なり量 = お互い当たらない最小距離 - お互いの実際距離
+			pRes->m_overlapDistance = needDistance - betweenDistance;
+
+			//正規化
+			pRes->m_hitDir.Normalize();
+
+			// 当たった座標はお互いのBoxAABBと球の衝突の中心点
+			pRes->m_hitPos = myBox.Center + pRes->m_hitDir * (myBox.Extents.z + pRes->m_overlapDistance * 0.5f);
+
+		}
+
+		
+	}
+
+
+	return isHit;
 }
 bool KdBoxCollision::Intersects(const DirectX::BoundingBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	if (!m_enable)return false;
 
-	//判定用ボックスを作り出す
-	DirectX::BoundingBox myBox;
-	m_Abox.Transform(myBox, world);
+	Math::Vector3 vec = Math::Vector3::Zero;
+	bool isHit = false;
+	if (m_Abox.Extents.x == 0.0f) {
 
-	//当たったかどうか
-	bool isHit = myBox.Intersects(target);
+		//判定用のボックスを作り出す
+		DirectX::BoundingOrientedBox myBox;
+		m_Obox.Transform(myBox, world);
 
-	if (!isHit || !pRes)return isHit;
+		//当たったかどうか
+		isHit = myBox.Intersects(target);
 
-	//ヒット位置や押し出しベクトルを簡易設定
-	pRes->m_hitDir = Math::Vector3(target.Center) - Math::Vector3(myBox.Center);
-	pRes->m_overlapDistance = 0.0f;
-	pRes->m_hitPos = myBox.Center;
+		if (!isHit || !pRes)return isHit;
 
-	return true;
+		//ヒット位置や押し出しベクトルを簡易設定
+		pRes->m_hitDir = Math::Vector3(target.Center) - Math::Vector3(myBox.Center);
+		pRes->m_overlapDistance = 0.0f;
+		pRes->m_hitPos = myBox.Center;
+
+	}
+	else
+	{
+		//判定用のボックスを作り出す
+		DirectX::BoundingBox myBox;
+		m_Abox.Transform(myBox, world);
+
+		//当たったかどうか
+		isHit = myBox.Intersects(target);
+
+		if (!isHit || !pRes)return isHit;
+
+		//ヒット位置や押し出しベクトルを簡易設定
+		pRes->m_hitDir = Math::Vector3(target.Center) - Math::Vector3(myBox.Center);
+		pRes->m_overlapDistance = 0.0f;
+		pRes->m_hitPos = myBox.Center;
+
+	}
+
+	
+	return isHit;
 }
 bool KdBoxCollision::Intersects(const DirectX::BoundingOrientedBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	if (!m_enable) { return false; }
 
-	//判定用のボックスを作り出す
-	DirectX::BoundingOrientedBox myBox;
-	m_Obox.Transform(myBox, world);
+	Math::Vector3 vec = Math::Vector3::Zero;
+	bool isHit = false;
+	if (m_Abox.Extents.x == 0.0f) {
 
-	//当たったかどうか
-	bool isHit = myBox.Intersects(target);
+		//判定用のボックスを作り出す
+		DirectX::BoundingOrientedBox myBox;
+		m_Obox.Transform(myBox, world);
+
+		//当たったかどうか
+		isHit = myBox.Intersects(target);
+
+	}
+	else
+	{
+
+		//判定用のボックスを作り出す
+		DirectX::BoundingBox myBox;
+		m_Abox.Transform(myBox, world);
+
+		//当たったかどうか
+		isHit = myBox.Intersects(target);
+	}
+
 
 	if (!isHit || !pRes)return isHit;
 
@@ -387,8 +597,45 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingOrientedBox& target, cons
 }
 bool KdBoxCollision::Intersects(const KdCollider::RayInfo& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
-	// TODO: 当たり計算は各自必要に応じて拡張して下さい
-	return false;
+	if (!m_enable) { return false; }
+
+	float hitDistance = 0.0f;
+	bool isHit = false;
+	
+	Math::Vector3 vec = Math::Vector3::Zero;
+	if (m_Abox.Extents.x == 0.0f) {
+
+		DirectX::BoundingOrientedBox myShape;
+		m_Obox.Transform(myShape, world);
+		isHit = myShape.Intersects(target.m_pos, target.m_dir, hitDistance);
+	}
+	else{
+
+		DirectX::BoundingBox myShape;
+		m_Abox.Transform(myShape, world);
+		isHit = myShape.Intersects(target.m_pos, target.m_dir, hitDistance);
+
+	}
+
+
+	// 判定限界距離を加味
+	isHit &= (target.m_range >= hitDistance);
+
+	// 詳細リザルトが必要無ければ即結果を返す
+	if (!pRes) { return isHit; }
+
+	// 当たった時のみ計算
+	if (isHit)
+	{
+		// レイ発射位置 + レイの当たった位置までのベクトル 
+		pRes->m_hitPos = target.m_pos + target.m_dir * hitDistance;
+
+		pRes->m_hitDir = target.m_dir * (-1);
+
+		pRes->m_overlapDistance = target.m_range - hitDistance;
+	}
+	return isHit;
+
 }
 
 // ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
