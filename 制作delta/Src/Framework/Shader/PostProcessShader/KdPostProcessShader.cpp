@@ -363,10 +363,6 @@ void KdPostProcessShader::CombineProcess()
 	};
 
 	DrawTexture(srcTexList, num, m_combineRTPack.m_RTTexture, &m_combineRTPack.m_viewPort);
-
-	/*GenerateCombineTexture(m_postEffectRTPack.m_RTTexture, m_combineRTPack.m_RTTexture, m_combineRTPack.m_viewPort);
-
-	GenerateCombineTexture(m_combineRTPack.m_RTTexture, m_combineRTPack.m_RTTexture, m_combineRTPack.m_viewPort);*/
 }
 
 void KdPostProcessShader::DepthOfFieldProcess()

@@ -373,16 +373,10 @@ void Application::ImGuiProcess()
 	// 以下にImGui描画処理を記述
 	//===========================================================
 
-	// デバッグウィンドウ
-	//if (ImGui::Begin("Debug Window"))
-	//{
-	//	// FPS
-	//	ImGui::Text("FPS : %d", m_fpsController.m_nowfps);
-	//}
-	//ImGui::End();
-
 	// ログウィンドウ
 	m_log.Draw("Log Window");
+
+	SceneManager::Instance().Edit_ImGui();
 
 	//=====================================================
 	// ログ出力 ・・・ AddLog("～") で追加

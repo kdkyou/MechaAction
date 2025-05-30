@@ -28,6 +28,7 @@ void Character::Init()
 
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<ActionIdle>());
+
 }
 
 void Character::Update()
@@ -819,6 +820,8 @@ void Character::ActionMove::Enter(std::weak_ptr<Character>& owner)
 
 	m_speed = spOwner->m_walkSpeed;
 
+	KdAudioManager::Instance().Play("Assets/Sounds/Walk.wav");
+
 }
 
 void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
@@ -859,6 +862,11 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 
+	}
+
+	if (spOwner->m_spAnimator->IsAnimationEnd())
+	{
+		KdAudioManager::Instance().Play("Asset/Sounds/Walk.wav");
 	}
 
 }

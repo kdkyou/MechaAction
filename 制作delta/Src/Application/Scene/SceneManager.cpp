@@ -55,9 +55,9 @@ void SceneManager::AddObject(const std::shared_ptr<KdGameObject>& obj)
 	m_currentScene->AddObject(obj);
 }
 
-void SceneManager::ImGui()
+void SceneManager::Edit_ImGui()
 {
-	
+	m_currentScene->Edit_ImGui();
 }
 
 void SceneManager::ChangeScene(SceneType sceneType)

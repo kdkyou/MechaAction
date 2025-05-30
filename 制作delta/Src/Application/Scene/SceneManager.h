@@ -34,7 +34,7 @@ public :
 	// 現在のシーンにオブジェクトを追加
 	void AddObject(const std::shared_ptr<KdGameObject>& obj);
 
-	void ImGui();
+	void Edit_ImGui();
 
 private :
 
