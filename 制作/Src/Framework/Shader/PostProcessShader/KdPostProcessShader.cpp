@@ -61,6 +61,33 @@ bool KdPostProcessShader::Init()
 
 	}
 
+	// グリッチ用PS 作成
+	{
+#include"KdPostProcessShader_PS_Glitch.shaderInc"
+
+		if (FAILED(KdDirect3D::Instance().WorkDev()->CreatePixelShader(
+			compiledBuffer, sizeof(compiledBuffer), nullptr, &m_PS_Glitch)))
+		{
+			assert(0 && "ピクセルシェーダー作成失敗");
+			Release();
+
+			return false;
+		}
+	}
+
+	//合成用PS 作成
+	{
+#include"KdPostProcessShader_PS_Combine.shaderInc"
+
+		if (FAILED(KdDirect3D::Instance().WorkDev()->CreatePixelShader(
+			compiledBuffer, sizeof(compiledBuffer), nullptr, &m_PS_Combine)))
+		{
+			assert(0 && "ピクセルシェーダー作成失敗");
+			Release();
+
+			return false;
+		}
+	}
 
 	{
 #include "KdPostProcessShader_PS_DoF.shaderInc"
@@ -92,6 +119,10 @@ bool KdPostProcessShader::Init()
 
 	//放射ブラー用
 	m_cb0_RadialBlurInfo.Create();
+	//グリッチ用
+	m_cb0_GlitchInfo.Create();
+	//合成用
+	m_cb0_CombineInfo.Create();
 
 	m_cb0_DoFInfo.Create();
 
@@ -108,6 +139,11 @@ bool KdPostProcessShader::Init()
 
 	//放射ブラー用
 	m_radialBlurRTPack.CreateRenderTarget(backBuffer->GetWidth(), backBuffer->GetHeight());
+	//グリッチ用
+	m_glitchRTPack.CreateRenderTarget(backBuffer->GetWidth(), backBuffer->GetHeight());
+	//合成用
+	m_combineRTPack.CreateRenderTarget(backBuffer->GetWidth(), backBuffer->GetHeight());
+
 
 	// 被写界深度画像
 	m_depthOfFieldRTPack.CreateRenderTarget(backBuffer->GetWidth(), backBuffer->GetHeight());
@@ -152,6 +188,10 @@ void KdPostProcessShader::Release()
 
 	//放射ブラー用
 	KdSafeRelease(m_PS_RBlur);
+	//グリッチ用
+	KdSafeRelease(m_PS_Glitch);
+	//合成用
+	KdSafeRelease(m_PS_Combine);
 
 	m_cb0_BlurInfo.Release();
 	m_cb0_DoFInfo.Release();
@@ -159,6 +199,10 @@ void KdPostProcessShader::Release()
 
 	//放射ブラー用
 	m_cb0_RadialBlurInfo.Release();
+	//グリッチ用
+	m_cb0_GlitchInfo.Release();
+	//合成用
+	m_cb0_CombineInfo.Release();
 
 }
 
@@ -214,11 +258,18 @@ void KdPostProcessShader::PostEffectProcess()
 
 	//放射ブラー用
 	RadialBlurProcess();
+	
+	//グリッチ用
+	GlicthProcess();
+
+	//合成用
+	CombineProcess();
 
 	DepthOfFieldProcess();
 
-	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
-//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_radialBlurRTPack.m_RTTexture.get(), 0, 0);
+	KdShaderManager::Instance().m_spriteShader.DrawTex(m_combineRTPack.m_RTTexture.get(), 0, 0);
+//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
+
 }
 
 
@@ -274,13 +325,42 @@ void KdPostProcessShader::BlurProcess()
 	GenerateBlurTexture(m_blurRTPack.m_RTTexture, m_strongBlurRTPack.m_RTTexture, m_strongBlurRTPack.m_viewPort, kBlurSamplingRadius);
 }
 
+//放射ブラー用
 void KdPostProcessShader::RadialBlurProcess()
 {
 	SetRadialBlurToDevice();
 
 	GenerateRadialBlurTexture(m_postEffectRTPack.m_RTTexture, m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_viewPort);
 
-//	GenerateRadialBlurTexture(m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_viewPort);
+	GenerateRadialBlurTexture(m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_RTTexture, m_radialBlurRTPack.m_viewPort);
+}
+
+//グリッチ用
+void KdPostProcessShader::GlicthProcess()
+{
+	SetGlitchToDevice();
+
+	GenerateGlitchTexture(m_postEffectRTPack.m_RTTexture, m_glitchRTPack.m_RTTexture, m_glitchRTPack.m_viewPort);
+
+	GenerateGlitchTexture(m_glitchRTPack.m_RTTexture, m_glitchRTPack.m_RTTexture, m_glitchRTPack.m_viewPort);
+
+}
+
+//シェーダーのテクスチャを合成
+void KdPostProcessShader::CombineProcess()
+{
+	SetCombineToDevice();
+
+	//描画数で変更
+	const int num = 3;
+	std::shared_ptr<KdTexture> srcTexList[num] =
+	{
+		m_postEffectRTPack.m_RTTexture,
+		m_radialBlurRTPack.m_RTTexture,
+		m_glitchRTPack.m_RTTexture,
+	};
+
+	DrawTexture(srcTexList, num, m_combineRTPack.m_RTTexture, &m_combineRTPack.m_viewPort);
 }
 
 void KdPostProcessShader::DepthOfFieldProcess()
@@ -368,8 +448,6 @@ void KdPostProcessShader::GenerateRadialBlurTexture(std::shared_ptr<KdTexture>& 
 	KdRenderTargetPack tmpRadialBlurRTPack;
 	tmpRadialBlurRTPack.CreateRenderTarget(spDstTex->GetWidth(), spDstTex->GetHeight());
 
-	SetRadialBlurInfo( 2, 0.2f, { 0.5f,0.5f },0.3f,0);
-
 	DrawTexture(&spSrcTex, 1, tmpRadialBlurRTPack.m_RTTexture, &tmpRadialBlurRTPack.m_viewPort);
 
 	DrawTexture(&tmpRadialBlurRTPack.m_RTTexture, 1, spDstTex, &VP);
@@ -377,6 +455,35 @@ void KdPostProcessShader::GenerateRadialBlurTexture(std::shared_ptr<KdTexture>& 
 	KdShaderManager::Instance().UndoSamplerState();
 }
 
+//グリッチ用
+void KdPostProcessShader::GenerateGlitchTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP)
+{
+	KdShaderManager::Instance().ChangeSamplerState(KdSamplerState::Linear_Clamp);
+
+	KdRenderTargetPack tmpGlitchRTPack;
+	tmpGlitchRTPack.CreateRenderTarget(spDstTex->GetWidth(), spDstTex->GetHeight());
+
+	DrawTexture(&spSrcTex, 1, tmpGlitchRTPack.m_RTTexture, &tmpGlitchRTPack.m_viewPort);
+
+	DrawTexture(&tmpGlitchRTPack.m_RTTexture, 1, spDstTex, &VP);
+
+	KdShaderManager::Instance().UndoSamplerState();
+}
+
+//合成用、DoF参考にしない場合
+void KdPostProcessShader::GenerateCombineTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP)
+{
+	KdShaderManager::Instance().ChangeSamplerState(KdSamplerState::Linear_Clamp);
+
+	KdRenderTargetPack tmpCombineRTPack;
+	tmpCombineRTPack.CreateRenderTarget(spDstTex->GetWidth(), spDstTex->GetHeight());
+
+	DrawTexture(&spSrcTex, 1, tmpCombineRTPack.m_RTTexture, &tmpCombineRTPack.m_viewPort);
+
+	DrawTexture(&tmpCombineRTPack.m_RTTexture, 1, spDstTex, &VP);
+
+	KdShaderManager::Instance().UndoSamplerState();
+}
 
 void KdPostProcessShader::DrawTexture(std::shared_ptr<KdTexture>* spSrcTex, int srcTexSize, std::shared_ptr<KdTexture> spDstTex, D3D11_VIEWPORT* pVP)
 {
@@ -465,26 +572,76 @@ void KdPostProcessShader::SetBlurToDevice()
 }
 
 //放射ブラー用
-void KdPostProcessShader::SetRadialBlurInfo(int samlingSize, float strength, const Math::Vector2& center, float mask, int dither)
+void KdPostProcessShader::SetRadialBlurInfo(int samlingSize, float strength, const Math::Vector2& center, float mask, int dither, float vor)
+{
+
+	m_cb0_RadialBlurInfo.Work().samples = samlingSize;
+	m_cb0_RadialBlurInfo.Work().strength = strength;
+	m_cb0_RadialBlurInfo.Work().center = center;
+	m_cb0_RadialBlurInfo.Work().mask = mask;
+	m_cb0_RadialBlurInfo.Work().dither = dither;
+	m_cb0_RadialBlurInfo.Work().vortex = vor;
+
+	m_cb0_RadialBlurInfo.Write();
+
+}
+
+void KdPostProcessShader::UndoRadialBlur()
 {
 	KdPostProcessShader::cbRadialBlur& radialInfo = m_cb0_RadialBlurInfo.Work();
 
-	radialInfo.samples = samlingSize;
-	radialInfo.strength = strength;
-	radialInfo.center = center;
-	radialInfo.mask = mask;
-	radialInfo.dither = dither;
-
-	static float vor = 3.f;
-	radialInfo.vortex = vor;
-	/*vor += 0.0001f;
-	if (vor > 20.0f)
-	{
-		vor = 0;
-	}*/
-
+	radialInfo.samples = 0;
+	radialInfo.strength = 0.0f;
+	radialInfo.center = { 0.5f,0.5f };
+	radialInfo.mask = 0.0f;
+	radialInfo.dither = 0;
+	radialInfo.vortex = 0.0f;
 
 	m_cb0_RadialBlurInfo.Write();
+
+}
+
+//グリッチ用
+//	グリッド	発生時間	フレームレート絶対0.0にしない	頻度	グリッドするか
+//				↑動く時間	↑滑らかに↓粗く
+void KdPostProcessShader::SetGlitch(const Math::Vector2& resolu, float time, float frameRate, float frequency, int useGrid, int playerHit, const Math::Vector2& center)
+{
+	KdPostProcessShader::cbGlitch& glitchInfo = m_cb0_GlitchInfo.Work();
+
+	glitchInfo.resolution = resolu;
+	glitchInfo.time = time;
+	glitchInfo.frameRate = frameRate;
+	glitchInfo.frequency = frequency;
+	glitchInfo.useGrid = useGrid;
+
+	glitchInfo.enable = 1;		//有効化
+
+	glitchInfo.playerHit = playerHit;
+	glitchInfo.center = center;
+
+
+
+	m_cb0_GlitchInfo.Write();
+}
+
+void KdPostProcessShader::UndoGlitch()
+{
+	KdPostProcessShader::cbGlitch& glitchInfo = m_cb0_GlitchInfo.Work();
+
+
+	glitchInfo.resolution = Math::Vector2::Zero;
+	glitchInfo.time = 0.0f;
+	glitchInfo.frameRate = 0.0f;
+	glitchInfo.frequency = 0.0f;
+	glitchInfo.useGrid = 0;
+
+	glitchInfo.enable = 0;		//無効化
+
+	glitchInfo.playerHit = 0;
+	glitchInfo.center = { 0.5f,0.5f };
+
+
+	m_cb0_GlitchInfo.Write();
 
 }
 
@@ -505,6 +662,47 @@ void KdPostProcessShader::SetRadialBlurToDevice()
 	}
 
 	shaderMgr.SetPixelShader(m_PS_RBlur);
+}
+
+//グリッチ用
+void KdPostProcessShader::SetGlitchToDevice()
+{
+	ID3D11DeviceContext* DevCon = KdDirect3D::Instance().WorkDevContext();
+	if (!DevCon) { return; }
+
+	m_cb0_GlitchInfo.Write();
+
+	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(0, 1, m_cb0_GlitchInfo.GetAddress());
+
+	KdShaderManager& shaderMgr = KdShaderManager::Instance();
+
+	if (shaderMgr.SetVertexShader(m_VS))
+	{
+		DevCon->IASetInputLayout(m_inputLayout);
+	}
+
+	shaderMgr.SetPixelShader(m_PS_Glitch);
+}
+
+//合成用
+void KdPostProcessShader::SetCombineToDevice()
+{
+	ID3D11DeviceContext* DevCon = KdDirect3D::Instance().WorkDevContext();
+	if (!DevCon) { return; }
+
+	m_cb0_CombineInfo.Write();
+
+	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(0, 1, m_cb0_CombineInfo.GetAddress());
+	//テクスチャのセット
+
+	KdShaderManager& shaderMgr = KdShaderManager::Instance();
+
+	if (shaderMgr.SetVertexShader(m_VS))
+	{
+		DevCon->IASetInputLayout(m_inputLayout);
+	}
+
+	shaderMgr.SetPixelShader(m_PS_Combine);
 }
 
 void KdPostProcessShader::SetDoFToDevice()

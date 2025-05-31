@@ -3,55 +3,33 @@
 // ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
 // FPSの制御コントローラー
 // ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-void KdFPSController::Init()
+void KdFPSController::Initialize()
 {
-	m_fpsMonitorBeginTime = timeGetTime();
+	m_startTime = std::chrono::system_clock::now();
 }
 
-void KdFPSController::UpdateStartTime()
-{
-	m_frameStartTime = timeGetTime();
-}
 
 void KdFPSController::Update()
 {
-	Control();
+	auto endTime = std::chrono::system_clock::now();
+	auto durationTime = endTime - m_startTime;
+	auto msec = std::chrono::duration_cast<std::chrono::microseconds>(durationTime).count();
 
-	Monitoring();
-}
+	float prevTime = m_time;
 
-// FPS制御
-void KdFPSController::Control()
-{
-	// 処理終了時間Get
-	DWORD frameProcessEndTime = timeGetTime();
+	m_time = msec / 1000000.0f;
 
-	// 1フレームで経過すべき時間
-	DWORD timePerFrame = kSecond / m_maxFps;
+	m_deltaTime = m_time - prevTime;
 
-	if (frameProcessEndTime - m_frameStartTime < timePerFrame)
+	if (m_fixedFrameRate)
 	{
-		// 1秒間にMaxFPS回数以上処理が回らないように待機する
-		Sleep(timePerFrame - (frameProcessEndTime - m_frameStartTime));
+		float targetFrameTime = 1.0f / m_targetFPS;
+		float sleepTime = targetFrameTime - m_deltaTime;
+		if (sleepTime > 0)
+		{
+			//		std::this_thread::sleep_for(std::chrono::duration<float>(sleepTime));
+			std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		}
 	}
-}
 
-// 現在のFPS計測
-void KdFPSController::Monitoring()
-{
-	// FPS計測のタイミング　0.5秒おき
-	constexpr float kFpsRefreshFrame = 500;		
-
-	m_fpsCnt++;
-
-	// 0.5秒おきに FPS計測
-	if (m_frameStartTime - m_fpsMonitorBeginTime >= kFpsRefreshFrame)
-	{
-		// 現在のFPS算出
-		m_nowfps = (m_fpsCnt * kSecond) / (m_frameStartTime - m_fpsMonitorBeginTime);
-
-		m_fpsMonitorBeginTime = m_frameStartTime;
-
-		m_fpsCnt = 0;
-	}
 }

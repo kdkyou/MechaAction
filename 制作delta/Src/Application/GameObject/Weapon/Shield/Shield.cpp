@@ -14,7 +14,7 @@ void Shield::Init()
 		m_spAnimator = std::make_shared<KdAnimator>();
 		m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Normal"), 10.0f);
 	}
-	Math::Vector3 pos = { 0.0f,5.0f,0.0f };
+	Math::Vector3 pos = { 0.0f,5.0f,3.0f };
 	SetPos(pos);
 }
 

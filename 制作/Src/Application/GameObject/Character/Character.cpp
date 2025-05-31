@@ -14,11 +14,13 @@ void Character::Init()
 
 		// 初期のアニメーションをセットする
 		m_spAnimator = std::make_shared<KdAnimator>();
-		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Stand"));
+		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Stand"),1.0f);
 	}
 
 	m_Gravity = 0;
 	SetPos({ 0, 5.0f, 0 });
+
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
 
 	//初期状態を「待機状態」へ設定
@@ -37,6 +39,14 @@ void Character::Update()
 		m_nowAction->Update(*this);
 	}
 
+	//グリッチ表現
+	/*auto time = KdFPSController::GetInstance().GetTime();
+
+	UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
+	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+	KdShaderManager::Instance().m_postProcessShader.
+		SetGlitch({ 30,30 }, time, 5.0f, 0.8f, 0, 1, { 0.5f,0.5f });*/
+
 	//1m_pCollider->RegisterCollisionShape(KdCollider::TypeBump)
 
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
@@ -49,6 +59,7 @@ void Character::PostUpdate()
 	// アニメーションの更新
 	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
 	m_spModel->CalcNodeMatrices();
+
 }
 
 void Character::GenerateDepthMapFromLight()
@@ -251,6 +262,18 @@ void Character::UpdateCollision()
 			}
 		}
 	}
+	DirectX::BoundingOrientedBox box;
+	box.Center = m_mWorld.Translation() + Math::Vector3(0.0f, 5.0f, 0.0f);
+	box.Extents = { 3.0f,10.0f,3.0f };
+	UINT type = KdCollider::TypeDamage;
+	KdCollider::BoxInfo boxInfo(type, box);
+
+	auto mat = Math::Matrix::CreateTranslation(boxInfo.m_Obox.Center);
+
+
+	m_pDebugWire->AddDebugBox(mat, box.Extents, {}, true, {0,1,0,1});
+//	m_pDebugWire->AddDebugSphere({}, 1.0f);
+
 }
 
 bool  Character::RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length)
@@ -316,7 +339,7 @@ void Character::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 
 void Character::ActionIdle::Enter(Character& owner)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"),30.0f);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"),3.0f);
 }
 
 void Character::ActionIdle::Update(Character& owner)
@@ -360,7 +383,7 @@ void Character::ActionJump::Enter(Character& owner)
 {
 	owner.m_Gravity += -0.5f;
 
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"),30.0f);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"),3.0f);
 }
 
 void Character::ActionJump::Update(Character& owner)
@@ -383,7 +406,7 @@ void Character::ActionJump::Exit(Character& owner)
 
 void Character::ActionMove::Enter(Character& owner)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Walk"),30.0f);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Walk"),3.0f);
 }
 
 void Character::ActionMove::Update(Character& owner)
@@ -447,7 +470,7 @@ void Character::ActionMove::Exit(Character& owner)
 
 void Character::ActionBoostNow::Enter(Character& owner)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Hoboor"),30.0f);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Hoboor"),3.0f);
 }
 
 void Character::ActionBoostNow::Update(Character& owner)
@@ -517,7 +540,7 @@ void Character::ActionBoostNow::Exit(Character& owner)
 
 void Character::ActionBoostEnd::Enter(Character& owner)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("BoostEnd"), 20.0f,false);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("BoostEnd"), 2.0f,false);
 }
 
 void Character::ActionBoostEnd::Update(Character& owner)
@@ -550,7 +573,7 @@ void Character::ActionBoostEnd::Exit(Character& owner)
 
 void Character::ActionLeftAttack::Enter(Character& owner)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("LeftBladeAttackBef"),20.0f ,false);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("LeftBladeAttackBef"),2.0f ,false);
 }
 
 void Character::ActionLeftAttack::Update(Character& owner)
@@ -590,7 +613,7 @@ void Character::ActionLeftAttack::Exit(Character& owner)
 
 void Character::ActionStandUp::Enter(Character& owner)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("StandUp"), 3.0f ,false);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("StandUp"), 3.0f ,false);
 }
 
 void Character::ActionStandUp::Update(Character& owner)
@@ -622,7 +645,7 @@ void Character::ActionStandUp::Exit(Character& owner)
 
 void Character::ActionBoostDush::Enter(Character& owner)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("BoostDush"), 3.0f);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("BoostDush"), 3.0f);
 }
 
 void Character::ActionBoostDush::Update(Character& owner)
@@ -691,7 +714,7 @@ void Character::ActionBoostDush::Exit(Character& owner)
 
 void Character::ActionBoost::Enter(Character& owner)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Boost"),20.0f, false);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Boost"),2.0f, false);
 	const std::shared_ptr<const CameraBase> _spCamera = owner.m_wpCamera.lock();
 	m_direction = owner.m_vMove;
 	if (_spCamera)
@@ -771,13 +794,13 @@ void Character::ActionStateBase::Checkkey(Character& owner)
 
 void Character::ActionLeftAttackAf::Enter(Character& owner)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("LeftBladeAttack"),20.0f,false );
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("LeftBladeAttack"),2.0f,false );
 }
 
 void Character::ActionLeftAttackAf::Update(Character& owner)
 {
 
-	if (owner.m_spAnimator->GetAnimationTime()<0.6f)
+	if (owner.m_spAnimator->GetProgress()<0.6f)
 	{
 		//座標更新
 		Math::Vector3 _move;

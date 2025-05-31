@@ -166,8 +166,8 @@ private:
 	// ゲームウィンドウクラス
 	KdWindow		m_window;
 
-	// FPSコントローラー
-	KdFPSController	m_fpsController;
+	//// FPSコントローラー
+	//KdFPSController	m_fpsController;
 
 	// ゲーム終了フラグ trueで終了する
 	bool			m_endFlag = false;

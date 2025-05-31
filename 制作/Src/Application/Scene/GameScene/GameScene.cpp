@@ -43,10 +43,10 @@ void GameScene::Init()
 	AddObject(_blade);
 
 	//エネミー
-	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
+	/*std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
 	enemy->Init();
 	enemy->SetTarget(_character);
-	AddObject(enemy);
+	AddObject(enemy);*/
 
 	//===================================================================
 	// カメラ初期化

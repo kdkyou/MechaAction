@@ -232,14 +232,12 @@ void Application::Execute()
 	//===================================================================
 
 	// 時間
-	m_fpsController.Init();
+	KdFPSController::GetInstance().Initialize();
 
 	// ループ
 	while (1)
 	{
-		// 処理開始時間Get
-		m_fpsController.UpdateStartTime();
-
+		
 		// ゲーム終了指定があるときはループ終了
 		if (m_endFlag)
 		{
@@ -309,7 +307,7 @@ void Application::Execute()
 		//
 		//=========================================
 
-		m_fpsController.Update();
+		KdFPSController::GetInstance().Update();
 	}
 
 	//===================================================================

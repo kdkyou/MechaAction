@@ -1,30 +1,43 @@
 ﻿#pragma once
 
-//============================================================
-// アプリケーションのFPS制御 + 測定
-//============================================================
-struct KdFPSController
+//===========================================
+// 
+// ゲーム時間
+// 
+//===========================================
+class KdFPSController
 {
-	// FPS制御
-	int		m_nowfps = 0;		// 現在のFPS値
-	int		m_maxFps = 60;		// 最大FPS
+public:
 
-	void Init();
+	float GetTime() { return m_time; }
+	float GetDeltaTime() { return m_deltaTime; }
 
-	void UpdateStartTime();
+	void Initialize();
 
 	void Update();
 
+
 private:
 
-	void Control();
+	std::chrono::system_clock::time_point m_startTime;
 
-	void Monitoring();
+	float m_time = 0.0f;
+	float m_deltaTime = 0.0f;
 
-	DWORD		m_frameStartTime = 0;		// フレームの開始時間
+	bool m_fixedFrameRate = true;
+	float m_targetFPS = 60.0f;
 
-	int			m_fpsCnt = 0;				// FPS計測用カウント
-	DWORD		m_fpsMonitorBeginTime = 0;	// FPS計測開始時間
 
-	const int	kSecond = 1000;				// １秒のミリ秒
+	//-------------------------------
+	// シングルトン
+	//-------------------------------
+private:
+	KdFPSController()
+	{
+	}
+public:
+	static KdFPSController& GetInstance() {
+		static KdFPSController instance;
+		return instance;
+	}
 };

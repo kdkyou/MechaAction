@@ -5,7 +5,7 @@ void Enemy::Init()
 	if (!m_spModel)
 	{
 		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Another/Another.gltf");
+		m_spModel->SetModelData("Asset/Models/Grint/Grint.gltf");
 		// 初期のアニメーションをセットする
 		m_spAnimator = std::make_shared<KdAnimator>();
 		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("StandUp"),10.0f ,true);
@@ -40,9 +40,15 @@ void Enemy::Update()
 	{
 		std::shared_ptr<KdGameObject> spTarget = m_wpTarget.lock();
 
-		//	if(spTarget==nullptr){}
+		if (spTarget == nullptr) { return; }
 
-		m_nowAction->Update(*this, spTarget);
+			std::shared_ptr<Enemy> spThis = m_wpThis.lock();
+
+			if (spThis == nullptr)
+			{
+				return;
+			}
+			m_nowAction->Update(m_wpThis, spTarget);
 	}
 }
 
@@ -72,19 +78,21 @@ void Enemy::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 {
 	std::shared_ptr<KdGameObject> spTarget = m_wpTarget.lock();
 
-	if (m_nowAction)m_nowAction->Exit(*this, spTarget);
+	if (m_nowAction)m_nowAction->Exit(m_wpThis, spTarget);
 	m_nowAction = nextAction;
-	m_nowAction->Enter(*this, spTarget);
+	m_nowAction->Enter(m_wpThis, spTarget);
 }
 
-void Enemy::Stand::Enter(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Stand::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"),10.0f);
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Stand"),10.0f);
 }
 
-void Enemy::Stand::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Stand::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
-	auto difference = spObj->GetMatrix().Translation() - owner.m_mWorld.Translation();
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+	auto difference = spObj->GetMatrix().Translation() - spOwner->m_mWorld.Translation();
 
 	
 	int rando = rand()%10 ;
@@ -111,24 +119,26 @@ void Enemy::Stand::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& sp
 
 }
 
-void Enemy::Stand::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Stand::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 }
 
-void Enemy::MoveForward::Enter(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::MoveForward::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("FLeaning"), 10.0f,false);
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("FLeaning"), 10.0f,false);
 }
 
-void Enemy::MoveForward::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::MoveForward::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	std::shared_ptr<Enemy> spOwner = owner.lock();
 
 	float speed = 30.0f;
 
 	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
 
 	//現在の座標
-	Math::Vector3 nowPos = owner.GetMatrix().Translation();
+	Math::Vector3 nowPos = spOwner->GetMatrix().Translation();
 
 	//追尾対象の座標
 	Math::Vector3 targetPos = spObj->GetMatrix().Translation();
@@ -137,7 +147,7 @@ void Enemy::MoveForward::Update(Enemy& owner, const  std::shared_ptr<KdGameObjec
 	Math::Vector3 difference = targetPos - nowPos;
 
 	//ベクトル
-	Math::Vector3 nowVec = owner.GetMatrix().Backward();
+	Math::Vector3 nowVec = spOwner->GetMatrix().Backward();
 	Math::Vector3 targetVec = difference;
 
 	nowVec.Normalize();
@@ -167,30 +177,30 @@ void Enemy::MoveForward::Update(Enemy& owner, const  std::shared_ptr<KdGameObjec
 		if (c.y >= 0)
 		{
 			//右回転
-			owner.m_worldRot.y -= ang;
+			spOwner->m_worldRot.y -= ang;
 		}
 		else
 		{
 			//左回転
-			owner.m_worldRot.y += ang;
+			spOwner->m_worldRot.y += ang;
 		}
 	}
 
-	if (owner.m_worldRot.y > 360)
+	if (spOwner->m_worldRot.y > 360)
 	{
-		owner.m_worldRot.y -= 360;
+		spOwner->m_worldRot.y -= 360;
 	}
-	else if (owner.m_worldRot.y < 0)
+	else if (spOwner->m_worldRot.y < 0)
 	{
-		owner.m_worldRot.y += 360;
+		spOwner->m_worldRot.y += 360;
 	}
 
 	Math::Matrix rotMat = Math::Matrix::CreateFromYawPitchRoll(
-		DirectX::XMConvertToRadians(owner.m_worldRot.y),
-		DirectX::XMConvertToRadians(owner.m_worldRot.x),
-		DirectX::XMConvertToRadians(owner.m_worldRot.z));
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.y),
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.x),
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.z));
 
-	if (difference.Length() > owner.m_dist.x)
+	if (difference.Length() > spOwner->m_dist.x)
 	{
 		Math::Vector3 vec = {};
 
@@ -204,73 +214,89 @@ void Enemy::MoveForward::Update(Enemy& owner, const  std::shared_ptr<KdGameObjec
 	}
 	else
 	{
-		owner.ChangeActionState(std::make_shared<Attack>());
+		spOwner->ChangeActionState(std::make_shared<Attack>());
 		return;
 	}
 
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
 
-	owner.m_mWorld = rotMat * transMat;
+	spOwner->m_mWorld = rotMat * transMat;
 }
 
-void Enemy::MoveForward::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::MoveForward::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 }
 
-void Enemy::Attack::Enter(Enemy& owner, const std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Attack::Enter(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("LeftArmAction"), 10.0f,false);
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("LeftArmAction"), 10.0f,false);
 }
 
-void Enemy::Attack::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Attack::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
-	if (owner.m_spAnimator->IsAnimationEnd())
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+
+	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
-		owner.ChangeActionState(std::make_shared<Stand>());
+		spOwner->ChangeActionState(std::make_shared<Stand>());
 		return;
 	}
 }
 
-void Enemy::Attack::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Attack::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+
 }
 
-void Enemy::Hited::Enter(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Hited::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Hited"),10.0f, false);
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Hited"),10.0f, false);
 }
 
-void Enemy::Hited::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Hited::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+
 	//攻撃をくらったとき
-	if (owner.m_spAnimator->IsAnimationEnd())
+	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
-		owner.ChangeActionState(std::make_shared<Stand>());
+		spOwner->ChangeActionState(std::make_shared<Stand>());
 		return;
 	}
 }
 
-void Enemy::Hited::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Hited::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+
 }
 
-void Enemy::Destoroy::Enter(Enemy& owner, const std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Destoroy::Enter(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)
 {
-	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Destroyed"),5.0f,false);
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Destroyed"),5.0f,false);
 }
 
-void Enemy::Destoroy::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Destoroy::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+
 	//死亡時
-	if (owner.m_spAnimator->IsAnimationEnd())
+	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
-		owner.ChangeActionState(std::make_shared<Stand>());
+		spOwner->ChangeActionState(std::make_shared<Stand>());
 		return;
 	}
 
 }
 
-void Enemy::Destoroy::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::Destoroy::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	std::shared_ptr<Enemy> spOwner = owner.lock();
 
 }

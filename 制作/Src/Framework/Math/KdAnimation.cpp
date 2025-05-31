@@ -120,6 +120,104 @@ bool KdAnimationData::Node::InterpolateScales(Math::Vector3& result, float time)
 	return true;
 }
 
+//前animationとの補完////////////////////
+void KdAnimationData::Node::InterpolateComp(Math::Matrix& rDst, KeyInfo _keyInfo, float time, float compCnt)
+{
+	// ベクターによる拡縮補間
+	bool isChange = false;
+	Math::Matrix scale;
+	Math::Vector3 resultVec;
+	if (InterpolateScalesComp(resultVec, _keyInfo, time, compCnt))
+	{
+		scale = scale.CreateScale(resultVec);
+		isChange = true;
+	}
+
+	// クォタニオンによる回転補間
+	Math::Matrix rotate;
+	Math::Quaternion resultQuat;
+	if (InterpolateRotationsComp(resultQuat, _keyInfo, time, compCnt))
+	{
+		rotate = rotate.CreateFromQuaternion(resultQuat);
+		isChange = true;
+	}
+
+	// ベクターによる座標補間
+	Math::Matrix trans;
+	if (InterpolateTranslationsComp(resultVec, _keyInfo, time, compCnt))
+	{
+		trans = trans.CreateTranslation(resultVec);
+		isChange = true;
+	}
+
+	if (isChange)
+	{
+		rDst = scale * rotate * trans;
+	}
+}
+
+bool KdAnimationData::Node::InterpolateTranslationsComp(Math::Vector3& result, KeyInfo _keyInfo, float time, float compCnt)
+{
+	if (m_translations.size() == 0)return false;
+
+	// キー位置検索
+	UINT keyIdx = BinarySearchNextAnimKey(m_translations, time);
+
+
+	auto& prev = _keyInfo.m_translations;	// 前のキー
+	auto& next = m_translations[keyIdx];		// 次のキー
+	// 補間
+	result = DirectX::XMVectorLerp(
+		prev.m_vec,
+		next.m_vec,
+		compCnt
+	);
+
+	return true;
+}
+
+bool KdAnimationData::Node::InterpolateRotationsComp(Math::Quaternion& result, KeyInfo _keyInfo, float time, float compCnt)
+{
+	if (m_rotations.size() == 0)return false;
+
+	// キー位置検索
+	UINT keyIdx = BinarySearchNextAnimKey(m_rotations, time);
+
+
+	auto& prev = _keyInfo.m_rotations;	// 前のキー
+	auto& next = m_rotations[keyIdx];		// 次のキー
+	// 補間
+// 補間
+	result = DirectX::XMQuaternionSlerp(
+		prev.m_quat,
+		next.m_quat,
+		compCnt
+	);
+
+	return true;
+}
+
+bool KdAnimationData::Node::InterpolateScalesComp(Math::Vector3& result, KeyInfo _keyInfo, float time, float compCnt)
+{
+	if (m_scales.size() == 0)return false;
+
+	// キー位置検索
+	UINT keyIdx = BinarySearchNextAnimKey(m_scales, time);
+
+
+	auto& prev = _keyInfo.m_scales;	// 前のキー
+	auto& next = m_scales[keyIdx];		// 次のキー
+	// 補間
+	result = DirectX::XMVectorLerp(
+		prev.m_vec,
+		next.m_vec,
+		compCnt
+	);
+
+	return true;
+}
+//////////////////////////////////////////////////
+
 void KdAnimationData::Node::Interpolate(Math::Matrix& rDst, float time)
 {
 	// ベクターによる拡縮補間
@@ -159,92 +257,35 @@ void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed
 {
 	if (!m_spAnimation) { return; }
 
-	bool isBlending = (m_spNextAnimation && m_blendTime < m_blendDuration);
-
 	// 全てのアニメーションノード（モデルの行列を補間する情報）の行列補間を実行する
+	int i = 0;
 	for (auto& rAnimNode : m_spAnimation->m_nodes)
 	{
 		// 対応するモデルノードのインデックス
 		UINT idx = rAnimNode.m_nodeOffset;
 
-		
+		auto prev = rNodes[idx].m_localTransform;
 
-		Math::Matrix matA = Math::Matrix::Identity;
-		Math::Matrix matB = Math::Matrix::Identity;
-
-		//現在のアニメーションのボーンのマトリックス情報
-		if (idx < m_spAnimation->m_nodes.size())
+		// アニメーションデータによる行列補間
+		if (m_isComp)
 		{
-			m_spAnimation->m_nodes[idx].Interpolate(matA, m_time);
-		}
 
-		//次のアニメーションのボーンのマトリックス情報
-		if (isBlending && idx < m_spNextAnimation->m_nodes.size())
-		{
-			m_spNextAnimation->m_nodes[idx].Interpolate(matB, 0.0f);
+			//前animationとの補完
+			rAnimNode.InterpolateComp(rNodes[idx].m_localTransform, m_lastKeyInfo[i], m_time, m_compCnt);
 		}
 		else
 		{
-			matB = matA;
-		}
-
-		//アニメーション遷移時
-		if (isBlending)
-		{
-			float t = m_blendTime / m_blendDuration;
-			Math::Vector3 sA, sB, pA, pB;
-			Math::Quaternion rA, rB;
-
-			////	現在のQuate
-			//Math::Quaternion rA = Math::Quaternion::CreateFromRotationMatrix(matA);
-			////	次のQuate
-			//Math::Quaternion rB = Math::Quaternion::CreateFromRotationMatrix(matB);
-
-			//// 座標の補完
-			//pA;
-			
-			//二つのQuaternionを合成
-
-
-			matA.Decompose(sA, rA, pA);
-			matB.Decompose(sB, rB, pB);
-
-			Math::Vector3 s = sA;
-		//	Math::Vector3 p = XMVectorLerp(pA, pB, t);
-			Math::Vector3 p = pA;
-			Math::Quaternion r = XMQuaternionSlerp(rA, rB, t);
-
-			rNodes[idx].m_localTransform =
-				Math::Matrix::CreateScale(s) *
-				Math::Matrix::CreateFromQuaternion(r) *
-				Math::Matrix::CreateTranslation(p);
-
-		}
-		else
-		{
-			auto prev = rNodes[idx].m_localTransform;
-
-			// アニメーションデータによる行列補間
 			rAnimNode.Interpolate(rNodes[idx].m_localTransform, m_time);
-
-			prev = rNodes[idx].m_localTransform;
 		}
+
+
+		prev = rNodes[idx].m_localTransform;
+
+		i++;
 	}
+
 	// アニメーションのフレームを進める
 	m_time += speed;
-
-	if (isBlending)
-	{
-		m_blendTime += speed;
-		//ブレンド完了
-		if (m_blendTime >= m_blendDuration)
-		{
-			//次のアニメーションを今のアニメーションにセット
-			m_spAnimation = m_spNextAnimation;
-			m_spNextAnimation = nullptr;
-			m_time = 0.0f;
-		}
-	}
 
 	// アニメーションデータの最後のフレームを超えたら
 	if (m_time >= m_spAnimation->m_maxLength)
@@ -256,16 +297,57 @@ void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed
 		}
 		else
 		{
-			//アニメーションの最後の時間に設定
 			m_time = m_spAnimation->m_maxLength;
+		}
+	}
+
+	//animation補完のカウント
+	if (m_isComp)
+	{
+		m_compCnt += KdFPSController::GetInstance().GetDeltaTime() * m_compSpd;
+		if (m_compCnt > 1.0)
+		{
+			//補完終了
+			m_isComp = false;
 		}
 	}
 }
 
-void KdAnimator::BlendToAnimation(const std::shared_ptr<KdAnimationData>& nextAnim, float duration,bool isLoop)
+void KdAnimator::SetLastKeyInfo()
 {
-	m_spNextAnimation = nextAnim;
-	m_blendDuration = duration;
-	m_blendTime = 0.0f;
-	m_isLoop = isLoop;
+	if (m_spAnimation == nullptr)return;
+
+	//リストのクリア
+	m_lastKeyInfo.clear();
+
+	//ノード分回す
+	for (auto& rAnimNode : m_spAnimation->m_nodes)
+	{
+		KeyInfo _keyInfo;
+
+		// キー位置検索
+		UINT _keyIdx = BinarySearchNextAnimKey(rAnimNode.m_translations, m_time);
+		// 配列外のキーなら、最後のデータを返す
+		if (_keyIdx >= rAnimNode.m_translations.size()) {
+			_keyIdx = rAnimNode.m_translations.size() - 1;
+		}
+		_keyInfo.m_translations = rAnimNode.m_translations[_keyIdx];
+
+
+		_keyIdx = BinarySearchNextAnimKey(rAnimNode.m_rotations, m_time);
+		// 配列外のキーなら、最後のデータを返す
+		if (_keyIdx >= rAnimNode.m_rotations.size()) {
+			_keyIdx = rAnimNode.m_rotations.size() - 1;
+		}
+		_keyInfo.m_rotations = rAnimNode.m_rotations[_keyIdx];
+
+		_keyIdx = BinarySearchNextAnimKey(rAnimNode.m_scales, m_time);
+		// 配列外のキーなら、最後のデータを返す
+		if (_keyIdx >= rAnimNode.m_scales.size()) {
+			_keyIdx = rAnimNode.m_scales.size() - 1;
+		}
+		_keyInfo.m_scales = rAnimNode.m_scales[_keyIdx];
+
+		m_lastKeyInfo.push_back(_keyInfo);
+	}
 }

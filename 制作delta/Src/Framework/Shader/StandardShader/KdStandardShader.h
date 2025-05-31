@@ -31,6 +31,22 @@ public:
 		float			DissolveEdgeRange = 0.03f;	// 0 ～ 1
 
 		Math::Vector3	DissolveEmissive = { 0.0f, 1.0f, 1.0f };
+
+
+		//水面表現3　定数バッファ作成
+		int WaterEnable = 0;
+		Math::Vector2 WaterUVOffset = { 0,0 }; //オフセット：補正値
+		float dimmy1 = 0.0f;
+
+		Math::Matrix mR;	//90度回転
+
+		//リムライト有効化
+		int LimLightEnable = 0;
+		Math::Vector3	LimLightColor = { 1.0f,1.0f,1.0f };
+
+		float			LimLightPow = 1;
+		float dimmy[3] = { 0.0f,0.0f,0.0f };
+
 	};
 
 	// 定数バッファ(メッシュ単位更新)
@@ -60,6 +76,52 @@ public:
 	//================================================
 	// 設定・取得
 	//================================================
+
+	//リムライト設定
+	void SetLimLightEnable(bool _enable)
+	{
+		m_cb0_Obj.Work().LimLightEnable = _enable;
+
+		m_dirtyCBObj = true;
+	}
+
+	void SetLimlightParam(Math::Vector3 _color, float _pow)
+	{
+		m_cb0_Obj.Work().LimLightColor = _color;
+		m_cb0_Obj.Work().LimLightPow = _pow;
+
+		m_dirtyCBObj = true;
+	}
+
+
+	//テクスチャを転送する関数
+	void SetWaterNormalTexture(KdTexture& _normalTex)
+	{
+		KdDirect3D::Instance().WorkDevContext()->PSSetShaderResources(
+			9,	//スロット番号 4-9なら空いている
+			1,	//個数
+			_normalTex.WorkSRViewAddress()	//転送するテクスチャ
+		);
+	}
+
+	//有効か
+	void SetWaterEnable(bool _enable)
+	{
+		m_cb0_Obj.Work().WaterEnable = _enable;
+
+		m_dirtyCBObj = true;
+	}
+
+	//水面のUV設定
+	void SetWaterUVOffset(const Math::Vector2& _offset, float _mR = 90.0f)
+	{
+		m_cb0_Obj.Work().WaterUVOffset = _offset;
+		m_cb0_Obj.Work().mR = Math::Matrix::CreateRotationX(DirectX::XMConvertToRadians(_mR));
+
+
+		m_dirtyCBObj = true;
+	}
+
 
 	// UVタイリング設定
 	void SetUVTiling(const Math::Vector2& tiling)
@@ -164,7 +226,7 @@ public:
 		const Math::Vector4& col, const Math::Vector3& emissive);
 
 	// モデルデータ描画：アニメーションに非対応
-	void DrawModel(const KdModelData& rModel, const Math::Matrix& mWorld = Math::Matrix::Identity, 
+	void DrawModel(const KdModelData& rModel, const Math::Matrix& mWorld = Math::Matrix::Identity,
 		const Math::Color& colRate = kWhiteColor, const Math::Vector3& emissive = Math::Vector3::Zero);
 
 	// モデルワーク描画：アニメーションに対応
@@ -234,7 +296,7 @@ private:
 
 	// 頂点入力レイアウト
 	ID3D11InputLayout* m_inputLayout = nullptr;
-	
+
 	// ピクセルシェーダー
 	ID3D11PixelShader* m_PS_Lit = nullptr;					// 陰影あり
 	ID3D11PixelShader* m_PS_UnLit = nullptr;				// 陰影なし

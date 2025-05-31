@@ -37,7 +37,7 @@ private:
 	const bool IsBoost();
 
 	//左クリック入力
-	const bool IsLeftAttack();
+	const bool IsAttack();
 
 	//スペース入力
 	const bool IsFlow();

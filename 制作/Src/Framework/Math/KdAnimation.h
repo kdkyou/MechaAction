@@ -14,6 +14,14 @@ struct KdAnimKeyVector3
 	Math::Vector3		m_vec;			// 3Dベクトルデータ
 };
 
+//キー情報のみ
+struct KeyInfo
+{
+	KdAnimKeyVector3 m_translations;
+	KdAnimKeyQuaternion m_rotations;
+	KdAnimKeyVector3 m_scales;
+};
+
 //============================
 // アニメーションデータ
 //============================
@@ -38,6 +46,12 @@ struct KdAnimationData
 		bool InterpolateTranslations(Math::Vector3& result, float time);
 		bool InterpolateRotations(Math::Quaternion& result, float time);
 		bool InterpolateScales(Math::Vector3& result, float time);
+
+
+		void InterpolateComp(Math::Matrix& rDst, KeyInfo _keyInfo, float time, float compCnt);
+		bool InterpolateTranslationsComp(Math::Vector3& result, KeyInfo _keyInfo, float time, float compCnt);
+		bool InterpolateRotationsComp(Math::Quaternion& result, KeyInfo _keyInfo, float time, float compCnt);
+		bool InterpolateScalesComp(Math::Vector3& result, KeyInfo _keyInfo, float time, float compCnt);
 	};
 
 	// 全ノード用アニメーションデータ
@@ -48,16 +62,25 @@ class KdAnimator
 {
 public:
 
-	inline void SetAnimation(const std::shared_ptr<KdAnimationData>& rData, bool isLoop = true) 
+
+
+
+	inline void SetAnimation(const std::shared_ptr<KdAnimationData>& rData, const float compSpd, bool isLoop = true, bool isComp = true)
 	{
+		if (m_spAnimation && isComp)
+		{
+			//最後のキー情報を取得
+			SetLastKeyInfo();
+			m_compCnt = 0.0;
+			m_isComp = true;
+			m_compSpd = compSpd;
+		}
+
 		m_spAnimation = rData;
 		m_isLoop = isLoop;
-		m_time = 0.0f;
-		m_spNextAnimation = nullptr;
-		m_blendTime = 0.0f;
-		m_blendDuration = 0.0f;
-	}
 
+		m_time = 0.0f;
+	}
 
 	// アニメーションが終了してる？
 	bool IsAnimationEnd() const
@@ -67,27 +90,38 @@ public:
 
 		return false;
 	}
-	
 
 	// アニメーションの更新
 	void AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed = 1.0f);
 
-	void BlendToAnimation(const std::shared_ptr<KdAnimationData>& nextAnim, float duration=0.0f,bool isLoop=true);
+	//現在のアニメーション位置を返す
+	const float GetAdvanceTime() const { return m_time; }
+	const float GetProgress()const { return m_time / m_spAnimation->m_maxLength; }
+	void SetAdvanceTime(const float advanceTime) { m_time = advanceTime; }
+	//現在のanimation名を返す
+	const std::string GetAnimName() {
 
-	const float GetAnimationTime() { return m_time; }
+		std::string _name = {};
+		if (m_spAnimation != nullptr)_name = m_spAnimation->m_name;
+		return _name;
+	}
+
+	//ループ終了
+	void SetLoopEnd() { m_isLoop = false; }
 
 private:
 
+	std::vector<KeyInfo> m_lastKeyInfo;				//最後のキー情報
 	std::shared_ptr<KdAnimationData>	m_spAnimation = nullptr;	// 再生するアニメーションデータ
 
 	float m_time = 0.0f;
 
 	bool m_isLoop = false;
 
-	//次のアニメーション
-	std::shared_ptr<KdAnimationData> m_spNextAnimation = nullptr;
-	//アニメーションのblend時間
-	float m_blendTime = 0.0f;
-	float m_blendDuration = 0.0f;
+	//前animationとの補完
+	void SetLastKeyInfo();
+	bool m_isComp = false;
+	float  m_compCnt = 0.0;
 
+	float m_compSpd = 0.0f;
 };

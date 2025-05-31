@@ -1,14 +1,15 @@
 #include"inc_KdPostProcessShader.hlsli"
 
-Texture2D g_inputTex : register(t0);	//Combine
-Texture2D g_radialTex : register(t1);	//ReaialBlur
-Texture2D g_glitchTex : register(t2);	//Glitch
+Texture2D g_inputTex : register(t0);  //posteffect
+Texture2D g_radialTex : register(t1); //ReaialBlur
+Texture2D g_glitchTex : register(t2); //Glitch
+Texture2D g_depthTex : register(t3);  //DoF
 
 SamplerState g_ss : register(s0);
 
 cbuffer cb : register(b0)
 {
-	int g_switch;	//描画項目の変更フラグ
+	int g_switch; //描画項目の変更フラグ
 	
 };
 
@@ -19,7 +20,7 @@ float4 main(VSOutput In) : SV_Target0
 
 	
 	//無し
-	if(g_switch ==  0)
+	if (g_switch == 0)
 	{
 		color += g_inputTex.Sample(g_ss, In.UV).rgb;
 		
@@ -32,22 +33,23 @@ float4 main(VSOutput In) : SV_Target0
 	//Glitchのみ
 	else if (g_switch == 2)
 	{
-		color  += g_glitchTex.Sample(g_ss, In.UV).rgb;
+		color += g_glitchTex.Sample(g_ss, In.UV).rgb;
 	}
 	//加算合成
-	else if(g_switch == 3)
+	else if (g_switch == 3)
 	{
 		float3 color1 = g_radialTex.Sample(g_ss, In.UV).rgb;
 		float3 color2 = g_glitchTex.Sample(g_ss, In.UV).rgb;
 		
-		color  += saturate(color1 + color2);
+		color += saturate(color1 + color2);
 	}
-	//半合成
-	else if(g_switch == 4)
+	//被写界深度のみ
+	else if (g_switch == 4)
 	{
+		color += g_depthTex.Sample(g_ss, In.UV).rgb;
 		
 	}
 
-	return float4(color,1);
+	return float4(color, 1);
 	
 }

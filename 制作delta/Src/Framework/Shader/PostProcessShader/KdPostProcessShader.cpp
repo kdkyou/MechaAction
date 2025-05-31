@@ -141,7 +141,6 @@ bool KdPostProcessShader::Init()
 
 	//放射ブラー用
 	m_radialBlurRTPack.CreateRenderTarget(backBuffer->GetWidth(), backBuffer->GetHeight());
-
 	//グリッチ用
 	m_glitchRTPack.CreateRenderTarget(backBuffer->GetWidth(), backBuffer->GetHeight());
 	//合成用
@@ -354,12 +353,14 @@ void KdPostProcessShader::CombineProcess()
 	SetCombineToDevice();
 
 	//描画数で変更
-	const int num = 3;
+	const int num = 5;
 	std::shared_ptr<KdTexture> srcTexList[num] =
 	{
 		m_postEffectRTPack.m_RTTexture,
 		m_radialBlurRTPack.m_RTTexture,
 		m_glitchRTPack.m_RTTexture,
+		m_depthOfFieldRTPack.m_RTTexture,
+		m_postEffectRTPack.m_ZBuffer
 	};
 
 	DrawTexture(srcTexList, num, m_combineRTPack.m_RTTexture, &m_combineRTPack.m_viewPort);
@@ -687,6 +688,7 @@ void KdPostProcessShader::SetGlitchToDevice()
 	shaderMgr.SetPixelShader(m_PS_Glitch);
 }
 
+//合成用
 void KdPostProcessShader::SetCombineToDevice()
 {
 	ID3D11DeviceContext* DevCon = KdDirect3D::Instance().WorkDevContext();
@@ -695,7 +697,9 @@ void KdPostProcessShader::SetCombineToDevice()
 	m_cb0_CombineInfo.Write();
 	
 	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(0, 1, m_cb0_CombineInfo.GetAddress());
-	//テクスチャのセット
+	////テクスチャのセット
+	//KdDirect3D::Instance().WorkDevContext()->PSSetShaderResources(0, 1, m_radialBlurRTPack.m_RTTexture->WorkSRViewAddress());
+	//KdDirect3D::Instance().WorkDevContext()->PSSetShaderResources(0, 2, m_radialBlurRTPack.m_RTTexture->WorkSRViewAddress());
 
 	KdShaderManager& shaderMgr = KdShaderManager::Instance();
 
@@ -741,6 +745,8 @@ void KdPostProcessShader::SetBrightToDevice()
 	{
 		DevCon->IASetInputLayout(m_inputLayout);
 	}
+
+	m_screenVert;
 
 	shaderMgr.SetPixelShader(m_PS_Bright);
 }

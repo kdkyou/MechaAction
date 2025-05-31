@@ -5,14 +5,14 @@ SamplerState g_ss : register(s0);
 
 cbuffer cb : register(b0)
 {
-	float2  g_resolution;	//分割数
-	float g_time;			//時間
-	float g_frameRate;		//フレームレート相当値
-	float g_frequency;		//頻度
-	int g_useGrid;			 //グリッド処理をするか
-	int g_enable;			//0=無効　1＝有効
-	int g_playerHit;		//プレイヤーが受けたかどうか
-	float2 g_center;		//範囲の中心
+	float2 g_resolution; //分割数
+	float g_time; //時間
+	float g_frameRate; //フレームレート相当値
+	float g_frequency; //頻度
+	int g_useGrid; //グリッド処理をするか
+	int g_enable; //0=無効　1＝有効
+	int g_playerHit; //プレイヤーが受けたかどうか
+	float2 g_center; //範囲の中心
 };
 
 //ランダムな値を返す
@@ -45,7 +45,7 @@ float4 main(VSOutput In) : SV_Target0
 	float3 color = 0;
 
 	
-	if(g_useGrid == 1)
+	if (g_useGrid == 1)
 	{
 		// === グリッド演出 ===
 		float2 gridSize = g_resolution;
@@ -87,7 +87,7 @@ float4 main(VSOutput In) : SV_Target0
 		float glitchLine2 = step(uv.y + noiseY, noiseY);
 		float glitch = saturate(glitchLine1 - glitchLine2);
 
-		if(g_playerHit==1)
+		if (g_playerHit == 1)
 		{
 			
 			//指定範囲にのみグリッチ

@@ -238,6 +238,8 @@ void Application::Execute()
 	while (1)
 	{
 		
+	//	m_log.Clear();
+
 		// ゲーム終了指定があるときはループ終了
 		if (m_endFlag)
 		{

@@ -33,7 +33,8 @@ void Character::Init()
 
 void Character::Update()
 {
-	
+
+
 	auto spThis = m_wpThis.lock();
 
 	color = { 0,1,0,1 };
@@ -79,11 +80,7 @@ void Character::DrawLit()
 {
 	if (!m_spModel) return;
 
-	Math::Vector3 emis = { 5,0,0 };
-
-	Math::Color colr = { 1,1,1 };
-
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, colr, emis);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld,kWhiteColor,Math::Vector3{1,1,1});
 }
 
 void Character::DrawUnLit()
@@ -133,7 +130,7 @@ const bool Character::IsMove()
 
 const bool Character::IsBoost()
 {
-	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
+	if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
 	{
 		return true;
 	}
@@ -141,7 +138,7 @@ const bool Character::IsBoost()
 	return false;
 }
 
-const bool Character::IsLeftAttack()
+const bool Character::IsAttack()
 {
 	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
@@ -296,7 +293,7 @@ void Character::UpdateCollision()
 			for (auto& ret : retBumpList)
 			{
 				Math::Vector3 newPos = GetPos() + (ret.m_hitDir * ret.m_overlapDistance);
-			//	SetPos(newPos);
+				SetPos(newPos);
 			}
 		}
 	}
@@ -619,7 +616,7 @@ void Character::ActionStateBase::Checkkey(std::weak_ptr<Character>& owner)
 
 	m_isMove = spOwner->IsMove();
 	m_isBoost = spOwner->IsBoost();
-	m_isRightAttack = spOwner->IsLeftAttack();
+	m_isRightAttack = spOwner->IsAttack();
 	m_isFlow = spOwner->IsFlow();
 
 }
@@ -819,9 +816,6 @@ void Character::ActionMove::Enter(std::weak_ptr<Character>& owner)
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Walk"), 4.0f);
 
 	m_speed = spOwner->m_walkSpeed;
-
-	KdAudioManager::Instance().Play("Assets/Sounds/Walk.wav");
-
 }
 
 void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
@@ -829,6 +823,11 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	Checkkey(owner);
+
+	if (spOwner->m_spAnimator->GetProgress() == 3.0f|| spOwner->m_spAnimator->GetProgress() == 6.0f)
+	{
+	//	KdAudioManager::Instance().Play("Asset/Sounds/Walk.wav");
+	}
 
 	if (m_isFlow) {
 		spOwner->ChangeActionState(std::make_shared<ActionJump>());
@@ -864,10 +863,7 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 
 	}
 
-	if (spOwner->m_spAnimator->IsAnimationEnd())
-	{
-		KdAudioManager::Instance().Play("Asset/Sounds/Walk.wav");
-	}
+	
 
 }
 
@@ -893,6 +889,9 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 	KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(4, 0.6f, { 0.5f,0.5f }, 0.45f, 0, 0.01f);
 	UINT kind = KdShaderManager::Instance().m_postProcessShader.RadialBlur;
 	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+
+	KdAudioManager::Instance().Play("Asset/Sounds/Thruster.wav");
+
 }
 
 void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
@@ -928,9 +927,8 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 
 	}
 
-
-
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
+
 
 }
 
@@ -1169,8 +1167,17 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 	}
 
 
+	if (m_direction.Length()>1.0f)
+	{
+		m_direction = spOwner->m_mWorld.Backward();
+		m_direction.Normalize();
+	}
+
 	//owner.Move(m_speed, m_direction, KdCollider::TypeDamage, true);
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
+
+	Application::Instance().m_log.Clear();
+	Application::Instance().m_log.AddLog("Attack%.2f,%.2f,%.2f\n", m_direction.x, m_direction.y, m_direction.z);
 
 }
 
@@ -1322,7 +1329,7 @@ void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 	UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
 	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	KdShaderManager::Instance().m_postProcessShader.
-		SetGlitch({ 30,30 }, time, 5.0f, 0.8f, 1, 1, { 0.5f,0.5f });
+		SetGlitch({ 30,30 }, time, 5.0f, 0.8f, 0, 1, { 0.5f,0.5f });
 
 if (spOwner->m_spAnimator->IsAnimationEnd() == false) { return; }
 

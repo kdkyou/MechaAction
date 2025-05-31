@@ -5,7 +5,7 @@ void Enemy::Init()
 	if (!m_spModel)
 	{
 		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Leg/Leg.gltf");
+		m_spModel->SetModelData("Asset/Models/Another/Another.gltf");
 		// 初期のアニメーションをセットする
 		m_spAnimator = std::make_shared<KdAnimator>();
 		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Stand"), true);
@@ -60,7 +60,7 @@ void Enemy::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 
 void Enemy::Stand::Enter(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"));
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"),1.0f);
 }
 
 void Enemy::Stand::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
@@ -216,7 +216,7 @@ void Enemy::Attack::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spO
 
 void Enemy::Hited::Enter(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Hited"), false);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Hited"),1.0f, false);
 }
 
 void Enemy::Hited::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
@@ -235,7 +235,7 @@ void Enemy::Hited::Exit(Enemy& owner, const  std::shared_ptr<KdGameObject>& spOb
 
 void Enemy::Destoroy::Enter(Enemy& owner, const std::shared_ptr<KdGameObject>& spObj)
 {
-	owner.m_spAnimator->BlendToAnimation(owner.m_spModel->GetData()->GetAnimation("Destroyed"), false);
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Destroyed"),1.0f, false);
 }
 
 void Enemy::Destoroy::Update(Enemy& owner, const  std::shared_ptr<KdGameObject>& spObj)
