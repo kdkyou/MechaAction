@@ -4,5 +4,6 @@
 bool CameraManager::ChangeCamera(std::shared_ptr<CameraBase> nextCamera)
 {
 
+
 	return false;
 }
