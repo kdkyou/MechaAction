@@ -15,6 +15,10 @@ public :
 		Rock,
 	};
 
+
+	bool ChangeCamera(std::shared_ptr<CameraBase> nextCamera);
+
+
 private:
 
 	void Init();

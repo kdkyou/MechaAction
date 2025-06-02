@@ -4,7 +4,7 @@
 
 #include "KdGLTFLoader.h"
 
-#include"../../Application/main.h"
+
 
 //=============================================================
 //
@@ -18,9 +18,6 @@ void KdMesh::SetToDevice() const
 	UINT stride = sizeof(KdMeshVertex);	// 1頂点のサイズ
 	UINT offset = 0;					// オフセット
 	KdDirect3D::Instance().WorkDevContext()->IASetVertexBuffers(0, 1, m_vertBuf.GetAddress(), &stride, &offset);
-
-	Application::Instance().m_log.Clear();
-	Application::Instance().m_log.AddLog("%d\n", stride);
 
 	// インデックスバッファセット
 	KdDirect3D::Instance().WorkDevContext()->IASetIndexBuffer(m_indxBuf.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);

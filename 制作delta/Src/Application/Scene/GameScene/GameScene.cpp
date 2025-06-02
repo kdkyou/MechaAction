@@ -46,24 +46,24 @@ void GameScene::Init()
 
 	std::shared_ptr<Shield> _shield = std::make_shared<Shield>();
 	_shield->Init();
-	//_shield->SetParent(_character);
+	_shield->SetParent(_character);
 	AddObject(_shield);
 
 	//エネミー
-	/*std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
+	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
 	enemy->SetThis(enemy);
 	enemy->Init();
 	enemy->SetTarget(_character);
-	AddObject(enemy);*/
+	AddObject(enemy);
 
-	//_character->RegistHitObject(enemy);
+	_character->RegistHitObject(enemy);
 
 	//===================================================================
 	// カメラ初期化
 	//===================================================================
-//	std::shared_ptr<FPSCamera>		_camera = std::make_shared<FPSCamera>();
+	std::shared_ptr<FPSCamera>		_camera = std::make_shared<FPSCamera>();
 //	std::shared_ptr<TPSCamera>		_camera = std::make_shared<TPSCamera>();
-	std::shared_ptr<TrackingCamera>		_camera = std::make_shared<TrackingCamera>();
+//	std::shared_ptr<TrackingCamera>		_camera = std::make_shared<TrackingCamera>();
 //	std::shared_ptr<RockCamera>		_camera = std::make_shared<RockCamera>();
 	_camera->Init();
 //	_camera->SetTarget(_character);

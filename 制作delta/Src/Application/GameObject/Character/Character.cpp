@@ -130,7 +130,7 @@ const bool Character::IsMove()
 
 const bool Character::IsBoost()
 {
-	if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
+	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
 	{
 		return true;
 	}
@@ -890,7 +890,7 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 	UINT kind = KdShaderManager::Instance().m_postProcessShader.RadialBlur;
 	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 
-	KdAudioManager::Instance().Play("Asset/Sounds/Thruster.wav");
+	KdAudioManager::Instance().Play("Asset/Sounds/Thruster2.wav");
 
 }
 
@@ -1139,14 +1139,16 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 
 void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 {
+
 	std::shared_ptr<Character> spOwner = owner.lock();
 	Checkkey(owner);
 
-	if (spOwner->m_spAnimator->GetProgress() > 0.6)
+	if (spOwner->m_spAnimator->GetProgress() > 0.6f)
 	{
 		if (m_isBoost)
 		{
 			spOwner->ChangeActionState(std::make_shared<ActionBoost>());
+			return;
 		}
 	}
 
@@ -1156,8 +1158,6 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 		return;
 	}
 
-
-
 	//敵が一定範囲内なら敵のほうに向いて敵に
 	std::shared_ptr<KdGameObject> target = spOwner->m_wpRockTarget.lock();
 	if (target)
@@ -1166,19 +1166,10 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 		m_direction.Normalize();
 	}
 
-
-	if (m_direction.Length()>1.0f)
-	{
-		m_direction = spOwner->m_mWorld.Backward();
-		m_direction.Normalize();
-	}
-
 	//owner.Move(m_speed, m_direction, KdCollider::TypeDamage, true);
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
 
-	Application::Instance().m_log.Clear();
-	Application::Instance().m_log.AddLog("Attack%.2f,%.2f,%.2f\n", m_direction.x, m_direction.y, m_direction.z);
-
+	
 }
 
 void Character::ActionRightAttack::Exit(std::weak_ptr<Character>& owner)
