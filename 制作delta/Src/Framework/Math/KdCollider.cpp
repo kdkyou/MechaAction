@@ -435,7 +435,7 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingSphere& target, const Mat
 
 	Math::Vector3 vec = Math::Vector3::Zero;
 	bool isHit = false;
-	if (m_Abox.Extents.x == 0.0f) {
+	if (m_isOriented ==true) {
 
 		//判定用のボックスを作り出す
 		DirectX::BoundingOrientedBox myBox;
@@ -447,7 +447,7 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingSphere& target, const Mat
 		if (!isHit || !pRes)return isHit;
 
 
-
+		int a = 0;
 
 	}
 	else
@@ -523,7 +523,7 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingBox& target, const Math::
 
 	Math::Vector3 vec = Math::Vector3::Zero;
 	bool isHit = false;
-	if (m_Abox.Extents.x == 0.0f) {
+	if (m_isOriented == true) {
 
 		//判定用のボックスを作り出す
 		DirectX::BoundingOrientedBox myBox;
@@ -561,13 +561,14 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingBox& target, const Math::
 	
 	return isHit;
 }
+
 bool KdBoxCollision::Intersects(const DirectX::BoundingOrientedBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	if (!m_enable) { return false; }
 
 	Math::Vector3 vec = Math::Vector3::Zero;
 	bool isHit = false;
-	if (m_Abox.Extents.x == 0.0f) {
+	if (m_isOriented == true) {
 
 		//判定用のボックスを作り出す
 		DirectX::BoundingOrientedBox myBox;
@@ -575,6 +576,82 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingOrientedBox& target, cons
 
 		//当たったかどうか
 		isHit = myBox.Intersects(target);
+
+		if (!isHit || !pRes)return isHit;
+
+		//詳細な押し戻し判定(MTV)を求める
+
+	//ボックスAのデータ
+		DirectX::XMVECTOR centerA = DirectX::XMLoadFloat3(&myBox.Center);
+		DirectX::XMVECTOR extentsA = DirectX::XMLoadFloat3(&myBox.Extents);
+		DirectX::XMVECTOR axesA[3];
+		GetOBBAxes(myBox, axesA);
+
+		//ボックスBのデータ
+		DirectX::XMVECTOR centerB = DirectX::XMLoadFloat3(&target.Center);
+		DirectX::XMVECTOR extentsB = DirectX::XMLoadFloat3(&target.Extents);
+		DirectX::XMVECTOR axesB[3];
+		GetOBBAxes(myBox, axesB);
+
+		DirectX::XMVECTOR testAxes[15];
+		int axisCount = 0;
+
+		// Aの軸
+		for (int i = 0; i < 3; ++i)testAxes[axisCount++] = axesA[i];
+
+		// Bの軸
+		for (int i = 0; i < 3; ++i)testAxes[axisCount++] = axesB[i];
+
+		// A×B の軸
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				DirectX::XMVECTOR cross = DirectX::XMVector3Cross(axesA[i], axesB[j]);
+				if (DirectX::XMVector3LengthSq(cross).m128_f32[0] > 1e-6f)
+				{
+					testAxes[axisCount++] = DirectX::XMVector3Normalize(cross);
+				}
+			}
+		}
+
+		//衝突しているかどうか
+		float minOverlap = FLT_MAX;
+		DirectX::XMVECTOR smallestAxis = DirectX::XMVectorZero();
+
+		for (int i = 0; i < axisCount; ++i)
+		{
+			DirectX::XMVECTOR axis = testAxes[i];
+
+			float minA, maxA, minB, maxB;
+			ProjectOBB(centerA, axesA, extentsA, axis, minA, maxA);
+			ProjectOBB(centerB, axesB, extentsB, axis, minB, maxB);
+
+			float overlap = std::min(maxA, maxB) - std::max(minA, minB);
+			if (overlap < 0.0f)
+			{
+				return false; // 分離軸あり → 衝突していない
+			}
+
+			if (overlap < minOverlap)
+			{
+				minOverlap = overlap;
+				smallestAxis = axis;
+			}
+		}
+
+		// 押し戻しベクトル計算
+		DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(centerB, centerA);
+		if (DirectX::XMVectorGetX(DirectX::XMVector3Dot(dir, smallestAxis)) < 0.0f)
+		{
+			smallestAxis = DirectX::XMVectorNegate(smallestAxis);
+		}
+
+		pRes->m_hitPos = DirectX::XMVectorScale(smallestAxis, minOverlap);
+		pRes->m_hitDir = smallestAxis;
+		pRes->m_overlapDistance = minOverlap;
+	
+		return true; // 衝突している
 
 	}
 	else
@@ -586,10 +663,16 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingOrientedBox& target, cons
 
 		//当たったかどうか
 		isHit = myBox.Intersects(target);
+		
+		if (!isHit || !pRes)return isHit;
+
+		int i = 0;
 	}
 
 
-	if (!isHit || !pRes)return isHit;
+
+	
+
 
 
 
@@ -603,7 +686,7 @@ bool KdBoxCollision::Intersects(const KdCollider::RayInfo& target, const Math::M
 	bool isHit = false;
 	
 	Math::Vector3 vec = Math::Vector3::Zero;
-	if (m_Abox.Extents.x == 0.0f) {
+	if (m_isOriented == true) {
 
 		DirectX::BoundingOrientedBox myShape;
 		m_Obox.Transform(myShape, world);

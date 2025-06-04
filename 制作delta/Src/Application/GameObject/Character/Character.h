@@ -136,6 +136,15 @@ private:
 
 		float m_speed = 0.0f;
 		Math::Vector3 m_direction = Math::Vector3::Zero;
+
+		struct Effect
+		{
+			std::string name;
+			std::weak_ptr<KdEffekseerObject> wpEffect;
+			Math::Matrix pNodeMat;
+		};
+
+		std::list<std::shared_ptr<Effect>> m_spEffects;
 	};
 
 	class ActionIdle :public ActionStateBase
@@ -189,7 +198,6 @@ private:
 
 	private:
 
-		Math::Vector3 m_direction=Math::Vector3::Zero;
 	};
 
 	class ActionBoostNow :public ActionStateBase

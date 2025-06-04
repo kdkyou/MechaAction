@@ -243,9 +243,11 @@ class KdBoxCollision : public KdCollisionShape
 public:
 	KdBoxCollision(const DirectX::BoundingBox& box, UINT type) :
 		KdCollisionShape(type), m_Abox(box) {
+		m_isOriented = false;
 	}
 	KdBoxCollision(const DirectX::BoundingOrientedBox& box, UINT type) :
 		KdCollisionShape(type), m_Obox(box) {
+		m_isOriented = true;
 	}
 
 	KdBoxCollision(UINT type, const Math::Matrix& matrix, const Math::Vector3& offset, const Math::Vector3& size, const bool isOriented) :
@@ -254,6 +256,7 @@ public:
 		{
 			m_Abox.Center = matrix.Translation() + offset;
 			m_Abox.Extents = size;
+			m_isOriented = false;
 		}
 		else
 		{
@@ -261,6 +264,7 @@ public:
 			createMat.Translation(createMat.Translation() + offset);
 			m_Obox.Transform(m_Obox, createMat);
 			m_Obox.Extents = size;
+			m_isOriented = true;
 		}
 	}
 
@@ -275,6 +279,8 @@ private:
 
 	DirectX::BoundingBox			m_Abox;
 	DirectX::BoundingOrientedBox	m_Obox;
+
+	bool							m_isOriented = false;
 
 	// OBBのローカル3軸（ワールド空間）を取得
 	void GetOBBAxes(const DirectX::BoundingOrientedBox& obb, DirectX::XMVECTOR axes[3])

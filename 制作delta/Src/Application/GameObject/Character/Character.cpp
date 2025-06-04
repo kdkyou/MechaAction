@@ -10,7 +10,7 @@ void Character::Init()
 	if (!m_spModel)
 	{
 		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Grint/grint.gltf");
+		m_spModel->SetModelData("Asset/Models/Grint/Grint.gltf");
 
 		// 初期のアニメーションをセットする
 		m_spAnimator = std::make_shared<KdAnimator>();
@@ -34,12 +34,12 @@ void Character::Init()
 void Character::Update()
 {
 
+	Application::Instance().m_log.Clear();
 
 	auto spThis = m_wpThis.lock();
 
 	color = { 0,1,0,1 };
 
-	AddTrail();
 
 	if (spThis)
 	{
@@ -53,9 +53,9 @@ void Character::Update()
 	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
 	Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false);
 
-
-
 	//1m_pCollider->RegisterCollisionShape(KdCollider::TypeBump)
+
+
 
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
 	UpdateCollision();
@@ -66,7 +66,10 @@ void Character::PostUpdate()
 {
 	// アニメーションの更新
 	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
-	m_spModel->CalcNodeMatrices();
+	//m_spModel->CalcNodeMatrices();
+
+	AddTrail();
+
 }
 
 void Character::GenerateDepthMapFromLight()
@@ -80,18 +83,21 @@ void Character::DrawLit()
 {
 	if (!m_spModel) return;
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld,kWhiteColor,Math::Vector3{1,1,1});
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, kWhiteColor, Math::Vector3{ 1,1,1 });
 }
 
 void Character::DrawUnLit()
 {
-	if (m_spTrails.size() == 0) { return; }
+	if (m_spTrails.size() <= 0) { return; }
+
+	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
 
 	for (auto& trail : m_spTrails)
 	{
 		KdShaderManager::Instance().m_StandardShader.DrawPolygon(*trail->trail);
 	}
 
+	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
 }
 
 const std::weak_ptr<KdModelWork> Character::GetModelWork()const
@@ -287,7 +293,7 @@ void Character::UpdateCollision()
 		if (spGameObj)
 		{
 			std::list<KdCollider::CollisionResult> retBumpList;
-			spGameObj->Intersects(spherInfo,nullptr);
+			spGameObj->Intersects(spherInfo, nullptr);
 
 			// ③結果を使って座標を補完する
 			for (auto& ret : retBumpList)
@@ -358,7 +364,7 @@ bool Character::RayCast(const Math::Vector3& startPos, const Math::Vector3& vec,
 	KdCollider::RayInfo rayInfo;
 
 	rayInfo.m_pos = startPos;		// レイの発射位置を設定
-	
+
 	rayInfo.m_dir = vec;				// レイの発射方向を設定
 
 	rayInfo.m_range = length;		// レイの長さ
@@ -452,52 +458,53 @@ void Character::InitTrail()
 	std::string name = LEFTUP;
 	newObj = std::make_shared<TrailParam>();
 	newObj->name = name;
-	 newObj->trail = std::make_shared<KdTrailPolygon>();
-	 newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail.png"));
+	newObj->trail = std::make_shared<KdTrailPolygon>();
+	newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail2.png"));
 	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
-	 newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
-	 newObj->trail->SetWidth(0.4f);
-	 newObj->trail->ClearPoints();
-	 m_spTrails.push_back(newObj);
+	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
+	newObj->trail->SetWidth(0.6f);
+	// newObj->trail->SetLength(30);
+	newObj->trail->ClearPoints();
+	m_spTrails.push_back(newObj);
 
-	 name = RIGHTUP;
-	 newObj = std::make_shared<TrailParam>();
+	name = RIGHTUP;
+	newObj = std::make_shared<TrailParam>();
 	newObj->name = name;
-	 newObj->trail = std::make_shared<KdTrailPolygon>();
-	 newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail.png"));
-	 //	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
-	 newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
-	 newObj->trail->SetWidth(0.4f);
-	 newObj->trail->ClearPoints();
-	 m_spTrails.push_back(newObj);
+	newObj->trail = std::make_shared<KdTrailPolygon>();
+	newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail2.png"));
+	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
+	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
+	newObj->trail->SetWidth(0.6f);
+	newObj->trail->ClearPoints();
+	m_spTrails.push_back(newObj);
 
-	 name = LEFTDOWN;
-	 newObj = std::make_shared<TrailParam>();
-	 newObj->name = name;
-	 newObj->trail = std::make_shared<KdTrailPolygon>();
-	 newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail.png"));
-	 //	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
-	 newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
-	 newObj->trail->SetWidth(0.4f);
-	 newObj->trail->ClearPoints();
-	 m_spTrails.push_back(newObj);
+	name = LEFTDOWN;
+	newObj = std::make_shared<TrailParam>();
+	newObj->name = name;
+	newObj->trail = std::make_shared<KdTrailPolygon>();
+	newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail2.png"));
+	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
+	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
+	newObj->trail->SetWidth(0.7f);
+	newObj->trail->ClearPoints();
+	m_spTrails.push_back(newObj);
 
-	 name = RIGHTDOWN;
-	 newObj = std::make_shared<TrailParam>();
-	 newObj->name = name;
-	 newObj->trail = std::make_shared<KdTrailPolygon>();
-	 newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail.png"));
-	 //	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
-	 newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
-	 newObj->trail->SetWidth(0.4f);
-	 newObj->trail->ClearPoints();
-	 m_spTrails.push_back(newObj);
+	name = RIGHTDOWN;
+	newObj = std::make_shared<TrailParam>();
+	newObj->name = name;
+	newObj->trail = std::make_shared<KdTrailPolygon>();
+	newObj->trail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Trail2.png"));
+	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
+	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
+	newObj->trail->SetWidth(0.4f);
+	newObj->trail->ClearPoints();
+	m_spTrails.push_back(newObj);
 
 }
 
 bool Character::EnableTrail()
 {
-	for (auto& trail:m_spTrails)
+	for (auto& trail : m_spTrails)
 	{
 		trail->trail->SetEnable(true);
 	}
@@ -529,8 +536,11 @@ bool Character::AddTrail()
 			const KdModelWork::Node* _pNode = m_spModel->FindWorkNode("LSUBP");
 			if (_pNode)
 			{
-				auto mat = _pNode->m_worldTransform * m_mWorld;
+
+				auto mat = _pNode->m_worldTransform;
+				mat = mat * m_mWorld;
 				trail->trail->AddPoint(mat);
+				Application::Instance().m_log.AddLog("LUpos X: %f Y : %f Z : %f\n", mat.Translation().x, mat.Translation().y, mat.Translation().z);
 			}
 			else
 				return false;
@@ -542,6 +552,7 @@ bool Character::AddTrail()
 			{
 				auto mat = _pNode->m_worldTransform * m_mWorld;
 				trail->trail->AddPoint(mat);
+				Application::Instance().m_log.AddLog("LDpos X: %f Y : %f Z : %f\n", mat.Translation().x, mat.Translation().y, mat.Translation().z);
 			}
 			else
 				return false;
@@ -553,6 +564,7 @@ bool Character::AddTrail()
 			{
 				auto mat = _pNode->m_worldTransform * m_mWorld;
 				trail->trail->AddPoint(mat);
+				Application::Instance().m_log.AddLog("RUpos X: %f Y : %f Z : %f\n", mat.Translation().x, mat.Translation().y, mat.Translation().z);
 			}
 			else
 				return false;
@@ -564,6 +576,7 @@ bool Character::AddTrail()
 			{
 				auto mat = _pNode->m_worldTransform * m_mWorld;
 				trail->trail->AddPoint(mat);
+				Application::Instance().m_log.AddLog("RDpos X: %f Y : %f Z : %f\n", mat.Translation().x, mat.Translation().y, mat.Translation().z);
 			}
 			else
 				return false;
@@ -597,7 +610,7 @@ const Math::Vector3 Character::ActionStateBase::Direct(std::weak_ptr<Character>&
 		}
 	}
 
-	if (isCamera==false)
+	if (isCamera == false)
 	{
 		direction = spOwner->GetMatrix().Backward();
 
@@ -680,7 +693,7 @@ void Character::ActionIdle::Update(std::weak_ptr<Character>& owner)
 
 	}
 
-//	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
+	//	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 }
 
 void Character::ActionIdle::Exit(std::weak_ptr<Character>& owner)
@@ -767,7 +780,7 @@ void Character::ActionJump::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction.Normalize();
 
-	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false,false, true);
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false, true);
 
 }
 
@@ -794,7 +807,7 @@ void Character::ActionJump::Update(std::weak_ptr<Character>& owner)
 		spOwner->ChangeActionState(std::make_shared<ActionJump>());
 		return;
 	}
-	
+
 	if (spOwner->m_isGround)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionBoostEnd>());
@@ -824,9 +837,9 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 
 	Checkkey(owner);
 
-	if (spOwner->m_spAnimator->GetProgress() == 3.0f|| spOwner->m_spAnimator->GetProgress() == 6.0f)
+	if (spOwner->m_spAnimator->GetProgress() == 3.0f || spOwner->m_spAnimator->GetProgress() == 6.0f)
 	{
-	//	KdAudioManager::Instance().Play("Asset/Sounds/Walk.wav");
+		//	KdAudioManager::Instance().Play("Asset/Sounds/Walk.wav");
 	}
 
 	if (m_isFlow) {
@@ -863,7 +876,7 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 
 	}
 
-	
+
 
 }
 
@@ -880,18 +893,54 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Boost"), 20.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Boost"), 3.0f, false);
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
 	m_speed = spOwner->m_boostSpeed;
 
-	KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(4, 0.6f, { 0.5f,0.5f }, 0.45f, 0, 0.01f);
+	KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(4, 0.6f, { 0.5f,0.5f }, 0.35f, 0, 0.0f);
 	UINT kind = KdShaderManager::Instance().m_postProcessShader.RadialBlur;
 	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 
 	KdAudioManager::Instance().Play("Asset/Sounds/Thruster2.wav");
 
+	{
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("CBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "Thruster";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
+	}
+
+	{
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("LLBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "LeftLegBarnia";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Barnia.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
+	}
+
+	{
+
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("RLBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "RightLegBarnia";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Barnia.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
+	}
 }
 
 void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
@@ -927,7 +976,16 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 
 	}
 
+
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
+
+
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+		KdEffekseerManager::GetInstance().SetWorldMatrix(spefct->GetHandle(), mat * spOwner->m_mWorld);
+	}
 
 
 }
@@ -935,6 +993,15 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 void Character::ActionBoost::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
+
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+		KdEffekseerManager::GetInstance().SetScale(spefct->GetHandle(), 0.0f);
+		spefct->SetLoop(false);
+	}
+	m_spEffects.clear();
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -1007,9 +1074,18 @@ void Character::ActionBoostEnd::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostEnd"), 9.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostEnd"), 3.0f, false);
 
 	m_speed = spOwner->m_bladeAttackSpeed;
+
+
+	{
+		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+		effect->name = "RightLegBarnia";
+		effect->pNodeMat = Math::Matrix::Identity;
+		effect->wpEffect = KdEffekseerManager::GetInstance().Play("Spark.efkefc", spOwner->m_mWorld.Translation());
+		m_spEffects.push_back(effect);
+	}
 
 }
 
@@ -1053,11 +1129,27 @@ void Character::ActionBoostEnd::Update(std::weak_ptr<Character>& owner)
 
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+		KdEffekseerManager::GetInstance().SetWorldMatrix(spefct->GetHandle(), mat * spOwner->m_mWorld);
+	}
+
 }
 
 void Character::ActionBoostEnd::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
+
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+		KdEffekseerManager::GetInstance().SetScale(spefct->GetHandle(), 0.0f);
+		spefct->SetLoop(false);
+	}
+	m_spEffects.clear();
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -1066,10 +1158,35 @@ void Character::ActionBoostEnd::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostDush"), 10.0f);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostDush"), 2.0f);
 	m_speed = spOwner->m_boostDushSpeed;
 
 	spOwner->EnableTrail();
+
+	{
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("LLBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "LeftLegBarnia";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Barnia.efkefc", pNode->m_worldTransform.Translation()* spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
+	}
+
+	{
+
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("RLBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "RightLegBarnia";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Barnia.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
+	}
 }
 
 void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
@@ -1109,7 +1226,7 @@ void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
 
 	if (m_direction.x > 0.0f)
 	{
-		int i=m_direction.x;
+		int i = m_direction.x;
 	}
 
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
@@ -1130,7 +1247,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("RightBladeAttackBef"), 10.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("RightBladeAttackBef"), 1.0f, false);
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
@@ -1169,7 +1286,7 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 	//owner.Move(m_speed, m_direction, KdCollider::TypeDamage, true);
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
 
-	
+
 }
 
 void Character::ActionRightAttack::Exit(std::weak_ptr<Character>& owner)
@@ -1184,13 +1301,13 @@ void Character::ActionRightAttack::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("RightBladeAttack"), 10.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("RightBladeAttack"), 2.0f, false);
 
 	m_speed = spOwner->m_bladeAttackSpeed;
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
-	spOwner->Move(m_speed,m_direction,KdCollider::TypeDamage,true);
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeDamage, true);
 
 }
 
@@ -1302,7 +1419,7 @@ void Character::ActionHited::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionDestroyed::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Destroyed"), 10.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Destroyed"), 5.0f, false);
 
 	m_speed = spOwner->m_stopSpeed;
 
@@ -1322,9 +1439,9 @@ void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 	KdShaderManager::Instance().m_postProcessShader.
 		SetGlitch({ 30,30 }, time, 5.0f, 0.8f, 0, 1, { 0.5f,0.5f });
 
-if (spOwner->m_spAnimator->IsAnimationEnd() == false) { return; }
+	if (spOwner->m_spAnimator->IsAnimationEnd() == false) { return; }
 
-	
+
 	spOwner->ChangeActionState(std::make_shared<ActionIdle>());
 	return;
 

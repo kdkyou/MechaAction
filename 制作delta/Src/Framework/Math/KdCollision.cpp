@@ -400,18 +400,18 @@ bool MeshIntersect(const KdMesh& mesh, const DirectX::BoundingSphere& sphere,
 // ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 // レイと同様の理由
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-static void InvertAABBInfo(DirectX::XMVECTOR& aabbPosInv, DirectX::XMVECTOR& aabbExtent, DirectX::XMFLOAT3& ExtentsSqr,
-	const DirectX::XMMATRIX& matrix, const DirectX::BoundingBox& aabb)
+static void InvertAABBInfo(DirectX::XMVECTOR& /*aabbPosInv*/, DirectX::XMFLOAT3& /*aabbExtent*/, DirectX::XMFLOAT3& /*ExtentsSqr*/,
+	const DirectX::XMMATRIX& /*matrix*/, const DirectX::BoundingBox& /*aabb*/)
 {
 	// メッシュの逆行列で、球の中心座標を変換(メッシュの座標系へ変換される)
-	DirectX::XMMATRIX invMat = XMMatrixInverse(0, matrix);
-	aabbPosInv = XMVector3TransformCoord(XMLoadFloat3(&aabb.Center), invMat);
+	//DirectX::XMMATRIX invMat = XMMatrixInverse(0, matrix);
+	//aabbPosInv = XMVector3TransformCoord(XMLoadFloat3(&aabb.Center), invMat);
 
-	// 半径の二乗(判定の高速化用)
-	//ExtentsSqr = aabb.Extents * aabb.Extents;	// 半径の２乗
+	//// 半径の二乗(判定の高速化用)
+	//ExtentsSqr = aabbExtent * aabbExtent;	// 半径の２乗
 
 	//// 行列の各軸の拡大率を取得しておく
-	//sphereScale.m128_f32[0] = DirectX::XMVector3Length(matrix.r[0]).m128_f32[0];
+	//.m128_f32[0] = DirectX::XMVector3Length(matrix.r[0]).m128_f32[0];
 	//sphereScale.m128_f32[1] = DirectX::XMVector3Length(matrix.r[1]).m128_f32[0];
 	//sphereScale.m128_f32[2] = DirectX::XMVector3Length(matrix.r[2]).m128_f32[0];
 	//sphereScale.m128_f32[3] = 0;

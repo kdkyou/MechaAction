@@ -15,7 +15,7 @@ void Enemy::Init()
 	{
 		m_pCollider = std::make_unique<KdCollider>();
 
-		DirectX::BoundingBox box;
+		DirectX::BoundingOrientedBox box;
 
 		box.Center = m_mWorld.Translation();
 		box.Extents = { 3,10,3 };
@@ -49,6 +49,7 @@ void Enemy::Update()
 				return;
 			}
 			m_nowAction->Update(m_wpThis, spTarget);
+
 	}
 }
 
@@ -97,24 +98,24 @@ void Enemy::Stand::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<Kd
 	
 	int rando = rand()%10 ;
 
-	/*if (rando < 7)
+	if (rando < 7)
 	{
 
-		if (difference.Length() < owner.m_dist.y)
+		if (difference.Length() < spOwner->m_dist.y)
 		{
-			owner.ChangeActionState(std::make_shared<MoveForward>());
+			spOwner->ChangeActionState(std::make_shared<MoveForward>());
 			return;
 		}
 	}
 	else if (rando < 9)
 	{
-		owner.ChangeActionState(std::make_shared<Hited>());
+		spOwner->ChangeActionState(std::make_shared<Hited>());
 		return;
 	}
 	else {
-		owner.ChangeActionState(std::make_shared<Destoroy>());
+		spOwner->ChangeActionState(std::make_shared<Destoroy>());
 		return;
-	}*/
+	}
 
 
 }

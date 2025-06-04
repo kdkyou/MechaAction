@@ -15,9 +15,13 @@ public :
 		Rock,
 	};
 
-
+	bool ChangeType(const CameraType& type);
 	bool ChangeCamera(std::shared_ptr<CameraBase> nextCamera);
 
+	void SetCameraTarget(const std::shared_ptr<KdGameObject>& target) { m_wpCameraTarget = target; }
+	void SetRockTarget(const std::shared_ptr<KdGameObject>& target) { m_wpRockTarget = target; }
+
+	void AnimationChange(std::shared_ptr<CameraBase> next){}
 
 private:
 
@@ -25,6 +29,8 @@ private:
 
 
 	std::shared_ptr<CameraBase>	m_currentCamera = nullptr;
+	std::weak_ptr<KdGameObject> m_wpCameraTarget;
+	std::weak_ptr<KdGameObject> m_wpRockTarget;
 
 private:
 

@@ -11,6 +11,7 @@ void TrackingCamera::Init()
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
+	
 	m_pos = {};
 }
 
