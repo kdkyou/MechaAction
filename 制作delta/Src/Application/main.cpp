@@ -209,7 +209,13 @@ bool Application::Init(int w, int h)
 	//===================================================================
 	SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 
-	KdEffekseerManager::GetInstance().Create(1280, 720);
+
+
+
+
+	
+
+	
 	return true;
 }
 

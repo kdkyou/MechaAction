@@ -1,4 +1,4 @@
-﻿#include"../CameraBase.h"
+﻿
 #include"TrackingCamera.h"
 
 void TrackingCamera::Init()
@@ -39,3 +39,7 @@ void TrackingCamera::PostUpdate()
 	m_mWorld = m_mLocalPos *m_mRotation * Math::Matrix::CreateTranslation(m_pos);
 }
 
+void TrackingCamera::Editor_ImGui()
+{
+	ImGui::SliderFloat("LerpSpeed", &m_speed, 0.0f, 100.0f);
+}

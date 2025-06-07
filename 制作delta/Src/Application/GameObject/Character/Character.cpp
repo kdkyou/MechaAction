@@ -4,6 +4,7 @@
 #include "../Camera/CameraBase.h"
 
 #include"../../Scene/SceneManager.h"
+#include"../Camera/CameraManager.h"
 
 void Character::Init()
 {
@@ -29,6 +30,8 @@ void Character::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<ActionIdle>());
 
+	m_gamePad = std::make_unique<DirectX::GamePad>();
+
 }
 
 void Character::Update()
@@ -39,6 +42,10 @@ void Character::Update()
 	auto spThis = m_wpThis.lock();
 
 	color = { 0,1,0,1 };
+
+	m_padState = m_gamePad->GetState(0);
+
+	m_wpCamera = CameraManager::Instance().GetCurrentCamera();
 
 
 	if (spThis)
@@ -108,24 +115,44 @@ const std::weak_ptr<KdModelWork> Character::GetModelWork()const
 	return m_spModel;
 }
 
+void Character::Editor_ImGui()
+{
+	ImGui::Text("CharacterSpeed");
+	ImGui::SliderFloat("Walk", &m_walkSpeed, 0.0f, 100.0f);
+	ImGui::SliderFloat("Jump", &m_jumpSpeed, 0.0f, 100.0f);
+	ImGui::SliderFloat("Boost", &m_boostSpeed, 0.0f, 300.0f);
+	ImGui::SliderFloat("BoostEnd", &m_boostEndSpeed, 0.0f, 300.0f);
+	ImGui::SliderFloat("BoostDush", &m_boostDushSpeed, 0.0f, 300.0f);
+	ImGui::SliderFloat("BladeAttack", &m_bladeAttackSpeed, 0.0f, 500.0f);
+	ImGui::SliderFloat("Hit", &m_hitedSpeed, 0.0f, 50.0f);
+	
+}
+
 const bool Character::IsMove()
 {
 	bool move = false;
 	m_vMove = Math::Vector3::Zero;
 
-	if (GetAsyncKeyState('W') & 0x8000) {
+	auto& key = KdInputManager::Instance();
+
+	
+	if(!m_padState.IsConnected()){ 
+		int i = 0;
+	}
+
+	if (GetAsyncKeyState('W') & 0x8000 || m_padState.IsLeftThumbStickUp()) {
 		m_vMove.z += 1.f;
 		move = true;
 	}
-	if (GetAsyncKeyState('A') & 0x8000) {
+	if (GetAsyncKeyState('A') & 0x8000 || m_padState.IsLeftThumbStickLeft()) {
 		m_vMove.x -= 1.f;
 		move = true;
 	}
-	if (GetAsyncKeyState('S') & 0x8000) {
+	if (GetAsyncKeyState('S') & 0x8000 || m_padState.IsLeftThumbStickDown()) {
 		m_vMove.z -= 1.f;
 		move = true;
 	}
-	if (GetAsyncKeyState('D') & 0x8000) {
+	if (GetAsyncKeyState('D') & 0x8000 || m_padState.IsLeftThumbStickRight()) {
 		m_vMove.x += 1.f;
 		move = true;
 	}
@@ -136,7 +163,7 @@ const bool Character::IsMove()
 
 const bool Character::IsBoost()
 {
-	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
+	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000 || m_padState.IsXPressed())
 	{
 		return true;
 	}
@@ -146,7 +173,7 @@ const bool Character::IsBoost()
 
 const bool Character::IsAttack()
 {
-	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000 || m_padState.IsRightTriggerPressed())
 	{
 		return true;
 	}
@@ -156,7 +183,7 @@ const bool Character::IsAttack()
 
 const bool Character::IsFlow()
 {
-	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+	if (GetAsyncKeyState(VK_SPACE) & 0x8000 || m_padState.IsBPressed())
 	{
 		return true;
 	}
@@ -863,7 +890,7 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 
 	//移動中に何も入力がなければ待機に移行
 	if (m_isMove == false) {
-		spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+		spOwner->ChangeActionState(std::make_shared<ActionStandUp>());
 		return;
 	}
 	else
@@ -905,12 +932,13 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 
 	KdAudioManager::Instance().Play("Asset/Sounds/Thruster2.wav");
 
+	//エフェクト
 	{
 		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("CBP");
 		if (pNode)
 		{
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
-			effect->name = "Thruster";
+			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
 			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
 			m_spEffects.push_back(effect);
@@ -922,9 +950,9 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 		if (pNode)
 		{
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
-			effect->name = "LeftLegBarnia";
+			effect->name = "BarniaL.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Barnia.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
 			m_spEffects.push_back(effect);
 		}
 	}
@@ -935,9 +963,9 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 		if (pNode)
 		{
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
-			effect->name = "RightLegBarnia";
+			effect->name = "BarniaR.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Barnia.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
 			m_spEffects.push_back(effect);
 		}
 	}
@@ -979,14 +1007,20 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 
-
+	//エフェクト
 	for (auto& eff : m_spEffects)
 	{
 		auto spefct = eff->wpEffect.lock();
 		auto mat = eff->pNodeMat;
+
+		if (spefct == nullptr)
+		{
+			eff->wpEffect = KdEffekseerManager::GetInstance().SerchEffect(eff->name);
+			spefct = eff->wpEffect.lock();
+		}
+		 
 		KdEffekseerManager::GetInstance().SetWorldMatrix(spefct->GetHandle(), mat * spOwner->m_mWorld);
 	}
-
 
 }
 
@@ -994,11 +1028,14 @@ void Character::ActionBoost::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
+	//エフェクト
 	for (auto& eff : m_spEffects)
 	{
 		auto spefct = eff->wpEffect.lock();
 		auto mat = eff->pNodeMat;
+		KdEffekseerManager::GetInstance().StopEffect(eff->name);
 		KdEffekseerManager::GetInstance().SetScale(spefct->GetHandle(), 0.0f);
+		spefct->SetScale(0.0f);
 		spefct->SetLoop(false);
 	}
 	m_spEffects.clear();
@@ -1014,6 +1051,44 @@ void Character::ActionBoostNow::Enter(std::weak_ptr<Character>& owner)
 
 	m_speed = spOwner->m_boostEndSpeed;
 
+
+	//エフェクト
+	{
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("CBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "Thruster.efkefc";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
+	}
+
+	{
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("LLBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "BarniaL.efkefc";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
+	}
+
+	{
+
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("RLBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "BarniaR.efkefc";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
+	}
 }
 
 void Character::ActionBoostNow::Update(std::weak_ptr<Character>& owner)
@@ -1049,7 +1124,7 @@ void Character::ActionBoostNow::Update(std::weak_ptr<Character>& owner)
 
 	if (!m_isMove)
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+		spOwner->ChangeActionState(std::make_shared<ActionStandUp>());
 		return;
 	}
 	else
@@ -1060,11 +1135,38 @@ void Character::ActionBoostNow::Update(std::weak_ptr<Character>& owner)
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 	}
 
+	//エフェクト
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+
+		if (spefct == nullptr)
+		{
+			eff->wpEffect = KdEffekseerManager::GetInstance().SerchEffect(eff->name);
+			spefct = eff->wpEffect.lock();
+		}
+
+		KdEffekseerManager::GetInstance().SetWorldMatrix(spefct->GetHandle(), mat * spOwner->m_mWorld);
+	}
+
 }
 
 void Character::ActionBoostNow::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
+
+	//エフェクト
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+		KdEffekseerManager::GetInstance().StopEffect(eff->name);
+		KdEffekseerManager::GetInstance().SetScale(spefct->GetHandle(), 0.0f);
+		spefct->SetScale(0.0f);
+		spefct->SetLoop(false);
+	}
+	m_spEffects.clear();
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -1078,13 +1180,31 @@ void Character::ActionBoostEnd::Enter(std::weak_ptr<Character>& owner)
 
 	m_speed = spOwner->m_bladeAttackSpeed;
 
+	//エフェクト
 
 	{
-		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
-		effect->name = "RightLegBarnia";
-		effect->pNodeMat = Math::Matrix::Identity;
-		effect->wpEffect = KdEffekseerManager::GetInstance().Play("Spark.efkefc", spOwner->m_mWorld.Translation());
-		m_spEffects.push_back(effect);
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("LLBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "BarniaL.efkefc";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
+	}
+
+	{
+
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("RLBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "BarniaR.efkefc";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
 	}
 
 }
@@ -1129,10 +1249,18 @@ void Character::ActionBoostEnd::Update(std::weak_ptr<Character>& owner)
 
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 
+	//エフェクト
 	for (auto& eff : m_spEffects)
 	{
 		auto spefct = eff->wpEffect.lock();
 		auto mat = eff->pNodeMat;
+
+		if (spefct == nullptr)
+		{
+			eff->wpEffect = KdEffekseerManager::GetInstance().SerchEffect(eff->name);
+			spefct = eff->wpEffect.lock();
+		}
+
 		KdEffekseerManager::GetInstance().SetWorldMatrix(spefct->GetHandle(), mat * spOwner->m_mWorld);
 	}
 
@@ -1142,11 +1270,14 @@ void Character::ActionBoostEnd::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
+	//エフェクト
 	for (auto& eff : m_spEffects)
 	{
 		auto spefct = eff->wpEffect.lock();
 		auto mat = eff->pNodeMat;
+		KdEffekseerManager::GetInstance().StopEffect(eff->name);
 		KdEffekseerManager::GetInstance().SetScale(spefct->GetHandle(), 0.0f);
+		spefct->SetScale(0.0f);
 		spefct->SetLoop(false);
 	}
 	m_spEffects.clear();
@@ -1163,14 +1294,16 @@ void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->EnableTrail();
 
+
+	//エフェクト
 	{
 		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("LLBP");
 		if (pNode)
 		{
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
-			effect->name = "LeftLegBarnia";
+			effect->name = "BarniaL.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Barnia.efkefc", pNode->m_worldTransform.Translation()* spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
 			m_spEffects.push_back(effect);
 		}
 	}
@@ -1181,12 +1314,19 @@ void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 		if (pNode)
 		{
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
-			effect->name = "RightLegBarnia";
+			effect->name = "BarniaR.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Barnia.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
 			m_spEffects.push_back(effect);
 		}
 	}
+
+		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+		effect->name = "Spark.efkefc";
+		effect->pNodeMat = Math::Matrix::Identity;
+		effect->wpEffect = KdEffekseerManager::GetInstance().Play("Spark.efkefc", spOwner->m_mWorld.Translation());
+		m_spEffects.push_back(effect);
+		
 }
 
 void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
@@ -1230,6 +1370,22 @@ void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
 	}
 
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
+
+	//エフェクト
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+		
+		if (spefct == nullptr)
+		{
+			eff->wpEffect = KdEffekseerManager::GetInstance().SerchEffect(eff->name);
+			spefct = eff->wpEffect.lock();
+		}
+
+		KdEffekseerManager::GetInstance().SetWorldMatrix(spefct->GetHandle(), mat * spOwner->m_mWorld);
+	}
+
 }
 
 void Character::ActionBoostDush::Exit(std::weak_ptr<Character>& owner)
@@ -1237,6 +1393,18 @@ void Character::ActionBoostDush::Exit(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	spOwner->UnEnableTrail();
+
+	//エフェクト
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+		KdEffekseerManager::GetInstance().StopEffect(eff->name);
+		KdEffekseerManager::GetInstance().SetScale(spefct->GetHandle(), 0.0f);
+		spefct->SetScale(0.0f);
+		spefct->SetLoop(false);
+	}
+	m_spEffects.clear();
 }
 
 
@@ -1252,6 +1420,22 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 	m_direction = ActionStateBase::Direct(owner, false);
 
 	m_speed = spOwner->m_bladeAttackSpeed;
+
+
+	KdAudioManager::Instance().Play("Asset/Sounds/Thruster2.wav");
+
+	//エフェクト
+	{
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("CBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "Thruster.efkefc";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			m_spEffects.push_back(effect);
+		}
+	}
 }
 
 void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
@@ -1286,12 +1470,39 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 	//owner.Move(m_speed, m_direction, KdCollider::TypeDamage, true);
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
 
+	//エフェクト
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+
+		if (spefct == nullptr)
+		{
+			eff->wpEffect = KdEffekseerManager::GetInstance().SerchEffect(eff->name);
+			spefct = eff->wpEffect.lock();
+		}
+
+		KdEffekseerManager::GetInstance().SetWorldMatrix(spefct->GetHandle(), mat * spOwner->m_mWorld);
+	}
 
 }
 
 void Character::ActionRightAttack::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
+
+	//エフェクト
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+		KdEffekseerManager::GetInstance().StopEffect(eff->name);
+		KdEffekseerManager::GetInstance().SetScale(spefct->GetHandle(), 0.0f);
+		spefct->SetScale(0.0f);
+		spefct->SetLoop(false);
+	}
+	m_spEffects.clear();
+
 }
 
 
@@ -1308,6 +1519,19 @@ void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 	m_direction = ActionStateBase::Direct(owner, false);
 
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeDamage, true);
+
+	//エフェクト
+	{
+		KdModelWork::Node* pNode = spOwner->m_spModel->FindWorkNode("CBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "Thruster.efkefc";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(),1.0f,1.0f,false);
+			m_spEffects.push_back(effect);
+		}
+	}
 
 }
 
@@ -1341,12 +1565,89 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 	spOwner->ChangeActionState(std::make_shared<ActionIdle>());
 	return;
 
+	//エフェクト
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+
+		if (spefct == nullptr)
+		{
+			eff->wpEffect = KdEffekseerManager::GetInstance().SerchEffect(eff->name);
+			spefct = eff->wpEffect.lock();
+		}
+
+		KdEffekseerManager::GetInstance().SetWorldMatrix(spefct->GetHandle(), mat * spOwner->m_mWorld);
+	}
 
 }
 
 void Character::ActionRightAttackAf::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
+
+	//エフェクト
+	for (auto& eff : m_spEffects)
+	{
+		auto spefct = eff->wpEffect.lock();
+		auto mat = eff->pNodeMat;
+		KdEffekseerManager::GetInstance().StopEffect(eff->name);
+		KdEffekseerManager::GetInstance().SetScale(spefct->GetHandle(), 0.0f);
+		spefct->SetScale(0.0f);
+		spefct->SetLoop(false);
+	}
+	m_spEffects.clear();
+
+}
+
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//防御　状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+void Character::ActionShield::Enter(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BladeAttack"), 2.0f, false);
+
+	m_speed = spOwner->m_stopSpeed;
+
+	m_direction = ActionStateBase::Direct(owner, false);
+
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeDamage, true);
+
+}
+
+void Character::ActionShield::Update(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	Checkkey(owner);
+
+	if (m_isBoost)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoost>());
+		return;
+	}
+
+	if (m_isRightAttack)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+		return;
+	}
+
+	if (m_isMove)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionMove>());
+		return;
+	}
+
+	spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+	return;
+}
+
+void Character::ActionShield::Exit(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -1360,6 +1661,8 @@ void Character::ActionHited::Enter(std::weak_ptr<Character>& owner)
 	m_speed = spOwner->m_hitedSpeed;
 
 	m_direction = spOwner->m_mWorld.Forward();
+
+	KdAudioManager::Instance().Play("Asset/Sounds/Noize-1.wav");
 
 }
 

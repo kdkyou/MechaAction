@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include"../CameraBase.h"
+
 class TrackingCamera : public CameraBase
 {
 public:
@@ -8,6 +10,8 @@ public:
 
 	void Init()				override;
 	void PostUpdate()		override;
+
+	void Editor_ImGui()		override;
 
 	void SetBasePos(Math::Vector3& _pos) { m_basePos = _pos; }
 

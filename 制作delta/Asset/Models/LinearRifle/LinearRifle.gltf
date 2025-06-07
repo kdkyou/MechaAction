@@ -23,7 +23,7 @@
 			"translation":[
 				0,
 				0.3814142644405365,
-				-2.9772205352783203
+				-2.940764904022217
 			]
 		}
 	],
@@ -33,7 +33,7 @@
 			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.001",
 			"normalTexture":{
 				"index":0,
-				"scale":10
+				"scale":7
 			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
@@ -79,8 +79,8 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"blue_metal_plate_rough_4k",
-			"uri":"blue_metal_plate_rough_4k.png"
+			"name":"rubber_tiles_nor_gl_4k",
+			"uri":"rubber_tiles_nor_gl_4k.png"
 		},
 		{
 			"mimeType":"image/jpeg",
@@ -90,7 +90,7 @@
 		{
 			"mimeType":"image/png",
 			"name":"blue_metal_plate_rough_4k",
-			"uri":"blue_metal_plate_rough_4k-1.png"
+			"uri":"blue_metal_plate_rough_4k.png"
 		}
 	],
 	"accessors":[

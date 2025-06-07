@@ -391,6 +391,7 @@ void KdStandardShader::DrawVertices(const std::vector<KdPolygon::Vertex>& vertic
 	// 描画パイプラインのチェック
 	ID3D11VertexShader* pNowVS = nullptr;
 	KdDirect3D::Instance().WorkDevContext()->VSGetShader(&pNowVS, nullptr, nullptr);
+	bool isUnLit = m_VS_UnLit == pNowVS;
 
 	KdSafeRelease(pNowVS);
 

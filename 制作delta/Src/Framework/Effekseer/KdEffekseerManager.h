@@ -55,6 +55,9 @@ public:
 		m_wpCamera = camera;
 	}
 
+	//新しいハンドルを見つける
+	std::weak_ptr<KdEffekseerObject> SerchEffect(const std::string& fileName);
+
 private:
 
 	const Effekseer::Vector3D GetEfkVec3D(const Math::Vector3& vec) const

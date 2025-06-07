@@ -4,6 +4,7 @@
 #include "TitleScene/TitleScene.h"
 #include "GameScene/GameScene.h"
 
+
 void SceneManager::PreUpdate()
 {
 	// シーン切替
@@ -63,13 +64,15 @@ void SceneManager::Edit_ImGui()
 void SceneManager::ChangeScene(SceneType sceneType)
 {
 	// 次のシーンを作成し、現在のシーンにする
+	std::shared_ptr<GameScene> scene;
 	switch (sceneType)
 	{
 	case SceneType::Title:
 		m_currentScene = std::make_shared<TitleScene>();
 		break;
 	case SceneType::Game:
-		m_currentScene = std::make_shared<GameScene>();
+		scene =  std::make_shared<GameScene>();
+		m_currentScene = scene;
 		break;
 	}
 

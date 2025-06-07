@@ -90,12 +90,12 @@ float4 main(VSOutput In) : SV_Target0
 		if(g_playerHit==1)
 		{
 			
-			//指定範囲にのみグリッチ
+			//指定範囲にマスクをしてグリッチ
 			float2 center = g_center;
 			float dist = distance(uv, center);
 			float effectRadius = 0.4; // 半径40%
 			float glitchMask = smoothstep(effectRadius - 0.2, effectRadius + 0.05, dist);
-			glitch *= 1.0 - glitchMask;
+			glitch *=  glitchMask;
 
 		//速度調整
 			uv.x = lerp(uv.x, uv.x + noiseX, glitch);
@@ -115,7 +115,7 @@ float4 main(VSOutput In) : SV_Target0
 			//狂わした色を反転
 			color.rgb = lerp(color.rgb, 1.0 - color.rgb, glitch);
 
-			color.r += 0.5f;
+			color.rgb *= 0.5f;
 			
 		}
 		else

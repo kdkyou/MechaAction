@@ -1,4 +1,5 @@
-﻿
+﻿#include "KdEffekseerManager.h"
+
 void KdEffekseerManager::Create(int w, int h)
 {
 	// エフェクトのレンダラーの作成
@@ -171,6 +172,29 @@ void KdEffekseerManager::SetPause(const int handle, const bool isPause)
 const bool KdEffekseerManager::IsPlaying(const int handle) const
 {
 	return (m_efkManager->GetInstanceCount(handle) != 0);
+}
+
+//新しいエフェクトの情報を探る
+std::weak_ptr<KdEffekseerObject> KdEffekseerManager::SerchEffect(const std::string& fileName)
+{
+	auto efkFoundItr = m_nowEffectPlayList.begin();
+	while (efkFoundItr != m_nowEffectPlayList.end())
+	{
+		KdEffekseerObject* effObj = efkFoundItr->get();
+		if (effObj)
+		{
+			if (effObj->GetPlayEfkInfo().FileName == fileName)
+			{
+				std::weak_ptr<KdEffekseerObject> ptr = *efkFoundItr;
+				return ptr;
+			}
+			
+		}
+
+		++efkFoundItr;
+	}
+
+	return {};
 }
 
 std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(const PlayEfkInfo& info)

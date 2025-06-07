@@ -8,11 +8,7 @@
 
 #include"../../GameObject/Enemy/Enemy.h"
 
-#include "../../GameObject/Camera/FPSCamera/FPSCamera.h"
-#include "../../GameObject/Camera/TPSCamera/TPSCamera.h"
-#include"../../GameObject/Camera/TrackingCamera/TrackingCamera.h"
-#include"../../GameObject/Camera/RockCamera/RockCamera.h"
-
+#include"../../GameObject/Camera/CameraManager.h"
 // 少数第n位で四捨五入する
 void round_n(float& number, int n)
 {
@@ -61,17 +57,9 @@ void GameScene::Init()
 	//===================================================================
 	// カメラ初期化
 	//===================================================================
-	std::shared_ptr<FPSCamera>		_camera = std::make_shared<FPSCamera>();
-//	std::shared_ptr<TPSCamera>		_camera = std::make_shared<TPSCamera>();
-//	std::shared_ptr<TrackingCamera>		_camera = std::make_shared<TrackingCamera>();
-//	std::shared_ptr<RockCamera>		_camera = std::make_shared<RockCamera>();
-	_camera->Init();
-//	_camera->SetTarget(_character);
-//	_camera->SetRock(enemy);
-	_camera->RegistHitObject(_terrain);
-//	_character->SetCamera(_camera);
-	AddObject(_camera);
-
+	CameraManager::Instance().SetCameraTarget(_character);
+	CameraManager::Instance().SetRockTarget(enemy);
+	CameraManager::Instance().SetNextType(CameraManager::CameraType::None);
 
 	
 }

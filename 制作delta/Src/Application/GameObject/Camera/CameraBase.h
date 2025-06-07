@@ -9,7 +9,9 @@ public:
 	void Init()				override;
 	void PreDraw()			override;
 
-	void SetTarget(const std::shared_ptr<KdGameObject>& target);
+
+	void SetTarget(const std::weak_ptr<KdGameObject>& target);
+	void SetRockTarget(const std::weak_ptr<KdGameObject>& rock);
 
 	// 「絶対変更しません！見るだけ！」な書き方
 	const std::shared_ptr<KdCamera>& GetCamera() const
@@ -51,6 +53,8 @@ protected:
 
 	std::shared_ptr<KdCamera>					m_spCamera		= nullptr;
 	std::weak_ptr<KdGameObject>					m_wpTarget;
+	std::weak_ptr<KdGameObject>					m_wpRockTarget;
+	
 	std::vector<std::weak_ptr<KdGameObject>>	m_wpHitObjectList{};
 
 	Math::Matrix								m_mLocalPos		= Math::Matrix::Identity;

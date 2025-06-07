@@ -1,6 +1,9 @@
 ﻿#pragma once
 
+#include"GamePad.h"
+
 class CameraBase;
+
 class Character : public KdGameObject
 {
 public:
@@ -29,6 +32,8 @@ public:
 	void SetThis(const std::shared_ptr<Character>& _this) { m_wpThis = _this; }
 
 private:
+
+	void Editor_ImGui()override;
 
 	//WASDの入力があったかどうか
 	const bool IsMove();
@@ -111,6 +116,10 @@ std::string RIGHTDOWN  = "RightDown";
 
 	std::weak_ptr<KdGameObject>					m_wpRockTarget;
 
+	std::unique_ptr<DirectX::GamePad>			m_gamePad;
+	DirectX::GamePad::State						m_padState;
+
+
 	//ステートパターン管理系!
 private:
 
@@ -121,6 +130,7 @@ private:
 
 		virtual void Enter(std::weak_ptr<Character>& owner) {}
 		virtual void Update(std::weak_ptr<Character>& owner) {}
+		virtual void PostUpdate(std::weak_ptr<Character>& owner) {}
 		virtual void Exit(std::weak_ptr<Character>& owner) {}
 
 		void Checkkey(std::weak_ptr<Character>& owner);
@@ -154,6 +164,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override{}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -164,6 +175,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -174,6 +186,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -184,6 +197,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -194,6 +208,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 
 	private:
@@ -207,6 +222,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -218,6 +234,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -229,6 +246,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -240,6 +258,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -251,6 +270,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -262,6 +282,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -272,6 +293,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -283,6 +305,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};

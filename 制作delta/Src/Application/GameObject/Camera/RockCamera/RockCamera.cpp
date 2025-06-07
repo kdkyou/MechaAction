@@ -46,46 +46,46 @@ void RockCamera::Rock()
 	toVec.Normalize();
 
 
-			//内積を使って回転する角度を求める
-			//ベクトルA*ベクトルB*cosΘ(ベクトルAとベクトルBのなす角)
-			//			1	*	1	* cosΘ			
-			float d = nowVec.Dot(toVec);
-			//dの中にはコサインΘが入っている
-	
-			//角度求める(でも残念ながらラジアン角)11
-			float ang = DirectX::XMConvertToDegrees(acos(d));
-	
-			//内積から角度を求めて少しでも角度が変わったら
-			//ゆっくり回転するようにする
-			if (ang >= 0.1f)
-			{
-				if (ang > 10)
-				{
-					ang = 10.0f;
-				}
-	
-				//外積を求める（どっっちに回転するのか調べる）
-				Math::Vector3 c = toVec.Cross(nowVec);
-	
-				if (c.y >= 0)
-				{
-					//右回転
-					m_DegAng.y -= ang;
-				}
-				else
-				{
-					//左回転
-					m_DegAng.y += ang;
-				}
-			}
-	
-			if (m_DegAng.y > 360)
-			{
-				m_DegAng.y -= 360;
-			}
-			else if (m_DegAng.y < 0)
-			{
-				m_DegAng.y += 360;
-			}
+	//内積を使って回転する角度を求める
+	//ベクトルA*ベクトルB*cosΘ(ベクトルAとベクトルBのなす角)
+	//			1	*	1	* cosΘ			
+	float d = nowVec.Dot(toVec);
+	//dの中にはコサインΘが入っている
+
+	//角度求める(でも残念ながらラジアン角)11
+	float ang = DirectX::XMConvertToDegrees(acos(d));
+
+	//内積から角度を求めて少しでも角度が変わったら
+	//ゆっくり回転するようにする
+	if (ang >= 0.1f)
+	{
+		if (ang > 10)
+		{
+			ang = 10.0f;
+		}
+
+		//外積を求める（どっっちに回転するのか調べる）
+		Math::Vector3 c = toVec.Cross(nowVec);
+
+		if (c.y >= 0)
+		{
+			//右回転
+			m_DegAng.y -= ang;
+		}
+		else
+		{
+			//左回転
+			m_DegAng.y += ang;
+		}
+	}
+
+	if (m_DegAng.y > 360)
+	{
+		m_DegAng.y -= 360;
+	}
+	else if (m_DegAng.y < 0)
+	{
+		m_DegAng.y += 360;
+	}
 
 }

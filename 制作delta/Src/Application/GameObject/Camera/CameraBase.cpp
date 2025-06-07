@@ -22,11 +22,18 @@ void CameraBase::PreDraw()
 	m_spCamera->SetToShader();
 }
 
-void CameraBase::SetTarget(const std::shared_ptr<KdGameObject>& target)
+void CameraBase::SetTarget(const std::weak_ptr<KdGameObject>& target)
 {
-	if (!target) { return; }
+	if (target.expired() == true) { return; }
 
 	m_wpTarget = target;
+}
+
+void CameraBase::SetRockTarget(const std::weak_ptr<KdGameObject>& target)
+{
+	if (target.expired() == true) { return; }
+
+	m_wpRockTarget = target;
 }
 
 void CameraBase::UpdateRotateByMouse()
