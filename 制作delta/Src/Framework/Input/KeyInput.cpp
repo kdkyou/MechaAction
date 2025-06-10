@@ -82,7 +82,6 @@ void KeyInput::Update()
 	{
 		m_mouseDatas.erase(m_mouseDatas.begin());
 	}
-
 	if (m_padDatas.size() > m_MaxDataLength)
 	{
 		m_padDatas.erase(m_padDatas.begin());

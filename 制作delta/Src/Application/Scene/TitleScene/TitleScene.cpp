@@ -14,7 +14,7 @@ void TitleScene::Event()
 	auto& key = KeyInput::GetInstance().GetKeyboardState();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
-	if (key.Enter || pad.IsBPressed())
+	if (GetAsyncKeyState(VK_RETURN) || pad.IsBPressed())
 	{
 		SceneManager::Instance().SetNextScene
 		(

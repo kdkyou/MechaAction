@@ -145,18 +145,22 @@ const bool Character::IsMove()
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
 	if (key.W||pad.IsLeftThumbStickUp()) {
+//	if (key.W ) {
 		m_vMove.z += 1.f;
 		move = true;
 	}
 	if (key.A || pad.IsLeftThumbStickLeft()) {
+//	if (key.A ) {
 		m_vMove.x -= 1.f;
 		move = true;
 	}
 	if (key.S || pad.IsLeftThumbStickDown()) {
+//	if (key.S ) {
 		m_vMove.z -= 1.f;
 		move = true;
 	}
 	if (key.D || pad.IsLeftThumbStickRight()) {
+//	if (key.D ) {
 		m_vMove.x += 1.f;
 		move = true;
 	}
@@ -171,6 +175,7 @@ const bool Character::IsBoost()
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
 	if (key.LeftShift || pad.IsXPressed())
+//	if (key.LeftShift )
 	{
 		return true;
 	}
@@ -184,6 +189,7 @@ const bool Character::IsAttack()
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
 	if (mouse.leftButton || pad.IsRightTriggerPressed())
+//	if (mouse.leftButton )
 	{
 		return true;
 	}
@@ -197,6 +203,7 @@ const bool Character::IsFlow()
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
 	if (key.Space || pad.IsBPressed())
+//	if (key.Space)
 	{
 		return true;
 	}
