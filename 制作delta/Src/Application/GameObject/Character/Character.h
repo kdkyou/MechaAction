@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include"GamePad.h"
 
 class CameraBase;
 
@@ -47,7 +46,7 @@ private:
 	//スペース入力
 	const bool IsFlow();
 	//				移動量　　方向		当たり判定するタイプ（基本地面） キャラが回転するか　レイに補正をかけるか
-	bool Move(float speed,const Math::Vector3& dir,const KdCollider::Type type, bool ray=false, bool camera = true,bool step =false);
+	bool Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool camera = true, bool step = false);
 	//bool Move(float speed,const Math::Vector3& dir,const Math::Vector3& step={}, const KdCollider::Type type=KdCollider::TypeGround, bool ray = true, bool sphere = true, bool camera = true);
 
 	// キャラクターの回転行列を作成する
@@ -55,9 +54,9 @@ private:
 	// 衝突判定とそれに伴う座標の更新
 	void UpdateCollision();
 
-	bool  RayCast(const Math::Vector3&startPos,const Math::Vector3& vec,const float length,const KdCollider::Type& type,Math::Vector3& resultPos);
+	bool  RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length, const KdCollider::Type& type, Math::Vector3& resultPos);
 
-	bool  SphereCast(const Math::Vector3&pos,const Math::Vector3& vec,const float radius,const KdCollider::Type& type,Math::Vector3& resultPos);
+	bool  SphereCast(const Math::Vector3& pos, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos);
 
 	std::shared_ptr<KdModelWork>				m_spModel = nullptr;
 	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
@@ -96,10 +95,10 @@ private:
 	bool UnEnableTrail();
 	bool AddTrail();
 
-std::string LEFTUP = "LeftUp";
-std::string LEFTDOWN  = "LeftDown";
-std::string RIGHTUP = "RightUp";
-std::string RIGHTDOWN  = "RightDown";
+	std::string LEFTUP = "LeftUp";
+	std::string LEFTDOWN = "LeftDown";
+	std::string RIGHTUP = "RightUp";
+	std::string RIGHTDOWN = "RightDown";
 
 	struct TrailParam
 	{
@@ -116,8 +115,7 @@ std::string RIGHTDOWN  = "RightDown";
 
 	std::weak_ptr<KdGameObject>					m_wpRockTarget;
 
-	std::unique_ptr<DirectX::GamePad>			m_gamePad;
-	DirectX::GamePad::State						m_padState;
+
 
 
 	//ステートパターン管理系!
@@ -137,7 +135,7 @@ private:
 
 	protected:
 
-		const Math::Vector3 Direct(std::weak_ptr<Character>& owner,bool isCamera);
+		const Math::Vector3 Direct(std::weak_ptr<Character>& owner, bool isCamera);
 
 		bool m_isBoost = false;
 		bool m_isMove = false;
@@ -160,11 +158,11 @@ private:
 	class ActionIdle :public ActionStateBase
 	{
 	public:
-		virtual ~ActionIdle() override{}
+		virtual ~ActionIdle() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override{}
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 

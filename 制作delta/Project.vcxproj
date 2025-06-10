@@ -168,6 +168,7 @@
     <ClInclude Include="Src\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\Terrain.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Blade\Blade.h" />
+    <ClInclude Include="Src\Application\GameObject\Weapon\Rifle\Rifle.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Shield\Shield.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase.h" />
     <ClInclude Include="Src\Application\main.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="Src\Framework\GameObject\KdGameObject.h" />
     <ClInclude Include="Src\Framework\GameObject\KdGameObjectFactory.h" />
     <ClInclude Include="Src\Framework\Input\KdInput.h" />
+    <ClInclude Include="Src\Framework\Input\KeyInput.h" />
     <ClInclude Include="Src\Framework\Math\KdCollider.h" />
     <ClInclude Include="Src\Framework\Math\KdEasing.h" />
     <ClInclude Include="Src\Framework\KdFramework.h" />
@@ -234,6 +236,7 @@
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\Terrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Blade\Blade.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Weapon\Rifle\Rifle.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Shield\Shield.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase.cpp" />
     <ClCompile Include="Src\Application\main.cpp" />
@@ -253,6 +256,7 @@
     <ClCompile Include="Src\Framework\GameObject\KdGameObject.cpp" />
     <ClCompile Include="Src\Framework\GameObject\KdGameObjectFactory.cpp" />
     <ClCompile Include="Src\Framework\Input\KdInput.cpp" />
+    <ClCompile Include="Src\Framework\Input\KeyInput.cpp" />
     <ClCompile Include="Src\Framework\Math\KdCollider.cpp" />
     <ClCompile Include="Src\Framework\Math\KdEasing.cpp" />
     <ClCompile Include="Src\Framework\Audio\KdAudio.cpp" />

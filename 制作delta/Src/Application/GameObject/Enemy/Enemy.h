@@ -39,18 +39,31 @@ private:
 	public:
 		virtual ~ActionStateBase() {}
 
-		virtual void Enter(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj) {}
-		virtual void Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj) {}
-		virtual void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj) {}
-		virtual void Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj) {}
+		virtual void Enter(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj){}
+		virtual void Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj){}
+		virtual void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj){}
+		virtual void Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj){}
 
 	protected:
+
+		float					m_speed = 0.0f;
+
+		struct Effect
+		{
+			std::string name;
+			std::weak_ptr<KdEffekseerObject> wpEffect;
+			Math::Matrix pNodeMat;
+		};
+
+		std::list<std::shared_ptr<Effect>> m_spEffects;
 	};
 
 
 	class Stand :public ActionStateBase
 	{
 	public:
+		~Stand()override{}
+
 		void Enter(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)override;
 		void Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
 		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override{}
@@ -58,9 +71,35 @@ private:
 	private:
 	};
 
+	class Boost : public ActionStateBase
+	{
+	public :
+		~Boost()override{}
+
+		void Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
+		void Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
+		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override {}
+		void Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
+	private:
+	};
+
+	class BoostStop : public ActionStateBase
+	{
+	public:
+		~BoostStop()override {}
+
+		void Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
+		void Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
+		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override {}
+		void Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
+	private:
+	};
+
 	class MoveForward :public ActionStateBase
 	{
 	public:
+		~MoveForward()override{}
+
 		void Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
 		void Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
 		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override{}
@@ -71,6 +110,20 @@ private:
 	class MoveBack :public ActionStateBase
 	{
 	public:
+		~MoveBack()override{}
+
+		void Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
+		void Update(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)override;
+		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override {}
+		void Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
+	private:
+	};
+
+	class MoveRotate : ActionStateBase
+	{
+	public:
+	~MoveRotate()override{}
+
 		void Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
 		void Update(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)override;
 		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override {}
@@ -81,6 +134,8 @@ private:
 	class Attack :public  ActionStateBase
 	{
 	public:
+		~Attack()override {}
+
 		void Enter(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)override;
 		void Update(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)override;
 		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override {}
@@ -91,6 +146,8 @@ private:
 	class Hited :public ActionStateBase
 	{
 	public:
+		~Hited()override {}
+
 		void Enter(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)override;
 		void Update(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)override;
 		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override {}
@@ -101,6 +158,9 @@ private:
 	class Destoroy :public ActionStateBase
 	{
 	public:
+
+		~Destoroy()override {}
+
 		void Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
 		void Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
 		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override {}

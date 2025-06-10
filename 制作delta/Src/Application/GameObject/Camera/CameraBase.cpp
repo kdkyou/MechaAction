@@ -40,7 +40,17 @@ void CameraBase::UpdateRotateByMouse()
 {
 	// マウスでカメラを回転させる処理
 	POINT _nowPos;
+
 	GetCursorPos(&_nowPos);
+
+	auto& pad = KeyInput::GetInstance().GetGamePadState();
+
+	{
+		if (pad.IsRightThumbStickDown()) { _nowPos.y += m_mouseSpeed.y; }
+		if (pad.IsRightThumbStickUp()) { _nowPos.y -= m_mouseSpeed.y; }
+		if (pad.IsRightThumbStickLeft()) { _nowPos.x -= m_mouseSpeed.x; }
+		if (pad.IsRightThumbStickRight()) { _nowPos.x += m_mouseSpeed.x; }
+	}
 
 	POINT _mouseMove{};
 	_mouseMove.x = _nowPos.x - m_FixMousePos.x;

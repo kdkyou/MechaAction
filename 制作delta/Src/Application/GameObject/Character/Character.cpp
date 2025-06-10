@@ -30,7 +30,7 @@ void Character::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<ActionIdle>());
 
-	m_gamePad = std::make_unique<DirectX::GamePad>();
+	
 
 }
 
@@ -43,9 +43,17 @@ void Character::Update()
 
 	color = { 0,1,0,1 };
 
-	m_padState = m_gamePad->GetState(0);
-
+	
 	m_wpCamera = CameraManager::Instance().GetCurrentCamera();
+
+	if (GetAsyncKeyState('I') & 0x8000)
+	{
+		CameraManager::Instance().SetNextType(CameraManager::Rock);
+	}
+	if (GetAsyncKeyState('U') & 0x8000)
+	{
+		CameraManager::Instance().SetNextType(CameraManager::Tracking);
+	}
 
 
 	if (spThis)
@@ -133,26 +141,22 @@ const bool Character::IsMove()
 	bool move = false;
 	m_vMove = Math::Vector3::Zero;
 
-	auto& key = KdInputManager::Instance();
+	auto& key = KeyInput::GetInstance().GetKeyboardState();
+	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
-	
-	if(!m_padState.IsConnected()){ 
-		int i = 0;
-	}
-
-	if (GetAsyncKeyState('W') & 0x8000 || m_padState.IsLeftThumbStickUp()) {
+	if (key.W||pad.IsLeftThumbStickUp()) {
 		m_vMove.z += 1.f;
 		move = true;
 	}
-	if (GetAsyncKeyState('A') & 0x8000 || m_padState.IsLeftThumbStickLeft()) {
+	if (key.A || pad.IsLeftThumbStickLeft()) {
 		m_vMove.x -= 1.f;
 		move = true;
 	}
-	if (GetAsyncKeyState('S') & 0x8000 || m_padState.IsLeftThumbStickDown()) {
+	if (key.S || pad.IsLeftThumbStickDown()) {
 		m_vMove.z -= 1.f;
 		move = true;
 	}
-	if (GetAsyncKeyState('D') & 0x8000 || m_padState.IsLeftThumbStickRight()) {
+	if (key.D || pad.IsLeftThumbStickRight()) {
 		m_vMove.x += 1.f;
 		move = true;
 	}
@@ -163,7 +167,10 @@ const bool Character::IsMove()
 
 const bool Character::IsBoost()
 {
-	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000 || m_padState.IsXPressed())
+	auto& key = KeyInput::GetInstance().GetKeyboardState();
+	auto& pad = KeyInput::GetInstance().GetGamePadState();
+
+	if (key.LeftShift || pad.IsXPressed())
 	{
 		return true;
 	}
@@ -173,7 +180,10 @@ const bool Character::IsBoost()
 
 const bool Character::IsAttack()
 {
-	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000 || m_padState.IsRightTriggerPressed())
+	auto& mouse = KeyInput::GetInstance().GetMouseState();
+	auto& pad = KeyInput::GetInstance().GetGamePadState();
+
+	if (mouse.leftButton || pad.IsRightTriggerPressed())
 	{
 		return true;
 	}
@@ -183,7 +193,10 @@ const bool Character::IsAttack()
 
 const bool Character::IsFlow()
 {
-	if (GetAsyncKeyState(VK_SPACE) & 0x8000 || m_padState.IsBPressed())
+	auto& key = KeyInput::GetInstance().GetKeyboardState();
+	auto& pad = KeyInput::GetInstance().GetGamePadState();
+
+	if (key.Space || pad.IsBPressed())
 	{
 		return true;
 	}
@@ -738,7 +751,7 @@ void Character::ActionStandUp::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("StandUp"), 2.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("StandUp"), 0.0f, false);
 
 	m_direction = Math::Vector3::Zero;
 
@@ -1415,7 +1428,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("RightBladeAttackBef"), 1.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("RightBladeAttackBef"), 0.2f, false);
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
@@ -1528,7 +1541,7 @@ void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(),1.0f,1.0f,false);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
 			m_spEffects.push_back(effect);
 		}
 	}

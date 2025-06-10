@@ -1,11 +1,14 @@
 ﻿#include "WeaponBase.h"
 
-
-void WeaponBase::Update()
+void WeaponBase::SetAttachModel(const std::string& modelPath, const std::string& AttachPath)
 {
+	if (m_spModelWork == nullptr)
+	{
+		m_spModelWork = std::make_shared<KdModelWork>();
+		m_spModelWork->SetModelData(modelPath);
+	}
 
 }
-
 
 void WeaponBase::DrawLit()
 {

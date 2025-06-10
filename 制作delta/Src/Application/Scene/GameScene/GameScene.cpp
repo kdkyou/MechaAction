@@ -24,7 +24,18 @@ void GameScene::Init()
 	//===================================================================
 	std::shared_ptr<Terrain> _terrain = std::make_shared<Terrain>();
 	_terrain->Init();
+	_terrain->SetModel("Asset/Models/Stage/Stage.gltf");
 	AddObject(_terrain);
+
+
+	/*std::shared_ptr<Terrain> _serrain = std::make_shared<Terrain>();
+	_serrain->Init();
+	_serrain->SetPos({ 5.0f,0.0f,5.0f });
+	_serrain->SetModel("Asset/Models/Building/Building.gltf");
+	
+	AddObject(_serrain);*/
+
+
 
 	//===================================================================
 	// キャラクター初期化

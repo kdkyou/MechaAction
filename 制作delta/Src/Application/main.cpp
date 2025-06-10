@@ -209,12 +209,6 @@ bool Application::Init(int w, int h)
 	//===================================================================
 	SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 
-
-
-
-
-	
-
 	
 	return true;
 }
@@ -270,12 +264,17 @@ void Application::Execute()
 
 		if (GetAsyncKeyState(VK_ESCAPE))
 		{
-//			if (MessageBoxA(m_window.GetWndHandle(), "本当にゲームを終了しますか？",
-//				"終了確認", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES)
+			if (MessageBoxA(m_window.GetWndHandle(), "本当にゲームを終了しますか？",
+				"終了確認", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES)
 			{
 				End();
 			}
 		}
+
+		//入力管理
+		KeyInput::GetInstance().Update();
+
+
 		//=========================================
 		//
 		// アプリケーション更新処理

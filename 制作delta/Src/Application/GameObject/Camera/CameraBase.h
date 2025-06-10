@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include"GamePad.h"
+
 class CameraBase : public KdGameObject
 {
 public:
@@ -59,7 +61,9 @@ protected:
 
 	Math::Matrix								m_mLocalPos		= Math::Matrix::Identity;
 	Math::Matrix								m_mRotation		= Math::Matrix::Identity;
-
+	
 	// カメラ回転用マウス座標の差分
 	POINT										m_FixMousePos{};
+
+	Math::Vector2								m_mouseSpeed = { 10.0f,10.0f };
 };

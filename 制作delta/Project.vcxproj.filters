@@ -112,6 +112,9 @@
     <Filter Include="Src\Application\GameObject\Camera\NoneCamera">
       <UniqueIdentifier>{abec27ce-a14b-4e18-87c0-47b55d1124b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Rifle">
+      <UniqueIdentifier>{ad36ca48-56ec-4d1d-b54a-f9cff788bdb0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -327,6 +330,12 @@
     <ClInclude Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.h">
       <Filter>Src\Application\GameObject\Camera\NoneCamera</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Rifle\Rifle.h">
+      <Filter>Src\Application\GameObject\Weapon\Rifle</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\Input\KeyInput.h">
+      <Filter>Src\Framework\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -514,6 +523,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\NoneCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Rifle\Rifle.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Rifle</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\Input\KeyInput.cpp">
+      <Filter>Src\Framework\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
