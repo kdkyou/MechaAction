@@ -46,11 +46,14 @@ void Character::Update()
 	
 	m_wpCamera = CameraManager::Instance().GetCurrentCamera();
 
-	if (GetAsyncKeyState('I') & 0x8000)
+	auto& key = KeyInput::GetInstance().GetKeyboardState();
+	auto& pad = KeyInput::GetInstance().GetGamePadState();
+
+	if (key.I || pad.IsLeftStickPressed())
 	{
 		CameraManager::Instance().SetNextType(CameraManager::Rock);
 	}
-	if (GetAsyncKeyState('U') & 0x8000)
+	if (key.U)
 	{
 		CameraManager::Instance().SetNextType(CameraManager::Tracking);
 	}

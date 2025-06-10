@@ -1,5 +1,7 @@
 ﻿#include "CameraBase.h"
 
+#include"CameraManager.h"
+
 void CameraBase::Init()
 {
 	if (!m_spCamera)
@@ -50,6 +52,8 @@ void CameraBase::UpdateRotateByMouse()
 		if (pad.IsRightThumbStickUp()) { _nowPos.y -= m_mouseSpeed.y; }
 		if (pad.IsRightThumbStickLeft()) { _nowPos.x -= m_mouseSpeed.x; }
 		if (pad.IsRightThumbStickRight()) { _nowPos.x += m_mouseSpeed.x; }
+
+	//	CameraManager::Instance().SetNextType(CameraManager::Tracking);
 	}
 
 	POINT _mouseMove{};
