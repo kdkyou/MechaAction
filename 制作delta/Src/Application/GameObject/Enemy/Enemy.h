@@ -29,7 +29,7 @@ private:
 	bool									m_isForWard = false;
 
 	//			追いかける範囲　x = Near　y = Far
-	Math::Vector2									m_dist = {10.0f,30.0f};
+	Math::Vector2									m_dist = {10.0f,100.0f};
 
 	std::weak_ptr<Enemy>                            m_wpThis;
 
@@ -119,7 +119,7 @@ private:
 	private:
 	};
 
-	class MoveRotate : ActionStateBase
+	class MoveRotate :public  ActionStateBase
 	{
 	public:
 	~MoveRotate()override{}

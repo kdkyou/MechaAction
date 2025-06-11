@@ -78,6 +78,13 @@ void Character::Update()
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
 	UpdateCollision();
 
+	KdModelWork::Node* pNode = m_spModel->FindWorkNode("CBP");
+	if (pNode)
+	{
+		auto mat = pNode->m_worldTransform;
+		Application::Instance().m_log.AddLog("CBP x:%.2f,y:%.2f,z:%.2f", mat.Translation().x, mat.Translation().y, mat.Translation().z);
+	}
+
 }
 
 void Character::PostUpdate()
@@ -590,7 +597,6 @@ bool Character::AddTrail()
 				auto mat = _pNode->m_worldTransform;
 				mat = mat * m_mWorld;
 				trail->trail->AddPoint(mat);
-				Application::Instance().m_log.AddLog("LUpos X: %f Y : %f Z : %f\n", mat.Translation().x, mat.Translation().y, mat.Translation().z);
 			}
 			else
 				return false;
@@ -602,7 +608,6 @@ bool Character::AddTrail()
 			{
 				auto mat = _pNode->m_worldTransform * m_mWorld;
 				trail->trail->AddPoint(mat);
-				Application::Instance().m_log.AddLog("LDpos X: %f Y : %f Z : %f\n", mat.Translation().x, mat.Translation().y, mat.Translation().z);
 			}
 			else
 				return false;
@@ -614,7 +619,6 @@ bool Character::AddTrail()
 			{
 				auto mat = _pNode->m_worldTransform * m_mWorld;
 				trail->trail->AddPoint(mat);
-				Application::Instance().m_log.AddLog("RUpos X: %f Y : %f Z : %f\n", mat.Translation().x, mat.Translation().y, mat.Translation().z);
 			}
 			else
 				return false;
@@ -626,7 +630,6 @@ bool Character::AddTrail()
 			{
 				auto mat = _pNode->m_worldTransform * m_mWorld;
 				trail->trail->AddPoint(mat);
-				Application::Instance().m_log.AddLog("RDpos X: %f Y : %f Z : %f\n", mat.Translation().x, mat.Translation().y, mat.Translation().z);
 			}
 			else
 				return false;
@@ -761,7 +764,7 @@ void Character::ActionStandUp::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("StandUp"), 0.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("StandUp"), 3.0f, false);
 
 	m_direction = Math::Vector3::Zero;
 
@@ -876,7 +879,7 @@ void Character::ActionJump::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionMove::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Walk"), 4.0f);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Walk"), 2.0f);
 
 	m_speed = spOwner->m_walkSpeed;
 }
@@ -1347,7 +1350,7 @@ void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 		effect->name = "Spark.efkefc";
 		effect->pNodeMat = Math::Matrix::Identity;
-		effect->wpEffect = KdEffekseerManager::GetInstance().Play("Spark.efkefc", spOwner->m_mWorld.Translation());
+		effect->wpEffect = KdEffekseerManager::GetInstance().Play("Spark.efkefc", spOwner->m_mWorld.Translation(),0.25f,5.0f);
 		m_spEffects.push_back(effect);
 		
 }

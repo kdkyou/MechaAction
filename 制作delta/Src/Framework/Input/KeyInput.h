@@ -17,20 +17,24 @@ public:
 	const DirectX::Mouse::State& GetMouseState() const { return m_mouseState; }
 	DirectX::Mouse& GetMouse() { return m_mouse; }
 	DirectX::Mouse::ButtonStateTracker& GetMouseTracker() { return m_mouseTracker; }
+	const std::vector<DirectX::Mouse::State>& GetMouseStateData(){return m_mouseDatas; }
 
 	// キーボード
 	const DirectX::Keyboard::State& GetKeyboardState() const { return m_keyboardState; }
 	DirectX::Keyboard& GetKeyboard() { return m_keyboard; }
 	DirectX::Keyboard::KeyboardStateTracker& GetKeyboardTracker() { return m_keyboardTracker; }
+	const std::vector<DirectX::Keyboard::State>& GetKeyboardStateData(){return m_keyDatas; }
 
 	// ゲームパッド
 	const DirectX::GamePad::State& GetGamePadState() const { return m_gamepadState; }
 	DirectX::GamePad& GetGamePad() { return m_gamepad; }
+	DirectX::GamePad::ButtonStateTracker& GetPadButtonTracker() { return m_gamepadTracker; }
+	const std::vector<DirectX::GamePad::State>& GetGamePadStateData(){return m_padDatas; }
 	
 
-
 	//保存された入力データ数の変更
-	void SetLength(int length) { m_MaxDataLength = length; }
+	void SetDataLength(int length) { m_MaxDataLength = length; }
+	const int GetDataLength()const { return m_MaxDataLength; }
 
 	void SetWindow(HWND hWnd);
 
@@ -50,6 +54,7 @@ private:
 
 	DirectX::GamePad::State					m_gamepadState = {};
 	DirectX::GamePad						m_gamepad = {};
+	DirectX::GamePad::ButtonStateTracker m_gamepadTracker = {};
 
 	//	DirectX::GamePad::GamePadStateTracker;
 

@@ -238,6 +238,8 @@ void Application::Execute()
 	// ループ
 	while (1)
 	{
+		// 処理開始時間Get
+		KdFPSController::GetInstance().UpdateStartTime();
 		
 	//	m_log.Clear();
 

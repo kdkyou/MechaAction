@@ -63,6 +63,7 @@ void KeyInput::Update()
 	m_mouseTracker.Update(m_mouseState);
 
 	m_gamepadState = m_gamepad.GetState(0);
+	m_gamepadTracker.Update(m_gamepadState);
 
 	//データ入力
 	m_keyDatas.push_back(m_keyboardState);

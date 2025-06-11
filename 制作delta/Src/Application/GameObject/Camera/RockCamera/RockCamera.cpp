@@ -11,7 +11,7 @@ void RockCamera::Init()
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
-
+	m_mWorld = m_mLocalPos * m_wpTarget.lock()->GetMatrix();
 }
 
 void RockCamera::PostUpdate()

@@ -12,7 +12,7 @@ void TrackingCamera::Init()
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
 	
-	m_pos = {};
+	m_mWorld = m_mLocalPos * m_wpTarget.lock()->GetMatrix();
 }
 
 void TrackingCamera::PostUpdate()
@@ -24,8 +24,6 @@ void TrackingCamera::PostUpdate()
 	if (_spTarget == nullptr) { return; }
 
 	Math::Vector3 targetPos = _spTarget->GetMatrix().Translation();
-
-
 
 	m_pos = Math::Vector3::Lerp(
 		m_pos,

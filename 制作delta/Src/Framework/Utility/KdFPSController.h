@@ -1,21 +1,24 @@
 ﻿#pragma once
 
 //===========================================
-// 
 // ゲーム時間
-// 
 //===========================================
 class KdFPSController
 {
 public:
+
+	// FPS制御
+	int		m_nowfps = 0;		// 現在のFPS値
+	int		m_maxFps = 60;		// 最大FPS
 
 	float GetTime() { return m_time; }
 	float GetDeltaTime() { return m_deltaTime; }
 
 	void Initialize();
 
-	void Update();
+	void UpdateStartTime();
 
+	void Update();
 
 private:
 
@@ -24,8 +27,16 @@ private:
 	float m_time =0.0f;
 	float m_deltaTime = 0.0f;
 
-	bool m_fixedFrameRate = true;
-	float m_targetFPS = 60.0f;
+	void Control();
+
+	void Monitoring();
+
+	DWORD		m_frameStartTime = 0;		// フレームの開始時間
+
+	int			m_fpsCnt = 0;				// FPS計測用カウント
+	DWORD		m_fpsMonitorBeginTime = 0;	// FPS計測開始時間
+
+	const int	kSecond = 1000;				// １秒のミリ秒
 
 
 	//-------------------------------
@@ -41,3 +52,32 @@ public:
 		return instance;
 	}
 };
+
+//============================================================
+// アプリケーションのFPS制御 + 測定
+//============================================================
+//struct KdFPSController
+//{
+//	// FPS制御
+//	int		m_nowfps = 0;		// 現在のFPS値
+//	int		m_maxFps = 60;		// 最大FPS
+//
+//	void Init();
+//
+//	void UpdateStartTime();
+//
+//	void Update();
+//
+//private:
+//
+//	void Control();
+//
+//	void Monitoring();
+//
+//	DWORD		m_frameStartTime = 0;		// フレームの開始時間
+//
+//	int			m_fpsCnt = 0;				// FPS計測用カウント
+//	DWORD		m_fpsMonitorBeginTime = 0;	// FPS計測開始時間
+//
+//	const int	kSecond = 1000;				// １秒のミリ秒
+//};

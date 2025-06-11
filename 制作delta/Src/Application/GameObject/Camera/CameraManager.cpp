@@ -78,9 +78,9 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 	}
 
 	m_nowType = m_nextType;
-	m_currentCamera->Init();
 	m_currentCamera->SetTarget(m_wpCameraTarget);
 	m_currentCamera->SetRockTarget(m_wpRockTarget);
+	m_currentCamera->Init();
 	
 	return true;
 }
