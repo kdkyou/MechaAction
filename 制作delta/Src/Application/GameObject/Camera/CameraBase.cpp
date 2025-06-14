@@ -47,18 +47,38 @@ void CameraBase::UpdateRotateByMouse()
 
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
-	{
-		if (pad.IsRightThumbStickDown()) { _nowPos.y += m_mouseSpeed.y; }
-		if (pad.IsRightThumbStickUp()) { _nowPos.y -= m_mouseSpeed.y; }
-		if (pad.IsRightThumbStickLeft()) { _nowPos.x -= m_mouseSpeed.x; }
-		if (pad.IsRightThumbStickRight()) { _nowPos.x += m_mouseSpeed.x; }
-
-	//	CameraManager::Instance().SetNextType(CameraManager::Tracking);
-	}
+	bool moveCamera = false;
 
 	POINT _mouseMove{};
 	_mouseMove.x = _nowPos.x - m_FixMousePos.x;
 	_mouseMove.y = _nowPos.y - m_FixMousePos.y;
+
+	if (_mouseMove.x > 0.0f || _mouseMove.y > 0.0f)
+	{
+		moveCamera = true;
+	}
+
+	if (pad.IsRightThumbStickDown()) {
+		_mouseMove.y += m_mouseSpeed.y;
+		moveCamera = true;
+	}
+	if (pad.IsRightThumbStickUp()) {
+		_mouseMove.y -= m_mouseSpeed.y;
+		moveCamera = true;
+	}
+	if (pad.IsRightThumbStickLeft()) {
+		_mouseMove.x -= m_mouseSpeed.x;
+		moveCamera = true;
+	}
+	if (pad.IsRightThumbStickRight()) {
+		_mouseMove.x += m_mouseSpeed.x;
+		moveCamera = true;
+	}
+
+	if (moveCamera == true)
+	{
+		CameraManager::Instance().SetNextType(CameraManager::Tracking);
+	}
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 

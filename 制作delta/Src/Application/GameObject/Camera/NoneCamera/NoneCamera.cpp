@@ -10,6 +10,8 @@ void NoneCamera::Init()
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
+	m_name = "None";
+
 }
 
 void NoneCamera::PostUpdate()

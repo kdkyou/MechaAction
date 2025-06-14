@@ -34,17 +34,20 @@ private:
 
 	void Editor_ImGui()override;
 
-	//WASDの入力があったかどうか
+	// WASDの入力があったかどうか
 	const bool IsMove();
 
-	//左SHIFTの入力があったか
+	// SHIFTの入力があったか
 	const bool IsBoost();
 
-	//左クリック入力
+	// 左クリック入力
 	const bool IsAttack();
 
-	//スペース入力
+	// スペース入力
 	const bool IsFlow();
+	// 右クリック入力
+	const bool IsShield();
+
 	//				移動量　　方向		当たり判定するタイプ（基本地面） キャラが回転するか　レイに補正をかけるか
 	bool Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool camera = true, bool step = false);
 	//bool Move(float speed,const Math::Vector3& dir,const Math::Vector3& step={}, const KdCollider::Type type=KdCollider::TypeGround, bool ray = true, bool sphere = true, bool camera = true);
@@ -141,6 +144,7 @@ private:
 		bool m_isMove = false;
 		bool m_isRightAttack = false;
 		bool m_isFlow = false;
+		bool m_isShield =false;
 
 		float m_speed = 0.0f;
 		Math::Vector3 m_direction = Math::Vector3::Zero;
@@ -188,10 +192,34 @@ private:
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
+	//未
+	class ActionStandShield : public ActionStateBase
+	{
+	public:
+		virtual ~ActionStandShield() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void Exit(std::weak_ptr<Character>& owner)override;
+	};
+
 	class ActionMove :public ActionStateBase
 	{
 	public:
 		virtual ~ActionMove()  override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void Exit(std::weak_ptr<Character>& owner)override;
+	};
+
+	//未
+	class ActionMoveShield : public ActionStateBase
+	{
+	public:
+		virtual ~ActionMoveShield() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;

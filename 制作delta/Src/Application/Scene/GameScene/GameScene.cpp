@@ -30,7 +30,7 @@ void GameScene::Init()
 
 	/*std::shared_ptr<Terrain> _serrain = std::make_shared<Terrain>();
 	_serrain->Init();
-	_serrain->SetPos({ 5.0f,0.0f,5.0f });
+	_serrain->SetPos({ 0.0f,0.0f,0.0f });
 	_serrain->SetModel("Asset/Models/Building/Building.gltf");
 	
 	AddObject(_serrain);*/
@@ -59,8 +59,8 @@ void GameScene::Init()
 	//エネミー
 	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
 	enemy->SetThis(enemy);
-	enemy->Init();
 	enemy->SetTarget(_character);
+	enemy->Init();
 	AddObject(enemy);
 
 	_character->RegistHitObject(enemy);

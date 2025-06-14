@@ -1,5 +1,7 @@
 ﻿#include"Enemy.h"
 
+#include"../../main.h"
+
 void Enemy::Init()
 {
 	if (!m_spModel)
@@ -8,7 +10,7 @@ void Enemy::Init()
 		m_spModel->SetModelData("Asset/Models/Another/Another.gltf");
 		// 初期のアニメーションをセットする
 		m_spAnimator = std::make_shared<KdAnimator>();
-		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("StandUp"), 10.0f, true);
+		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("StandUp"), 10.0f, false);
 	}
 
 	if (!m_pCollider)
@@ -77,11 +79,19 @@ void Enemy::DrawLit()
 
 void Enemy::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 {
+	if (nextAction == nullptr) { return; }
+
 	std::shared_ptr<KdGameObject> spTarget = m_wpTarget.lock();
 
-	if (m_nowAction)m_nowAction->Exit(m_wpThis, spTarget);
+	if (spTarget == nullptr) { return; }
+
+	if (m_nowAction) {
+		m_nowAction->Exit(m_wpThis, spTarget);
+	}
+
 	m_nowAction = nextAction;
 	m_nowAction->Enter(m_wpThis, spTarget);
+
 }
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //待機状態
@@ -94,6 +104,9 @@ void Enemy::Stand::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdG
 
 void Enemy::Stand::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+
+	Application::Instance().m_log.AddLog("EnemynowState: Stand\n");
+
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto difference = spObj->GetMatrix().Translation() - spOwner->m_mWorld.Translation();
 
@@ -116,7 +129,7 @@ void Enemy::Stand::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGa
 void Enemy::Boost::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Boost"), 1.0f,false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Boost"), 1.0f, false);
 
 	m_speed = 100.0f;
 
@@ -133,6 +146,8 @@ void Enemy::Boost::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdG
 
 void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	Application::Instance().m_log.AddLog("EnemynowState: Boost\n");
+
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
 	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
@@ -148,7 +163,7 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<Kd
 
 	auto distHalf = (spOwner->m_dist.y - spOwner->m_dist.x) / 2.0f;
 
-	if (spOwner->m_spAnimator->IsAnimationEnd())
+	if (spOwner->m_spAnimator->IsAnimationEnd() == true)
 	{
 		if (difference.LengthSquared() <= distHalf)
 		{
@@ -230,7 +245,7 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<Kd
 	spOwner->m_mWorld = rotMat * transMat;
 
 
-	
+
 
 	//エフェクト
 	for (auto& eff : m_spEffects)
@@ -270,7 +285,7 @@ void Enemy::Boost::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGa
 void Enemy::BoostStop::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostStop"), 1.0f,false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostStop"), 1.0f, false);
 
 	m_speed = 50.0f;
 
@@ -278,6 +293,8 @@ void Enemy::BoostStop::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr
 
 void Enemy::BoostStop::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	Application::Instance().m_log.AddLog("EnemynowState: BoostStop\n");
+
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto difference = spObj->GetMatrix().Translation() - spOwner->m_mWorld.Translation();
 
@@ -302,7 +319,7 @@ void Enemy::BoostStop::Update(std::weak_ptr<Enemy>& owner, const  std::shared_pt
 			spOwner->ChangeActionState(std::make_shared<MoveBack>());
 			return;
 		}
-		else 
+		else
 		{
 			spOwner->ChangeActionState(std::make_shared<Boost>());
 			return;
@@ -365,13 +382,15 @@ void Enemy::BoostStop::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<
 void Enemy::MoveForward::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("FLeaning"), 3.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostDush"), 3.0f, false);
 
 	m_speed = 30.0f;
 }
 
 void Enemy::MoveForward::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	Application::Instance().m_log.AddLog("EnemynowState: MoveForward\n");
+
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
 	auto myMat = spOwner->GetMatrix();
@@ -389,16 +408,26 @@ void Enemy::MoveForward::Update(std::weak_ptr<Enemy>& owner, const  std::shared_
 			return;
 		}
 
-		auto& key = KeyInput::GetInstance().GetKeyboardStateData();
-		auto& pad = KeyInput::GetInstance().GetGamePadStateData();
-		
+
 		bool move = false;
-		for (int i = 0; i < KeyInput::GetInstance().GetDataLength(); i++)
+		for (auto& key : KeyInput::GetInstance().GetKeyboardStateData())
 		{
-			if (key[i].A || key[i].W || key[i].S || key[i].D || pad[i].IsLeftThumbStickDown() || pad[i].IsLeftThumbStickLeft() || pad[i].IsLeftThumbStickRight() || pad[i].IsLeftThumbStickUp())
+			if (key.A || key.W || key.S || key.D)
 			{
 				move = true;
 				break;
+			}
+		}
+
+		if (move == false)
+		{
+			for (auto& pad : KeyInput::GetInstance().GetGamePadStateData())
+			{
+				if (pad.IsLeftThumbStickDown() || pad.IsLeftThumbStickLeft() || pad.IsLeftThumbStickRight() || pad.IsLeftThumbStickUp())
+				{
+					move = true;
+					break;
+				}
 			}
 		}
 
@@ -409,7 +438,83 @@ void Enemy::MoveForward::Update(std::weak_ptr<Enemy>& owner, const  std::shared_
 		}
 	}
 
-	
+	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
+
+	//現在の座標
+	Math::Vector3 nowPos = spOwner->GetMatrix().Translation();
+
+	//ベクトル
+	Math::Vector3 nowVec = spOwner->GetMatrix().Backward();
+	Math::Vector3 targetVec = difference;
+
+	nowVec.Normalize();
+	targetVec.Normalize();
+
+	//内積を使って回転する角度を求める
+	//ベクトルA*ベクトルB*cosΘ(ベクトルAとベクトルBのなす角)
+	//			1	*	1	* cosΘ			
+	float d = nowVec.Dot(targetVec);
+	//dの中にはコサインΘが入っている
+
+	//角度求める(でも残念ながらラジアン角)11
+	float ang = DirectX::XMConvertToDegrees(acos(d));
+
+	//内積から角度を求めて少しでも角度が変わったら
+	//ゆっくり回転するようにする
+	if (ang >= 0.1f)
+	{
+		if (ang > 10)
+		{
+			ang = 10.0f;
+		}
+
+		//外積を求める（どっっちに回転するのか調べる）
+		Math::Vector3 c = targetVec.Cross(nowVec);
+
+		if (c.y >= 0)
+		{
+			//右回転
+			spOwner->m_worldRot.y -= ang;
+		}
+		else
+		{
+			//左回転
+			spOwner->m_worldRot.y += ang;
+		}
+	}
+
+	if (spOwner->m_worldRot.y > 360)
+	{
+		spOwner->m_worldRot.y -= 360;
+	}
+	else if (spOwner->m_worldRot.y < 0)
+	{
+		spOwner->m_worldRot.y += 360;
+	}
+
+	Math::Matrix rotMat = Math::Matrix::CreateFromYawPitchRoll(
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.y),
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.x),
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.z));
+
+	//	if (difference.Length() > spOwner->m_dist.x)
+	{
+		Math::Vector3 vec = {};
+
+		Math::Matrix mat = rotMat * Math::Matrix::CreateTranslation(nowPos);
+
+		vec = mat.Backward();
+
+		vec.Normalize();
+
+		nowPos += vec * m_speed * deltaTime;
+	}
+
+
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
+
+	spOwner->m_mWorld = rotMat * transMat;
+
 }
 
 void Enemy::MoveForward::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
@@ -423,7 +528,7 @@ void Enemy::MoveForward::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_pt
 void Enemy::MoveBack::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Back"), 4.0f,false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostBack"), 4.0f, false);
 
 	m_speed = 20.0f;
 
@@ -431,9 +536,11 @@ void Enemy::MoveBack::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<
 
 void Enemy::MoveBack::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	Application::Instance().m_log.AddLog("EnemynowState: MoveBack\n");
+
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
-	
+
 	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
 
 	//現在の座標
@@ -450,15 +557,15 @@ void Enemy::MoveBack::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr
 	// 範囲内の半分より遠い時
 	if (difference.LengthSquared() > distHalf)
 	{
-		spOwner->ChangeActionState(std::make_shared<MoveRotate>());
+		spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
 		return;
-	} 
+	}
 	else
 	{
 		// 
 		auto& keyData = KeyInput::GetInstance().GetKeyboardStateData();
 		auto& padData = KeyInput::GetInstance().GetGamePadStateData();
-		
+
 		//if()
 
 	}
@@ -518,7 +625,7 @@ void Enemy::MoveBack::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr
 		DirectX::XMConvertToRadians(spOwner->m_worldRot.x),
 		DirectX::XMConvertToRadians(spOwner->m_worldRot.z));
 
-//	if (difference.Length() > spOwner->m_dist.x)
+	//	if (difference.Length() > spOwner->m_dist.x)
 	{
 		Math::Vector3 vec = {};
 
@@ -530,7 +637,7 @@ void Enemy::MoveBack::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr
 
 		nowPos += vec * m_speed * deltaTime;
 	}
-	
+
 
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
 
@@ -543,18 +650,20 @@ void Enemy::MoveBack::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<K
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-// 回り込み
+// 右回り込み
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-void Enemy::MoveRotate::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::MoveRightRotate::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("FLeaning"), 10.0f);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostRight"), 3.0f);
 
 	m_speed = 30.0f;
 }
 
-void Enemy::MoveRotate::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::MoveRightRotate::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	Application::Instance().m_log.AddLog("EnemynowState: MoveRightRotate\n");
+
 	auto spOwner = owner.lock();
 
 	auto ownerPos = spOwner->GetMatrix().Translation();
@@ -562,14 +671,210 @@ void Enemy::MoveRotate::Update(std::weak_ptr<Enemy>& owner, const  std::shared_p
 
 	auto difference = targetPos - ownerPos;
 
-	
+	//ステート変化
+	if (difference.Length() < spOwner->m_dist.x)
+	{
+		spOwner->ChangeActionState(std::make_shared<Attack>());
+		return;
+	}
+
+
+	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
+
+	auto nowPos = spOwner->GetMatrix().Translation();
+
+	//ベクトル
+	Math::Vector3 nowVec = spOwner->GetMatrix().Backward();
+	Math::Vector3 targetVec = difference;
+
+	nowVec.Normalize();
+	targetVec.Normalize();
+
+	//内積を使って回転する角度を求める
+	//ベクトルA*ベクトルB*cosΘ(ベクトルAとベクトルBのなす角)
+	//			1	*	1	* cosΘ			
+	float d = nowVec.Dot(targetVec);
+	//dの中にはコサインΘが入っている
+
+	//角度求める(でも残念ながらラジアン角)11
+	float ang = DirectX::XMConvertToDegrees(acos(d));
+
+	//内積から角度を求めて少しでも角度が変わったら
+	//ゆっくり回転するようにする
+	if (ang >= 0.1f)
+	{
+		if (ang > 10)
+		{
+			ang = 10.0f;
+		}
+
+		//外積を求める（どっっちに回転するのか調べる）
+		Math::Vector3 c = targetVec.Cross(nowVec);
+
+		if (c.y >= 0)
+		{
+			//右回転
+			spOwner->m_worldRot.y -= ang;
+		}
+		else
+		{
+			//左回転
+			spOwner->m_worldRot.y += ang;
+		}
+	}
+
+	if (spOwner->m_worldRot.y > 360)
+	{
+		spOwner->m_worldRot.y -= 360;
+	}
+	else if (spOwner->m_worldRot.y < 0)
+	{
+		spOwner->m_worldRot.y += 360;
+	}
+
+	Math::Matrix rotMat = Math::Matrix::CreateFromYawPitchRoll(
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.y),
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.x),
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.z));
+
+	//	if (difference.Length() > spOwner->m_dist.x)
+	{
+		Math::Vector3 vec = {};
+
+		Math::Matrix mat = rotMat * Math::Matrix::CreateTranslation(nowPos);
+
+		vec = mat.Right();
+
+		vec.Normalize();
+
+		nowPos += vec * m_speed * deltaTime;
+	}
+
+
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
+
+	spOwner->m_mWorld = rotMat * transMat;
 
 }
 
-void Enemy::MoveRotate::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
+void Enemy::MoveRightRotate::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 
 }
+
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+// 左回り込み
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+void Enemy::MoveLeftRotate::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
+{
+	std::shared_ptr<Enemy> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("BoostLeft"), 3.0f);
+
+	m_speed = 30.0f;
+}
+
+void Enemy::MoveLeftRotate::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
+{
+	Application::Instance().m_log.AddLog("EnemynowState: MoveLeftRotate\n");
+
+	auto spOwner = owner.lock();
+
+	auto ownerPos = spOwner->GetMatrix().Translation();
+	auto targetPos = spObj->GetMatrix().Translation();
+
+	auto difference = targetPos - ownerPos;
+
+	//ステート変化
+	if (difference.Length() < spOwner->m_dist.x)
+	{
+		spOwner->ChangeActionState(std::make_shared<Attack>());
+		return;
+	}
+
+
+	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
+
+	auto nowPos = spOwner->GetMatrix().Translation();
+
+	//ベクトル
+	Math::Vector3 nowVec = spOwner->GetMatrix().Backward();
+	Math::Vector3 targetVec = difference;
+
+	nowVec.Normalize();
+	targetVec.Normalize();
+
+	//内積を使って回転する角度を求める
+	//ベクトルA*ベクトルB*cosΘ(ベクトルAとベクトルBのなす角)
+	//			1	*	1	* cosΘ			
+	float d = nowVec.Dot(targetVec);
+	//dの中にはコサインΘが入っている
+
+	//角度求める(でも残念ながらラジアン角)11
+	float ang = DirectX::XMConvertToDegrees(acos(d));
+
+	//内積から角度を求めて少しでも角度が変わったら
+	//ゆっくり回転するようにする
+	if (ang >= 0.1f)
+	{
+		if (ang > 10)
+		{
+			ang = 10.0f;
+		}
+
+		//外積を求める（どっっちに回転するのか調べる）
+		Math::Vector3 c = targetVec.Cross(nowVec);
+
+		if (c.y >= 0)
+		{
+			//右回転
+			spOwner->m_worldRot.y -= ang;
+		}
+		else
+		{
+			//左回転
+			spOwner->m_worldRot.y += ang;
+		}
+	}
+
+	if (spOwner->m_worldRot.y > 360)
+	{
+		spOwner->m_worldRot.y -= 360;
+	}
+	else if (spOwner->m_worldRot.y < 0)
+	{
+		spOwner->m_worldRot.y += 360;
+	}
+
+	Math::Matrix rotMat = Math::Matrix::CreateFromYawPitchRoll(
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.y),
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.x),
+		DirectX::XMConvertToRadians(spOwner->m_worldRot.z));
+
+	//	if (difference.Length() > spOwner->m_dist.x)
+	{
+		Math::Vector3 vec = {};
+
+		Math::Matrix mat = rotMat * Math::Matrix::CreateTranslation(nowPos);
+
+		vec = mat.Left();
+
+		vec.Normalize();
+
+		nowPos += vec * m_speed * deltaTime;
+	}
+
+
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
+
+	spOwner->m_mWorld = rotMat * transMat;
+
+}
+
+void Enemy::MoveLeftRotate::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
+{
+
+}
+
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 // 攻撃状態
@@ -582,6 +887,8 @@ void Enemy::Attack::Enter(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdG
 
 void Enemy::Attack::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	Application::Instance().m_log.AddLog("EnemyowState: Attack\n");
+
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
 	if (spOwner->m_spAnimator->IsAnimationEnd())
@@ -604,11 +911,13 @@ void Enemy::Hited::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdG
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Hited"), 10.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Hited"), 2.0f, false);
 }
 
 void Enemy::Hited::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	Application::Instance().m_log.AddLog("EnemynowState: Hited\n");
+
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
 	//攻撃をくらったとき
@@ -632,11 +941,13 @@ void Enemy::Destoroy::Enter(std::weak_ptr<Enemy>& owner, const std::shared_ptr<K
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Destroyed"), 2.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("Destroyed"), 5.0f, false);
 }
 
 void Enemy::Destoroy::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
+	Application::Instance().m_log.AddLog("EnemynowState: Destory\n");
+
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
 	//死亡時

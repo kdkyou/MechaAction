@@ -11,8 +11,11 @@ void TrackingCamera::Init()
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
-	
 	m_mWorld = m_mLocalPos * m_wpTarget.lock()->GetMatrix();
+
+	m_pos = m_wpTarget.lock()->GetMatrix().Translation();
+
+	m_name = "Tracking";
 }
 
 void TrackingCamera::PostUpdate()

@@ -119,10 +119,22 @@ private:
 	private:
 	};
 
-	class MoveRotate :public  ActionStateBase
+	class MoveRightRotate :public  ActionStateBase
 	{
 	public:
-	~MoveRotate()override{}
+	~MoveRightRotate()override{}
+
+		void Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
+		void Update(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)override;
+		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override {}
+		void Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
+	private:
+	};
+
+	class MoveLeftRotate :public  ActionStateBase
+	{
+	public:
+		~MoveLeftRotate()override {}
 
 		void Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)override;
 		void Update(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)override;

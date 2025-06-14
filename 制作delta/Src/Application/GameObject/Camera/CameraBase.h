@@ -46,7 +46,11 @@ public:
 		m_wpHitObjectList.push_back(object);
 	}
 
+	const std::string& GetName() { return m_name; }
+
 protected:
+
+	std::string									m_name;
 
 	// カメラ回転用角度
 	Math::Vector3								m_DegAng = Math::Vector3::Zero;

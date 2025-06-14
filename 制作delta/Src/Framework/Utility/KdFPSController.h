@@ -11,6 +11,7 @@ public:
 	int		m_nowfps = 0;		// 現在のFPS値
 	int		m_maxFps = 60;		// 最大FPS
 
+	float GetFPS() { return m_nowfps; }
 	float GetTime() { return m_time; }
 	float GetDeltaTime() { return m_deltaTime; }
 

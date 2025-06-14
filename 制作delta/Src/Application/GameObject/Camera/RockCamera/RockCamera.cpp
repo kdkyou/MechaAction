@@ -12,6 +12,8 @@ void RockCamera::Init()
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
 	m_mWorld = m_mLocalPos * m_wpTarget.lock()->GetMatrix();
+
+	m_name = "Rock";
 }
 
 void RockCamera::PostUpdate()
@@ -23,6 +25,8 @@ void RockCamera::PostUpdate()
 	{
 		_targetMat = Math::Matrix::CreateTranslation(_spTarget->GetPos());
 	}
+
+	UpdateRotateByMouse();
 
 	Rock();
 
