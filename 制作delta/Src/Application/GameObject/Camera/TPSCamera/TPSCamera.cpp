@@ -84,4 +84,6 @@ void TPSCamera::PostUpdate()
 			}
 		}
 	}
+
+	CameraBase::PostUpdate();
 }

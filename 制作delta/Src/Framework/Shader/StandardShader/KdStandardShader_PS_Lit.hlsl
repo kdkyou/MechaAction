@@ -334,6 +334,18 @@ float4 main(VSOutput In) : SV_Target0
 			outColor += g_dissolveEmissive;
 		}
 	}
+
+	// リムライト処理
+	if(g_limLightEnable > 0)
+	{
+		//float limLightPow = dot(normalize(In.wPos - g_CamPos), wN);
+		//limLightPow = 1 - abs(limLightPow);
+
+		// 法線の「上向き度」や「Z成分」など、固定方向と比較
+		float rim = 1.0 - saturate(dot(wN, float3(1, 0, 1))); // 例えばZ方向
+
+		outColor.rgb += g_limLightColor * pow(rim, g_limLightPow);
+	}
 	
 	totalBrightness = saturate( totalBrightness );
 	outColor *= totalBrightness;

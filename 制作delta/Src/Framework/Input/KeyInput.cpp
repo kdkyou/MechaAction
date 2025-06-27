@@ -77,15 +77,15 @@ void KeyInput::Update()
 
 	if (m_keyDatas.size() > m_MaxDataLength)
 	{
-		m_keyDatas.erase(m_keyDatas.begin());
+		m_keyDatas.pop_front();
 	}
 	if (m_mouseDatas.size() > m_MaxDataLength)
 	{
-		m_mouseDatas.erase(m_mouseDatas.begin());
+		m_mouseDatas.pop_front();
 	}
 	if (m_padDatas.size() > m_MaxDataLength)
 	{
-		m_padDatas.erase(m_padDatas.begin());
+		m_padDatas.pop_front();
 	}
 	/*
 	if (m_mouseState.rightButton && m_mouseState.positionMode == DirectX::Mouse::MODE_RELATIVE)

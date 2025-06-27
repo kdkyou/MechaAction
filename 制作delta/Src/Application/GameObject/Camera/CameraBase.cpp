@@ -16,6 +16,14 @@ void CameraBase::Init()
 
 }
 
+void CameraBase::PostUpdate()
+{
+	if (!m_spCamera) { return; }
+
+	KdAudioManager::Instance().SetListnerMatrix(m_mWorld);
+}
+
+
 void CameraBase::PreDraw()
 {
 	if (!m_spCamera) { return; }
@@ -44,7 +52,7 @@ void CameraBase::UpdateRotateByMouse()
 	POINT _nowPos;
 
 	GetCursorPos(&_nowPos);
-
+	auto& mouse = KeyInput::GetInstance().GetMouseState();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
 	bool moveCamera = false;

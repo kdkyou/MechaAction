@@ -46,7 +46,7 @@ private:
 	// スペース入力
 	const bool IsFlow();
 	// 右クリック入力
-	const bool IsShield();
+	const bool IsGuard();
 
 	//				移動量　　方向		当たり判定するタイプ（基本地面） キャラが回転するか　レイに補正をかけるか
 	bool Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool camera = true, bool step = false);
@@ -78,6 +78,9 @@ private:
 
 	bool										m_isGround = false;
 
+	
+	void OverTrans(const std::string& nowAnimName);
+
 
 	//パラメータ
 	Math::Vector3								m_stepHigh = { 0.0f,0.2f,0.0f };
@@ -91,6 +94,8 @@ private:
 	float										m_hitedSpeed = 15.0f;
 
 	Math::Color color = { 0,1,0,1 };
+
+	bool									    m_transAC = false;
 
 	//トレイル
 	void InitTrail();
@@ -144,7 +149,9 @@ private:
 		bool m_isMove = false;
 		bool m_isRightAttack = false;
 		bool m_isFlow = false;
-		bool m_isShield =false;
+		bool m_isGuard =false;
+
+		std::string		m_animName;
 
 		float m_speed = 0.0f;
 		Math::Vector3 m_direction = Math::Vector3::Zero;
@@ -166,7 +173,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -177,7 +184,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -188,11 +195,11 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
-	//未
+	//
 	class ActionStandShield : public ActionStateBase
 	{
 	public:
@@ -200,7 +207,18 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	};
+
+	class ActionJumpShield :public ActionStateBase
+	{
+
+		virtual ~ActionJumpShield() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -211,7 +229,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -223,7 +241,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -234,7 +252,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 
 	private:
@@ -248,7 +266,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -260,7 +278,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -272,7 +290,19 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+
+	class ActionBoostShield :public ActionStateBase
+	{
+	public:
+		virtual ~ActionBoostShield() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -284,7 +314,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -296,7 +326,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -308,7 +338,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
@@ -319,7 +349,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
@@ -331,7 +361,7 @@ private:
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override {}
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};

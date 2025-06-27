@@ -74,6 +74,7 @@ public:
 	// 帯状ポリゴンの長さを設定
 	inline void SetLength(UINT length) { m_length = length; }
 	inline void SetWidth(float width) { m_width = width; }
+	inline void SetHeigh(float width) { m_heigth = width; }
 
 private:
 
@@ -99,4 +100,6 @@ private:
 	UINT			m_length = 20;
 	//軌跡の幅
 	float			m_width = 0.6f;
+	//軌跡の高さ
+	float			m_heigth = 1.0f;
 };

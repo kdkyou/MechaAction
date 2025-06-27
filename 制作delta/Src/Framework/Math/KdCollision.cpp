@@ -400,10 +400,10 @@ bool MeshIntersect(const KdMesh& mesh, const DirectX::BoundingSphere& sphere,
 // ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 // レイと同様の理由
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-static void InvertAABBInfo(DirectX::XMVECTOR& /*aabbPosInv*/, DirectX::XMFLOAT3& /*aabbExtent*/, DirectX::XMFLOAT3& /*ExtentsSqr*/,
-	const DirectX::XMMATRIX& /*matrix*/, const DirectX::BoundingBox& /*aabb*/)
+static void InvertAABBInfo(DirectX::XMVECTOR& aabbPosInv, DirectX::XMFLOAT3& aabbExtent, DirectX::XMFLOAT3& ExtentsSqr,
+	const DirectX::XMMATRIX& matrix, const DirectX::BoundingBox& aabb)
 {
-	// メッシュの逆行列で、球の中心座標を変換(メッシュの座標系へ変換される)
+	//// メッシュの逆行列で、球の中心座標を変換(メッシュの座標系へ変換される)
 	//DirectX::XMMATRIX invMat = XMMatrixInverse(0, matrix);
 	//aabbPosInv = XMVector3TransformCoord(XMLoadFloat3(&aabb.Center), invMat);
 

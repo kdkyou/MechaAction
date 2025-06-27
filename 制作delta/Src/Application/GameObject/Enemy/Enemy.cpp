@@ -27,7 +27,7 @@ void Enemy::Init()
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-	SetPos({ 15.0f,0.0f,10.0f });
+	SetPos({ 0.0f,0.0f,10.0f });
 
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Stand>());
@@ -57,7 +57,7 @@ void Enemy::Update()
 
 void Enemy::PostUpdate()
 {
-	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+	m_spAnimator->AdvanceTime(m_spModel->WorkNodes(),40.0f);
 
 	m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });
 
@@ -167,8 +167,86 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<Kd
 	{
 		if (difference.LengthSquared() <= distHalf)
 		{
-			spOwner->ChangeActionState(std::make_shared<MoveForward>());
-			return;
+			auto& key = KeyInput::GetInstance().GetKeyboardStateData();
+			auto& pad = KeyInput::GetInstance().GetGamePadStateData();
+
+			int flg = 0;
+
+			for (auto& data : key)
+			{
+				if (data.A)
+				{
+					flg = 2;
+					break;
+				}
+				else if (data.D)
+				{
+					flg = 3;
+					break;
+				}
+				else if (data.W)
+				{
+					flg = 4;
+					break;
+				}
+				else if (data.S)
+				{
+					flg = 1;
+					break;
+				}
+			}
+
+			if(flg == 0)
+			{ 
+				for (auto& data : pad)
+				{
+					if (data.IsLeftThumbStickLeft())
+					{
+						flg = 2;
+						break;
+					}
+					else if (data.IsLeftThumbStickRight())
+					{
+						flg = 3;
+						break;
+					}
+					else if (data.IsLeftThumbStickUp())
+					{
+						flg = 4;
+						break;
+					}
+					else if (data.IsLeftThumbStickDown())
+					{
+						flg = 1;
+						break;
+					}
+				}
+			}
+
+			//前進
+			if (flg == 1)
+			{
+				spOwner->ChangeActionState(std::make_shared<MoveForward>());
+				return;
+			}
+			// 右回り
+			else if(flg == 2)
+			{
+				spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
+				return;
+			}
+			// 左回り
+			else if(flg == 3)
+			{
+				spOwner->ChangeActionState(std::make_shared<MoveLeftRotate>());
+				return;
+			}
+			// 後退
+			else if (flg == 4)
+			{
+				spOwner->ChangeActionState(std::make_shared<MoveBack>());
+				return;
+			}
 		}
 		else
 		{
@@ -186,16 +264,12 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<Kd
 	targetVec.Normalize();
 
 	//内積を使って回転する角度を求める
-	//ベクトルA*ベクトルB*cosΘ(ベクトルAとベクトルBのなす角)
-	//			1	*	1	* cosΘ			
 	float d = nowVec.Dot(targetVec);
 	//dの中にはコサインΘが入っている
 
-	//角度求める(でも残念ながらラジアン角)11
+	//角度求める
 	float ang = DirectX::XMConvertToDegrees(acos(d));
 
-	//内積から角度を求めて少しでも角度が変わったら
-	//ゆっくり回転するようにする
 	if (ang >= 0.1f)
 	{
 		if (ang > 10)
@@ -203,7 +277,6 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<Kd
 			ang = 10.0f;
 		}
 
-		//外積を求める（どっっちに回転するのか調べる）
 		Math::Vector3 c = targetVec.Cross(nowVec);
 
 		if (c.y >= 0)
@@ -243,8 +316,6 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<Kd
 
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
 	spOwner->m_mWorld = rotMat * transMat;
-
-
 
 
 	//エフェクト
@@ -882,7 +953,7 @@ void Enemy::MoveLeftRotate::Exit(std::weak_ptr<Enemy>& owner, const  std::shared
 void Enemy::Attack::Enter(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation("LeftArmAction"), 3.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModel->GetData()->GetAnimation(""), 3.0f, false);
 }
 
 void Enemy::Attack::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)

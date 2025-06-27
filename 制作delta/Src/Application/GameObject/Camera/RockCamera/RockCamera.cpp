@@ -92,4 +92,6 @@ void RockCamera::Rock()
 		m_DegAng.y += 360;
 	}
 
+
+	CameraBase::PostUpdate();
 }

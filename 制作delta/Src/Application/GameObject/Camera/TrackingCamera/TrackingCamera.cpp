@@ -11,9 +11,16 @@ void TrackingCamera::Init()
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
-	m_mWorld = m_mLocalPos * m_wpTarget.lock()->GetMatrix();
 
-	m_pos = m_wpTarget.lock()->GetMatrix().Translation();
+	if (m_wpTarget.expired() == false)
+	{
+		m_mWorld = m_mLocalPos * m_wpTarget.lock()->GetMatrix();
+
+		m_pos = m_wpTarget.lock()->GetMatrix().Translation();
+		
+		m_DegAng;
+	}
+
 
 	m_name = "Tracking";
 }
@@ -38,6 +45,8 @@ void TrackingCamera::PostUpdate()
 	m_mRotation = GetRotationMatrix();
 
 	m_mWorld = m_mLocalPos *m_mRotation * Math::Matrix::CreateTranslation(m_pos);
+
+	CameraBase::PostUpdate(); 
 }
 
 void TrackingCamera::Editor_ImGui()

@@ -9,6 +9,9 @@ public:
 	virtual ~CameraBase()	override	{}
 
 	void Init()				override;
+
+	// カメラに3Dリスナーを置く
+	void PostUpdate()			override;
 	void PreDraw()			override;
 
 

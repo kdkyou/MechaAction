@@ -95,7 +95,8 @@ float4 main(VSOutput In) : SV_Target0
 			float dist = distance(uv, center);
 			float effectRadius = 0.4; // 半径40%
 			float glitchMask = smoothstep(effectRadius - 0.2, effectRadius + 0.05, dist);
-			glitch *=  glitchMask;
+			//glitch *= 1.0f- glitchMask;
+			glitch *= glitchMask;
 
 		//速度調整
 			uv.x = lerp(uv.x, uv.x + noiseX, glitch);
@@ -115,7 +116,7 @@ float4 main(VSOutput In) : SV_Target0
 			//狂わした色を反転
 			color.rgb = lerp(color.rgb, 1.0 - color.rgb, glitch);
 
-			color.rgb *= 0.5f;
+			
 			
 		}
 		else

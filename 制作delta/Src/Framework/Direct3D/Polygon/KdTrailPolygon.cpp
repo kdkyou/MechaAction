@@ -107,7 +107,7 @@ void KdTrailPolygon::CreateVerticesWithBillboardPattern()
 		Math::Vector3 axisX = DirectX::XMVector3Cross(vDir, v);
 
 		float width = mat.Right().Length() * m_width;
-
+		
 		axisX.Normalize();
 
 		// 座標

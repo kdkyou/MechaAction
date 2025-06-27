@@ -5,6 +5,8 @@
 #include "../../GameObject/Character/Character.h"
 #include"../../GameObject/Weapon/Blade/Blade.h"
 #include"../../GameObject/Weapon/Shield/Shield.h"
+#include"../../GameObject/Weapon/Sowrd/Sowrd.h"
+#include"../../GameObject/Weapon/Rifle/Rifle.h"
 
 #include"../../GameObject/Enemy/Enemy.h"
 
@@ -51,6 +53,12 @@ void GameScene::Init()
 	_blade->SetParent(_character);
 	AddObject(_blade);
 
+	std::shared_ptr<Sowrd> _sowrd = std::make_shared<Sowrd>();
+	_sowrd->Init();
+	_sowrd->SetParent(_character);
+	AddObject(_sowrd);
+
+
 	std::shared_ptr<Shield> _shield = std::make_shared<Shield>();
 	_shield->Init();
 	_shield->SetParent(_character);
@@ -63,6 +71,24 @@ void GameScene::Init()
 	enemy->Init();
 	AddObject(enemy);
 
+	//エネミー武器
+	std::shared_ptr<Rifle> rifle;
+	{
+		rifle = std::make_shared<Rifle>();
+		rifle->SetParent(enemy);
+		rifle->SetAttachModel("Asset/Models/Another/Another.gltf", "RightWeapon");
+		rifle->SetGunsParam("Asset/Models/RailGun/RailGun.gltf",200,3.0f,10.0f,3,10);
+		AddObject(rifle);
+	}
+	{
+		rifle = std::make_shared<Rifle>();
+		rifle->SetParent(enemy);
+		rifle->SetAttachModel("Asset/Models/Another/Another.gltf", "LeftWeapon");
+		rifle->SetGunsParam("Asset/Models/LinearRifle/LinearRifle.gltf", 50, 0.5f, 2.0f, 18, 50);
+		AddObject(rifle);
+	}
+
+
 	_character->RegistHitObject(enemy);
 
 	//===================================================================
@@ -73,8 +99,10 @@ void GameScene::Init()
 	CameraManager::Instance().SetNextType(CameraManager::CameraType::None);
 
 	
+
 }
 
 void GameScene::Event()
 {
+
 }

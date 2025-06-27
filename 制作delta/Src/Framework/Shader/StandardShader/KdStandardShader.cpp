@@ -71,8 +71,8 @@ void KdStandardShader::BeginUnLit()
 		KdShaderManager::Instance().SetVSConstantBuffer(1, m_cb1_Mesh.GetAddress());
 	}
 
-	// ボーン情報をセット(スキンメッシュ対応)
-	KdShaderManager::Instance().SetVSConstantBuffer(3, m_cb3_Bone.GetAddress());
+	//// ボーン情報をセット(スキンメッシュ対応)
+	//KdShaderManager::Instance().SetVSConstantBuffer(3, m_cb3_Bone.GetAddress());
 
 
 	if (KdShaderManager::Instance().SetPixelShader(m_PS_UnLit))
@@ -109,6 +109,7 @@ void KdStandardShader::BeginGenerateDepthMapFromLight()
 		KdShaderManager::Instance().SetVSConstantBuffer(3, m_cb3_Bone.GetAddress());
 
 	}
+
 
 	
 	if (KdShaderManager::Instance().SetPixelShader(m_PS_GenDepthFromLight))

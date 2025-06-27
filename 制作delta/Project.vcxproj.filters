@@ -115,6 +115,18 @@
     <Filter Include="Src\Application\GameObject\Weapon\Rifle">
       <UniqueIdentifier>{ad36ca48-56ec-4d1d-b54a-f9cff788bdb0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Effect">
+      <UniqueIdentifier>{89852e6a-2aec-48e2-ac46-28629fdd83e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Effect\ConcentrationLine">
+      <UniqueIdentifier>{1709f259-38fb-4e89-bac7-48d86e54d102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Sowrd">
+      <UniqueIdentifier>{86651d95-0685-41e8-b424-44c28e103b86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Camera\HitCamera">
+      <UniqueIdentifier>{42391527-06c1-410b-b44e-87bb78891ffc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -336,6 +348,15 @@
     <ClInclude Include="Src\Framework\Input\KeyInput.h">
       <Filter>Src\Framework\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Effect\ConcentrationLine\ConcentrationLine.h">
+      <Filter>Src\Application\GameObject\Effect\ConcentrationLine</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\TransAC.h">
+      <Filter>Src\Application\GameObject\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Sowrd\Sowrd.h">
+      <Filter>Src\Application\GameObject\Weapon\Sowrd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -529,6 +550,15 @@
     </ClCompile>
     <ClCompile Include="Src\Framework\Input\KeyInput.cpp">
       <Filter>Src\Framework\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Effect\ConcentrationLine\ConcentrationLine.cpp">
+      <Filter>Src\Application\GameObject\Effect\ConcentrationLine</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\TransAC.cpp">
+      <Filter>Src\Application\GameObject\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Sowrd\Sowrd.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Sowrd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

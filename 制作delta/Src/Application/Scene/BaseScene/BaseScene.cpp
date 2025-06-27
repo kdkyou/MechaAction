@@ -27,6 +27,8 @@ void BaseScene::PreUpdate()
 	{
 		obj->PreUpdate();
 	}
+
+	CameraManager::Instance().PreUpdate();
 }
 
 void BaseScene::Update()

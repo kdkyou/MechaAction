@@ -146,8 +146,18 @@ public:
 
 	void SetPos(const Math::Vector3& rPos);
 
+	void SetEmitterMatrix(const Math::Matrix& mat);
+	void SetEmitterMatrix(const Math::Matrix& mat, const Math::Vector3& lisVec);
+
 	// 減衰倍率設定 1:通常 FLT_MIN～FLT_MAX
 	void SetCurveDistanceScaler(float val);
+
+	// Doppler効果
+	void SetVelocity(const Math::Vector3& velocity);
+	void SetInnerRadiusAngle(int degAngle);
+	//void SetPitch(float pitch);
+
+	void Update3D();
 
 protected:
 

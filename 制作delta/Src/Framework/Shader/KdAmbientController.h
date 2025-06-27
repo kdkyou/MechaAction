@@ -65,8 +65,6 @@ public:
 	// 高さフォグの設定
 	void SetheightFog(const Math::Vector3& col, float topValue, float bottomValue, float distance);
 
-	////放射ブラー用
-	//void SetRadialBlur(bool enable){}
 
 private:
 

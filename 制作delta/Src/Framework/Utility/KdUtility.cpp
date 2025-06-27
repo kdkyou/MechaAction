@@ -36,3 +36,30 @@ float EaseInOutSine(float progress)
 {
 	return (float)(-(std::cos(M_PI * progress) - 1.0f) / 2.0f);
 }
+
+float BulletDamage(const Math::Vector3& _startPos, const Math::Vector3& _endPos, float _damage, float _enableLength, float _dampingInterval, float _dampingRate)
+{
+	// 開始地点と着弾地点から距離を判定
+	auto length = (_endPos - _startPos).Length();
+
+	// 有効射程内なら元のダメージを返す
+	if (_enableLength >= length) { return _damage; }
+
+	//有効射程からどれだけ離れているか
+	auto overLength = length - _enableLength;
+
+	// 係数を離れた距離と減衰間隔から取得
+	// 何乗するか
+	int calcDumping = (overLength / _dampingInterval);
+
+	// ダメージ計算
+	float nowDamage = _damage * std::pow(_dampingRate, calcDumping);
+
+	// 念のための最低値
+	if (nowDamage < 0.0f)
+	{
+		nowDamage = 0.0f;
+	}
+
+	return nowDamage;
+}

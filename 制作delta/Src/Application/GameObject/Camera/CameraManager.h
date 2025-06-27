@@ -17,8 +17,9 @@ public:
 
 
 	void PreDraw();
-	void PostUpdate();
+	void PreUpdate();
 	void Update();
+	void PostUpdate();
 
 
 	//外部から変更する際に通る関数
@@ -30,6 +31,8 @@ public:
 	void AnimationChange(std::shared_ptr<CameraBase> next) {}
 
 	const std::weak_ptr<CameraBase> GetCurrentCamera() { return m_currentCamera; }
+
+	const Math::Vector3& ToCameraVec(const Math::Vector3 nowPos);
 
 private:
 

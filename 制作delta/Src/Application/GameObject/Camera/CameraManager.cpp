@@ -16,6 +16,11 @@ void CameraManager::Init()
 	KdEffekseerManager::GetInstance().Create(1280, 720);
 }
 
+void CameraManager::PreUpdate()
+{
+	ChangeCamera(m_nextType);
+}
+
 void CameraManager::Update()
 {
 	if (m_currentCamera == nullptr) { return; }
@@ -44,11 +49,18 @@ bool CameraManager::SetNextType(const CameraType& type)
 {
 	
 	m_nextType = type;
-
-	ChangeCamera(m_nextType);
-
-
+	
 	return true;
+}
+
+const Math::Vector3& CameraManager::ToCameraVec( const Math::Vector3 nowPos)
+{
+	Math::Vector3 toVec = {};
+	toVec = m_currentCamera->GetPos() - nowPos;
+
+	toVec.Normalize();
+
+	return toVec;
 }
 
 bool CameraManager::ChangeCamera(const CameraType& type)
@@ -57,7 +69,6 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 
 	if (m_nextType == m_nowType) { return false; }
 
-	
 
 	switch (m_nextType)
 	{

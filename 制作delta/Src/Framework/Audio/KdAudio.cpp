@@ -35,6 +35,8 @@ void KdAudioManager::Update()
 		m_audioEng->Update();
 	}
 
+	
+
 	// ストップさせたインスタンスは終了したと判断してリストから削除
 	for (auto iter = m_playList.begin(); iter != m_playList.end();)
 	{
@@ -43,6 +45,12 @@ void KdAudioManager::Update()
 			iter = m_playList.erase(iter);
 
 			continue;
+		}
+
+		// 3DAudioの更新
+		if (auto inst3D = std::dynamic_pointer_cast<KdSoundInstance3D>(iter->second))
+		{
+			inst3D->Update3D();
 		}
 
 		++iter;
@@ -59,6 +67,9 @@ void KdAudioManager::SetListnerMatrix(const Math::Matrix& mWorld)
 
 	// 正面方向
 	m_listener.OrientFront = mWorld.Backward();
+
+	// 上方向
+	m_listener.OrientTop = mWorld.Up();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -307,6 +318,8 @@ void KdSoundInstance::SetVolume(float vol)
 	m_instance->SetVolume(vol);
 }
 
+
+
 void KdSoundInstance::SetPitch(float pitch)
 {
 	if (m_instance == nullptr) { return; }
@@ -374,11 +387,61 @@ void KdSoundInstance3D::SetPos(const Math::Vector3& rPos)
 	m_instance->Apply3D(m_ownerListener, m_emitter, false);
 }
 
+void KdSoundInstance3D::SetEmitterMatrix(const Math::Matrix& mat)
+{
+	if (!m_instance) { return; }
+
+	m_emitter.SetPosition(mat.Translation());
+	m_emitter.SetOrientation(mat.Backward(), mat.Up());
+
+	m_instance->Apply3D(m_ownerListener, m_emitter, false);
+}
+
+void KdSoundInstance3D::SetEmitterMatrix(const Math::Matrix& mat,const Math::Vector3& vec)
+{
+	if (!m_instance) { return; }
+
+	m_emitter.SetPosition(mat.Translation());
+	m_emitter.SetOrientation(vec,mat.Up());
+
+	m_instance->Apply3D(m_ownerListener, m_emitter, false);
+}
+
+void KdSoundInstance3D::SetVelocity(const Math::Vector3& velocity)
+{
+	if (!m_instance) { return; }
+	m_emitter.SetVelocity(velocity);
+
+	m_instance->Apply3D(m_ownerListener, m_emitter, false);
+}
+
+void KdSoundInstance3D::SetInnerRadiusAngle(int degAngle)
+{
+	if (!m_instance) { return; }
+	m_emitter.InnerRadiusAngle = DirectX::XMConvertToRadians(degAngle);
+	
+	m_instance->Apply3D(m_ownerListener, m_emitter, false);
+}
+
+//void KdSoundInstance3D::SetPitch(float pitch)
+//{
+//	if (!m_instance) { return; }
+//	m_emitter.pi = 
+//
+//	m_instance->Apply3D(m_ownerListener, m_emitter, false);
+//}
+
 void KdSoundInstance3D::SetCurveDistanceScaler(float val)
 {
 	if (!m_instance) { return; }
 
 	m_emitter.CurveDistanceScaler = val;
 
+	m_instance->Apply3D(m_ownerListener, m_emitter, false);
+}
+
+void KdSoundInstance3D::Update3D()
+{
+	if (!m_instance) { return; }
 	m_instance->Apply3D(m_ownerListener, m_emitter, false);
 }

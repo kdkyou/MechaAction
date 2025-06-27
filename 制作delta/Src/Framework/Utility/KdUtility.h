@@ -140,3 +140,9 @@ inline Math::Vector3 ConvertToRadian(const Math::Vector3& _degree)
 	vec3.z = _degree.z * (3.141592f / 180.0f);
 	return vec3;
 }
+
+//===========================================
+// ダメージ計算距離減衰
+//===========================================
+// 発射地点　着弾地点　元のダメージ　有効射程　減衰間隔 
+float BulletDamage(const Math::Vector3& _startPos, const Math::Vector3& _endPos,float _damage ,float _enableLength, float _dampingInterval,float _dampingRate);

@@ -8,7 +8,7 @@ public:
 	WeaponBase(){}
 	~WeaponBase() override{};
 
-	virtual void SetParent(std::weak_ptr<KdGameObject>_parent){}
+	void SetParent(std::weak_ptr<KdGameObject>_parent) { m_wpParent = _parent; }
 
 	void SetAttachModel(const std::string& modelPath, const std::string& AttachPath);
 
@@ -17,6 +17,8 @@ public:
 
 protected:
 	
+	std::weak_ptr<KdGameObject>    m_wpParent;
+
 	std::shared_ptr<KdModelWork>	m_spModelWork = nullptr;
 
 	std::shared_ptr<KdAnimator>		m_spAnimator = nullptr;
@@ -26,4 +28,6 @@ protected:
 	Math::Matrix m_parentAttachMat = Math::Matrix::Identity;
 
 	std::shared_ptr<KdModelWork::Node>	m_pNode;
+
+	std::string m_attachPath = "";
 };
