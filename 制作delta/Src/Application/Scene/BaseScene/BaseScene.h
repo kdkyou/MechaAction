@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class CharacterBase;
+
 class BaseScene
 {
 public :
@@ -22,7 +24,15 @@ public :
 	{
 		return m_objList;
 	}
+
+	const std::list<std::shared_ptr<CharacterBase>>& GetPlayerList();
 	
+	const std::list<std::shared_ptr<CharacterBase>>& GetEnemyList();
+	
+
+	const std::list<std::shared_ptr<KdGameObject>>& GetTerrainList();
+
+
 	// オブジェクトリストに追加
 	void AddObject(const std::shared_ptr<KdGameObject>& obj)
 	{
@@ -39,4 +49,7 @@ protected :
 	
 	// 全オブジェクトのアドレスをリストで管理
 	std::list<std::shared_ptr<KdGameObject>> m_objList;
+	std::list<std::shared_ptr<CharacterBase>> m_playerList;
+	std::list<std::shared_ptr<CharacterBase>> m_enemyList;
+	std::list<std::shared_ptr<KdGameObject>> m_terrainList;
 };

@@ -127,6 +127,9 @@
     <Filter Include="Src\Application\GameObject\Camera\HitCamera">
       <UniqueIdentifier>{42391527-06c1-410b-b44e-87bb78891ffc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Rifle\Bullet">
+      <UniqueIdentifier>{0e86f8d4-6c89-4aa6-bf41-f62dca0b6291}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -357,6 +360,15 @@
     <ClInclude Include="Src\Application\GameObject\Weapon\Sowrd\Sowrd.h">
       <Filter>Src\Application\GameObject\Weapon\Sowrd</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Rifle\Bullet\Bullet.h">
+      <Filter>Src\Application\GameObject\Weapon\Rifle\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.h">
+      <Filter>Src\Application\GameObject\Camera\HitCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h">
+      <Filter>Src\Application\GameObject\Enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -559,6 +571,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Weapon\Sowrd\Sowrd.cpp">
       <Filter>Src\Application\GameObject\Weapon\Sowrd</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Rifle\Bullet\Bullet.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Rifle\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.cpp">
+      <Filter>Src\Application\GameObject\Camera\HitCamera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

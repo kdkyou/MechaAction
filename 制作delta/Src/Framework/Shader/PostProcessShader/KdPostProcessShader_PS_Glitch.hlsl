@@ -93,7 +93,7 @@ float4 main(VSOutput In) : SV_Target0
 			//指定範囲にマスクをしてグリッチ
 			float2 center = g_center;
 			float dist = distance(uv, center);
-			float effectRadius = 0.4; // 半径40%
+			float effectRadius = 0.6; // 半径50%
 			float glitchMask = smoothstep(effectRadius - 0.2, effectRadius + 0.05, dist);
 			//glitch *= 1.0f- glitchMask;
 			glitch *= glitchMask;
@@ -114,7 +114,7 @@ float4 main(VSOutput In) : SV_Target0
 			color.rgb += float3(r, g, b);
 
 			//狂わした色を反転
-			color.rgb = lerp(color.rgb, 1.0 - color.rgb, glitch);
+			//color.rgb = lerp(color.rgb, 1.0 - color.rgb, glitch);
 
 			
 			

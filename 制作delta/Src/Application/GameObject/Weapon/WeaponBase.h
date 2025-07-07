@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-
+class CharacterBase;
+#include"../Character/CharacterBase.h"
 
 class WeaponBase :public KdGameObject
 {
@@ -8,20 +9,24 @@ public:
 	WeaponBase(){}
 	~WeaponBase() override{};
 
-	void SetParent(std::weak_ptr<KdGameObject>_parent) { m_wpParent = _parent; }
+	void SetParent(std::shared_ptr<CharacterBase>_parent);
+	virtual void SetModel(const std::string& path);
+	virtual void SetModelData(const std::string& path);
+	void SetAttachPath(const std::string& AttachPath);
 
-	void SetAttachModel(const std::string& modelPath, const std::string& AttachPath);
 
 	void DrawLit()override;
 	void GenerateDepthMapFromLight()override;
 
 protected:
 	
-	std::weak_ptr<KdGameObject>    m_wpParent;
+	std::weak_ptr<CharacterBase>    m_wpParent;
 
+	std::shared_ptr<KdModelData>	m_spModelData = nullptr;
 	std::shared_ptr<KdModelWork>	m_spModelWork = nullptr;
 
 	std::shared_ptr<KdAnimator>		m_spAnimator = nullptr;
+	bool							m_animChanged = false;
 
 
 	Math::Matrix m_mLocalMat = Math::Matrix::Identity;

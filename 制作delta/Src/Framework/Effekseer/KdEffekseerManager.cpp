@@ -177,12 +177,15 @@ const bool KdEffekseerManager::IsPlaying(const int handle) const
 //新しいエフェクトの情報を探る
 std::weak_ptr<KdEffekseerObject> KdEffekseerManager::SerchEffect(const std::string& fileName)
 {
+	// リストの始まりのイテレーターを取得
 	auto efkFoundItr = m_nowEffectPlayList.begin();
 	while (efkFoundItr != m_nowEffectPlayList.end())
 	{
+		// エフェクトのデータを取得
 		KdEffekseerObject* effObj = efkFoundItr->get();
 		if (effObj)
 		{
+			// エフェクトの名前と検索の名前が合っていたら
 			if (effObj->GetPlayEfkInfo().FileName == fileName)
 			{
 				std::weak_ptr<KdEffekseerObject> ptr = *efkFoundItr;

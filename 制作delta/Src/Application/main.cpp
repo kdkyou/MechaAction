@@ -217,11 +217,11 @@ bool Application::Init(int w, int h)
 	{
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Another/Another.gltf");
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Grint/Grint.gltf");
-		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine1.png");
+		/*KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine1.png");
 		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine2.png");
 		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine3.png");
 		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine4.png");
-		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine5.png");
+		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine5.png");*/
 
 	}
 

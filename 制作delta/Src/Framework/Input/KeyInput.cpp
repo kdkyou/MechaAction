@@ -32,6 +32,9 @@ void KeyInput::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_ACTIVATE:
 	case WM_ACTIVATEAPP:
+	case WM_KEYDOWN:
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
 		DirectX::Keyboard::ProcessMessage(message, wParam, lParam);
 		break;
 
@@ -46,12 +49,10 @@ void KeyInput::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
 		DirectX::Keyboard::ProcessMessage(message, wParam, lParam);
 		break;
 
-	case WM_KEYDOWN:
-	case WM_KEYUP:
-	case WM_SYSKEYUP:
-		DirectX::Keyboard::ProcessMessage(message, wParam, lParam);
+	default:
 		break;
 	}
+
 }
 
 void KeyInput::Update()
@@ -87,6 +88,7 @@ void KeyInput::Update()
 	{
 		m_padDatas.pop_front();
 	}
+
 	/*
 	if (m_mouseState.rightButton && m_mouseState.positionMode == DirectX::Mouse::MODE_RELATIVE)
 	{
@@ -95,4 +97,20 @@ void KeyInput::Update()
 		OutputDebugStringA(s);
 	}
 	*/
+}
+
+bool KeyInput::IsDashingRightFrequently()
+{
+
+	return true;
+}
+
+bool KeyInput::IsDashingLeftFrequently()
+{
+	return false;
+}
+
+bool KeyInput::IsAttackingFrequently()
+{
+	return false;
 }

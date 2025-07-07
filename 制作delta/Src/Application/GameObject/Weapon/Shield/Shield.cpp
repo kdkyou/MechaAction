@@ -1,19 +1,23 @@
 ﻿#include "Shield.h"
-#include"../../Character/Character.h"
 
-void Shield::Init()
+void Shield::SetModel(const std::string& path)
 {
 	if (!m_spModelWork)
 	{
 		m_spModelWork = std::make_shared<KdModelWork>();
-		m_spModelWork->SetModelData("Asset/Models/Shield/Shield.gltf");
+		m_spModelWork->SetModelData(path);
 	}
 
 	if (!m_spAnimator)
 	{
 		m_spAnimator = std::make_shared<KdAnimator>();
-		m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Normal"), 10.0f);
+		m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Close"), 10.0f,false);
 	}
+}
+
+void Shield::Init()
+{
+	
 	Math::Vector3 pos = { 0.0f,5.0f,3.0f };
 	SetPos(pos);
 }
@@ -21,7 +25,7 @@ void Shield::Init()
 void Shield::Update()
 {
 	//親(プレイヤー)の行列を取得
-	const std::shared_ptr<const Character> _spParent = m_wpParent.lock();
+	const std::shared_ptr<const CharacterBase> _spParent = m_wpParent.lock();
 	Math::Matrix _rotMat = Math::Matrix::Identity;
 	Math::Matrix _parentMat = Math::Matrix::Identity;
 
@@ -37,18 +41,39 @@ void Shield::Update()
 
 	}
 
+	if (_spParent)
+	{
+		// 
+		if (_spParent->IsLeftAttack()) {
+			if (m_animChanged == false)
+			{
+
+				m_animChanged = true; m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Open"), 30.0f, false);
+			}
+		}
+		else
+		{
+			if (m_animChanged == true)
+			{
+
+				m_animChanged = false; m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Close"), 30.0f, false);
+			}
+
+		}
+
+	}
+
 	m_mWorld = m_parentAttachMat * _parentMat;
 
 
 	WeaponBase::Update();
 
-	m_spAnimator->AdvanceTime(m_spModelWork->WorkNodes());
 
 }
 
-void Shield::SetParent(std::weak_ptr<Character> _parent)
+void Shield::PostUpdate()
 {
-	m_wpParent = _parent;
+	m_spAnimator->AdvanceTime(m_spModelWork->WorkNodes(), 30.0f);
 }
 
 void Shield::DrawBright()

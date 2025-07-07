@@ -51,6 +51,10 @@ public:
 
 	const std::string& GetName() { return m_name; }
 
+	const Math::Vector3& GetDeg() { return m_DegAng; }
+
+	void SetDeg(const Math::Vector3& ang) { m_DegAng = ang; }
+
 protected:
 
 	std::string									m_name;

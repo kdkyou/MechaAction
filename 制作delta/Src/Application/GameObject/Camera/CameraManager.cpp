@@ -5,6 +5,7 @@
 #include"RockCamera/RockCamera.h"
 #include"TPSCamera/TPSCamera.h"
 #include"TrackingCamera/TrackingCamera.h"
+#include"HitCamera/HitCamera.h"
 
 #include"../../Scene/SceneManager.h"
 
@@ -48,6 +49,8 @@ void CameraManager::PreDraw()
 bool CameraManager::SetNextType(const CameraType& type)
 {
 	
+	if (IsEnableChanged() == false) { return false; }
+
 	m_nextType = type;
 	
 	return true;
@@ -65,10 +68,13 @@ const Math::Vector3& CameraManager::ToCameraVec( const Math::Vector3 nowPos)
 
 bool CameraManager::ChangeCamera(const CameraType& type)
 {
-	if (m_nextType == None) { return false; }
-
 	if (m_nextType == m_nowType) { return false; }
 
+	Math::Vector3 deg = Math::Vector3::Zero;
+	if (m_currentCamera != nullptr)
+	{
+		deg = m_currentCamera->GetDeg();
+	}
 
 	switch (m_nextType)
 	{
@@ -95,6 +101,10 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 		m_currentCamera = std::make_shared<RockCamera>();
 		Application::Instance().m_log.AddLog("Rock\n");
 		break;
+	case CameraManager::Hit:
+		m_currentCamera = std::make_shared<HitCamera>();
+		Application::Instance().m_log.AddLog("Hit\n");
+		break;
 	default:
 		break;
 	}
@@ -103,6 +113,7 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 	m_currentCamera->SetTarget(m_wpCameraTarget);
 	m_currentCamera->SetRockTarget(m_wpRockTarget);
 	m_currentCamera->Init();
+	m_currentCamera->SetDeg(deg);
 	
 	return true;
 }

@@ -7,6 +7,8 @@ public:
 	CharacterBase() {}
 	~CharacterBase()			override {}
 
+	void GenerateDepthMapFromLight()override;
+
 	void SetCamera(const std::shared_ptr<CameraBase>& camera)
 	{
 		m_wpCamera = camera;
@@ -17,14 +19,30 @@ public:
 		m_wpHitObjectList.push_back(object);
 	}
 
-	const std::weak_ptr<KdModelWork>GetModelWork()const;
+	const std::weak_ptr<KdModelWork>GetModelWork()const {
+		return m_spModelWork;
+	}
+
+	// 右手行動状態かどうかを調べる
+	const bool IsRightAttack()const { return m_isRightAttack; }
+	void ChangeEnableRightAttack(bool attack) { m_isRightAttack = attack; }
+
+	// 左手行動状態かどうかを調べる
+	const bool IsLeftAttack()const { return m_isLeftAttack; }
+	void ChangeEnableLeftAttack(bool attack) { m_isLeftAttack = attack; }
+
+	const bool IsHit() const{ return m_isHit; }
+	void HitDamage(float damage);
+	void SetHitEnable(bool hit) { m_isHit = hit; }
 
 protected:
 
+	bool SearchDetect(const Math::Vector3& hitPos, const Math::Matrix& myPos, float viewRange);
 
-	// キャラクターの回転行列を作成する
-	
 
+	std::shared_ptr<KdModelWork>				m_spModelWork;
+	std::shared_ptr<KdModelData>				m_spModelData;
+	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
 
 	std::weak_ptr<CameraBase>					m_wpCamera;
 	std::vector<std::weak_ptr<KdGameObject>>	m_wpHitObjectList{};
@@ -33,29 +51,17 @@ protected:
 
 	Math::Matrix 								m_scale;
 
-	float										m_Gravity = 0;
+	float										m_gravity = 0;
 
 	bool										m_isGround = false;
 
+	bool										m_isRightAttack = false;
+	bool										m_isLeftAttack = false;
+
 	Math::Vector3 m_vMove = Math::Vector3::Zero;
 
-	Math::Vector3 m_emissive = { 10,10,10 };
+	// パラメータ関係
+	float										m_hp = 0;
+	bool										m_isHit = false;
 
-	//ステートパターン管理系!
-protected:
-
-	class ActionStateBase
-	{
-	public:
-		virtual ~ActionStateBase() {}
-
-		virtual void Enter(CharacterBase& owner) {}
-		virtual void Update(CharacterBase& owner) {}
-		virtual void Exit(CharacterBase& owner) {}
-
-	protected:
-	};
-
-	/*virtual void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction){}
-	std::shared_ptr<ActionStateBase>		m_nowAction = nullptr;*/
 };

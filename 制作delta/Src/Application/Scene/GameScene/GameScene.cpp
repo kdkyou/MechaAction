@@ -34,7 +34,7 @@ void GameScene::Init()
 	_serrain->Init();
 	_serrain->SetPos({ 0.0f,0.0f,0.0f });
 	_serrain->SetModel("Asset/Models/Building/Building.gltf");
-	
+
 	AddObject(_serrain);*/
 
 
@@ -50,18 +50,24 @@ void GameScene::Init()
 
 	std::shared_ptr<Blade> _blade = std::make_shared<Blade>();
 	_blade->Init();
+	_blade->SetModel("Asset/Models/Weapon/Blade/Blade.gltf");
 	_blade->SetParent(_character);
+	_blade->SetAttachPath("RightWeapon");
 	AddObject(_blade);
 
 	std::shared_ptr<Sowrd> _sowrd = std::make_shared<Sowrd>();
 	_sowrd->Init();
+	_sowrd->SetModel("Asset/Models/Weapon/Sowrd/Sowrd.gltf");
 	_sowrd->SetParent(_character);
+	_sowrd->SetAttachPath("RightHand");
 	AddObject(_sowrd);
 
 
 	std::shared_ptr<Shield> _shield = std::make_shared<Shield>();
 	_shield->Init();
+	_shield->SetModel("Asset/Models/Weapon/Shield/Shield.gltf");
 	_shield->SetParent(_character);
+	_shield->SetAttachPath("LeftWeapon");
 	AddObject(_shield);
 
 	//エネミー
@@ -76,15 +82,17 @@ void GameScene::Init()
 	{
 		rifle = std::make_shared<Rifle>();
 		rifle->SetParent(enemy);
-		rifle->SetAttachModel("Asset/Models/Another/Another.gltf", "RightWeapon");
-		rifle->SetGunsParam("Asset/Models/RailGun/RailGun.gltf",200,3.0f,10.0f,3,10);
+		rifle->SetAttachPath("RightWeapon");
+		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 1.8f, 5.0f, 24, 80);
+		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", "Asset/Textures/GameObject/Prazma1.png", 200, 500, 200, 40.0f, 0.95f);
 		AddObject(rifle);
 	}
 	{
 		rifle = std::make_shared<Rifle>();
 		rifle->SetParent(enemy);
-		rifle->SetAttachModel("Asset/Models/Another/Another.gltf", "LeftWeapon");
-		rifle->SetGunsParam("Asset/Models/LinearRifle/LinearRifle.gltf", 50, 0.5f, 2.0f, 18, 50);
+		rifle->SetAttachPath("LeftWeapon");
+		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.5f, 2.0f, 36, 250);
+		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", "Asset/Textures/GameObject/ClockHand.png", 50, 300, 200, 20.0f, 0.9f);
 		AddObject(rifle);
 	}
 
@@ -98,11 +106,22 @@ void GameScene::Init()
 	CameraManager::Instance().SetRockTarget(enemy);
 	CameraManager::Instance().SetNextType(CameraManager::CameraType::None);
 
-	
+
 
 }
 
 void GameScene::Event()
 {
-
+	if (KeyInput::GetInstance().GetKeyboardState().H)
+	{
+		auto instance = KdAudioManager::Instance().Play3D("Asset/Sounds/Thruster2.wav", { 0.0f,0.0f,10.0f });
+		instance->SetVelocity({ 0.0f,0.0f,1.0f });
+		instance->SetCurveDistanceScaler(1.0f);
+		instance->SetVolume(1);
+		instance->SetInnerRadiusAngle(45);
+	}
+	if (KeyInput::GetInstance().GetKeyboardState().J)
+	{
+		KdAudioManager::Instance().Play("Asset/Sounds/Thruster2.wav");
+	}
 }

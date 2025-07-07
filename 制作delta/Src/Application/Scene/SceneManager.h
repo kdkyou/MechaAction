@@ -2,6 +2,8 @@
 
 class BaseScene;
 
+class CharacterBase;
+
 class SceneManager
 {
 public :
@@ -30,6 +32,12 @@ public :
 
 	// 現在のシーンのオブジェクトリストを取得
 	const std::list<std::shared_ptr<KdGameObject>>& GetObjList();
+
+	const std::list<std::shared_ptr<CharacterBase>>& GetPlayerList();
+
+	const std::list<std::shared_ptr<CharacterBase>>& GetEnemyList();
+
+	const std::list<std::shared_ptr<KdGameObject>>& GetTerrainList();
 
 	// 現在のシーンにオブジェクトを追加
 	void AddObject(const std::shared_ptr<KdGameObject>& obj);

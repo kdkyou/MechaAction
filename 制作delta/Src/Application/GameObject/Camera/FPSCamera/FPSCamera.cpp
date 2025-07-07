@@ -11,6 +11,9 @@ void FPSCamera::Init()
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
 	m_name = "FPS";
+
+	ShowCursor(false);
+
 }
 
 void FPSCamera::PostUpdate()

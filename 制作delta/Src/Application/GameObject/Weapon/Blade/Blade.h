@@ -10,10 +10,10 @@ public:
 	void Init()override;
 	void Update()override;
 
-	void SetParent(std::weak_ptr<Character>_parent);
-
 	void DrawBright()override;
+
+	void SetModel(const std::string& path)override;
 private:
 	
-	std::weak_ptr<Character> m_wpParent;
+	
 };

@@ -13,6 +13,7 @@ public:
 		Tracking,
 		Animation,
 		Rock,
+		Hit,
 	};
 
 
@@ -27,6 +28,10 @@ public:
 
 	void SetCameraTarget(const std::shared_ptr<KdGameObject>& target) { m_wpCameraTarget = target; }
 	void SetRockTarget(const std::shared_ptr<KdGameObject>& target) { m_wpRockTarget = target; }
+
+	void EnableChangedCamera(bool isEnablechanged) { m_isEnableChanged = isEnablechanged; }
+
+	bool IsEnableChanged() { return m_isEnableChanged; }
 
 	void AnimationChange(std::shared_ptr<CameraBase> next) {}
 
@@ -48,6 +53,8 @@ private:
 
 	CameraType					m_nowType  = None;
 	CameraType					m_nextType = None;
+
+	bool						m_isEnableChanged = true;
 
 private:
 

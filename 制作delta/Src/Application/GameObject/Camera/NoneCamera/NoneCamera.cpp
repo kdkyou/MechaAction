@@ -12,6 +12,7 @@ void NoneCamera::Init()
 
 	m_name = "None";
 
+	ShowCursor(true);
 }
 
 void NoneCamera::PostUpdate()

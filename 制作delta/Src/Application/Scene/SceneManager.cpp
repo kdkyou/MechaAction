@@ -1,5 +1,7 @@
 ﻿#include "SceneManager.h"
 
+#include "../GameObject/Character/CharacterBase.h"
+
 #include "BaseScene/BaseScene.h"
 #include "TitleScene/TitleScene.h"
 #include "GameScene/GameScene.h"
@@ -49,6 +51,21 @@ void SceneManager::DrawDebug()
 const std::list<std::shared_ptr<KdGameObject>>& SceneManager::GetObjList()
 {
 	return m_currentScene->GetObjList();
+}
+
+const std::list<std::shared_ptr<CharacterBase>>& SceneManager::GetPlayerList()
+{
+	return m_currentScene->GetPlayerList();
+}
+
+const std::list<std::shared_ptr<CharacterBase>>& SceneManager::GetEnemyList()
+{
+	return m_currentScene->GetEnemyList();
+}
+
+const std::list<std::shared_ptr<KdGameObject>>& SceneManager::GetTerrainList()
+{
+	return m_currentScene->GetTerrainList();
 }
 
 void SceneManager::AddObject(const std::shared_ptr<KdGameObject>& obj)

@@ -55,7 +55,7 @@ public:
 		m_wpCamera = camera;
 	}
 
-	//新しいハンドルを見つける
+	//ループされた新しいエフェクトオブジェクトを見つける
 	std::weak_ptr<KdEffekseerObject> SerchEffect(const std::string& fileName);
 
 private:

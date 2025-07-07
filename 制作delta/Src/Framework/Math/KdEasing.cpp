@@ -5,10 +5,7 @@ inline float KdEase::InSine(float progress)
 	return 1 - cos((progress * DirectX::XM_PI) * 0.5f);
 }
 
-inline float KdEase::OutSine(float progress)
-{
-	return sin((progress * DirectX::XM_PI) * 0.5f);
-}
+
 
 inline float KdEase::InOutSine(float progress)
 {

@@ -338,13 +338,24 @@ float4 main(VSOutput In) : SV_Target0
 	// リムライト処理
 	if(g_limLightEnable > 0)
 	{
+		float3 viewDir = normalize(g_CamPos - In.wPos);
+		float rim = 1.0 - saturate(dot(wN, viewDir));
+		float limLight = pow(rim, g_limLightPow);
+		
 		//float limLightPow = dot(normalize(In.wPos - g_CamPos), wN);
-		//limLightPow = 1 - abs(limLightPow);
+		//limLightPow = step(1, limLightPow) * 10;
+		//float limLight = 1 - abs(limLightPow);
 
-		// 法線の「上向き度」や「Z成分」など、固定方向と比較
-		float rim = 1.0 - saturate(dot(wN, float3(1, 0, 1))); // 例えばZ方向
+		//// 法線の「上向き度」や「Z成分」など、固定方向と比較
+		//float rim = 1.0 - saturate(dot(wN, float3(1, 0, 1))); // 例えばZ方向
 
-		outColor.rgb += g_limLightColor * pow(rim, g_limLightPow);
+		outColor.rgb += g_limLightColor * limLight;
+	}
+
+	// 簡易AO
+	{
+		float ao = saturate(dot(wN, float3(0, 1, 0)));
+		outColor.rgb *= 0.7f + 0.3 * ao;
 	}
 	
 	totalBrightness = saturate( totalBrightness );

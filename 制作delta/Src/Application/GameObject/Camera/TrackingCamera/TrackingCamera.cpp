@@ -23,6 +23,9 @@ void TrackingCamera::Init()
 
 
 	m_name = "Tracking";
+
+	ShowCursor(false);
+
 }
 
 void TrackingCamera::PostUpdate()

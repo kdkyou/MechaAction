@@ -1,36 +1,57 @@
 ﻿#include "WeaponBase.h"
 
-void WeaponBase::SetAttachModel(const std::string& modelPath, const std::string& attachPath)
+
+
+void WeaponBase::SetParent(std::shared_ptr<CharacterBase> _parent)
 {
-	if (m_spModelWork == nullptr)
+	m_wpParent = _parent;
+}
+
+void WeaponBase::SetModel(const std::string& path) {
+	if (!m_spModelWork)
 	{
 		m_spModelWork = std::make_shared<KdModelWork>();
-		m_spModelWork->SetModelData(modelPath);
+		m_spModelWork->SetModelData(path);
 	}
+}
 
-	if (attachPath != "")
+void WeaponBase::SetModelData(const std::string& path)
+{
+	if (!m_spModelData)
 	{
-		m_attachPath = attachPath;
-		const KdModelWork::Node* _pNode = m_spModelWork->FindWorkNode(attachPath);
-		if (_pNode)
-		{
-			m_parentAttachMat = _pNode->m_worldTransform;
-		}
+		m_spModelData = KdAssets::Instance().m_modeldatas.GetData(path);
 	}
+}
+
+void WeaponBase::SetAttachPath(const std::string& attachPath)
+{
+	m_attachPath = attachPath;
 
 }
 
 void WeaponBase::DrawLit()
 {
-	if (!m_spModelWork)return;
+	if (m_spModelWork)
+	{
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld);
+	}
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld);
+	if (m_spModelData)
+	{
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld);
+	}
+
 }
 
 void WeaponBase::GenerateDepthMapFromLight()
 {
+	if (m_spModelWork)
+	{
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld);
+	}
 
-	if (!m_spModelWork)return;
-
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld);
+	if (m_spModelData)
+	{
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld);
+	}
 }

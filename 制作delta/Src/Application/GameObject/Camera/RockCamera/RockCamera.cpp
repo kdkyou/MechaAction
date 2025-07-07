@@ -14,6 +14,9 @@ void RockCamera::Init()
 	m_mWorld = m_mLocalPos * m_wpTarget.lock()->GetMatrix();
 
 	m_name = "Rock";
+
+	ShowCursor(false);
+
 }
 
 void RockCamera::PostUpdate()

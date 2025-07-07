@@ -811,7 +811,8 @@ bool KdModelCollision::Intersects(const DirectX::BoundingBox& target, const Math
 	// TODO: 当たり計算は各自必要に応じて拡張して下さい
 
 	//当たり判定が無効 or 形状が解放済みなら判定せずに返る
-	if (!m_enable || m_shape) { return false; }
+	if (!m_enable || !m_shape) {
+		return false; }
 
 	std::shared_ptr<KdModelData> spModelData = m_shape->GetData();
 
@@ -829,50 +830,57 @@ bool KdModelCollision::Intersects(const DirectX::BoundingBox& target, const Math
 
 	Math::Vector3 hitPos;
 
-	//// 当たり判定ノードとのみ当たり判定
-	//for (int index : spModelData->GetCollisionMeshNodeIndices())
-	//{
-	//	const KdModelData::Node& dataNode = dataNodes[index];
-	//	const KdModelWork::Node& workNode = workNodes[index];
+	// 当たり判定ノードとのみ当たり判定
+	for (int index : spModelData->GetCollisionMeshNodeIndices())
+	{
+		const KdModelData::Node& dataNode = dataNodes[index];
+		const KdModelWork::Node& workNode = workNodes[index];
 
-	//	// あり得ないはずだが一応チェック
-	//	if (!dataNode.m_spMesh) { continue; }
+		// あり得ないはずだが一応チェック
+		if (!dataNode.m_spMesh) { continue; }
 
-	//	CollisionMeshResult tmpResult;
-	//	CollisionMeshResult* pTmpResult = pRes ? &tmpResult : nullptr;
+		CollisionMeshResult tmpResult;
+		CollisionMeshResult* pTmpResult = pRes ? &tmpResult : nullptr;
 
-	//	// メッシュと球形の当たり判定実行
-	//	if (!MeshIntersect(*dataNode.m_spMesh, pushedBoxCenter, workNode.m_worldTransform * world, pTmpResult))
-	//	{
-	//		continue;
-	//	}
+		// メッシュとAABB形の当たり判定実行
+		if (!MeshIntersect(*dataNode.m_spMesh, pushedBox, workNode.m_worldTransform * world, pTmpResult))
+		{
+			continue;
+		}
 
-	//	// 詳細リザルトが必要無ければ即結果を返す
-	//	if (!pRes) { return true; }
+		// 詳細リザルトが必要無ければ即結果を返す
+		if (!pRes) { return true; }
 
-	//	isHit = true;
+		isHit = true;
 
-	//	// 重なった分押し戻す
-	//	pushedSphereCenter = DirectX::XMVectorAdd(pushedSphereCenter, DirectX::XMVectorScale(tmpResult.m_hitDir, tmpResult.m_overlapDistance));
+		// 重なった分押し戻す
+		pushedBoxCenter = DirectX::XMVectorAdd(pushedBoxCenter, DirectX::XMVectorScale(tmpResult.m_hitDir, tmpResult.m_overlapDistance));
 
-	//	DirectX::XMStoreFloat3(&pushedSphere.Center, pushedSphereCenter);
+		DirectX::XMStoreFloat3(&pushedBox.Center, pushedBoxCenter);
 
-	//	// とりあえず当たった座標で更新
-	//	hitPos = tmpResult.m_hitPos;
-	//}
+		// とりあえず当たった座標で更新
+		hitPos = tmpResult.m_hitPos;
+	}
 
-	//if (pRes && isHit)
-	//{
-	//	// 最後に当たった座標が使用される
-	//	pRes->m_hitPos = hitPos;
+	if (pRes && isHit)
+	{
+		// 最後に当たった座標が使用される
+		pRes->m_hitPos = hitPos;
 
-	//	// 複数のメッシュに押された最終的な位置 - 移動前の位置 = 押し出しベクトル
-	//	pRes->m_hitDir = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&pushedSphere.Center), DirectX::XMLoadFloat3(&target.Center));
+		// 複数のメッシュに押された最終的な位置 - 移動前の位置 = 押し出しベクトル
+		pRes->m_hitDir = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&pushedBox.Center), DirectX::XMLoadFloat3(&target.Center));
 
-	//	pRes->m_overlapDistance = DirectX::XMVector3Length(pRes->m_hitDir).m128_f32[0];
+		pRes->m_overlapDistance = DirectX::XMVector3Length(pRes->m_hitDir).m128_f32[0];
 
-	//	pRes->m_hitDir = DirectX::XMVector3Normalize(pRes->m_hitDir);
-	//}
+		if (pRes->m_overlapDistance > 0.00001f)
+		{
+			pRes->m_hitDir = DirectX::XMVector3Normalize(pRes->m_hitDir);
+		}
+		else
+		{
+			pRes->m_hitDir = DirectX::XMVectorZero(); // または fallback 方向
+		}
+	}
 
 	return isHit;
 }
@@ -882,10 +890,84 @@ bool KdModelCollision::Intersects(const DirectX::BoundingBox& target, const Math
 // 判定回数は メッシュの個数 x 各メッシュのポリゴン数 計算回数がモデルのデータ依存のため処理効率は不安定
 // 単純に計算回数が多くなる可能性があるため重くなりがち
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-bool KdModelCollision::Intersects(const DirectX::BoundingOrientedBox& /*target*/, const Math::Matrix& /*world*/, KdCollider::CollisionResult* /*pRes*/)
+bool KdModelCollision::Intersects(const DirectX::BoundingOrientedBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	// TODO: 当たり計算は各自必要に応じて拡張して下さい
-	return false;
+
+		//当たり判定が無効 or 形状が解放済みなら判定せずに返る
+	if (!m_enable || !m_shape) {
+		return false;
+	}
+
+	std::shared_ptr<KdModelData> spModelData = m_shape->GetData();
+
+	if (!spModelData) { return false; }
+
+	const std::vector<KdModelData::Node>& dataNodes = spModelData->GetOriginalNodes();
+	const std::vector<KdModelWork::Node>& workNodes = m_shape->GetNodes();
+
+	// 各メッシュに押される用の箱・押される毎に座標を更新する必要がある
+	DirectX::BoundingOrientedBox pushedBox = target;
+	// 計算用にFloat3 → Vectorへ変換
+	Math::Vector3 pushedBoxCenter = DirectX::XMLoadFloat3(&pushedBox.Center);
+
+	bool isHit = false;
+
+	Math::Vector3 hitPos;
+
+	// 当たり判定ノードとのみ当たり判定
+	for (int index : spModelData->GetCollisionMeshNodeIndices())
+	{
+		const KdModelData::Node& dataNode = dataNodes[index];
+		const KdModelWork::Node& workNode = workNodes[index];
+
+		// あり得ないはずだが一応チェック
+		if (!dataNode.m_spMesh) { continue; }
+
+		CollisionMeshResult tmpResult;
+		CollisionMeshResult* pTmpResult = pRes ? &tmpResult : nullptr;
+
+		// メッシュとOBB形の当たり判定実行
+		if (!MeshIntersect(*dataNode.m_spMesh, pushedBox, workNode.m_worldTransform * world, pTmpResult))
+		{
+			continue;
+		}
+
+		// 詳細リザルトが必要無ければ即結果を返す
+		if (!pRes) { return true; }
+
+		isHit = true;
+
+		// 重なった分押し戻す
+		pushedBoxCenter = DirectX::XMVectorAdd(pushedBoxCenter, DirectX::XMVectorScale(tmpResult.m_hitDir, tmpResult.m_overlapDistance));
+
+		DirectX::XMStoreFloat3(&pushedBox.Center, pushedBoxCenter);
+
+		// とりあえず当たった座標で更新
+		hitPos = tmpResult.m_hitPos;
+	}
+
+	if (pRes && isHit)
+	{
+		// 最後に当たった座標が使用される
+		pRes->m_hitPos = hitPos;
+
+		// 複数のメッシュに押された最終的な位置 - 移動前の位置 = 押し出しベクトル
+		pRes->m_hitDir = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&pushedBox.Center), DirectX::XMLoadFloat3(&target.Center));
+
+		pRes->m_overlapDistance = DirectX::XMVector3Length(pRes->m_hitDir).m128_f32[0];
+
+		if (pRes->m_overlapDistance > 0.00001f)
+		{
+			pRes->m_hitDir = DirectX::XMVector3Normalize(pRes->m_hitDir);
+		}
+		else
+		{
+			pRes->m_hitDir = DirectX::XMVectorZero(); // または fallback 方向
+		}
+	}
+
+	return isHit;
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////

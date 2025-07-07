@@ -12,12 +12,10 @@ public:
 
 	void DrawUnLit()override;
 
-	void SetParent(std::weak_ptr<Character>_parent);
-
+	void SetModel(const std::string& path)override;
 private:
 
-	std::weak_ptr<Character> m_wpParent;
-
+	
 	std::shared_ptr<KdTrailPolygon> m_spTrail;
 
 	Math::Matrix					m_startMat;

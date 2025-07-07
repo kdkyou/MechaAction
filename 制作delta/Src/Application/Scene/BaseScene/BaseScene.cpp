@@ -1,6 +1,7 @@
 ﻿#include "BaseScene.h"
 
-#include"../../GameObject/Camera/CameraManager.h"
+#include "../../GameObject/Camera/CameraManager.h"
+#include "../../GameObject/Character/CharacterBase.h"
 
 void BaseScene::PreUpdate()
 {
@@ -33,15 +34,19 @@ void BaseScene::PreUpdate()
 
 void BaseScene::Update()
 {
+
+
+
 	// KdGameObjectを継承した全てのオブジェクトの更新 (ポリモーフィズム)
 	for (auto& obj : m_objList)
 	{
 		obj->Update();
 	}
 
+	KdEffekseerManager::GetInstance().Update();
+
 	CameraManager::Instance().Update();
 
-	KdEffekseerManager::GetInstance().Update();
 
 	// シーン毎のイベント処理
 	Event();
@@ -143,6 +148,24 @@ void BaseScene::DrawDebug()
 		}
 	}
 	KdShaderManager::Instance().m_StandardShader.EndUnLit();
+}
+
+const std::list<std::shared_ptr<CharacterBase>>& BaseScene::GetPlayerList()
+{
+	// TODO: return ステートメントをここに挿入します
+	return m_playerList;
+}
+
+const std::list<std::shared_ptr<CharacterBase>>& BaseScene::GetEnemyList()
+{
+	// TODO: return ステートメントをここに挿入します
+	return m_enemyList;
+}
+
+const std::list<std::shared_ptr<KdGameObject>>& BaseScene::GetTerrainList()
+{
+	// TODO: return ステートメントをここに挿入します
+	return m_terrainList;
 }
 
 void BaseScene::Edit_ImGui()

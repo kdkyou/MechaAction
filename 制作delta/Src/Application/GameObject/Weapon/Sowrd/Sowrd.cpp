@@ -1,12 +1,11 @@
 ﻿#include"Sowrd.h"
-#include"../../Character/Character.h"
 
-void Sowrd::Init()
+void Sowrd::SetModel(const std::string& path)
 {
 	if (!m_spModelWork)
 	{
 		m_spModelWork = std::make_shared<KdModelWork>();
-		m_spModelWork->SetModelData("Asset/Models/Sowrd/Sowrd.gltf");
+		m_spModelWork->SetModelData(path);
 
 		const KdModelWork::Node* _pNode = m_spModelWork->FindWorkNode("StartPoint");
 		if (_pNode)
@@ -14,8 +13,8 @@ void Sowrd::Init()
 
 			m_startMat = _pNode->m_worldTransform;
 		}
-		
-		 _pNode = m_spModelWork->FindWorkNode("EndPoint");
+
+		_pNode = m_spModelWork->FindWorkNode("EndPoint");
 		if (_pNode)
 		{
 
@@ -23,15 +22,18 @@ void Sowrd::Init()
 		}
 
 	}
+}
 
+void Sowrd::Init()
+{
 	if (!m_spTrail)
 	{
 		m_spTrail = std::make_shared<KdTrailPolygon>();
 		m_spTrail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Thunder1.png"));
 		m_spTrail->SetColor(Math::Color{ 0.2f,0.3f,2.0f });
 		m_spTrail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
-		m_spTrail->SetWidth(0.7f);
-		m_spTrail->SetLength(6);
+		m_spTrail->SetWidth(0.3f);
+		m_spTrail->SetLength(10);
 		m_spTrail->ClearPoints();
 	}
 
@@ -41,13 +43,13 @@ void Sowrd::Init()
 void Sowrd::Update()
 {
 	//親(プレイヤー)の行列を取得
-	const std::shared_ptr<const Character> _spParent = m_wpParent.lock();
+	const std::shared_ptr<const CharacterBase> _spParent = m_wpParent.lock();
 	Math::Matrix _rotMat = Math::Matrix::Identity;
 	Math::Matrix _parentMat = Math::Matrix::Identity;
 
 	if (_spParent)
 	{
-		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode("RightHand");
+		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode(m_attachPath);
 		if (_pNode)
 		{
 			m_parentAttachMat = _pNode->m_worldTransform;
@@ -60,16 +62,27 @@ void Sowrd::Update()
 
 	m_mWorld = m_parentAttachMat * _parentMat;
 
-	static bool flg = false;
-	if (flg == false)
+	if (_spParent->IsRightAttack())
 	{
-		m_spTrail->AddPoint(m_startMat*m_mWorld);
-		flg = true;
+		m_spTrail->SetEnable(true);
+
+
+		static bool flg = false;
+		if (flg == false)
+		{
+			m_spTrail->AddPoint(m_startMat * m_mWorld);
+			flg = true;
+		}
+		else
+		{
+			m_spTrail->AddPoint(m_endMat * m_mWorld);
+			flg = false;
+		}
 	}
-	else
-	{
-		m_spTrail->AddPoint(m_endMat * m_mWorld);
-		flg = false;
+
+	else {
+		m_spTrail->ClearPoints();
+		m_spTrail->SetEnable(false);
 	}
 
 	WeaponBase::Update();
@@ -85,12 +98,6 @@ void Sowrd::DrawUnLit()
 	}
 
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
-}
-
-
-void Sowrd::SetParent(std::weak_ptr<Character> _parent)
-{
-	m_wpParent = _parent;
 }
 
 

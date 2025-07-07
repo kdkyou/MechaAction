@@ -30,6 +30,13 @@ bool PolygonsIntersect(const KdPolygon& poly, const DirectX::BoundingBox& target
 bool MeshIntersect(const KdMesh& mesh, const DirectX::BoundingBox& targetAABB,
 	const DirectX::XMMATRIX& matrix, CollisionMeshResult* pResult = nullptr);
 
+//OBBボックスの当たり判定
+bool PolygonsIntersect(const KdPolygon& poly, const DirectX::BoundingOrientedBox& targetOBB,
+	const DirectX::XMMATRIX& matrix, CollisionMeshResult* pResult = nullptr);
+bool MeshIntersect(const KdMesh& mesh, const DirectX::BoundingOrientedBox& targetOBB,
+	const DirectX::XMMATRIX& matrix, CollisionMeshResult* pResult = nullptr);
+
+
 
 // 点 vs 三角形面との最近接点を求める
 void KdPointToTriangle(const DirectX::XMVECTOR& point, const DirectX::XMVECTOR& v1,

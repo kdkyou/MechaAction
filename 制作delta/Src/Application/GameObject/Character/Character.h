@@ -1,9 +1,10 @@
 ﻿#pragma once
 
+#include"CharacterBase.h"
 
 class CameraBase;
 
-class Character : public KdGameObject
+class Character : public CharacterBase
 {
 public:
 	Character() {}
@@ -12,21 +13,8 @@ public:
 	void Init()				override;
 	void Update()			override;
 	void PostUpdate()		override;
-	void GenerateDepthMapFromLight() override;
 	void DrawLit()			override;
 	void DrawUnLit()		override;
-
-	void SetCamera(const std::shared_ptr<CameraBase>& camera)
-	{
-		m_wpCamera = camera;
-	}
-
-	void RegistHitObject(const std::shared_ptr<KdGameObject>& object)
-	{
-		m_wpHitObjectList.push_back(object);
-	}
-
-	const std::weak_ptr<KdModelWork>GetModelWork()const;
 
 	void SetThis(const std::shared_ptr<Character>& _this) { m_wpThis = _this; }
 
@@ -61,29 +49,21 @@ private:
 
 	bool  SphereCast(const Math::Vector3& pos, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos);
 
-	std::shared_ptr<KdModelWork>				m_spModel = nullptr;
-	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
-
-	std::weak_ptr<CameraBase>					m_wpCamera;
-	std::vector<std::weak_ptr<KdGameObject>>	m_wpHitObjectList{};
-
-	Math::Vector3								m_worldRot;
+	
 
 	float										m_clampSize = 10.0f;
 
-	Math::Matrix 								m_scale;
 
-	float										m_gravity = 0;
 	const float									m_gravityPow = 9.16f;
 
-	bool										m_isGround = false;
-
 	
-	void OverTrans(const std::string& nowAnimName);
+	
+	void OverTrans(const std::string& nowAnimName,float animProgress);
 
+	Math::Vector3								m_stepHigh = { 0.0f,0.2f,0.0f };
 
 	//パラメータ
-	Math::Vector3								m_stepHigh = { 0.0f,0.2f,0.0f };
+	float										m_speedMag = 1.0f;	//スピードの掛け算
 	float										m_stopSpeed = 0.0f;
 	float										m_walkSpeed = 10.0f;
 	float										m_jumpSpeed = 15.0f;
@@ -93,9 +73,15 @@ private:
 	float										m_bladeAttackSpeed = 200.0f;
 	float										m_hitedSpeed = 15.0f;
 
+	// デバッグ用
 	Math::Color color = { 0,1,0,1 };
 
+	Math::Vector3 m_limColor = { 0.19f,0.09f,0.09f };
+	float m_limPow = 8.0f;
+
 	bool									    m_transAC = false;
+
+	bool m_limEnable = false;
 
 	//トレイル
 	void InitTrail();
@@ -141,9 +127,17 @@ private:
 
 		void Checkkey(std::weak_ptr<Character>& owner);
 
+		const std::string& GetName() { return m_animName; }
+
 	protected:
 
 		const Math::Vector3 Direct(std::weak_ptr<Character>& owner, bool isCamera);
+
+		void Trans(std::weak_ptr<Character>& owner,float animProgress);
+
+
+		void EffectUpdate(std::weak_ptr<Character>& owner);
+		void EffectExit();
 
 		bool m_isBoost = false;
 		bool m_isMove = false;
@@ -160,7 +154,8 @@ private:
 		{
 			std::string name;
 			std::weak_ptr<KdEffekseerObject> wpEffect;
-			Math::Matrix pNodeMat;
+			Effekseer::Handle handle = 0;
+			Math::Matrix pNodeMat = Math::Matrix::Identity;
 		};
 
 		std::list<std::shared_ptr<Effect>> m_spEffects;
@@ -281,6 +276,10 @@ private:
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
+
+		float m_easeSpeed = 0.0f;
+
+		KdEase m_ease;
 	};
 
 	class ActionBoostDush :public ActionStateBase
@@ -331,16 +330,6 @@ private:
 	private:
 	};
 
-	class ActionShield :public ActionStateBase
-	{
-	public:
-		virtual ~ActionShield() override {}
-
-		void Enter(std::weak_ptr<Character>& owner) override;
-		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override;
-		void Exit(std::weak_ptr<Character>& owner)override;
-	};
 
 	class ActionHited :public ActionStateBase
 	{
@@ -369,5 +358,7 @@ private:
 
 
 	void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction);
+	const std::weak_ptr<ActionStateBase>& GetPrvAction() { return m_prvAction; }
 	std::shared_ptr<ActionStateBase>		m_nowAction = nullptr;
+	std::shared_ptr<ActionStateBase>		m_prvAction = nullptr;
 };

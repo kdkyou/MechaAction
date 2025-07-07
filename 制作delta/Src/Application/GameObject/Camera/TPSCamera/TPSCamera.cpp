@@ -11,6 +11,8 @@ void TPSCamera::Init()
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
 	m_name = "TPS";
+
+	ShowCursor(false);
 }
 
 void TPSCamera::PostUpdate()

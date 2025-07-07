@@ -42,6 +42,10 @@ public:
 
 	void Update();
 
+	bool IsDashingRightFrequently();
+	bool IsDashingLeftFrequently();
+	bool IsAttackingFrequently();
+
 private:
 
 	DirectX::Mouse::State				m_mouseState = {};

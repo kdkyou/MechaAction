@@ -67,6 +67,11 @@ public:
 	bool Intersects(const KdCollider::RayInfo& targetShape, std::list<KdCollider::CollisionResult>* pResults);
 
 	virtual void Editor_ImGui(){}
+	virtual void Serialize(){}
+	virtual void Deserialize(){}
+
+	virtual void OnHit(){}
+	virtual float GetParameter() { return m_parameter; }
 
 protected:
 
@@ -89,4 +94,7 @@ protected:
 
 	// デバッグ情報クラス
 	std::unique_ptr<KdDebugWireFrame> m_pDebugWire = nullptr;
+
+	// 受け渡したい何らかの数値一つ(float型) 
+	float m_parameter = 0.0f;
 };
