@@ -155,7 +155,7 @@ protected:
 	DirectX::AudioEmitter			m_emitter;
 
 	// 3Dサウンド用リスナー
-	const DirectX::AudioListener&	m_ownerListener;
+	const DirectX::AudioListener& m_ownerListener;
 
 	// コピー禁止用
 	KdSoundInstance3D(const KdSoundInstance3D& src) = delete;
@@ -180,7 +180,7 @@ public:
 
 	std::unique_ptr<DirectX::SoundEffectInstance> CreateInstance(DirectX::SOUND_EFFECT_INSTANCE_FLAGS flag)
 	{
-		if (!m_soundEffect){ return nullptr; }
+		if (!m_soundEffect) { return nullptr; }
 
 		return m_soundEffect->CreateInstance(flag);
 	}

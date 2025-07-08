@@ -78,7 +78,7 @@ std::shared_ptr<KdSoundInstance> KdAudioManager::Play(std::string_view rName, bo
 
 	std::shared_ptr<KdSoundInstance> instance = std::make_shared<KdSoundInstance>(soundData);
 
-	if(!instance->CreateInstance()){ return nullptr; }
+	if (!instance->CreateInstance()) { return nullptr; }
 
 	instance->Play(loop);
 
@@ -277,7 +277,8 @@ bool KdSoundEffect::Load(std::string_view fileName, const std::unique_ptr<Direct
 // ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
 
 KdSoundInstance::KdSoundInstance(const std::shared_ptr<KdSoundEffect>& soundEffect)
-	:m_soundData(soundEffect){}
+	:m_soundData(soundEffect) {
+}
 
 bool KdSoundInstance::CreateInstance()
 {
@@ -344,7 +345,8 @@ bool KdSoundInstance::IsStopped()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 
 KdSoundInstance3D::KdSoundInstance3D(const std::shared_ptr<KdSoundEffect>& soundEffect, const DirectX::AudioListener& ownerListener)
-	:KdSoundInstance(soundEffect), m_ownerListener(ownerListener){}
+	:KdSoundInstance(soundEffect), m_ownerListener(ownerListener) {
+}
 
 bool KdSoundInstance3D::CreateInstance()
 {

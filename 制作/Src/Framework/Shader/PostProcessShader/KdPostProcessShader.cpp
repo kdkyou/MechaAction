@@ -22,7 +22,7 @@ bool KdPostProcessShader::Init()
 
 		if (FAILED(KdDirect3D::Instance().WorkDev()->CreateInputLayout(
 			&layout[0], layout.size(), compiledBuffer,
-			sizeof(compiledBuffer), &m_inputLayout)) ) 
+			sizeof(compiledBuffer), &m_inputLayout)))
 		{
 			assert(0 && "CreateInputLayout失敗");
 			Release();
@@ -36,11 +36,11 @@ bool KdPostProcessShader::Init()
 #include "KdPostProcessShader_PS_Blur.shaderInc"
 
 		if (FAILED(KdDirect3D::Instance().WorkDev()->CreatePixelShader(
-			compiledBuffer, sizeof(compiledBuffer), nullptr, &m_PS_Blur))) 
+			compiledBuffer, sizeof(compiledBuffer), nullptr, &m_PS_Blur)))
 		{
 			assert(0 && "ピクセルシェーダー作成失敗");
 			Release();
-			
+
 			return false;
 		}
 
@@ -89,11 +89,12 @@ bool KdPostProcessShader::Init()
 		}
 	}
 
+
 	{
 #include "KdPostProcessShader_PS_DoF.shaderInc"
 
 		if (FAILED(KdDirect3D::Instance().WorkDev()->CreatePixelShader(
-			compiledBuffer, sizeof(compiledBuffer), nullptr, &m_PS_DoF))) 
+			compiledBuffer, sizeof(compiledBuffer), nullptr, &m_PS_DoF)))
 		{
 			assert(0 && "ピクセルシェーダー作成失敗");
 			Release();
@@ -106,7 +107,7 @@ bool KdPostProcessShader::Init()
 #include "KdPostProcessShader_PS_Bright.shaderInc"
 
 		if (FAILED(KdDirect3D::Instance().WorkDev()->CreatePixelShader(
-			compiledBuffer, sizeof(compiledBuffer), nullptr, &m_PS_Bright))) 
+			compiledBuffer, sizeof(compiledBuffer), nullptr, &m_PS_Bright)))
 		{
 			assert(0 && "ピクセルシェーダー作成失敗");
 			Release();
@@ -124,12 +125,13 @@ bool KdPostProcessShader::Init()
 	//合成用
 	m_cb0_CombineInfo.Create();
 
+
 	m_cb0_DoFInfo.Create();
 
 	m_cb0_BrightInfo.Create();
 
 	const std::shared_ptr<KdTexture>& backBuffer = KdDirect3D::Instance().GetBackBuffer();
-	
+
 	// ポストプロセス用のシーンの全描画用画像
 	m_postEffectRTPack.CreateRenderTarget(backBuffer->GetWidth(), backBuffer->GetHeight(), true);
 
@@ -144,10 +146,9 @@ bool KdPostProcessShader::Init()
 	//合成用
 	m_combineRTPack.CreateRenderTarget(backBuffer->GetWidth(), backBuffer->GetHeight());
 
-
 	// 被写界深度画像
 	m_depthOfFieldRTPack.CreateRenderTarget(backBuffer->GetWidth(), backBuffer->GetHeight());
-	
+
 	m_brightEffectRTPack.CreateRenderTarget(backBuffer->GetWidth(), backBuffer->GetHeight());
 
 	int lightBloomWidth = m_brightEffectRTPack.m_RTTexture->GetWidth();
@@ -168,7 +169,7 @@ bool KdPostProcessShader::Init()
 	m_screenVert[2] = { { 1,-1,0}, {1, 1} };
 	m_screenVert[3] = { { 1, 1,0}, {1, 0} };
 
-	SetBrightThreshold( 1.2f );
+	SetBrightThreshold(1.2f);
 
 	return true;
 }
@@ -190,8 +191,9 @@ void KdPostProcessShader::Release()
 	KdSafeRelease(m_PS_RBlur);
 	//グリッチ用
 	KdSafeRelease(m_PS_Glitch);
-	//合成用
+
 	KdSafeRelease(m_PS_Combine);
+
 
 	m_cb0_BlurInfo.Release();
 	m_cb0_DoFInfo.Release();
@@ -203,7 +205,6 @@ void KdPostProcessShader::Release()
 	m_cb0_GlitchInfo.Release();
 	//合成用
 	m_cb0_CombineInfo.Release();
-
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -258,7 +259,7 @@ void KdPostProcessShader::PostEffectProcess()
 
 	//放射ブラー用
 	RadialBlurProcess();
-	
+
 	//グリッチ用
 	GlicthProcess();
 
@@ -267,9 +268,9 @@ void KdPostProcessShader::PostEffectProcess()
 
 	DepthOfFieldProcess();
 
+	//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_combineRTPack.m_RTTexture.get(), 0, 0);
-//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
-
+	//	KdShaderManager::Instance().m_spriteShader.DrawTex(m_glitchRTPack.m_RTTexture.get(), 0, 0);
 }
 
 
@@ -292,7 +293,7 @@ void KdPostProcessShader::LightBloomProcess()
 	for (int i = 0; i < kLightBloomNum; ++i)
 	{
 		GenerateBlurTexture(srcRTTex, m_lightBloomRTPack[i].m_RTTexture, m_lightBloomRTPack[i].m_viewPort, kBlurSamplingRadius);
-			
+
 		srcRTTex = m_lightBloomRTPack[i].m_RTTexture;
 	}
 
@@ -352,12 +353,14 @@ void KdPostProcessShader::CombineProcess()
 	SetCombineToDevice();
 
 	//描画数で変更
-	const int num = 3;
+	const int num = 5;
 	std::shared_ptr<KdTexture> srcTexList[num] =
 	{
 		m_postEffectRTPack.m_RTTexture,
 		m_radialBlurRTPack.m_RTTexture,
 		m_glitchRTPack.m_RTTexture,
+		m_depthOfFieldRTPack.m_RTTexture,
+		m_postEffectRTPack.m_ZBuffer
 	};
 
 	DrawTexture(srcTexList, num, m_combineRTPack.m_RTTexture, &m_combineRTPack.m_viewPort);
@@ -470,7 +473,6 @@ void KdPostProcessShader::GenerateGlitchTexture(std::shared_ptr<KdTexture>& spSr
 	KdShaderManager::Instance().UndoSamplerState();
 }
 
-//合成用、DoF参考にしない場合
 void KdPostProcessShader::GenerateCombineTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP)
 {
 	KdShaderManager::Instance().ChangeSamplerState(KdSamplerState::Linear_Clamp);
@@ -484,6 +486,7 @@ void KdPostProcessShader::GenerateCombineTexture(std::shared_ptr<KdTexture>& spS
 
 	KdShaderManager::Instance().UndoSamplerState();
 }
+
 
 void KdPostProcessShader::DrawTexture(std::shared_ptr<KdTexture>* spSrcTex, int srcTexSize, std::shared_ptr<KdTexture> spDstTex, D3D11_VIEWPORT* pVP)
 {
@@ -645,6 +648,7 @@ void KdPostProcessShader::UndoGlitch()
 
 }
 
+//放射ブラー用
 void KdPostProcessShader::SetRadialBlurToDevice()
 {
 	ID3D11DeviceContext* DevCon = KdDirect3D::Instance().WorkDevContext();
@@ -693,7 +697,9 @@ void KdPostProcessShader::SetCombineToDevice()
 	m_cb0_CombineInfo.Write();
 
 	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(0, 1, m_cb0_CombineInfo.GetAddress());
-	//テクスチャのセット
+	////テクスチャのセット
+	//KdDirect3D::Instance().WorkDevContext()->PSSetShaderResources(0, 1, m_radialBlurRTPack.m_RTTexture->WorkSRViewAddress());
+	//KdDirect3D::Instance().WorkDevContext()->PSSetShaderResources(0, 2, m_radialBlurRTPack.m_RTTexture->WorkSRViewAddress());
 
 	KdShaderManager& shaderMgr = KdShaderManager::Instance();
 
@@ -739,6 +745,8 @@ void KdPostProcessShader::SetBrightToDevice()
 	{
 		DevCon->IASetInputLayout(m_inputLayout);
 	}
+
+	m_screenVert;
 
 	shaderMgr.SetPixelShader(m_PS_Bright);
 }

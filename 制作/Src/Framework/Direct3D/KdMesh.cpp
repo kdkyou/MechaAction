@@ -4,6 +4,8 @@
 
 #include "KdGLTFLoader.h"
 
+
+
 //=============================================================
 //
 // Mesh
@@ -40,7 +42,7 @@ bool KdMesh::Create(const std::vector<KdMeshVertex>& vertices, const std::vector
 	//------------------------------
 	// 頂点バッファ作成
 	//------------------------------
-	if(vertices.size() > 0)
+	if (vertices.size() > 0)
 	{
 		// 書き込むデータ
 		D3D11_SUBRESOURCE_DATA initData;
@@ -66,12 +68,12 @@ bool KdMesh::Create(const std::vector<KdMeshVertex>& vertices, const std::vector
 		DirectX::BoundingBox::CreateFromPoints(m_aabb, m_positions.size(), &m_positions[0], sizeof(Math::Vector3));
 		// 境界球データ作成
 		DirectX::BoundingSphere::CreateFromPoints(m_bs, m_positions.size(), &m_positions[0], sizeof(Math::Vector3));
-	}	
+	}
 
 	//------------------------------
 	// インデックスバッファ作成
 	//------------------------------
-	if(faces.size() > 0)
+	if (faces.size() > 0)
 	{
 		// 書き込むデータ
 		D3D11_SUBRESOURCE_DATA initData;

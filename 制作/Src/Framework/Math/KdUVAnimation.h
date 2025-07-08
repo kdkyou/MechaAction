@@ -7,7 +7,8 @@ struct KdAnimationFrame
 		m_startFrame(start),
 		// 最後のコマを表示するため+1
 		// 終了フレームになった瞬間終了判定になってしまっては、最後のコマが描画される時間が無くなる
-		m_endFrame(end + 1) {}
+		m_endFrame(end + 1) {
+	}
 
 	int m_startFrame = 0;
 	int m_endFrame = 0;

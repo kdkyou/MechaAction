@@ -62,7 +62,7 @@ public:
 	}
 
 	// パターンを設定
-	inline void SetPattern(Trail_Pattern pattern) 
+	inline void SetPattern(Trail_Pattern pattern)
 	{
 		if (m_pattern == pattern) { return; }
 
@@ -73,6 +73,7 @@ public:
 
 	// 帯状ポリゴンの長さを設定
 	inline void SetLength(UINT length) { m_length = length; }
+	inline void SetWidth(float width) { m_width = width; }
 
 private:
 
@@ -96,4 +97,6 @@ private:
 
 	// 軌跡の長さ
 	UINT			m_length = 20;
+	//軌跡の幅
+	float			m_width = 0.6f;
 };

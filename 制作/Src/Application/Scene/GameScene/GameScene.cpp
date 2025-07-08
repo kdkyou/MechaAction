@@ -4,14 +4,11 @@
 #include "../../GameObject/Terrain/Terrain.h"
 #include "../../GameObject/Character/Character.h"
 #include"../../GameObject/Weapon/Blade/Blade.h"
+#include"../../GameObject/Weapon/Shield/Shield.h"
 
 #include"../../GameObject/Enemy/Enemy.h"
 
-#include "../../GameObject/Camera/FPSCamera/FPSCamera.h"
-#include "../../GameObject/Camera/TPSCamera/TPSCamera.h"
-#include"../../GameObject/Camera/TrackingCamera/TrackingCamera.h"
-#include"../../GameObject/Camera/RockCamera/RockCamera.h"
-
+#include"../../GameObject/Camera/CameraManager.h"
 // 少数第n位で四捨五入する
 void round_n(float& number, int n)
 {
@@ -27,12 +24,24 @@ void GameScene::Init()
 	//===================================================================
 	std::shared_ptr<Terrain> _terrain = std::make_shared<Terrain>();
 	_terrain->Init();
+	_terrain->SetModel("Asset/Models/Stage/Stage.gltf");
 	AddObject(_terrain);
+
+
+	/*std::shared_ptr<Terrain> _serrain = std::make_shared<Terrain>();
+	_serrain->Init();
+	_serrain->SetPos({ 0.0f,0.0f,0.0f });
+	_serrain->SetModel("Asset/Models/Building/Building.gltf");
+	
+	AddObject(_serrain);*/
+
+
 
 	//===================================================================
 	// キャラクター初期化
 	//===================================================================
 	std::shared_ptr<Character> _character = std::make_shared<Character>();
+	_character->SetThis(_character);
 	_character->Init();
 	_character->RegistHitObject(_terrain);
 	AddObject(_character);
@@ -42,25 +51,28 @@ void GameScene::Init()
 	_blade->SetParent(_character);
 	AddObject(_blade);
 
+	std::shared_ptr<Shield> _shield = std::make_shared<Shield>();
+	_shield->Init();
+	_shield->SetParent(_character);
+	AddObject(_shield);
+
 	//エネミー
-	/*std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
-	enemy->Init();
+	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
+	enemy->SetThis(enemy);
 	enemy->SetTarget(_character);
-	AddObject(enemy);*/
+	enemy->Init();
+	AddObject(enemy);
+
+	_character->RegistHitObject(enemy);
 
 	//===================================================================
 	// カメラ初期化
 	//===================================================================
-//	std::shared_ptr<FPSCamera>		_camera = std::make_shared<FPSCamera>();
-//	std::shared_ptr<TPSCamera>		_camera = std::make_shared<TPSCamera>();
-	std::shared_ptr<TrackingCamera>		_camera = std::make_shared<TrackingCamera>();
-//	std::shared_ptr<RockCamera>		_camera = std::make_shared<RockCamera>();
-	_camera->Init();
-	_camera->SetTarget(_character);
-//	_camera->SetRock(enemy);
-	_camera->RegistHitObject(_terrain);
-	_character->SetCamera(_camera);
-	AddObject(_camera);
+	CameraManager::Instance().SetCameraTarget(_character);
+	CameraManager::Instance().SetRockTarget(enemy);
+	CameraManager::Instance().SetNextType(CameraManager::CameraType::None);
+
+	
 }
 
 void GameScene::Event()

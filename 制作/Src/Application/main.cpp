@@ -6,7 +6,7 @@
 // エントリーポイント
 // アプリケーションはこの関数から進行する
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR , _In_ int)
+int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR, _In_ int)
 {
 	// メモリリークを知らせる
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -209,6 +209,8 @@ bool Application::Init(int w, int h)
 	//===================================================================
 	SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 
+	KeyInput::GetInstance().SetWindow(m_window.GetWndHandle());
+
 	return true;
 }
 
@@ -237,8 +239,12 @@ void Application::Execute()
 	// ループ
 	while (1)
 	{
-		
-		// ゲーム終了指定があるときはループ終了
+		// 処理開始時間Get
+		KdFPSController::GetInstance().UpdateStartTime();
+
+		//	m_log.Clear();
+
+			// ゲーム終了指定があるときはループ終了
 		if (m_endFlag)
 		{
 			break;
@@ -261,12 +267,17 @@ void Application::Execute()
 
 		if (GetAsyncKeyState(VK_ESCAPE))
 		{
-//			if (MessageBoxA(m_window.GetWndHandle(), "本当にゲームを終了しますか？",
-//				"終了確認", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES)
+			if (MessageBoxA(m_window.GetWndHandle(), "本当にゲームを終了しますか？",
+				"終了確認", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES)
 			{
 				End();
 			}
 		}
+
+		//入力管理
+		KeyInput::GetInstance().Update();
+
+
 		//=========================================
 		//
 		// アプリケーション更新処理
@@ -308,6 +319,9 @@ void Application::Execute()
 		//=========================================
 
 		KdFPSController::GetInstance().Update();
+
+		std::string titleBar = "Mecha fps=" + std::to_string(KdFPSController::GetInstance().GetFPS());
+		SetWindowTextA(m_window.GetWndHandle(), titleBar.c_str());
 	}
 
 	//===================================================================
@@ -370,21 +384,20 @@ void Application::ImGuiProcess()
 	// 以下にImGui描画処理を記述
 	//===========================================================
 
-	// デバッグウィンドウ
-	//if (ImGui::Begin("Debug Window"))
-	//{
-	//	// FPS
-	//	ImGui::Text("FPS : %d", m_fpsController.m_nowfps);
-	//}
-	//ImGui::End();
-
 	// ログウィンドウ
 	m_log.Draw("Log Window");
 
+	SceneManager::Instance().Edit_ImGui();
+
 	//=====================================================
-	// ログ出力 ・・・ AddLog("～") で追加
+	// ログ出力 ・・・ 
+	// 
+	// 
+	// 
+	// 
+	// ("～") で追加
 	//=====================================================
-	
+
 	//m_log.AddLog("hello world\n");
 
 	//=====================================================

@@ -55,6 +55,9 @@ public:
 		m_wpCamera = camera;
 	}
 
+	//新しいハンドルを見つける
+	std::weak_ptr<KdEffekseerObject> SerchEffect(const std::string& fileName);
+
 private:
 
 	const Effekseer::Vector3D GetEfkVec3D(const Math::Vector3& vec) const
@@ -157,8 +160,8 @@ public:
 	const bool IsLoop() const { return m_info.IsLoop; }
 
 	// エフェクトの各種情報取得
-	KdEffekseerManager::PlayEfkInfo& WorkPlayEfkInfo()				{ return m_info; }
-	const KdEffekseerManager::PlayEfkInfo& GetPlayEfkInfo() const	{ return m_info; }
+	KdEffekseerManager::PlayEfkInfo& WorkPlayEfkInfo() { return m_info; }
+	const KdEffekseerManager::PlayEfkInfo& GetPlayEfkInfo() const { return m_info; }
 
 private:
 

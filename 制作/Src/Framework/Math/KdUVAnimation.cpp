@@ -37,7 +37,7 @@ const std::shared_ptr<KdAnimationFrame> KdUVAnimationData::GetAnimation(std::str
 {
 	auto dataItr = m_animations.find(name.data());
 
-	if ( dataItr == m_animations.end() ) { return nullptr; }
+	if (dataItr == m_animations.end()) { return nullptr; }
 
 	return dataItr->second;
 }

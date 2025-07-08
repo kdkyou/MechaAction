@@ -1,9 +1,8 @@
 #include"inc_KdPostProcessShader.hlsli"
 
-Texture2D g_inputTex : register(t0);  //posteffect
+Texture2D g_inputTex : register(t0); //Combine
 Texture2D g_radialTex : register(t1); //ReaialBlur
 Texture2D g_glitchTex : register(t2); //Glitch
-Texture2D g_depthTex : register(t3);  //DoF
 
 SamplerState g_ss : register(s0);
 
@@ -23,7 +22,6 @@ float4 main(VSOutput In) : SV_Target0
 	if (g_switch == 0)
 	{
 		color += g_inputTex.Sample(g_ss, In.UV).rgb;
-		
 	}
 	//RadialBlurのみ
 	else if (g_switch == 1)
@@ -43,10 +41,9 @@ float4 main(VSOutput In) : SV_Target0
 		
 		color += saturate(color1 + color2);
 	}
-	//被写界深度のみ
+	//半合成
 	else if (g_switch == 4)
 	{
-		color += g_depthTex.Sample(g_ss, In.UV).rgb;
 		
 	}
 

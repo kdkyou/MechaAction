@@ -29,12 +29,12 @@ bool KdBuffer::Create(UINT bindFlags, UINT bufferSize, D3D11_USAGE bufferUsage, 
 	// バッファ作成のための詳細データ
 	//--------------------------------
 	D3D11_BUFFER_DESC desc;
-	desc.BindFlags			= bindFlags;		// デバイスにバインドするときの種類(頂点バッファ、インデックスバッファ、定数バッファなど)
-	desc.ByteWidth			= bufferSize;		// 作成するバッファのバイトサイズ
-	desc.MiscFlags			= 0;				// その他のフラグ
-	desc.StructureByteStride= 0;				// 構造化バッファの場合、その構造体のサイズ
+	desc.BindFlags = bindFlags;		// デバイスにバインドするときの種類(頂点バッファ、インデックスバッファ、定数バッファなど)
+	desc.ByteWidth = bufferSize;		// 作成するバッファのバイトサイズ
+	desc.MiscFlags = 0;				// その他のフラグ
+	desc.StructureByteStride = 0;				// 構造化バッファの場合、その構造体のサイズ
 
-	desc.Usage				= bufferUsage;		// 作成するバッファの使用法
+	desc.Usage = bufferUsage;		// 作成するバッファの使用法
 
 	// 動的ビデオメモリバッファ
 	//  GPUからWrite× Read○
@@ -48,7 +48,7 @@ bool KdBuffer::Create(UINT bindFlags, UINT bufferSize, D3D11_USAGE bufferUsage, 
 	//  GPUからWrite○ Read○
 	//  CPUからWrite× Read×　(ただしUpdateSubresource()で更新は可能)
 	// ビデオメモリーのバッファ　頻繁に更新するには向いていないが描画が高速
-	else if(desc.Usage == D3D11_USAGE_DEFAULT)
+	else if (desc.Usage == D3D11_USAGE_DEFAULT)
 	{
 		desc.CPUAccessFlags = 0;
 	}
@@ -62,7 +62,7 @@ bool KdBuffer::Create(UINT bindFlags, UINT bufferSize, D3D11_USAGE bufferUsage, 
 		desc.BindFlags = 0;
 		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
 	}
-	
+
 	//--------------------------------
 	// バッファ作成
 	//--------------------------------

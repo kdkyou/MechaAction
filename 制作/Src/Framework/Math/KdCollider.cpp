@@ -283,8 +283,6 @@ bool KdSphereCollision::Intersects(const DirectX::BoundingBox& target, const Mat
 {
 	if (!m_enable) { return false; }
 
-	return false;
-
 	DirectX::BoundingSphere myShape;
 
 	m_shape.Transform(myShape, world);
@@ -341,8 +339,6 @@ bool KdSphereCollision::Intersects(const DirectX::BoundingBox& target, const Mat
 bool KdSphereCollision::Intersects(const DirectX::BoundingOrientedBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	if (!m_enable) { return false; }
-
-	return false;
 
 	DirectX::BoundingSphere myShape;
 
@@ -436,13 +432,10 @@ bool KdSphereCollision::Intersects(const KdCollider::RayInfo& target, const Math
 bool KdBoxCollision::Intersects(const DirectX::BoundingSphere& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	if (!m_enable) { return false; }
-	
-	return false;
-
 
 	Math::Vector3 vec = Math::Vector3::Zero;
 	bool isHit = false;
-	if (m_Abox.Extents.x == 0.0f) {
+	if (m_isOriented == true) {
 
 		//判定用のボックスを作り出す
 		DirectX::BoundingOrientedBox myBox;
@@ -454,7 +447,7 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingSphere& target, const Mat
 		if (!isHit || !pRes)return isHit;
 
 
-
+		int a = 0;
 
 	}
 	else
@@ -528,11 +521,9 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingBox& target, const Math::
 {
 	if (!m_enable)return false;
 
-	return false;
-
 	Math::Vector3 vec = Math::Vector3::Zero;
 	bool isHit = false;
-	if (m_Abox.Extents.x == 0.0f) {
+	if (m_isOriented == true) {
 
 		//判定用のボックスを作り出す
 		DirectX::BoundingOrientedBox myBox;
@@ -570,15 +561,164 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingBox& target, const Math::
 
 	return isHit;
 }
-bool KdBoxCollision::Intersects(const DirectX::BoundingOrientedBox& /*target*/, const Math::Matrix& /*world*/, KdCollider::CollisionResult* /*pRes*/)
+
+bool KdBoxCollision::Intersects(const DirectX::BoundingOrientedBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
-	// TODO: 当たり計算は各自必要に応じて拡張して下さい
-	return false;
+	if (!m_enable) { return false; }
+
+	Math::Vector3 vec = Math::Vector3::Zero;
+	bool isHit = false;
+	if (m_isOriented == true) {
+
+		//判定用のボックスを作り出す
+		DirectX::BoundingOrientedBox myBox;
+		m_Obox.Transform(myBox, world);
+
+		//当たったかどうか
+		isHit = myBox.Intersects(target);
+
+		if (!isHit || !pRes)return isHit;
+
+		//詳細な押し戻し判定(MTV)を求める
+
+	//ボックスAのデータ
+		DirectX::XMVECTOR centerA = DirectX::XMLoadFloat3(&myBox.Center);
+		DirectX::XMVECTOR extentsA = DirectX::XMLoadFloat3(&myBox.Extents);
+		DirectX::XMVECTOR axesA[3];
+		GetOBBAxes(myBox, axesA);
+
+		//ボックスBのデータ
+		DirectX::XMVECTOR centerB = DirectX::XMLoadFloat3(&target.Center);
+		DirectX::XMVECTOR extentsB = DirectX::XMLoadFloat3(&target.Extents);
+		DirectX::XMVECTOR axesB[3];
+		GetOBBAxes(myBox, axesB);
+
+		DirectX::XMVECTOR testAxes[15];
+		int axisCount = 0;
+
+		// Aの軸
+		for (int i = 0; i < 3; ++i)testAxes[axisCount++] = axesA[i];
+
+		// Bの軸
+		for (int i = 0; i < 3; ++i)testAxes[axisCount++] = axesB[i];
+
+		// A×B の軸
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				DirectX::XMVECTOR cross = DirectX::XMVector3Cross(axesA[i], axesB[j]);
+				if (DirectX::XMVector3LengthSq(cross).m128_f32[0] > 1e-6f)
+				{
+					testAxes[axisCount++] = DirectX::XMVector3Normalize(cross);
+				}
+			}
+		}
+
+		//衝突しているかどうか
+		float minOverlap = FLT_MAX;
+		DirectX::XMVECTOR smallestAxis = DirectX::XMVectorZero();
+
+		for (int i = 0; i < axisCount; ++i)
+		{
+			DirectX::XMVECTOR axis = testAxes[i];
+
+			float minA, maxA, minB, maxB;
+			ProjectOBB(centerA, axesA, extentsA, axis, minA, maxA);
+			ProjectOBB(centerB, axesB, extentsB, axis, minB, maxB);
+
+			float overlap = std::min(maxA, maxB) - std::max(minA, minB);
+			if (overlap < 0.0f)
+			{
+				return false; // 分離軸あり → 衝突していない
+			}
+
+			if (overlap < minOverlap)
+			{
+				minOverlap = overlap;
+				smallestAxis = axis;
+			}
+		}
+
+		// 押し戻しベクトル計算
+		DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(centerB, centerA);
+		if (DirectX::XMVectorGetX(DirectX::XMVector3Dot(dir, smallestAxis)) < 0.0f)
+		{
+			smallestAxis = DirectX::XMVectorNegate(smallestAxis);
+		}
+
+		pRes->m_hitPos = DirectX::XMVectorScale(smallestAxis, minOverlap);
+		pRes->m_hitDir = smallestAxis;
+		pRes->m_overlapDistance = minOverlap;
+
+		return true; // 衝突している
+
+	}
+	else
+	{
+
+		//判定用のボックスを作り出す
+		DirectX::BoundingBox myBox;
+		m_Abox.Transform(myBox, world);
+
+		//当たったかどうか
+		isHit = myBox.Intersects(target);
+
+		if (!isHit || !pRes)return isHit;
+
+		int i = 0;
+	}
+
+
+
+
+
+
+
+
+	return true;
 }
-bool KdBoxCollision::Intersects(const KdCollider::RayInfo& /*target*/, const Math::Matrix& /*world*/, KdCollider::CollisionResult* /*pRes*/)
+bool KdBoxCollision::Intersects(const KdCollider::RayInfo& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
-	// TODO: 当たり計算は各自必要に応じて拡張して下さい
-	return false;
+	if (!m_enable) { return false; }
+
+	float hitDistance = 0.0f;
+	bool isHit = false;
+
+	Math::Vector3 vec = Math::Vector3::Zero;
+	if (m_isOriented == true) {
+
+		DirectX::BoundingOrientedBox myShape;
+		m_Obox.Transform(myShape, world);
+		isHit = myShape.Intersects(target.m_pos, target.m_dir, hitDistance);
+	}
+	else {
+
+		DirectX::BoundingBox myShape;
+		m_Abox.Transform(myShape, world);
+		isHit = myShape.Intersects(target.m_pos, target.m_dir, hitDistance);
+
+	}
+
+
+	// 判定限界距離を加味
+	isHit &= (target.m_range >= hitDistance);
+
+	// 詳細リザルトが必要無ければ即結果を返す
+	if (!pRes) { return isHit; }
+
+	// 当たった時のみ計算
+	if (isHit)
+	{
+		// レイ発射位置 + レイの当たった位置までのベクトル 
+		pRes->m_hitPos = target.m_pos + target.m_dir * hitDistance;
+
+		pRes->m_hitDir = target.m_dir * (-1);
+
+		pRes->m_overlapDistance = target.m_range - hitDistance;
+	}
+	return isHit;
+
 }
 
 // ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
@@ -666,10 +806,75 @@ bool KdModelCollision::Intersects(const DirectX::BoundingSphere& target, const M
 // 判定回数は メッシュの個数 x 各メッシュのポリゴン数 計算回数がモデルのデータ依存のため処理効率は不安定
 // 単純に計算回数が多くなる可能性があるため重くなりがち
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-bool KdModelCollision::Intersects(const DirectX::BoundingBox& /*target*/, const Math::Matrix& /*world*/, KdCollider::CollisionResult* /*pRes*/)
+bool KdModelCollision::Intersects(const DirectX::BoundingBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	// TODO: 当たり計算は各自必要に応じて拡張して下さい
-	return false;
+
+	//当たり判定が無効 or 形状が解放済みなら判定せずに返る
+	if (!m_enable || m_shape) { return false; }
+
+	std::shared_ptr<KdModelData> spModelData = m_shape->GetData();
+
+	if (!spModelData) { return false; }
+
+	const std::vector<KdModelData::Node>& dataNodes = spModelData->GetOriginalNodes();
+	const std::vector<KdModelWork::Node>& workNodes = m_shape->GetNodes();
+
+	// 各メッシュに押される用の箱・押される毎に座標を更新する必要がある
+	DirectX::BoundingBox pushedBox = target;
+	// 計算用にFloat3 → Vectorへ変換
+	Math::Vector3 pushedBoxCenter = DirectX::XMLoadFloat3(&pushedBox.Center);
+
+	bool isHit = false;
+
+	Math::Vector3 hitPos;
+
+	//// 当たり判定ノードとのみ当たり判定
+	//for (int index : spModelData->GetCollisionMeshNodeIndices())
+	//{
+	//	const KdModelData::Node& dataNode = dataNodes[index];
+	//	const KdModelWork::Node& workNode = workNodes[index];
+
+	//	// あり得ないはずだが一応チェック
+	//	if (!dataNode.m_spMesh) { continue; }
+
+	//	CollisionMeshResult tmpResult;
+	//	CollisionMeshResult* pTmpResult = pRes ? &tmpResult : nullptr;
+
+	//	// メッシュと球形の当たり判定実行
+	//	if (!MeshIntersect(*dataNode.m_spMesh, pushedBoxCenter, workNode.m_worldTransform * world, pTmpResult))
+	//	{
+	//		continue;
+	//	}
+
+	//	// 詳細リザルトが必要無ければ即結果を返す
+	//	if (!pRes) { return true; }
+
+	//	isHit = true;
+
+	//	// 重なった分押し戻す
+	//	pushedSphereCenter = DirectX::XMVectorAdd(pushedSphereCenter, DirectX::XMVectorScale(tmpResult.m_hitDir, tmpResult.m_overlapDistance));
+
+	//	DirectX::XMStoreFloat3(&pushedSphere.Center, pushedSphereCenter);
+
+	//	// とりあえず当たった座標で更新
+	//	hitPos = tmpResult.m_hitPos;
+	//}
+
+	//if (pRes && isHit)
+	//{
+	//	// 最後に当たった座標が使用される
+	//	pRes->m_hitPos = hitPos;
+
+	//	// 複数のメッシュに押された最終的な位置 - 移動前の位置 = 押し出しベクトル
+	//	pRes->m_hitDir = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&pushedSphere.Center), DirectX::XMLoadFloat3(&target.Center));
+
+	//	pRes->m_overlapDistance = DirectX::XMVector3Length(pRes->m_hitDir).m128_f32[0];
+
+	//	pRes->m_hitDir = DirectX::XMVector3Normalize(pRes->m_hitDir);
+	//}
+
+	return isHit;
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -788,10 +993,31 @@ bool KdPolygonCollision::Intersects(const DirectX::BoundingSphere& target, const
 // 判定回数は ポリゴンの個数 計算回数がポリゴンデータ依存のため処理効率は不安定
 // 単純に計算回数が多くなる可能性があるため重くなりがち
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-bool KdPolygonCollision::Intersects(const DirectX::BoundingBox& /*target*/, const Math::Matrix& /*world*/, KdCollider::CollisionResult* /*pRes*/)
+bool KdPolygonCollision::Intersects(const DirectX::BoundingBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	// TODO: 当たり計算は各自必要に応じて拡張して下さい
-	return false;
+	if (!m_enable || !m_shape) { return false; }
+
+	CollisionMeshResult result;
+	CollisionMeshResult* pTmpResult = pRes ? &result : nullptr;
+
+	// メッシュと球形の当たり判定実行
+	if (!PolygonsIntersect(*m_shape, target, world, pTmpResult))
+	{
+		// 当たっていなければ無条件に返る
+		return false;
+	}
+
+	if (pRes)
+	{
+		pRes->m_hitPos = result.m_hitPos;
+
+		pRes->m_hitDir = result.m_hitDir;
+
+		pRes->m_overlapDistance = result.m_overlapDistance;
+	}
+
+	return true;
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -799,7 +1025,7 @@ bool KdPolygonCollision::Intersects(const DirectX::BoundingBox& /*target*/, cons
 // 判定回数は ポリゴンの個数 計算回数がポリゴンデータ依存のため処理効率は不安定
 // 単純に計算回数が多くなる可能性があるため重くなりがち
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-bool KdPolygonCollision::Intersects(const DirectX::BoundingOrientedBox& /*target*/, const Math::Matrix& /*world*/, KdCollider::CollisionResult* /*pRes*/)
+bool KdPolygonCollision::Intersects(const DirectX::BoundingOrientedBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	// TODO: 当たり計算は各自必要に応じて拡張して下さい
 	return false;

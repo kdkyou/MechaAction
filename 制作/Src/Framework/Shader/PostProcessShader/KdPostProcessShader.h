@@ -17,7 +17,7 @@ public:
 	void SetBrightThreshold(float threshold) { m_cb0_BrightInfo.Work().Threshold = threshold; }
 
 	//放射ブラー用
-//サンプリング回数　長さ 中心 反映しない範囲 ディザリング 回転角度
+	//サンプリング回数　長さ 中心 反映しない範囲 ディザリング 回転角度
 	void SetRadialBlurInfo(int samlingSize, float strength, const Math::Vector2& center, float mask, int dither, float vor);
 	void UndoRadialBlur();
 
@@ -35,7 +35,6 @@ public:
 		Add,
 	};
 	void SetCombine(UINT kind) { m_cb0_CombineInfo.Work().Switch = kind; }
-
 
 	struct Vertex
 	{
@@ -55,20 +54,19 @@ public:
 	void PostEffectProcess();
 
 	void GenerateBlurTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP, int blurRadius);
-	
+
 	//放射ブラー用
 	void GenerateRadialBlurTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP);
+
 	//グリッチ用
 	void GenerateGlitchTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP);
 	//合成用
 	void GenerateCombineTexture(std::shared_ptr<KdTexture>& spSrcTex, std::shared_ptr<KdTexture>& spDstTex, D3D11_VIEWPORT& VP);
 
-
-
 private:
 
 	void BlurProcess();
-	
+
 	//放射ブラー用
 	void RadialBlurProcess();
 	//グリッチ用
@@ -79,8 +77,9 @@ private:
 	void LightBloomProcess();
 	void DepthOfFieldProcess();
 
+
 	void CreateBlurOffsetList(std::vector<Math::Vector3>& dstInfo, const std::shared_ptr<KdTexture>& spSrcTex, int samplingSize, const Math::Vector2& dir);
-	
+
 	void DrawTexture(std::shared_ptr<KdTexture>* spSrcTex, int srcTexSize, std::shared_ptr<KdTexture> spDstTex, D3D11_VIEWPORT* pVP);
 
 	void SetBlurInfo(const std::shared_ptr<KdTexture>& spSrcTex, int samplingSize, const Math::Vector2& dir);
@@ -88,8 +87,6 @@ private:
 
 	void SetBlurToDevice();
 
-
-	
 	//放射ブラー用
 	void SetRadialBlurToDevice();
 
@@ -98,7 +95,6 @@ private:
 	//合成用
 	void SetCombineToDevice();
 
-
 	void SetDoFToDevice();
 	void SetBrightToDevice();
 
@@ -106,11 +102,9 @@ private:
 	ID3D11InputLayout* m_inputLayout = nullptr;
 
 	ID3D11PixelShader* m_PS_Blur = nullptr;
-	
 	ID3D11PixelShader* m_PS_RBlur = nullptr;		//放射ブラー用
 	ID3D11PixelShader* m_PS_Glitch = nullptr;		//グリッチ用
 	ID3D11PixelShader* m_PS_Combine = nullptr;		//合成用
-
 	ID3D11PixelShader* m_PS_DoF = nullptr;
 	ID3D11PixelShader* m_PS_Bright = nullptr;
 
@@ -121,24 +115,23 @@ private:
 	struct cbBlur
 	{
 		Math::Vector4 Info[kMaxSampling];
-	
+
 		int SamplingNum = 0;
 		int _blank[3] = { 0, 0 ,0 };
 	};
 	KdConstantBuffer<cbBlur>	m_cb0_BlurInfo;
 
 	//放射ブラー用
-	int m_radialBlurSamplingNum = 2;
 	struct cbRadialBlur
 	{
-		int samples =0;
+		int samples = 0;
 		float strength = 0.0f;
 		Math::Vector2 center = { 0.5f,0.5f };
-		
+
 		float mask = 0.0f;
 		int  dither = 1;
-		float vortex = 0;
-		int _blank = { 0};
+		float vortex = 0.0f;
+		int _blank = 0;
 	};
 	KdConstantBuffer<cbRadialBlur> m_cb0_RadialBlurInfo;
 
@@ -166,7 +159,7 @@ private:
 		int _blank[3] = { 0,0,0 };
 	};
 	KdConstantBuffer<cbCombine>	m_cb0_CombineInfo;
-	
+
 
 
 	struct cbDepthOfField

@@ -1,5 +1,7 @@
 ﻿#include "CameraBase.h"
 
+#include"CameraManager.h"
+
 void CameraBase::Init()
 {
 	if (!m_spCamera)
@@ -9,6 +11,9 @@ void CameraBase::Init()
 	// ↓画面中央座標
 	m_FixMousePos.x = 640;
 	m_FixMousePos.y = 360;
+
+	KdEffekseerManager::GetInstance().SetCamera(m_spCamera);
+
 }
 
 void CameraBase::PreDraw()
@@ -19,22 +24,62 @@ void CameraBase::PreDraw()
 	m_spCamera->SetToShader();
 }
 
-void CameraBase::SetTarget(const std::shared_ptr<KdGameObject>& target)
+void CameraBase::SetTarget(const std::weak_ptr<KdGameObject>& target)
 {
-	if (!target) { return; }
+	if (target.expired() == true) { return; }
 
 	m_wpTarget = target;
+}
+
+void CameraBase::SetRockTarget(const std::weak_ptr<KdGameObject>& target)
+{
+	if (target.expired() == true) { return; }
+
+	m_wpRockTarget = target;
 }
 
 void CameraBase::UpdateRotateByMouse()
 {
 	// マウスでカメラを回転させる処理
 	POINT _nowPos;
+
 	GetCursorPos(&_nowPos);
+
+	auto& pad = KeyInput::GetInstance().GetGamePadState();
+
+	bool moveCamera = false;
 
 	POINT _mouseMove{};
 	_mouseMove.x = _nowPos.x - m_FixMousePos.x;
 	_mouseMove.y = _nowPos.y - m_FixMousePos.y;
+
+	if (_mouseMove.x > 0.0f || _mouseMove.y > 0.0f)
+	{
+		moveCamera = true;
+	}
+
+	
+	if (pad.IsRightThumbStickDown()) {
+		_mouseMove.y += m_mouseSpeed.y;
+		moveCamera = true;
+	}
+	if (pad.IsRightThumbStickUp()) {
+		_mouseMove.y -= m_mouseSpeed.y;
+		moveCamera = true;
+	}
+	if (pad.IsRightThumbStickLeft()) {
+		_mouseMove.x -= m_mouseSpeed.x;
+		moveCamera = true;
+	}
+	if (pad.IsRightThumbStickRight()) {
+		_mouseMove.x += m_mouseSpeed.x;
+		moveCamera = true;
+	}
+
+	if (moveCamera == true)
+	{
+		CameraManager::Instance().SetNextType(CameraManager::Tracking);
+	}
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 

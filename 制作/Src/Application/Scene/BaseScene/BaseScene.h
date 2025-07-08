@@ -16,6 +16,7 @@ public :
 	void DrawSprite();
 	void DrawDebug();
 
+
 	// オブジェクトリストを取得
 	const std::list<std::shared_ptr<KdGameObject>>& GetObjList()
 	{
@@ -28,12 +29,14 @@ public :
 		m_objList.push_back(obj);
 	}
 
+	void Edit_ImGui();
+
 protected :
 
 	// 継承先シーンで必要ならオーバーライドする
 	virtual void Event();
 	virtual void Init();
-
+	
 	// 全オブジェクトのアドレスをリストで管理
 	std::list<std::shared_ptr<KdGameObject>> m_objList;
 };

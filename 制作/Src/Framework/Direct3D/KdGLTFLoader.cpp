@@ -12,12 +12,12 @@
 // GLTFのデバッグ表示を有効
 //#define GLTF_DEBUG
 
-static void Dump(const tinygltf::Model &model);
+static void Dump(const tinygltf::Model& model);
 
 //===================================================
 // ファイル名から拡張子を取得
 //===================================================
-static std::string GetFilePathExtension(const std::string &FileName)
+static std::string GetFilePathExtension(const std::string& FileName)
 {
 	if (FileName.find_last_of(".") != std::string::npos)
 	{
@@ -107,9 +107,9 @@ public:
 	}
 
 	// 
-	const tinygltf::Accessor*	GetAccessor() const { return m_accessor; }
-	const tinygltf::BufferView*	GetBufferView() const { return m_bufferView; }
-	const tinygltf::Buffer*		GetBuffer() const { return m_buffer; }
+	const tinygltf::Accessor* GetAccessor() const { return m_accessor; }
+	const tinygltf::BufferView* GetBufferView() const { return m_bufferView; }
+	const tinygltf::Buffer* GetBuffer() const { return m_buffer; }
 
 
 private:
@@ -122,10 +122,10 @@ private:
 
 	const BYTE* m_address = nullptr;
 
-	const tinygltf::Model*		m_model = nullptr;
-	const tinygltf::Accessor*	m_accessor = nullptr;
-	const tinygltf::BufferView*	m_bufferView = nullptr;
-	const tinygltf::Buffer*		m_buffer = nullptr;
+	const tinygltf::Model* m_model = nullptr;
+	const tinygltf::Accessor* m_accessor = nullptr;
+	const tinygltf::BufferView* m_bufferView = nullptr;
+	const tinygltf::Buffer* m_buffer = nullptr;
 };
 
 //===================================================
@@ -207,12 +207,12 @@ std::shared_ptr<KdGLTFModel> KdLoadGLTFModel(std::string_view path)
 	{
 		// 指定Indexのテクスチャ名取得
 		auto GetTextureFilename = [&model](int texIndex) -> std::string
-		{
-			if (texIndex < 0)return "";
-			int imgIndex = model.textures[texIndex].source;
-			if (imgIndex < 0)return "";
-			return model.images[imgIndex].uri;
-		};
+			{
+				if (texIndex < 0)return "";
+				int imgIndex = model.textures[texIndex].source;
+				if (imgIndex < 0)return "";
+				return model.images[imgIndex].uri;
+			};
 
 		// マテリアル数だけ、配列確保
 		destModel->Materials.resize(model.materials.size());
@@ -364,20 +364,20 @@ std::shared_ptr<KdGLTFModel> KdLoadGLTFModel(std::string_view path)
 	{
 		// 行列計算用 再帰関数
 		std::function<void(KdGLTFNode*, const Math::Matrix*)> rec = [&rec, &destModel](KdGLTFNode* node, const Math::Matrix* parentMat)
-		{
-			if (parentMat) {
-				node->WorldTransform = node->LocalTransform * (*parentMat);
-			}
-			else {
-				node->WorldTransform = node->LocalTransform;
-			}
-
-			// 子再帰
-			for (auto&& child : node->Children)
 			{
-				rec(&destModel->Nodes[child], &node->WorldTransform);
-			}
-		};
+				if (parentMat) {
+					node->WorldTransform = node->LocalTransform * (*parentMat);
+				}
+				else {
+					node->WorldTransform = node->LocalTransform;
+				}
+
+				// 子再帰
+				for (auto&& child : node->Children)
+				{
+					rec(&destModel->Nodes[child], &node->WorldTransform);
+				}
+			};
 
 		// 親子関係から行列を作成
 		for (int nodeIdx : destModel->RootNodeIndices)
@@ -538,7 +538,7 @@ std::shared_ptr<KdGLTFModel> KdLoadGLTFModel(std::string_view path)
 
 					for (UINT vi = 0; vi < destPrimitive->Vertices.size(); vi++)
 					{
-						Math::Color color(1,1,1,1);
+						Math::Color color(1, 1, 1, 1);
 
 						// RGB
 						if (colorGetter.GetAccessor()->type == TINYGLTF_TYPE_VEC3)
@@ -705,11 +705,11 @@ std::shared_ptr<KdGLTFModel> KdLoadGLTFModel(std::string_view path)
 			// 接線が存在する場合はスキップ
 			if (v.Tangent.Length()) { continue; }
 
-			Math::Vector3( 0.0f, 1.0f, 0.0f ).Cross(v.Normal, v.Tangent);
-			
+			Math::Vector3(0.0f, 1.0f, 0.0f).Cross(v.Normal, v.Tangent);
+
 			if (v.Tangent.x == 0 && v.Tangent.y == 0 && v.Tangent.z == 0)
 			{
-				Math::Vector3( 0.0f, 0.0f, -1.0f).Cross(v.Normal, v.Tangent);
+				Math::Vector3(0.0f, 0.0f, -1.0f).Cross(v.Normal, v.Tangent);
 			}
 		}
 	}
@@ -1089,7 +1089,7 @@ static std::string PrintFilterMode(int mode) {
 	return "**UNKNOWN**";
 }
 
-static std::string PrintIntArray(const std::vector<int> &arr) {
+static std::string PrintIntArray(const std::vector<int>& arr) {
 	if (arr.size() == 0) {
 		return "";
 	}
@@ -1107,7 +1107,7 @@ static std::string PrintIntArray(const std::vector<int> &arr) {
 	return ss.str();
 }
 
-static std::string PrintFloatArray(const std::vector<double> &arr) {
+static std::string PrintFloatArray(const std::vector<double>& arr) {
 	if (arr.size() == 0) {
 		return "";
 	}
@@ -1134,7 +1134,7 @@ static std::string Indent(const int indent) {
 	return s;
 }
 
-static std::string PrintParameterValue(const tinygltf::Parameter &param) {
+static std::string PrintParameterValue(const tinygltf::Parameter& param) {
 	if (!param.number_array.empty()) {
 		return PrintFloatArray(param.number_array);
 	}
@@ -1144,11 +1144,11 @@ static std::string PrintParameterValue(const tinygltf::Parameter &param) {
 }
 
 #if 0
-static std::string PrintParameterMap(const tinygltf::ParameterMap &pmap) {
+static std::string PrintParameterMap(const tinygltf::ParameterMap& pmap) {
 	std::stringstream ss;
 
 	ss << pmap.size() << std::endl;
-	for (auto &kv : pmap) {
+	for (auto& kv : pmap) {
 		ss << kv.first << " : " << PrintParameterValue(kv.second) << std::endl;
 	}
 
@@ -1156,13 +1156,13 @@ static std::string PrintParameterMap(const tinygltf::ParameterMap &pmap) {
 }
 #endif
 
-static std::string PrintValue(const std::string &name,
-	const tinygltf::Value &value, const int indent,
+static std::string PrintValue(const std::string& name,
+	const tinygltf::Value& value, const int indent,
 	const bool tag = true) {
 	std::stringstream ss;
 
 	if (value.IsObject()) {
-		const tinygltf::Value::Object &o = value.Get<tinygltf::Value::Object>();
+		const tinygltf::Value::Object& o = value.Get<tinygltf::Value::Object>();
 		tinygltf::Value::Object::const_iterator it(o.begin());
 		tinygltf::Value::Object::const_iterator itEnd(o.end());
 		for (; it != itEnd; it++) {
@@ -1218,7 +1218,7 @@ static std::string PrintValue(const std::string &name,
 	return ss.str();
 }
 
-static void DumpNode(const tinygltf::Node &node, int indent) {
+static void DumpNode(const tinygltf::Node& node, int indent) {
 	std::cout << Indent(indent) << "name        : " << node.name << std::endl;
 	std::cout << Indent(indent) << "camera      : " << node.camera << std::endl;
 	std::cout << Indent(indent) << "mesh        : " << node.mesh << std::endl;
@@ -1246,7 +1246,7 @@ static void DumpNode(const tinygltf::Node &node, int indent) {
 		<< "children    : " << PrintIntArray(node.children) << std::endl;
 }
 
-static void DumpStringIntMap(const std::map<std::string, int> &m, int indent) {
+static void DumpStringIntMap(const std::map<std::string, int>& m, int indent) {
 	std::map<std::string, int>::const_iterator it(m.begin());
 	std::map<std::string, int>::const_iterator itEnd(m.end());
 	for (; it != itEnd; it++) {
@@ -1254,7 +1254,7 @@ static void DumpStringIntMap(const std::map<std::string, int> &m, int indent) {
 	}
 }
 
-static void DumpPrimitive(const tinygltf::Primitive &primitive, int indent) {
+static void DumpPrimitive(const tinygltf::Primitive& primitive, int indent) {
 	std::cout << Indent(indent) << "material : " << primitive.material
 		<< std::endl;
 	std::cout << Indent(indent) << "indices : " << primitive.indices << std::endl;
@@ -1269,16 +1269,16 @@ static void DumpPrimitive(const tinygltf::Primitive &primitive, int indent) {
 		<< PrintValue("extras", primitive.extras, indent + 1) << std::endl;
 }
 
-static void DumpExtensions(const tinygltf::ExtensionMap &extension,
+static void DumpExtensions(const tinygltf::ExtensionMap& extension,
 	const int indent) {
 	// TODO(syoyo): pritty print Value
-	for (auto &e : extension) {
+	for (auto& e : extension) {
 		std::cout << Indent(indent) << e.first << std::endl;
 		std::cout << PrintValue("extensions", e.second, indent + 1) << std::endl;
 	}
 }
 
-static void DumpTextureInfo(const tinygltf::TextureInfo &texinfo,
+static void DumpTextureInfo(const tinygltf::TextureInfo& texinfo,
 	const int indent) {
 	std::cout << Indent(indent) << "index     : " << texinfo.index << "\n";
 	std::cout << Indent(indent) << "texCoord  : TEXCOORD_" << texinfo.texCoord
@@ -1287,7 +1287,7 @@ static void DumpTextureInfo(const tinygltf::TextureInfo &texinfo,
 	std::cout << PrintValue("extras", texinfo.extras, indent + 1) << "\n";
 }
 
-static void DumpNormalTextureInfo(const tinygltf::NormalTextureInfo &texinfo,
+static void DumpNormalTextureInfo(const tinygltf::NormalTextureInfo& texinfo,
 	const int indent) {
 	std::cout << Indent(indent) << "index     : " << texinfo.index << "\n";
 	std::cout << Indent(indent) << "texCoord  : TEXCOORD_" << texinfo.texCoord
@@ -1298,7 +1298,7 @@ static void DumpNormalTextureInfo(const tinygltf::NormalTextureInfo &texinfo,
 }
 
 static void DumpOcclusionTextureInfo(
-	const tinygltf::OcclusionTextureInfo &texinfo, const int indent) {
+	const tinygltf::OcclusionTextureInfo& texinfo, const int indent) {
 	std::cout << Indent(indent) << "index     : " << texinfo.index << "\n";
 	std::cout << Indent(indent) << "texCoord  : TEXCOORD_" << texinfo.texCoord
 		<< "\n";
@@ -1307,7 +1307,7 @@ static void DumpOcclusionTextureInfo(
 	std::cout << PrintValue("extras", texinfo.extras, indent + 1) << "\n";
 }
 
-static void DumpPbrMetallicRoughness(const tinygltf::PbrMetallicRoughness &pbr,
+static void DumpPbrMetallicRoughness(const tinygltf::PbrMetallicRoughness& pbr,
 	const int indent) {
 	std::cout << Indent(indent)
 		<< "baseColorFactor   : " << PrintFloatArray(pbr.baseColorFactor)
@@ -1326,7 +1326,7 @@ static void DumpPbrMetallicRoughness(const tinygltf::PbrMetallicRoughness &pbr,
 	std::cout << PrintValue("extras", pbr.extras, indent + 1) << "\n";
 }
 
-static void Dump(const tinygltf::Model &model) {
+static void Dump(const tinygltf::Model& model) {
 	std::cout << "=== Dump glTF ===" << std::endl;
 	std::cout << "asset.copyright          : " << model.asset.copyright
 		<< std::endl;
@@ -1367,7 +1367,7 @@ static void Dump(const tinygltf::Model &model) {
 
 	{
 		for (size_t i = 0; i < model.accessors.size(); i++) {
-			const tinygltf::Accessor &accessor = model.accessors[i];
+			const tinygltf::Accessor& accessor = model.accessors[i];
 			std::cout << Indent(1) << "name         : " << accessor.name << std::endl;
 			std::cout << Indent(2) << "bufferView   : " << accessor.bufferView
 				<< std::endl;
@@ -1427,7 +1427,7 @@ static void Dump(const tinygltf::Model &model) {
 		std::cout << "animations(items=" << model.animations.size() << ")"
 			<< std::endl;
 		for (size_t i = 0; i < model.animations.size(); i++) {
-			const tinygltf::Animation &animation = model.animations[i];
+			const tinygltf::Animation& animation = model.animations[i];
 			std::cout << Indent(1) << "name         : " << animation.name
 				<< std::endl;
 
@@ -1449,7 +1449,7 @@ static void Dump(const tinygltf::Model &model) {
 			std::cout << Indent(1) << "samplers(items=" << animation.samplers.size()
 				<< ")" << std::endl;
 			for (size_t j = 0; j < animation.samplers.size(); j++) {
-				const tinygltf::AnimationSampler &sampler = animation.samplers[j];
+				const tinygltf::AnimationSampler& sampler = animation.samplers[j];
 				std::cout << Indent(2) << "input         : " << sampler.input
 					<< std::endl;
 				std::cout << Indent(2) << "interpolation : " << sampler.interpolation
@@ -1464,7 +1464,7 @@ static void Dump(const tinygltf::Model &model) {
 		std::cout << "bufferViews(items=" << model.bufferViews.size() << ")"
 			<< std::endl;
 		for (size_t i = 0; i < model.bufferViews.size(); i++) {
-			const tinygltf::BufferView &bufferView = model.bufferViews[i];
+			const tinygltf::BufferView& bufferView = model.bufferViews[i];
 			std::cout << Indent(1) << "name         : " << bufferView.name
 				<< std::endl;
 			std::cout << Indent(2) << "buffer       : " << bufferView.buffer
@@ -1484,7 +1484,7 @@ static void Dump(const tinygltf::Model &model) {
 	{
 		std::cout << "buffers(items=" << model.buffers.size() << ")" << std::endl;
 		for (size_t i = 0; i < model.buffers.size(); i++) {
-			const tinygltf::Buffer &buffer = model.buffers[i];
+			const tinygltf::Buffer& buffer = model.buffers[i];
 			std::cout << Indent(1) << "name         : " << buffer.name << std::endl;
 			std::cout << Indent(2) << "byteLength   : " << buffer.data.size()
 				<< std::endl;
@@ -1495,7 +1495,7 @@ static void Dump(const tinygltf::Model &model) {
 		std::cout << "materials(items=" << model.materials.size() << ")"
 			<< std::endl;
 		for (size_t i = 0; i < model.materials.size(); i++) {
-			const tinygltf::Material &material = model.materials[i];
+			const tinygltf::Material& material = model.materials[i];
 			std::cout << Indent(1) << "name                 : " << material.name
 				<< std::endl;
 
@@ -1540,7 +1540,7 @@ static void Dump(const tinygltf::Model &model) {
 	{
 		std::cout << "nodes(items=" << model.nodes.size() << ")" << std::endl;
 		for (size_t i = 0; i < model.nodes.size(); i++) {
-			const tinygltf::Node &node = model.nodes[i];
+			const tinygltf::Node& node = model.nodes[i];
 			std::cout << Indent(1) << "name         : " << node.name << std::endl;
 
 			DumpNode(node, 2);
@@ -1550,7 +1550,7 @@ static void Dump(const tinygltf::Model &model) {
 	{
 		std::cout << "images(items=" << model.images.size() << ")" << std::endl;
 		for (size_t i = 0; i < model.images.size(); i++) {
-			const tinygltf::Image &image = model.images[i];
+			const tinygltf::Image& image = model.images[i];
 			std::cout << Indent(1) << "name         : " << image.name << std::endl;
 
 			std::cout << Indent(2) << "width     : " << image.width << std::endl;
@@ -1563,7 +1563,7 @@ static void Dump(const tinygltf::Model &model) {
 	{
 		std::cout << "textures(items=" << model.textures.size() << ")" << std::endl;
 		for (size_t i = 0; i < model.textures.size(); i++) {
-			const tinygltf::Texture &texture = model.textures[i];
+			const tinygltf::Texture& texture = model.textures[i];
 			std::cout << Indent(1) << "sampler        : " << texture.sampler
 				<< std::endl;
 			std::cout << Indent(1) << "source         : " << texture.source
@@ -1576,7 +1576,7 @@ static void Dump(const tinygltf::Model &model) {
 		std::cout << "samplers(items=" << model.samplers.size() << ")" << std::endl;
 
 		for (size_t i = 0; i < model.samplers.size(); i++) {
-			const tinygltf::Sampler &sampler = model.samplers[i];
+			const tinygltf::Sampler& sampler = model.samplers[i];
 			std::cout << Indent(1) << "name (id)    : " << sampler.name << std::endl;
 			std::cout << Indent(2)
 				<< "minFilter    : " << PrintFilterMode(sampler.minFilter)
@@ -1597,7 +1597,7 @@ static void Dump(const tinygltf::Model &model) {
 		std::cout << "cameras(items=" << model.cameras.size() << ")" << std::endl;
 
 		for (size_t i = 0; i < model.cameras.size(); i++) {
-			const tinygltf::Camera &camera = model.cameras[i];
+			const tinygltf::Camera& camera = model.cameras[i];
 			std::cout << Indent(1) << "name (id)    : " << camera.name << std::endl;
 			std::cout << Indent(1) << "type         : " << camera.type << std::endl;
 
@@ -1635,5 +1635,3 @@ static void Dump(const tinygltf::Model &model) {
 }
 
 #endif
-
-

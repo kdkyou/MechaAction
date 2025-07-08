@@ -37,8 +37,8 @@ public:
 	void CreateAnimations(const std::shared_ptr<KdGLTFModel>& spGltfModel);								// アニメーション作成
 
 	//アクセサ
-	const std::shared_ptr<KdMesh> GetMesh(UINT index) const { return index < m_originalNodes.size() ? m_originalNodes[ index ].m_spMesh : nullptr; }
-	
+	const std::shared_ptr<KdMesh> GetMesh(UINT index) const { return index < m_originalNodes.size() ? m_originalNodes[index].m_spMesh : nullptr; }
+
 	Node* FindNode(std::string name)
 	{
 		for (auto&& node : m_originalNodes)
@@ -119,7 +119,7 @@ public:
 	};
 
 	// コンストラクタ
-	KdModelWork(){}
+	KdModelWork() {}
 	KdModelWork(const std::shared_ptr<KdModelData>& spModel) { SetModelData(spModel); }
 
 	~KdModelWork() {}

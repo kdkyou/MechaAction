@@ -115,7 +115,7 @@ struct ImGuiAppLog
 //============================================================
 class Application
 {
-// メンバ
+	// メンバ
 public:
 
 	// アプリケーション実行
@@ -166,21 +166,21 @@ private:
 	// ゲームウィンドウクラス
 	KdWindow		m_window;
 
-	//// FPSコントローラー
+	// FPSコントローラー
 	//KdFPSController	m_fpsController;
 
 	// ゲーム終了フラグ trueで終了する
 	bool			m_endFlag = false;
 
-//=====================================================
-// シングルトンパターン
-//=====================================================
+	//=====================================================
+	// シングルトンパターン
+	//=====================================================
 private:
 
 	Application() {}
 
 public:
-	static Application &Instance(){
+	static Application& Instance() {
 		static Application Instance;
 		return Instance;
 	}

@@ -48,17 +48,17 @@ public:
 	//=================================================
 
 	// サブセット情報配列を取得
-	const std::vector<KdMeshSubset>&	GetSubsets() const { return m_subsets; }
+	const std::vector<KdMeshSubset>& GetSubsets() const { return m_subsets; }
 
 	// 頂点の座標配列を取得
-	const std::vector<Math::Vector3>&	GetVertexPositions() const { return m_positions; }
+	const std::vector<Math::Vector3>& GetVertexPositions() const { return m_positions; }
 	// 面の配列を取得
-	const std::vector<KdMeshFace>&		GetFaces() const { return m_faces; }
+	const std::vector<KdMeshFace>& GetFaces() const { return m_faces; }
 
 	// 軸平行境界ボックス取得
-	const DirectX::BoundingBox&			GetBoundingBox() const { return m_aabb; }
+	const DirectX::BoundingBox& GetBoundingBox() const { return m_aabb; }
 	// 境界球取得
-	const DirectX::BoundingSphere&		GetBoundingSphere() const { return m_bs; }
+	const DirectX::BoundingSphere& GetBoundingSphere() const { return m_bs; }
 
 	// メッシュデータをデバイスへセットする
 	void SetToDevice() const;

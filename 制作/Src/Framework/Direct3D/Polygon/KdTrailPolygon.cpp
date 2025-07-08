@@ -7,9 +7,9 @@ void KdTrailPolygon::GenerateVertices()
 {
 	switch (m_pattern)
 	{
-		case Trail_Pattern::eDefault:		CreateVerticesWithDefaultPattern();		break;
-		case Trail_Pattern::eBillboard:		CreateVerticesWithBillboardPattern();	break;
-		case Trail_Pattern::eVertices:		CreateVerticesWithVerticesPattern();	break;
+	case Trail_Pattern::eDefault:		CreateVerticesWithDefaultPattern();		break;
+	case Trail_Pattern::eBillboard:		CreateVerticesWithBillboardPattern();	break;
+	case Trail_Pattern::eVertices:		CreateVerticesWithVerticesPattern();	break;
 	}
 }
 
@@ -44,7 +44,7 @@ void KdTrailPolygon::CreateVerticesWithDefaultPattern()
 
 		// X方向
 		Math::Vector3 axisX = mat.Right();
-		float width = axisX.Length() * 0.5f;
+		float width = axisX.Length() * m_width;
 
 		axisX.Normalize();
 
@@ -106,7 +106,7 @@ void KdTrailPolygon::CreateVerticesWithBillboardPattern()
 		Math::Vector3 v = mat.Translation() - mCam.Translation();
 		Math::Vector3 axisX = DirectX::XMVector3Cross(vDir, v);
 
-		float width = mat.Right().Length() * 0.5f;
+		float width = mat.Right().Length() * m_width;
 
 		axisX.Normalize();
 

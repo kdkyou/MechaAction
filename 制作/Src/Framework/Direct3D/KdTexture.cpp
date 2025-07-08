@@ -338,7 +338,7 @@ bool KdTexture::Create(ID3D11Texture2D* pTexture2D)
 
 }
 
-bool KdTexture::Create(const D3D11_TEXTURE2D_DESC & desc, const D3D11_SUBRESOURCE_DATA * fillData)
+bool KdTexture::Create(const D3D11_TEXTURE2D_DESC& desc, const D3D11_SUBRESOURCE_DATA* fillData)
 {
 	Release();
 
@@ -377,7 +377,7 @@ void SetTextureInfo(D3D11_TEXTURE2D_DESC& rDesc, int w, int h, DXGI_FORMAT forma
 	rDesc.MiscFlags = miscFlags;
 }
 
-bool KdTexture::Create(int w, int h, DXGI_FORMAT format, UINT arrayCnt, const D3D11_SUBRESOURCE_DATA * fillData)
+bool KdTexture::Create(int w, int h, DXGI_FORMAT format, UINT arrayCnt, const D3D11_SUBRESOURCE_DATA* fillData)
 {
 	Release();
 
@@ -408,7 +408,7 @@ bool KdTexture::CreateRenderTarget(int w, int h, DXGI_FORMAT format, UINT arrayC
 	D3D11_TEXTURE2D_DESC desc = {};
 
 	SetTextureInfo(desc, w, h, format, arrayCnt, 0);
-	
+
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 	desc.CPUAccessFlags = 0;

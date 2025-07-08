@@ -71,6 +71,10 @@ void KdStandardShader::BeginUnLit()
 		KdShaderManager::Instance().SetVSConstantBuffer(1, m_cb1_Mesh.GetAddress());
 	}
 
+	// ボーン情報をセット(スキンメッシュ対応)
+	KdShaderManager::Instance().SetVSConstantBuffer(3, m_cb3_Bone.GetAddress());
+
+
 	if (KdShaderManager::Instance().SetPixelShader(m_PS_UnLit))
 	{
 		KdShaderManager::Instance().SetPSConstantBuffer(0, m_cb0_Obj.GetAddress());
@@ -100,11 +104,13 @@ void KdStandardShader::BeginGenerateDepthMapFromLight()
 
 		KdShaderManager::Instance().SetVSConstantBuffer(0, m_cb0_Obj.GetAddress());
 		KdShaderManager::Instance().SetVSConstantBuffer(1, m_cb1_Mesh.GetAddress());
+
+		// ボーン情報をセット(スキンメッシュ対応)
+		KdShaderManager::Instance().SetVSConstantBuffer(3, m_cb3_Bone.GetAddress());
+
 	}
 
-	// ボーン情報をセット(スキンメッシュ対応)
-	KdShaderManager::Instance().SetVSConstantBuffer(3, m_cb3_Bone.GetAddress());
-
+	
 	if (KdShaderManager::Instance().SetPixelShader(m_PS_GenDepthFromLight))
 	{
 		KdShaderManager::Instance().SetPSConstantBuffer(0, m_cb0_Obj.GetAddress());
@@ -184,12 +190,12 @@ void KdStandardShader::DrawModel(const KdModelData& rModel, const Math::Matrix& 
 	for (auto& nodeIdx : rModel.GetDrawMeshNodeIndices())
 	{
 		// 描画
-		DrawMesh(dataNodes[nodeIdx].m_spMesh.get(), dataNodes[nodeIdx].m_worldTransform * mWorld, 
+		DrawMesh(dataNodes[nodeIdx].m_spMesh.get(), dataNodes[nodeIdx].m_worldTransform * mWorld,
 			rModel.GetMaterials(), colRate, emissive);
 	}
 
 	// 定数に変更があった場合は自動的に初期状態に戻す
-	if(m_dirtyCBObj)
+	if (m_dirtyCBObj)
 	{
 		ResetCBObject();
 	}
@@ -237,9 +243,9 @@ void KdStandardShader::DrawModel(KdModelWork& rModel, const Math::Matrix& mWorld
 		// ノード内からボーン情報を取得
 		for (auto&& nodeIdx : data->GetBoneNodeIndices())
 		{
-			if (nodeIdx >= KdStandardShader::maxBoneBufferSize) 
+			if (nodeIdx >= KdStandardShader::maxBoneBufferSize)
 			{
-				assert(0 && "転送できるボーンの上限数を超えました"); 
+				assert(0 && "転送できるボーンの上限数を超えました");
 				return;
 			}
 
@@ -385,6 +391,7 @@ void KdStandardShader::DrawVertices(const std::vector<KdPolygon::Vertex>& vertic
 	// 描画パイプラインのチェック
 	ID3D11VertexShader* pNowVS = nullptr;
 	KdDirect3D::Instance().WorkDevContext()->VSGetShader(&pNowVS, nullptr, nullptr);
+	bool isUnLit = m_VS_UnLit == pNowVS;
 
 	KdSafeRelease(pNowVS);
 
@@ -494,8 +501,8 @@ bool KdStandardShader::Init()
 			Release();
 			return false;
 		}
-	} 
-	
+	}
+
 	{
 #include "KdStandardShader_PS_UnLit.shaderInc"
 
@@ -542,7 +549,7 @@ void KdStandardShader::Release()
 	KdSafeRelease(m_VS_UnLit);
 
 	KdSafeRelease(m_inputLayout);
-	
+
 	KdSafeRelease(m_PS_Lit);
 	KdSafeRelease(m_PS_GenDepthFromLight);
 	KdSafeRelease(m_PS_UnLit);

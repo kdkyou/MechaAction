@@ -14,9 +14,9 @@ void Blade::Init()
 	if (!m_spAnimator)
 	{
 		m_spAnimator = std::make_shared<KdAnimator>();
-		m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Normal"),1.0f);
+		m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Normal"),10.0f);
 	}
-	Math::Vector3 pos = { 0.0f,5.0f,0.0f };
+	Math::Vector3 pos = { 0.0f,5.0f,3.0f };
 	SetPos(pos);
 }
 
@@ -29,7 +29,7 @@ void Blade::Update()
 
 	if (_spParent)
 	{
-		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode("LeftWeapon");
+		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode("RightWeapon");
 		if (_pNode)
 		{
 			m_parentAttachMat = _pNode->m_worldTransform;
@@ -58,5 +58,5 @@ void Blade::DrawBright()
 {
 	Math::Color colr = { 1,1,1 };
 
-//	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld,colr , Math::Vector3::One);
+
 }

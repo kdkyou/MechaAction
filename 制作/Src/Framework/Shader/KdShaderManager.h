@@ -9,7 +9,8 @@ struct PointLight
 {
 	PointLight() {}
 	PointLight(const Math::Vector3& color, float radius, const Math::Vector3& pos, int isBright)
-		:Color(color), Radius(radius), Pos(pos), IsBright(isBright) {}
+		:Color(color), Radius(radius), Pos(pos), IsBright(isBright) {
+	}
 
 	Math::Vector3 Color;	// 色
 	float	Radius = 0.0f;	// 半径
@@ -136,8 +137,8 @@ public:
 	//
 	//==========================
 	KdStandardShader		m_StandardShader;		// 標準描画シェーダ
-	
-	
+
+
 	KdPostProcessShader     m_postProcessShader;	// ポストプロセスシェーダ
 	KdSpriteShader			m_spriteShader;			// 2Dテクスチャ描画シェーダ
 
@@ -238,7 +239,7 @@ private:
 	// パイプラインステート
 	//
 	//==========================
-	 
+
 	//深度ステンシル（奥行情報の使い方・手前にあるものを無視して描画したりできる
 	ID3D11DepthStencilState* m_depthStencilStates[(int)KdDepthStencilState::Max] = {};
 	std::stack<ID3D11DepthStencilState*> m_ds_Undo;

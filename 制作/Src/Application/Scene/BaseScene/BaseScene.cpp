@@ -1,5 +1,7 @@
 ﻿#include "BaseScene.h"
 
+#include"../../GameObject/Camera/CameraManager.h"
+
 void BaseScene::PreUpdate()
 {
 	// Updateの前の更新処理
@@ -35,6 +37,10 @@ void BaseScene::Update()
 		obj->Update();
 	}
 
+	CameraManager::Instance().Update();
+
+	KdEffekseerManager::GetInstance().Update();
+
 	// シーン毎のイベント処理
 	Event();
 }
@@ -45,6 +51,9 @@ void BaseScene::PostUpdate()
 	{
 		obj->PostUpdate();
 	}
+
+	CameraManager::Instance().PostUpdate();
+
 }
 
 void BaseScene::PreDraw()
@@ -53,6 +62,8 @@ void BaseScene::PreDraw()
 	{
 		obj->PreDraw();
 	}
+
+	CameraManager::Instance().PreDraw();
 }
 
 void BaseScene::Draw()
@@ -87,6 +98,8 @@ void BaseScene::Draw()
 		{
 			obj->DrawUnLit();
 		}
+
+		KdEffekseerManager::GetInstance().Draw();
 	}
 	KdShaderManager::Instance().m_StandardShader.EndUnLit();
 
@@ -128,6 +141,14 @@ void BaseScene::DrawDebug()
 		}
 	}
 	KdShaderManager::Instance().m_StandardShader.EndUnLit();
+}
+
+void BaseScene::Edit_ImGui()
+{
+	for (auto& obj : m_objList)
+	{
+		obj->Editor_ImGui();
+	}
 }
 
 void BaseScene::Event()

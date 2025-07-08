@@ -15,19 +15,19 @@ VSOutputGenShadow main(
 )
 {
    // スキニング---------------->
-	if(g_IsSkinMeshObj)
+	if (g_IsSkinMeshObj)
 	{
 		// 行列を合成
 		row_major float4x4 mBones = 0;
 		[unroll]
-		for(int i = 0 ; i < 4 ; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			mBones += g_mBones[skinIndex[i]] * skinWeight[i];
 		}
 
 		// 座標と法線に適応
-		pos		= mul(pos, mBones);
-		normal	= mul(normal, (float3x3)mBones);
+		pos = mul(pos, mBones);
+		normal = mul(normal, (float3x3) mBones);
 	}
 	// <----------------スキニング
 

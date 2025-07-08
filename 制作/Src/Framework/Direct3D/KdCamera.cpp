@@ -15,7 +15,7 @@ void KdCamera::SetToShader() const
 	// ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 	// 被写界深度（DepthOfField）加工に使うの情報も更新
 	float nearClippingDistance = -(m_mProj._43 / m_mProj._33);
-	float farClippingDistance = - (m_mProj._43 / (m_mProj._33 - 1));
+	float farClippingDistance = -(m_mProj._43 / (m_mProj._33 - 1));
 	float viewRange = farClippingDistance - nearClippingDistance;
 
 	// フォーカスを合わせる焦点距離をコピー

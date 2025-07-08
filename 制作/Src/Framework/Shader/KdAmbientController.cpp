@@ -32,8 +32,6 @@ void KdAmbientController::Init()
 
 	// 影用深度バッファ生成情報の初期化
 	SetDirLightShadowArea({ 25.0f, 25.0f }, 30.0f);
-	//最大許容範囲
-	SetDirLightShadowArea({ 50.0f, 50.0f }, 100.0f);
 
 	// 光のパラメータの反映
 	// ----- ----- ----- ----- ----- ----- ----- ----- ----- -----

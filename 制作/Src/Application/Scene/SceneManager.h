@@ -4,7 +4,7 @@ class BaseScene;
 
 class SceneManager
 {
-public :
+public:
 
 	// シーン情報
 	enum class SceneType
@@ -34,7 +34,9 @@ public :
 	// 現在のシーンにオブジェクトを追加
 	void AddObject(const std::shared_ptr<KdGameObject>& obj);
 
-private :
+	void Edit_ImGui();
+
+private:
 
 	// マネージャーの初期化
 	// インスタンス生成(アプリ起動)時にコンストラクタで自動実行
@@ -52,7 +54,7 @@ private :
 
 	// 現在のシーンの種類を保持している変数
 	SceneType m_currentSceneType = SceneType::Title;
-	
+
 	// 次のシーンの種類を保持している変数
 	SceneType m_nextSceneType = m_currentSceneType;
 

@@ -22,31 +22,31 @@ public:
 	// 画像の高さを取得
 	UINT								GetHeight() const { return m_desc.Height; }
 	// 画像の全情報を取得
-	const D3D11_TEXTURE2D_DESC&			GetInfo() const { return m_desc; }
+	const D3D11_TEXTURE2D_DESC& GetInfo() const { return m_desc; }
 	// ファイルパス取得(Load時のみ)
-	const std::string&					GetFilepath() const { return m_filepath; }
+	const std::string& GetFilepath() const { return m_filepath; }
 
 	// 画像リソースを取得
-	const ID3D11Texture2D*				GetResource() const;
-	ID3D11Texture2D*					WorkResource() const;
+	const ID3D11Texture2D* GetResource() const;
+	ID3D11Texture2D* WorkResource() const;
 
 	// シェーダリソースビュー取得
-	const ID3D11ShaderResourceView*		GetSRView() const { return m_srv; }
-	ID3D11ShaderResourceView*			WorkSRView() const { return m_srv; }	
+	const ID3D11ShaderResourceView* GetSRView() const { return m_srv; }
+	ID3D11ShaderResourceView* WorkSRView() const { return m_srv; }
 	// シェーダリソースビューのアドレス取得
-	const ID3D11ShaderResourceView* const*	GetSRViewAddress() const { return &m_srv; }
-	ID3D11ShaderResourceView* const*		WorkSRViewAddress() const { return &m_srv; }
+	const ID3D11ShaderResourceView* const* GetSRViewAddress() const { return &m_srv; }
+	ID3D11ShaderResourceView* const* WorkSRViewAddress() const { return &m_srv; }
 
 	// レンダーターゲットビュー取得
-	const ID3D11RenderTargetView*		GetRTView() const { return m_rtv; }
-	ID3D11RenderTargetView*				WorkRTView() const { return m_rtv; }
+	const ID3D11RenderTargetView* GetRTView() const { return m_rtv; }
+	ID3D11RenderTargetView* WorkRTView() const { return m_rtv; }
 	// レンダーターゲットビューのアドレス取得
-	const ID3D11RenderTargetView* const*	GetRTViewAddress() const { return &m_rtv; }
-	ID3D11RenderTargetView* const*			WorkRTViewAddress() const { return &m_rtv; }
+	const ID3D11RenderTargetView* const* GetRTViewAddress() const { return &m_rtv; }
+	ID3D11RenderTargetView* const* WorkRTViewAddress() const { return &m_rtv; }
 
 	// 深度ステンシルビュー取得
-	const ID3D11DepthStencilView*		GetDSView() const { return m_dsv; }
-	ID3D11DepthStencilView*				WorkDSView() const { return m_dsv; }
+	const ID3D11DepthStencilView* GetDSView() const { return m_dsv; }
+	ID3D11DepthStencilView* WorkDSView() const { return m_dsv; }
 
 	//====================================================
 	//
@@ -121,7 +121,7 @@ public:
 	KdTexture() {}
 
 	// 
-	KdTexture(std::string_view filename )
+	KdTexture(std::string_view filename)
 	{
 		Load(filename);
 	}
@@ -140,11 +140,11 @@ public:
 private:
 
 	// シェーダリソースビュー(読み取り用)
-	ID3D11ShaderResourceView*	m_srv = nullptr;
+	ID3D11ShaderResourceView* m_srv = nullptr;
 	// レンダーターゲットビュー(書き込み用)
-	ID3D11RenderTargetView*		m_rtv = nullptr;
+	ID3D11RenderTargetView* m_rtv = nullptr;
 	// 深度ステンシルビュー(Zバッファ用)
-	ID3D11DepthStencilView*		m_dsv = nullptr;
+	ID3D11DepthStencilView* m_dsv = nullptr;
 
 	// 画像情報
 	D3D11_TEXTURE2D_DESC		m_desc = {};

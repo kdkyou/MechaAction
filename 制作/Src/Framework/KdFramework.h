@@ -57,6 +57,7 @@
 
 // 入力関連
 #include "Input/KdInput.h"
+#include "Input/KeyInput.h"
 
 // レンダーターゲット切替
 #include "Shader/KdRenderTargetChange.h"

@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.1.63",
+		"generator":"Khronos glTF Blender I/O v4.4.56",
 		"version":"2.0"
 	},
 	"extensionsUsed":[
@@ -23,6 +23,12 @@
 		{
 			"mesh":0,
 			"name":"Gun",
+			"rotation":[
+				0,
+				-1,
+				0,
+				4.371138828673793e-08
+			],
 			"scale":[
 				0.2500000596046448,
 				1.2500001192092896,
@@ -35,11 +41,11 @@
 			]
 		},
 		{
-			"name":"BulletPoint",
+			"name":"SP",
 			"translation":[
 				0,
-				-0.15363702178001404,
-				8.62887191772461
+				-0.2283739298582077,
+				-8.359404563903809
 			]
 		}
 	],
@@ -116,8 +122,8 @@
 		},
 		{
 			"mimeType":"image/png",
-			"name":"blue_metal_plate_rough_4k",
-			"uri":"blue_metal_plate_rough_4k.png"
+			"name":"blue_metal_plate_rough_4k.exr",
+			"uri":"blue_metal_plate_rough_4k_exr.png"
 		}
 	],
 	"accessors":[
@@ -191,7 +197,7 @@
 	"buffers":[
 		{
 			"byteLength":20612,
-			"uri":"Railgun.bin"
+			"uri":"RailGun.bin"
 		}
 	]
 }

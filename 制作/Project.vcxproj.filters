@@ -88,26 +88,38 @@
     <Filter Include="Src\Application\GameObject\Terrain">
       <UniqueIdentifier>{708cd46d-37e0-4430-8a29-e02fe2512348}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\System">
-      <UniqueIdentifier>{69c0f415-c5f8-4410-9a55-dcfcbe966165}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon">
-      <UniqueIdentifier>{321a806b-3343-4012-a697-b081aca9ec4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\Blade">
-      <UniqueIdentifier>{0819f680-86e3-4336-9ac6-34abf3e696e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\Gun">
-      <UniqueIdentifier>{efe8f9fd-8939-4c9c-9a21-daa800990f41}</UniqueIdentifier>
+    <Filter Include="Src\Application\GameObject\Camera\CCTVCamera">
+      <UniqueIdentifier>{37bed005-b125-4c81-b34a-83b8d519a6f4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Camera\TrackingCamera">
-      <UniqueIdentifier>{d762179f-3487-4f21-9b56-99bf7bc9716f}</UniqueIdentifier>
+      <UniqueIdentifier>{52f8ea8b-b3b5-44f3-8f41-10d5395fe40b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Camera\RockCamera">
-      <UniqueIdentifier>{8576e92e-106b-48d8-862b-0d663ea35511}</UniqueIdentifier>
+      <UniqueIdentifier>{7dbe06eb-7393-4236-ab6f-f67b22ddf99b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Camera\NoneCamera">
+      <UniqueIdentifier>{585f7c39-03e3-43ad-982c-d2b773736836}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Enemy">
-      <UniqueIdentifier>{72fca871-dacf-48e0-9897-4e7b070934b2}</UniqueIdentifier>
+      <UniqueIdentifier>{cf84719e-7084-4584-a1e3-36be0f864888}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Effect">
+      <UniqueIdentifier>{a0275fa6-84aa-4459-bb22-ab74b5700265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Effect\CocentrationLine">
+      <UniqueIdentifier>{5dbf8667-7434-4a14-88e3-28e3437d9935}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon">
+      <UniqueIdentifier>{5f2fb6c6-6abd-4503-85e8-b73e2e5d7974}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Blade">
+      <UniqueIdentifier>{8b92719e-5357-4db6-9096-fe769251d9d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Rifle">
+      <UniqueIdentifier>{3bcfbf8e-ffda-4155-964e-484330d8f73e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Shield">
+      <UniqueIdentifier>{14f1d220-b90d-4410-9e17-4fcd34dfdab3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -291,17 +303,14 @@
     <ClInclude Include="Src\Application\GameObject\Terrain\Terrain.h">
       <Filter>Src\Application\GameObject\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\CCTVCamera\CCTVCamera.h">
+      <Filter>Src\Application\GameObject\Camera\CCTVCamera</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Framework\Utility\KdRandomGenerator.h">
       <Filter>Src\Framework\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\System\KeyData.h">
-      <Filter>Src\Application\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase.h">
-      <Filter>Src\Application\GameObject\Weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\Blade\Blade.h">
-      <Filter>Src\Application\GameObject\Weapon\Blade</Filter>
+    <ClInclude Include="Src\Application\GameObject\Camera\CameraManager.h">
+      <Filter>Src\Application\GameObject\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.h">
       <Filter>Src\Application\GameObject\Camera\TrackingCamera</Filter>
@@ -309,11 +318,29 @@
     <ClInclude Include="Src\Application\GameObject\Camera\RockCamera\RockCamera.h">
       <Filter>Src\Application\GameObject\Camera\RockCamera</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.h">
+      <Filter>Src\Application\GameObject\Camera\NoneCamera</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Enemy\Enemy.h">
       <Filter>Src\Application\GameObject\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\CharacterBase.h">
-      <Filter>Src\Application\GameObject\Character</Filter>
+    <ClInclude Include="Src\Application\GameObject\Effect\ConcentrationLine\ConcentrationLine.h">
+      <Filter>Src\Application\GameObject\Effect\CocentrationLine</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Blade\Blade.h">
+      <Filter>Src\Application\GameObject\Weapon\Blade</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Rifle\Rifle.h">
+      <Filter>Src\Application\GameObject\Weapon\Rifle</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Shield\Shield.h">
+      <Filter>Src\Application\GameObject\Weapon\Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase.h">
+      <Filter>Src\Application\GameObject\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\Input\KeyInput.h">
+      <Filter>Src\Framework\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -464,23 +491,20 @@
     <ClCompile Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\FPSCamera</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Character.cpp">
+      <Filter>Src\Application\GameObject\Character</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Terrain\Terrain.cpp">
       <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\CCTVCamera\CCTVCamera.cpp">
+      <Filter>Src\Application\GameObject\Camera\CCTVCamera</Filter>
     </ClCompile>
     <ClCompile Include="Src\Framework\Utility\KdRandomGenerator.cpp">
       <Filter>Src\Framework\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\System\KeyData.cpp">
-      <Filter>Src\Application\System</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase.cpp">
-      <Filter>Src\Application\GameObject\Weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\Blade\Blade.cpp">
-      <Filter>Src\Application\GameObject\Weapon\Blade</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Character.cpp">
-      <Filter>Src\Application\GameObject\Character</Filter>
+    <ClCompile Include="Src\Application\GameObject\Camera\CameraManager.cpp">
+      <Filter>Src\Application\GameObject\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\TrackingCamera</Filter>
@@ -488,11 +512,29 @@
     <ClCompile Include="Src\Application\GameObject\Camera\RockCamera\RockCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\RockCamera</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.cpp">
+      <Filter>Src\Application\GameObject\Camera\NoneCamera</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp">
       <Filter>Src\Application\GameObject\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\CharacterBase.cpp">
-      <Filter>Src\Application\GameObject\Character</Filter>
+    <ClCompile Include="Src\Application\GameObject\Effect\ConcentrationLine\ConcentrationLine.cpp">
+      <Filter>Src\Application\GameObject\Effect\CocentrationLine</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Blade\Blade.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Blade</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Rifle\Rifle.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Rifle</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Shield\Shield.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase.cpp">
+      <Filter>Src\Application\GameObject\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\Input\KeyInput.cpp">
+      <Filter>Src\Framework\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -546,13 +588,13 @@
     <FxCompile Include="Src\Framework\Shader\StandardShader\KdStandardShader_VS_UnLit.hlsl">
       <Filter>Src\Framework\Shader\StandardShader</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Framework\Shader\PostProcessShader\KdPostProcessShader_PS_RadialBlur.hlsl">
+    <FxCompile Include="Src\Framework\Shader\PostProcessShader\KdPostProcessShader_PS_Combine.hlsl">
       <Filter>Src\Framework\Shader\PostProcessShader</Filter>
     </FxCompile>
     <FxCompile Include="Src\Framework\Shader\PostProcessShader\KdPostProcessShader_PS_Glitch.hlsl">
       <Filter>Src\Framework\Shader\PostProcessShader</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Framework\Shader\PostProcessShader\KdPostProcessShader_PS_Combine.hlsl">
+    <FxCompile Include="Src\Framework\Shader\PostProcessShader\KdPostProcessShader_PS_RadialBlur.hlsl">
       <Filter>Src\Framework\Shader\PostProcessShader</Filter>
     </FxCompile>
   </ItemGroup>

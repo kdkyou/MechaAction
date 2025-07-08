@@ -94,6 +94,10 @@ bool KdWindow::ProcessMessage()
 		//メッセージ処理
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
+
+		//入力管理
+		KeyInput::GetInstance().ProcessMessage(msg.message, msg.wParam, msg.lParam);
+
 	}
 
 	return true;

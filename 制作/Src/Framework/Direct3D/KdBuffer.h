@@ -20,8 +20,8 @@ public:
 	//=================================================
 
 	// バッファインターフェイスを取得
-	ID3D11Buffer*			GetBuffer() const { return m_pBuffer; }
-	ID3D11Buffer* const*	GetAddress() const { return &m_pBuffer; }
+	ID3D11Buffer* GetBuffer() const { return m_pBuffer; }
+	ID3D11Buffer* const* GetAddress() const { return &m_pBuffer; }
 
 	// バッファのサイズを取得
 	UINT					GetBufferSize() const { return m_bufSize; }
@@ -38,7 +38,7 @@ public:
 	// ・bufferUsage	… バッファの使用法　D3D11_USAGE定数を指定する
 	// ・initData		… 作成時に書き込むデータ nullptrだと何も書き込まない
 	bool Create(UINT bindFlags, UINT bufferSize, D3D11_USAGE bufferUsage, const D3D11_SUBRESOURCE_DATA* initData);
-	
+
 	// 解放
 	void Release()
 	{
@@ -84,7 +84,7 @@ public:
 protected:
 
 	// バッファ本体
-	ID3D11Buffer*		m_pBuffer = nullptr;
+	ID3D11Buffer* m_pBuffer = nullptr;
 
 	// バッファのサイズ(byte)
 	UINT				m_bufSize = 0;
@@ -124,10 +124,10 @@ public:
 	}
 
 	// 作業領域取得　※読み取り専用　変更フラグは変化しません
-	const DataType&			Get() const { return m_work; }
+	const DataType& Get() const { return m_work; }
 
 	// バッファアドレス取得
-	ID3D11Buffer* const*	GetAddress() const { return m_buffer.GetAddress(); }
+	ID3D11Buffer* const* GetAddress() const { return m_buffer.GetAddress(); }
 
 
 	// m_workを定数バッファへ書き込む
@@ -167,7 +167,7 @@ public:
 		srd.SysMemPitch = 0;
 		srd.SysMemSlicePitch = 0;
 		// 作成
-		return m_buffer.Create(	D3D11_BIND_CONSTANT_BUFFER, sizeof(DataType), D3D11_USAGE_DYNAMIC, &srd);
+		return m_buffer.Create(D3D11_BIND_CONSTANT_BUFFER, sizeof(DataType), D3D11_USAGE_DYNAMIC, &srd);
 	}
 
 	// 解放

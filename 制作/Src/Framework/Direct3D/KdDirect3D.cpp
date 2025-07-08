@@ -313,9 +313,9 @@ bool KdDirect3D::Init(HWND hWnd, int w, int h, bool deviceDebug, std::string& er
 		bufferSize *= 2;	// 容量を倍にしていく
 	}
 
-	m_windowWidth	= w;
-	m_windowHeight	= h;
-	m_isFullScreen	= false;
+	m_windowWidth = w;
+	m_windowHeight = h;
+	m_isFullScreen = false;
 
 	return true;
 }

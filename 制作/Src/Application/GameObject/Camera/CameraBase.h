@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include"GamePad.h"
+
 class CameraBase : public KdGameObject
 {
 public:
@@ -9,7 +11,9 @@ public:
 	void Init()				override;
 	void PreDraw()			override;
 
-	void SetTarget(const std::shared_ptr<KdGameObject>& target);
+
+	void SetTarget(const std::weak_ptr<KdGameObject>& target);
+	void SetRockTarget(const std::weak_ptr<KdGameObject>& rock);
 
 	// 「絶対変更しません！見るだけ！」な書き方
 	const std::shared_ptr<KdCamera>& GetCamera() const
@@ -42,7 +46,11 @@ public:
 		m_wpHitObjectList.push_back(object);
 	}
 
+	const std::string& GetName() { return m_name; }
+
 protected:
+
+	std::string									m_name;
 
 	// カメラ回転用角度
 	Math::Vector3								m_DegAng = Math::Vector3::Zero;
@@ -51,11 +59,15 @@ protected:
 
 	std::shared_ptr<KdCamera>					m_spCamera		= nullptr;
 	std::weak_ptr<KdGameObject>					m_wpTarget;
+	std::weak_ptr<KdGameObject>					m_wpRockTarget;
+	
 	std::vector<std::weak_ptr<KdGameObject>>	m_wpHitObjectList{};
 
 	Math::Matrix								m_mLocalPos		= Math::Matrix::Identity;
 	Math::Matrix								m_mRotation		= Math::Matrix::Identity;
-
+	
 	// カメラ回転用マウス座標の差分
 	POINT										m_FixMousePos{};
+
+	Math::Vector2								m_mouseSpeed = { 10.0f,10.0f };
 };
