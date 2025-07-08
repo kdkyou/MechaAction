@@ -7,6 +7,7 @@
 #include"../Camera/CameraManager.h"
 
 //#include"../Effect/ConcentrationLine/ConcentrationLine.h"
+
 #include"TransAC.h"
 
 void Character::Init()
@@ -436,7 +437,7 @@ void Character::UpdateCollision()
 	}
 
 
-	DirectX::BoundingBox box;
+	DirectX::BoundingOrientedBox box;
 
 	box.Center = GetPos() + Math::Vector3(0.0f, 6.0f, 0.0f) ;
 	box.Extents = { 3.0f,5.0f,3.0f };
@@ -466,7 +467,7 @@ void Character::UpdateCollision()
 	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 
 	m_pDebugWire->AddDebugSphere(spherInfo.m_sphere.Center, spherInfo.m_sphere.Radius, color);
-	m_pDebugWire->AddDebugBox(m_mWorld, box.Extents, {}, false, color);
+	m_pDebugWire->AddDebugBox(m_mWorld, box.Extents, {}, true, color);
 
 }
 

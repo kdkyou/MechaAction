@@ -3,12 +3,12 @@
 
 #include "../../GameObject/Terrain/Terrain.h"
 #include "../../GameObject/Character/Character.h"
+#include"../../GameObject/Enemy/Enemy.h"
+
 #include"../../GameObject/Weapon/Blade/Blade.h"
 #include"../../GameObject/Weapon/Shield/Shield.h"
 #include"../../GameObject/Weapon/Sowrd/Sowrd.h"
 #include"../../GameObject/Weapon/Rifle/Rifle.h"
-
-#include"../../GameObject/Enemy/Enemy.h"
 
 #include"../../GameObject/Camera/CameraManager.h"
 // 少数第n位で四捨五入する
