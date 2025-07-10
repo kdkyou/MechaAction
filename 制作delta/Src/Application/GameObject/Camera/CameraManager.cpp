@@ -2,7 +2,7 @@
 
 #include"FPSCamera/FPSCamera.h"
 #include"NoneCamera/NoneCamera.h"
-#include"RockCamera/RockCamera.h"
+#include"LockCamera/LockCamera.h"
 #include"TPSCamera/TPSCamera.h"
 #include"TrackingCamera/TrackingCamera.h"
 #include"HitCamera/HitCamera.h"
@@ -98,8 +98,8 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 		Application::Instance().m_log.AddLog("Animation\n");
 		break;
 	case CameraManager::Rock:
-		m_currentCamera = std::make_shared<RockCamera>();
-		Application::Instance().m_log.AddLog("Rock\n");
+		m_currentCamera = std::make_shared<LockCamera>();
+		Application::Instance().m_log.AddLog("Lock\n");
 		break;
 	case CameraManager::Hit:
 		m_currentCamera = std::make_shared<HitCamera>();

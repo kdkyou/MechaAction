@@ -55,3 +55,33 @@ void WeaponBase::GenerateDepthMapFromLight()
 		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld);
 	}
 }
+
+void WeaponBase::CheckTrigger()
+{
+	auto spParent = m_wpParent.lock();
+
+	m_nowTrigger = 0;
+
+	if (spParent) {
+
+		if (spParent->IsLeftAttack())
+		{
+			m_nowTrigger |= TriggerType::LeftHand;
+		}
+
+		if (spParent->IsLeftShoulderAttack())
+		{
+			m_nowTrigger |= TriggerType::LeftShoulder;
+		}
+
+		if (spParent->IsRightAttack())
+		{
+			m_nowTrigger |= TriggerType::RightHand;
+		}
+
+		if (spParent->IsRightShoudlerAttack())
+		{
+			m_nowTrigger |= TriggerType::RightShoulder;
+		}
+	}
+}

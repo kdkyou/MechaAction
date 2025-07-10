@@ -16,6 +16,17 @@ public:
 		Hit,
 	};
 
+	struct LockTargetInfo
+	{
+		std::weak_ptr<KdGameObject> wpLockTarget;
+		float						distance = 0.0f;
+
+		// ソート：距離が小さい順
+		bool operator<(const std::shared_ptr<LockTargetInfo>& other)const{
+			return distance < other->distance;
+		}
+	};
+
 
 	void PreDraw();
 	void PreUpdate();
@@ -27,7 +38,12 @@ public:
 	bool SetNextType(const CameraType& type);
 
 	void SetCameraTarget(const std::shared_ptr<KdGameObject>& target) { m_wpCameraTarget = target; }
-	void SetRockTarget(const std::shared_ptr<KdGameObject>& target) { m_wpRockTarget = target; }
+	void SetLockTarget(const std::shared_ptr<KdGameObject>& target) { m_wpRockTarget = target; }
+
+	void SetMultiLocks(const std::shared_ptr<KdGameObject>& locks) { m_wpMultiLocks .push_back(locks); }
+	void ResetMultiLocks() { m_wpMultiLocks.clear(); }
+	void SetMultiLockNum(int num) { m_multiLockNum = num; }
+	const int	 GetMultiLockNum()const { return m_multiLockNum; }
 
 	void EnableChangedCamera(bool isEnablechanged) { m_isEnableChanged = isEnablechanged; }
 
@@ -51,10 +67,17 @@ private:
 	std::weak_ptr<KdGameObject> m_wpCameraTarget;
 	std::weak_ptr<KdGameObject> m_wpRockTarget;
 
+	std::vector<std::shared_ptr<KdGameObject>>	m_wpMultiLocks;
+	int											m_multiLockNum = 3;
+
+	
+
 	CameraType					m_nowType  = None;
 	CameraType					m_nextType = None;
 
 	bool						m_isEnableChanged = true;
+
+
 
 private:
 

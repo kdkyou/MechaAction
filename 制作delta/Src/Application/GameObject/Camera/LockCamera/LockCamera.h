@@ -1,17 +1,17 @@
 ﻿#pragma once
 #include"../CameraBase.h"
 
-class RockCamera : public CameraBase
+class LockCamera : public CameraBase
 {
 public:
-	RockCamera() {}
-	~RockCamera()			override {}
+	LockCamera() {}
+	~LockCamera()			override {}
 
 	void Init()				override;
 	void PostUpdate()		override;
-	
+
 private:
 
-	void Rock();
-	
+	void Lock();
+
 };

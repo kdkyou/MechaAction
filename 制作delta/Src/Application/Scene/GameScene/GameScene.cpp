@@ -47,28 +47,56 @@ void GameScene::Init()
 	_character->Init();
 	_character->RegistHitObject(_terrain);
 	AddObject(_character);
+	AddPlayer(_character);
 
-	std::shared_ptr<Blade> _blade = std::make_shared<Blade>();
-	_blade->Init();
-	_blade->SetModel("Asset/Models/Weapon/Blade/Blade.gltf");
-	_blade->SetParent(_character);
-	_blade->SetAttachPath("RightWeapon");
-	AddObject(_blade);
+	// プレイヤー武器
+	{
+		std::shared_ptr<Blade> _blade = std::make_shared<Blade>();
+		_blade->Init();
+		_blade->SetModel("Asset/Models/Weapon/Blade/Blade.gltf");
+		_blade->SetParent(_character);
+		_blade->SetAttachPath("RightWeapon");
+		AddObject(_blade);
 
-	std::shared_ptr<Sowrd> _sowrd = std::make_shared<Sowrd>();
-	_sowrd->Init();
-	_sowrd->SetModel("Asset/Models/Weapon/Sowrd/Sowrd.gltf");
-	_sowrd->SetParent(_character);
-	_sowrd->SetAttachPath("RightHand");
-	AddObject(_sowrd);
+		std::shared_ptr<Sowrd> _sowrd = std::make_shared<Sowrd>();
+		_sowrd->Init();
+		_sowrd->SetModel("Asset/Models/Weapon/Sowrd/Sowrd.gltf");
+		_sowrd->SetParent(_character);
+		_sowrd->SetAttachPath("RightHand");
+		AddObject(_sowrd);
 
 
-	std::shared_ptr<Shield> _shield = std::make_shared<Shield>();
-	_shield->Init();
-	_shield->SetModel("Asset/Models/Weapon/Shield/Shield.gltf");
-	_shield->SetParent(_character);
-	_shield->SetAttachPath("LeftWeapon");
-	AddObject(_shield);
+		std::shared_ptr<Shield> _shield = std::make_shared<Shield>();
+		_shield->Init();
+		_shield->SetModel("Asset/Models/Weapon/Shield/Shield.gltf");
+		_shield->SetParent(_character);
+		_shield->SetAttachPath("LeftWeapon");
+		AddObject(_shield);
+
+
+		std::shared_ptr<Rifle> rifle;
+
+		rifle = std::make_shared<Rifle>();
+		rifle->SetParent(_character);
+		rifle->SetAttackTrigger(WeaponBase::LeftShoulder);
+		rifle->SetAttachPath("LeftShoulderWeapon");
+		rifle->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 2.5f, 5.0f, 24, 80);
+		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", "Asset/Textures/GameObject/Thunder1.png", 200, 500, 200, 40.0f, 0.95f);
+		AddObject(rifle);
+		
+		rifle = std::make_shared<Rifle>();
+		rifle->SetParent(_character);
+		rifle->SetAttackTrigger(WeaponBase::RightShoulder);
+		rifle->SetAttachPath("RightShoulderWeapon");
+		rifle->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/FrontMisail.gltf", 1.8f, 5.0f, 24, 80);
+		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", "Asset/Textures/GameObject/Thunder1.png", 200, 500, 200, 40.0f, 0.95f);
+		AddObject(rifle);
+
+
+	}
+
+
+
 
 	//エネミー
 	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
@@ -76,6 +104,7 @@ void GameScene::Init()
 	enemy->SetTarget(_character);
 	enemy->Init();
 	AddObject(enemy);
+	AddEnemy(enemy);
 
 	//エネミー武器
 	std::shared_ptr<Rifle> rifle;
@@ -103,7 +132,7 @@ void GameScene::Init()
 	// カメラ初期化
 	//===================================================================
 	CameraManager::Instance().SetCameraTarget(_character);
-	CameraManager::Instance().SetRockTarget(enemy);
+	CameraManager::Instance().SetLockTarget(enemy);
 	CameraManager::Instance().SetNextType(CameraManager::CameraType::None);
 
 

@@ -12,6 +12,8 @@ void CameraBase::Init()
 	m_FixMousePos.x = 640;
 	m_FixMousePos.y = 360;
 
+	m_localPos = { 3, 12.5f, -15.0f };
+
 	KdEffekseerManager::GetInstance().SetCamera(m_spCamera);
 
 }

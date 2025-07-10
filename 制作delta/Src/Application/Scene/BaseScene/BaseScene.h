@@ -38,6 +38,25 @@ public :
 	{
 		m_objList.push_back(obj);
 	}
+	
+	// プレイヤーリストに追加
+	void AddPlayer(const std::shared_ptr<CharacterBase>& obj)
+	{
+		m_playerList.push_back(obj);
+	}
+
+	// オブジェクトリストに追加
+	void AddEnemy(const std::shared_ptr<CharacterBase>& obj)
+	{
+		m_enemyList.push_back(obj);
+	}
+
+	// オブジェクトリストに追加
+	void AddTerrain(const std::shared_ptr<KdGameObject>& obj)
+	{
+		m_terrainList.push_back(obj);
+	}
+
 
 	void Edit_ImGui();
 

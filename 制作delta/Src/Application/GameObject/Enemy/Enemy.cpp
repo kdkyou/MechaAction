@@ -65,7 +65,6 @@ void Enemy::PostUpdate()
 	{
 		std::shared_ptr<KdGameObject> spTarget = m_wpTarget.lock();
 
-		if (spTarget == nullptr) { return; }
 
 		std::shared_ptr<Enemy> spThis = m_wpThis.lock();
 
@@ -75,7 +74,6 @@ void Enemy::PostUpdate()
 		}
 		m_nowAction->PostUpdate(m_wpThis, spTarget);
 	}
-	m_spAnimator->AdvanceTime(m_spModelWork->WorkNodes(),40.0f);
 
 	m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });
 
@@ -98,6 +96,7 @@ bool Enemy::Search()
 	KdCollider::SphereInfo sphere;
 	sphere.m_sphere.Center = m_mWorld.Translation() + m_currection;
 	sphere.m_sphere.Radius = m_radius;
+	sphere.m_type = KdCollider::TypeDamage;
 	
 	std::list< KdCollider::CollisionResult> retList;
 	std::list<std::shared_ptr<KdGameObject>> objList;
@@ -210,6 +209,41 @@ void Enemy::ActionStateBase::EffectExit()
 	m_spEffects.clear();
 }
 
+void Enemy::ActionStateBase::ChangeStateWithDisttance(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj)
+{
+	auto spOwner = owner.lock();
+
+	auto spTarget = spObj;
+
+	if (spTarget == nullptr) { return; }
+
+	auto distance = spTarget->GetPos() - spOwner->GetPos();
+	auto length = distance.Length();
+	auto halfOnwenrLength = (spOwner->m_dist.y - spOwner->m_dist.x) / 2.0f;
+
+	// プレイヤーと自身との差がどれくらいか
+	if (length > spOwner->m_dist.y)
+	{
+		spOwner->ChangeActionState(std::make_shared<Boost>());
+		return;
+	}
+	else if (length > halfOnwenrLength)
+	{
+		spOwner->ChangeActionState(std::make_shared<MoveForward>());
+		return;
+	}
+	else if (length > halfOnwenrLength)
+	{
+		spOwner->ChangeActionState(std::make_shared<AttackStand>());
+		return;
+	}
+	else {
+		spOwner->ChangeActionState(std::make_shared<MoveBack>());
+		return;
+	}
+
+}
+
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //待機状態
@@ -275,7 +309,7 @@ void Enemy::StandUp::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<
 void Enemy::StandUp::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 7.0f);
 }
 
 void Enemy::StandUp::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
@@ -604,11 +638,12 @@ void Enemy::BoostStop::Update(std::weak_ptr<Enemy>& owner, const  std::shared_pt
 
 	Math::Vector3 vec = {};
 
-	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
 
 	vec = m_direct;
 
 	nowPos += vec * m_speed * deltaTime;
+
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
 
 	spOwner->m_mWorld = rotMat * transMat;
 

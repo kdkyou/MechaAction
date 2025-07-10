@@ -100,9 +100,6 @@
     <Filter Include="Src\Application\GameObject\Camera\TrackingCamera">
       <UniqueIdentifier>{d762179f-3487-4f21-9b56-99bf7bc9716f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Camera\RockCamera">
-      <UniqueIdentifier>{8576e92e-106b-48d8-862b-0d663ea35511}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Enemy">
       <UniqueIdentifier>{72fca871-dacf-48e0-9897-4e7b070934b2}</UniqueIdentifier>
     </Filter>
@@ -129,6 +126,12 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Weapon\Rifle\Bullet">
       <UniqueIdentifier>{0e86f8d4-6c89-4aa6-bf41-f62dca0b6291}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Camera\LockCamera">
+      <UniqueIdentifier>{8576e92e-106b-48d8-862b-0d663ea35511}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Missile">
+      <UniqueIdentifier>{a5c594c6-db16-4af3-9542-7f2f59c3f63b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -327,9 +330,6 @@
     <ClInclude Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.h">
       <Filter>Src\Application\GameObject\Camera\TrackingCamera</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Camera\RockCamera\RockCamera.h">
-      <Filter>Src\Application\GameObject\Camera\RockCamera</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Enemy\Enemy.h">
       <Filter>Src\Application\GameObject\Enemy</Filter>
     </ClInclude>
@@ -368,6 +368,12 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h">
       <Filter>Src\Application\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.h">
+      <Filter>Src\Application\GameObject\Camera\LockCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Missile\Missile.h">
+      <Filter>Src\Application\GameObject\Weapon\Missile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -539,9 +545,6 @@
     <ClCompile Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\TrackingCamera</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Camera\RockCamera\RockCamera.cpp">
-      <Filter>Src\Application\GameObject\Camera\RockCamera</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp">
       <Filter>Src\Application\GameObject\Enemy</Filter>
     </ClCompile>
@@ -577,6 +580,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\HitCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.cpp">
+      <Filter>Src\Application\GameObject\Camera\LockCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Missile\Missile.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Missile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

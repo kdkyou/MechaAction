@@ -170,6 +170,7 @@ private:
 		void Update(std::weak_ptr<Character>& owner)override;
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
 	class ActionStandUp :public ActionStateBase
@@ -181,6 +182,7 @@ private:
 		void Update(std::weak_ptr<Character>& owner)override;
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
 	class ActionJump :public ActionStateBase
@@ -192,6 +194,7 @@ private:
 		void Update(std::weak_ptr<Character>& owner)override;
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
 	//
@@ -204,17 +207,19 @@ private:
 		void Update(std::weak_ptr<Character>& owner)override;
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
 	class ActionJumpShield :public ActionStateBase
 	{
-
+	public:
 		virtual ~ActionJumpShield() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
 	class ActionMove :public ActionStateBase

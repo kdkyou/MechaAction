@@ -18,6 +18,21 @@ public:
 	void DrawLit()override;
 	void GenerateDepthMapFromLight()override;
 
+	enum TriggerType
+	{
+		NoneTrigger,
+		RightHand		= 1 << 1,
+		LeftHand		= 1 << 2,
+		RightShoulder	= 1 << 3,
+		LeftShoulder	= 1 << 4,
+		Max
+	};
+
+	void SetAttackTrigger(TriggerType type) { m_AttackTrigger = type; }
+
+	void CheckTrigger();
+
+
 protected:
 	
 	std::weak_ptr<CharacterBase>    m_wpParent;
@@ -35,4 +50,7 @@ protected:
 	std::shared_ptr<KdModelWork::Node>	m_pNode;
 
 	std::string m_attachPath = "";
+
+	UINT					 m_nowTrigger = 0;
+	TriggerType				 m_AttackTrigger = NoneTrigger;
 };

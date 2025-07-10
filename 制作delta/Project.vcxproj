@@ -160,8 +160,8 @@
     <ClInclude Include="Src\Application\GameObject\Camera\CameraManager.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.h" />
+    <ClInclude Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.h" />
-    <ClInclude Include="Src\Application\GameObject\Camera\RockCamera\RockCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Character.h" />
@@ -172,6 +172,7 @@
     <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\Terrain.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Blade\Blade.h" />
+    <ClInclude Include="Src\Application\GameObject\Weapon\Missile\Missile.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Rifle\Bullet\Bullet.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Rifle\Rifle.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Shield\Shield.h" />
@@ -234,8 +235,8 @@
     <ClCompile Include="Src\Application\GameObject\Camera\CameraManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Camera\RockCamera\RockCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Character.cpp" />
@@ -245,6 +246,7 @@
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\Terrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Blade\Blade.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Weapon\Missile\Missile.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Rifle\Bullet\Bullet.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Rifle\Rifle.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Shield\Shield.cpp" />

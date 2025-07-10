@@ -41,6 +41,8 @@ private:
 	Math::Vector3							m_currection = { 0.0f,5.0f,0.0f };
 
 
+
+
 	std::weak_ptr<Enemy>				    m_wpThis;
 
 
@@ -58,6 +60,8 @@ private:
 
 		void EffectUpdate(std::weak_ptr<Enemy>& owner);
 		void EffectExit();
+
+		void ChangeStateWithDisttance(std::weak_ptr<Enemy>& owner, const std::shared_ptr<KdGameObject>& spObj);
 
 		Math::Vector3 m_direct = {};
 		float					m_speed = 0.0f;
@@ -268,5 +272,7 @@ private:
 
 	void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction);
 	std::shared_ptr<ActionStateBase>		m_nowAction = nullptr;
+	std::shared_ptr<ActionStateBase>		m_prevAction = nullptr;
+
 
 };

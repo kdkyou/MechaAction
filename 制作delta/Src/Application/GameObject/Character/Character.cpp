@@ -26,10 +26,11 @@ void Character::Init()
 	m_mWorld = Math::Matrix::Identity;
 	SetPos({ 0, 1.0f, 0 });
 
-	
+
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape("Player", m_spModelWork, KdCollider::TypeDamage);
 
 	InitTrail();
 	UnEnableTrail();
@@ -112,6 +113,22 @@ void Character::Update()
 		ChangeActionState(std::make_shared<ActionDestroyed>());
 		return;
 	}
+
+
+	ChangeEnableLeftShoulderAttack(false);
+	ChangeEnableRightShoulderAttack(false);
+
+
+	if (key.Q)
+	{
+		ChangeEnableLeftShoulderAttack(true);
+	}
+
+	if (key.E)
+	{
+		ChangeEnableRightShoulderAttack(true);
+	}
+
 
 
 	if (spThis)
@@ -393,60 +410,65 @@ void Character::UpdateCollision()
 	// その他球による衝突判定
 	// ---- ---- ---- ---- ---- ----
 	// ①当たり判定(球判定)用の情報を作成
-	KdCollider::SphereInfo spherInfo;
-	spherInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 2.5f, 0);
-	spherInfo.m_sphere.Radius = 5.0f;
-	spherInfo.m_type = KdCollider::TypeBump;
+	KdCollider::SphereInfo sphereInfo;
+	/*sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 2.5f, 0);
+	sphereInfo.m_sphere.Radius = 5.0f;
+	sphereInfo.m_type = KdCollider::TypeGround;*/
 
-	// ②HIT対象オブジェクトに総当たり
-	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
-	{
-		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
-		if (spGameObj)
-		{
-			std::list<KdCollider::CollisionResult> retBumpList;
-			spGameObj->Intersects(spherInfo, nullptr);
 
-			// ③結果を使って座標を補完する
-			for (auto& ret : retBumpList)
-			{
-			}
-		}
-	}
 
-	spherInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 3.5f, 0);
-	spherInfo.m_sphere.Radius = 40.0f;
-	spherInfo.m_type = KdCollider::TypeDamage;
+	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 3.5f, 0);
+	sphereInfo.m_sphere.Radius = 50.0f;
+	sphereInfo.m_type = KdCollider::TypeDamage;
+
 
 	//
 	m_wpRockTarget.reset();
 
+	std::vector<std::shared_ptr<CameraManager::LockTargetInfo>> vec;
+
 	// ②HIT対象オブジェクトに総当たり
-	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
+	for (auto& obj : SceneManager::Instance().GetEnemyList())
 	{
-		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
-		if (spGameObj)
+		if (obj->Intersects(sphereInfo, nullptr))
 		{
-			std::list<KdCollider::CollisionResult> retList;
-			if (spGameObj->Intersects(spherInfo, nullptr))
+			std::shared_ptr<CameraManager::LockTargetInfo> info = std::make_shared<CameraManager::LockTargetInfo>();
+			auto targetPos = obj->GetMatrix().Translation();
+			targetPos.y = 0.0f;
+			auto pos = m_mWorld.Translation();
+			pos.y = 0.0f;
+			float distance = (targetPos - pos).Length();
+
+			if (SearchDetect(targetPos, m_mWorld, 30) == true)
 			{
-				m_wpRockTarget = spGameObj;
-				color = { 0,0,1,1 };
+				info->wpLockTarget = obj;
+				info->distance = distance;
+				vec.push_back(info);
 			}
 		}
 	}
 
+	std::sort(vec.begin(), vec.end());
+
+	for (int i = 0; i < std::min((int)vec.size(), CameraManager::Instance().GetMultiLockNum()); i++)
+	{
+		CameraManager::Instance().SetMultiLocks(vec[i]->wpLockTarget.lock());
+	}
+	CameraManager::Instance().SetLockTarget(vec[0]->wpLockTarget.lock());
+
+	
+
 
 	DirectX::BoundingOrientedBox box;
 
-	box.Center = GetPos() + Math::Vector3(0.0f, 6.0f, 0.0f) ;
+	box.Center = GetPos() + Math::Vector3(0.0f, 6.0f, 0.0f);
 	box.Extents = { 3.0f,5.0f,3.0f };
 	UINT type = KdCollider::TypeDamage;
 	KdCollider::BoxInfo boxInfo(type, box);
-	
+
 	auto translation = m_mWorld.Translation();
 
-	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
+	for (std::weak_ptr<KdGameObject> wpGameObj : SceneManager::Instance().GetEnemyList())
 	{
 		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
 		if (spGameObj)
@@ -458,7 +480,8 @@ void Character::UpdateCollision()
 				for (auto& ret : retList)
 				{
 					Math::Vector3 nowPos = translation + (ret.m_hitDir * ret.m_overlapDistance);
-						//	SetPos(nowPos);
+					Application::Instance().m_log.AddLog("hitPos x:%.2f,y:%.2f,z:%.2f\n", ret.m_hitPos.x, ret.m_hitPos.y, ret.m_hitPos.z);
+					//	SetPos(nowPos);
 				}
 			}
 		}
@@ -466,7 +489,7 @@ void Character::UpdateCollision()
 
 	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 
-	m_pDebugWire->AddDebugSphere(spherInfo.m_sphere.Center, spherInfo.m_sphere.Radius, color);
+	m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, color);
 	m_pDebugWire->AddDebugBox(m_mWorld, box.Extents, {}, true, color);
 
 }
@@ -541,7 +564,7 @@ bool Character::SphereCast(const Math::Vector3& center, const Math::Vector3& vec
 	KdCollider::SphereInfo spherInfo;
 	spherInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 0.5f, 0);
 	spherInfo.m_sphere.Radius = 0.5f;
-	spherInfo.m_type = KdCollider::TypeGround;
+	spherInfo.m_type = type;
 
 	// ②HIT対象オブジェクトに総当たり
 	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
@@ -555,6 +578,8 @@ bool Character::SphereCast(const Math::Vector3& center, const Math::Vector3& vec
 			// ③結果を使って座標を補完する
 			for (auto& ret : retBumpList)
 			{
+				resultPos = ret.m_hitPos;
+
 				Math::Vector3 newPos = GetPos() + (ret.m_hitDir * ret.m_overlapDistance);
 				SetPos(newPos);
 			}
@@ -584,7 +609,7 @@ void Character::InitTrail()
 	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
 	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
 	newObj->trail->SetWidth(1.6f);
-	newObj->trail->SetLength(30);
+	newObj->trail->SetLength(20);
 	newObj->trail->ClearPoints();
 	m_spTrails.push_back(newObj);
 
@@ -596,7 +621,7 @@ void Character::InitTrail()
 	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
 	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
 	newObj->trail->SetWidth(1.6f);
-	newObj->trail->SetLength(30);
+	newObj->trail->SetLength(20);
 	newObj->trail->ClearPoints();
 	m_spTrails.push_back(newObj);
 
@@ -608,7 +633,7 @@ void Character::InitTrail()
 	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
 	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
 	newObj->trail->SetWidth(1.7f);
-	newObj->trail->SetLength(30);
+	newObj->trail->SetLength(20);
 	newObj->trail->ClearPoints();
 	m_spTrails.push_back(newObj);
 
@@ -620,7 +645,7 @@ void Character::InitTrail()
 	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
 	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
 	newObj->trail->SetWidth(1.4f);
-	newObj->trail->SetLength(30);
+	newObj->trail->SetLength(20);
 	newObj->trail->ClearPoints();
 	m_spTrails.push_back(newObj);
 
@@ -936,6 +961,12 @@ void Character::ActionStandUp::Update(std::weak_ptr<Character>& owner)
 		return;
 	}
 
+	if (m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionStandShield>());
+		return;
+	}
+
 	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionIdle>());
@@ -1132,15 +1163,23 @@ void Character::ActionJumpShield::Enter(std::weak_ptr<Character>& owner)
 
 void Character::ActionJumpShield::Update(std::weak_ptr<Character>& owner)
 {
-	Application::Instance().m_log.AddLog("StandShield\n");
+	Application::Instance().m_log.AddLog("FlyShield\n");
 
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	Checkkey(owner);
 
-	if (m_isMove && !m_isBoost)
+	// ガードしていない状況
+	if (m_isMove && !m_isGuard)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionMove>());
+		return;
+	}
+
+	// ガードしている状況
+	if (m_isMove && m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionMoveShield>());
 		return;
 	}
 
@@ -1287,6 +1326,8 @@ void Character::ActionMoveShield::Enter(std::weak_ptr<Character>& owner)
 	m_speed = spOwner->m_walkSpeed * spOwner->m_speedMag;
 
 	m_animName = "WalkShield";
+
+	spOwner->ChangeEnableLeftAttack(true);
 }
 
 void Character::ActionMoveShield::Update(std::weak_ptr<Character>& owner)
@@ -1302,8 +1343,14 @@ void Character::ActionMoveShield::Update(std::weak_ptr<Character>& owner)
 		//	KdAudioManager::Instance().Play("Asset/Sounds/Walk.wav");
 	}
 
-	if (m_isFlow) {
+	if (m_isFlow && !m_isGuard) {
 		spOwner->ChangeActionState(std::make_shared<ActionJump>());
+		return;
+	}
+
+
+	if (m_isFlow && m_isGuard) {
+		spOwner->ChangeActionState(std::make_shared<ActionJumpShield>());
 		return;
 	}
 
@@ -1329,6 +1376,10 @@ void Character::ActionMoveShield::Update(std::weak_ptr<Character>& owner)
 	}
 	else
 	{
+		if (!m_isGuard) {
+			spOwner->ChangeActionState(std::make_shared<ActionMove>());
+			return;
+		}
 
 		m_direction = ActionStateBase::Direct(owner, true);
 
@@ -1353,6 +1404,9 @@ void Character::ActionMoveShield::PostUpdate(std::weak_ptr<Character>& owner)
 void Character::ActionMoveShield::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
+
+	spOwner->ChangeEnableLeftAttack(false);
+
 
 }
 
@@ -1802,12 +1856,17 @@ void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	Checkkey(owner);
 
-	if (m_isFlow)
+	if (m_isFlow && !m_isGuard)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionJump>());
 		return;
 	}
 
+	if (m_isFlow && m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionJumpShield>());
+		return;
+	}
 
 	if (m_isRightAttack)
 	{
@@ -1915,6 +1974,9 @@ void Character::ActionBoostShield::Enter(std::weak_ptr<Character>& owner)
 
 
 	m_animName = "BoostDushShield";
+
+	spOwner->ChangeEnableLeftAttack(true);
+
 }
 
 void Character::ActionBoostShield::Update(std::weak_ptr<Character>& owner)
@@ -1924,12 +1986,17 @@ void Character::ActionBoostShield::Update(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	Checkkey(owner);
 
-	if (m_isFlow)
+	if (m_isFlow && !m_isGuard)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionJump>());
 		return;
 	}
 
+	if (m_isFlow && m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionJump>());
+		return;
+	}
 
 	if (m_isRightAttack)
 	{
@@ -1950,6 +2017,11 @@ void Character::ActionBoostShield::Update(std::weak_ptr<Character>& owner)
 	}
 	else
 	{
+		if (!m_isGuard) {
+			spOwner->ChangeActionState(std::make_shared<ActionBoostDush>());
+			return;
+		}
+
 		m_direction = ActionStateBase::Direct(owner, true);
 	}
 
@@ -1981,6 +2053,9 @@ void Character::ActionBoostShield::Exit(std::weak_ptr<Character>& owner)
 
 	//エフェクト
 	EffectExit();
+
+	spOwner->ChangeEnableLeftAttack(false);
+
 }
 
 
@@ -1991,7 +2066,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightBladeAttackBef"), 10.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightBladeAttackBef"), 20.0f, false);
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
@@ -2087,13 +2162,13 @@ void Character::ActionRightAttack::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightBladeAttack"), 10.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightBladeAttack"), 30.0f, false);
 
 	m_speed = spOwner->m_bladeAttackSpeed * spOwner->m_speedMag;
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
-	spOwner->Move(m_speed, m_direction, KdCollider::TypeDamage, true);
+	//spOwner->Move(m_speed, m_direction, KdCollider::TypeDamage, true);
 
 	//エフェクト
 	{
@@ -2119,7 +2194,7 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	//移動
-	if (spOwner->m_spAnimator->GetProgress() < 0.4f)
+	if (spOwner->m_spAnimator->GetProgress() < 0.2f)
 	{
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
 	}
@@ -2228,9 +2303,15 @@ void Character::ActionHited::Update(std::weak_ptr<Character>& owner)
 		return;
 	}
 
-	if (m_isMove)
+	if (m_isMove && !m_isGuard)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionMove>());
+		return;
+	}
+
+	if (m_isMove && m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionMoveShield>());
 		return;
 	}
 

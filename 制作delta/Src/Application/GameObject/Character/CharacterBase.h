@@ -31,6 +31,14 @@ public:
 	const bool IsLeftAttack()const { return m_isLeftAttack; }
 	void ChangeEnableLeftAttack(bool attack) { m_isLeftAttack = attack; }
 
+	// 右肩行動状態かどうかを調べる
+	const bool IsRightShoudlerAttack()const { return m_isRightShoulderAttack; }
+	void ChangeEnableRightShoulderAttack(bool attack) { m_isRightShoulderAttack = attack; }
+
+	// 左肩行動状態かどうかを調べる
+	const bool IsLeftShoulderAttack()const { return m_isLeftShoulderAttack; }
+	void ChangeEnableLeftShoulderAttack(bool attack) { m_isLeftShoulderAttack = attack; }
+
 	const bool IsHit() const{ return m_isHit; }
 	void HitDamage(float damage);
 	void SetHitEnable(bool hit) { m_isHit = hit; }
@@ -57,6 +65,8 @@ protected:
 
 	bool										m_isRightAttack = false;
 	bool										m_isLeftAttack = false;
+	bool										m_isRightShoulderAttack = false;
+	bool										m_isLeftShoulderAttack = false;
 
 	Math::Vector3 m_vMove = Math::Vector3::Zero;
 

@@ -1,25 +1,25 @@
-﻿#include"RockCamera.h"
+﻿#include"LockCamera.h"
 
 
-void RockCamera::Init()
+void LockCamera::Init()
 {
 	// 親クラスの初期化呼び出し
 	CameraBase::Init();
 
 	// 注視点
-	m_mLocalPos = Math::Matrix::CreateTranslation(0, 12.5f, -10.0f);
+	m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
 	m_mWorld = m_mLocalPos * m_wpTarget.lock()->GetMatrix();
 
-	m_name = "Rock";
+	m_name = "Lock";
 
 	ShowCursor(false);
 
 }
 
-void RockCamera::PostUpdate()
+void LockCamera::PostUpdate()
 {
 	// ターゲットの行列(有効な場合利用する)
 	Math::Matrix								_targetMat = Math::Matrix::Identity;
@@ -31,18 +31,19 @@ void RockCamera::PostUpdate()
 
 	UpdateRotateByMouse();
 
-	Rock();
+	Lock();
 
 	m_mRotation = GetRotationMatrix();
 	m_mWorld = m_mLocalPos * m_mRotation * _targetMat;
 
 }
 
-void RockCamera::Rock()
+void LockCamera::Lock()
 {
 	const std::shared_ptr<const KdGameObject> spTarget = m_wpRockTarget.lock();
 	if (spTarget == nullptr) { return; }
 
+	
 	Math::Vector3 targetPos = spTarget->GetMatrix().Translation();
 	Math::Vector3 pos = m_mWorld.Translation();
 
@@ -52,39 +53,15 @@ void RockCamera::Rock()
 	toVec.y = 0.0f;
 	toVec.Normalize();
 
+	float targetYaw = atan2f(toVec.x, toVec.z); // ラジアンでY軸方向の向きを計算
+	float currentYaw = atan2f(nowVec.x, nowVec.z);
 
-	//内積を使って回転する角度を求める
-	//ベクトルA*ベクトルB*cosΘ(ベクトルAとベクトルBのなす角)
-	//			1	*	1	* cosΘ			
-	float d = nowVec.Dot(toVec);
-	//dの中にはコサインΘが入っている
+	float rotateSpeed = 0.1f; // 補間スピード
+	float newYaw = (1.0f - rotateSpeed) * currentYaw + rotateSpeed * targetYaw;
 
-	//角度求める(でも残念ながらラジアン角)11
-	float ang = DirectX::XMConvertToDegrees(acos(d));
+	// ラジアン → 度に変換して角度を設定
+	m_DegAng.y = DirectX::XMConvertToDegrees(newYaw);
 
-	//内積から角度を求めて少しでも角度が変わったら
-	//ゆっくり回転するようにする
-	if (ang >= 0.1f)
-	{
-		if (ang > 10)
-		{
-			ang = 10.0f;
-		}
-
-		//外積を求める（どっっちに回転するのか調べる）
-		Math::Vector3 c = toVec.Cross(nowVec);
-
-		if (c.y >= 0)
-		{
-			//右回転
-			m_DegAng.y -= ang;
-		}
-		else
-		{
-			//左回転
-			m_DegAng.y += ang;
-		}
-	}
 
 	if (m_DegAng.y > 360)
 	{
@@ -94,6 +71,8 @@ void RockCamera::Rock()
 	{
 		m_DegAng.y += 360;
 	}
+
+	
 
 
 	CameraBase::PostUpdate();

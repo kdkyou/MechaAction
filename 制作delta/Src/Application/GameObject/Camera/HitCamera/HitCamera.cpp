@@ -8,7 +8,7 @@ void HitCamera::Init()
 	CameraBase::Init();
 
 	// 注視点
-	m_mLocalPos = Math::Matrix::CreateTranslation(3, 12.5f, -10.0f);
+	m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
@@ -23,13 +23,13 @@ void HitCamera::Init()
 	}
 
 
-	m_name = "Tracking";
+	m_name = "Hit";
 
 	ShowCursor(false);
 
 	m_pos = {};
 
-	m_movePow = { 0.0f,1.0f };
+	m_movePow = { 0.0f,0.25f };
 
 	CameraManager::Instance().EnableChangedCamera(false);
 }

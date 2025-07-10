@@ -37,15 +37,7 @@ void KeyInput::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SYSKEYUP:
 		DirectX::Keyboard::ProcessMessage(message, wParam, lParam);
 		break;
-
 	case WM_SYSKEYDOWN:
-		/*
-		if (wParam == VK_RETURN && (lParam & 0x60000000) == 0x20000000)
-		{
-		// This is where you'd implement the classic ALT+ENTER hotkey for fullscreen toggle
-		...
-		}
-		*/
 		DirectX::Keyboard::ProcessMessage(message, wParam, lParam);
 		break;
 
@@ -101,16 +93,109 @@ void KeyInput::Update()
 
 bool KeyInput::IsDashingRightFrequently()
 {
+	int count = 0;
 
-	return true;
+	for (auto& key : m_keyDatas)
+	{
+		if (key.D)
+		{
+			count++;
+		}
+	}
+
+	if (count > 20) {
+		return true;
+	}
+
+
+	for (auto& pad : m_padDatas)
+	{
+		if (pad.IsLeftThumbStickRight())
+		{
+			count++;
+		}
+	}
+
+	if (count > 20) {
+		return true;
+	}
+
+	return false;
 }
 
 bool KeyInput::IsDashingLeftFrequently()
 {
+	int count = 0;
+
+	for (auto& key : m_keyDatas)
+	{
+		if (key.A)
+		{
+			count++;
+		}
+	}
+
+	if (count > 20) {
+		return true;
+	}
+
+
+	for (auto& pad : m_padDatas)
+	{
+		if (pad.IsLeftThumbStickLeft())
+		{
+			count++;
+		}
+	}
+
+	if (count > 20) {
+		return true;
+	}
+
 	return false;
 }
 
 bool KeyInput::IsAttackingFrequently()
 {
+	int count = 0;
+
+	for (auto& key : m_keyDatas)
+	{
+		if (key.Q || key.E)
+		{
+			count++;
+		}
+	}
+
+	if (count > 10) {
+		return true;
+	}
+
+	for (auto& mouse : m_mouseDatas)
+	{
+		if (mouse.rightButton)
+		{
+			count++;
+		}
+	}
+
+	if (count > 10)
+	{
+		return true;
+	}
+
+
+	for (auto& pad : m_padDatas)
+	{
+		if (pad.IsRightShoulderPressed() || pad.IsRightTriggerPressed() || pad.IsLeftShoulderPressed() || pad.IsLeftTriggerPressed())
+		{
+			count++;
+		}
+	}
+
+	if (count > 10) {
+		return true;
+	}
+
 	return false;
 }
