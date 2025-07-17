@@ -83,9 +83,18 @@ void TransAC::SetTransACData(const std::string& modelPath,const std::string& ani
 	
 	m_spAnimator = std::make_shared<KdAnimator>();
 
-	m_spAnimator->SetAnimation(m_spModelWork->GetData()->GetAnimation(animPath), 0.0f, false, false);
-	float animAdvance = m_spModelWork->GetData()->GetAnimation(animPath)->m_maxLength * animprogress;
-	m_spAnimator->SetAdvanceTime(animAdvance);
+	auto animation = m_spModelWork->GetData()->GetAnimation(animPath);
+	if (animation)
+	{
+		m_spAnimator->SetAnimation(animation, 0.0f, false, false);
+		float animAdvance = m_spModelWork->GetData()->GetAnimation(animPath)->m_maxLength * animprogress;
+		m_spAnimator->SetAdvanceTime(animAdvance);
+	}
+	else {
+		m_spAnimator->SetAnimation(m_spModelWork->GetData()->GetAnimation("Stand"), 0.0f, false, false);
+		float animAdvance = m_spModelWork->GetData()->GetAnimation(animPath)->m_maxLength * animprogress;
+		m_spAnimator->SetAdvanceTime(animAdvance);
+	}
 	
 	m_mWorld = mat;
 

@@ -63,3 +63,39 @@ float BulletDamage(const Math::Vector3& _startPos, const Math::Vector3& _endPos,
 
 	return nowDamage;
 }
+
+Math::Vector3 SlerpDirection(const Math::Vector3& from, const Math::Vector3& to, float t)
+{
+	// 方向ベクトルがほぼ一致 or t = 0 なら補間スキップ
+	if (t <= 0.0f || from == to || (from - to).LengthSquared() < 1e-6f)
+	{
+		return from;
+	}
+
+	// 正規化された方向ベクトルをクォータニオンに変換
+	Math::Vector3 axis = from.Cross(to);
+	float dot = from.Dot(to);
+
+	if (axis.LengthSquared() < 1e-6f)
+	{
+		return from;
+	}
+
+	// クランプ
+	dot = std::clamp(dot, -1.0f, 1.0f);
+
+	float angle = acosf(dot);
+
+	if (fabs(angle) < 1e-6f)
+	{
+		return from;	// ほぼ同じ方向
+	}
+
+	Math::Quaternion rot = Math::Quaternion::CreateFromAxisAngle(axis, angle * t);
+	Math::Matrix rotMat = Math::Matrix::CreateFromQuaternion(rot);
+	Math::Vector3 result = DirectX::XMVector3TransformNormal(from, rotMat);
+
+	result.Normalize();
+
+	return result;
+}

@@ -146,3 +146,6 @@ inline Math::Vector3 ConvertToRadian(const Math::Vector3& _degree)
 //===========================================
 // 発射地点　着弾地点　元のダメージ　有効射程　減衰間隔 
 float BulletDamage(const Math::Vector3& _startPos, const Math::Vector3& _endPos,float _damage ,float _enableLength, float _dampingInterval,float _dampingRate);
+
+// ベクトルからSlerpして返す
+Math::Vector3 SlerpDirection(const Math::Vector3& from, const Math::Vector3& to, float t);

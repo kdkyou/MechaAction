@@ -2,6 +2,8 @@
 
 #include"CameraManager.h"
 
+#include"../Character/CharacterBase.h"
+
 void CameraBase::Init()
 {
 	if (!m_spCamera)
@@ -12,7 +14,7 @@ void CameraBase::Init()
 	m_FixMousePos.x = 640;
 	m_FixMousePos.y = 360;
 
-	m_localPos = { 3, 12.5f, -15.0f };
+	m_localPos = { 3, 14.5f, -22.0f };
 
 	KdEffekseerManager::GetInstance().SetCamera(m_spCamera);
 
@@ -34,14 +36,14 @@ void CameraBase::PreDraw()
 	m_spCamera->SetToShader();
 }
 
-void CameraBase::SetTarget(const std::weak_ptr<KdGameObject>& target)
+void CameraBase::SetTarget(const std::weak_ptr<CharacterBase>& target)
 {
 	if (target.expired() == true) { return; }
 
 	m_wpTarget = target;
 }
 
-void CameraBase::SetRockTarget(const std::weak_ptr<KdGameObject>& target)
+void CameraBase::SetRockTarget(const std::weak_ptr<CharacterBase>& target)
 {
 	if (target.expired() == true) { return; }
 

@@ -27,9 +27,13 @@
 		{
 			"doubleSided":true,
 			"name":"mat_walls",
+			"normalTexture":{
+				"index":0,
+				"scale":1.2000000476837158
+			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":0
+					"index":1
 				},
 				"metallicFactor":0,
 				"roughnessFactor":0.5
@@ -39,12 +43,12 @@
 			"doubleSided":true,
 			"name":"mat_slabs",
 			"normalTexture":{
-				"index":1,
+				"index":2,
 				"scale":2.299999952316284
 			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":2
+					"index":3
 				},
 				"metallicFactor":0,
 				"roughnessFactor":0.5
@@ -53,9 +57,12 @@
 		{
 			"doubleSided":true,
 			"name":"mat_window",
+			"normalTexture":{
+				"index":4
+			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":3
+					"index":5
 				},
 				"metallicFactor":0.9113923907279968,
 				"roughnessFactor":0.3807793855667114
@@ -144,9 +151,22 @@
 		{
 			"sampler":0,
 			"source":3
+		},
+		{
+			"sampler":0,
+			"source":4
+		},
+		{
+			"sampler":0,
+			"source":5
 		}
 	],
 	"images":[
+		{
+			"mimeType":"image/png",
+			"name":"Rock046L_1K-PNG_NormalDX",
+			"uri":"Rock046L_1K-PNG_NormalDX.png"
+		},
 		{
 			"mimeType":"image/png",
 			"name":"Rock046L_1K-PNG_Color",
@@ -161,6 +181,11 @@
 			"mimeType":"image/png",
 			"name":"28464617_s",
 			"uri":"28464617_s.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Ice003_1K-PNG_NormalDX",
+			"uri":"Ice003_1K-PNG_NormalDX.png"
 		},
 		{
 			"mimeType":"image/png",

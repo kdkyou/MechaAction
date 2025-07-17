@@ -1,6 +1,8 @@
 ﻿#include"HitCamera.h"
 
 #include"../CameraManager.h"
+#include"../../Character/CharacterBase.h"
+
 
 void HitCamera::Init()
 {
@@ -36,7 +38,7 @@ void HitCamera::Init()
 
 void HitCamera::PostUpdate()
 {
-	const std::shared_ptr<const KdGameObject>	_spTarget = m_wpTarget.lock();
+	const std::shared_ptr<const CharacterBase>	_spTarget = m_wpTarget.lock();
 
 	if (_spTarget == nullptr) { return; }
 

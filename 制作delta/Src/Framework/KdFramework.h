@@ -6,6 +6,7 @@
 //
 //====================================================
 
+
 // ウィンドウ
 #include "Window/KdWindow.h"
 
@@ -78,3 +79,10 @@
 
 // Effekseer管理クラス
 #include "Effekseer/KdEffekseerManager.h"
+
+// エディター関連
+#include "Editor/EditorData.h"
+
+// ポストプロセス
+#include "RenderSetting/RenderSetting.h"
+

@@ -98,6 +98,7 @@ public:
 	const float GetAdvanceTime() const { return m_time; }
 	const float GetProgress()const { return m_time / m_spAnimation->m_maxLength; }
 	const float GetComp()const { return m_compCnt; }
+	const bool IsComp()const { return m_isComp; }
 	void SetAdvanceTime(const float advanceTime) { m_time = advanceTime; }
 	//現在のanimation名を返す
 	const std::string GetAnimName() {

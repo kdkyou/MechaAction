@@ -27,9 +27,12 @@ void Enemy::Init()
 		box.Center = m_mWorld.Translation();
 		box.Extents = { 3,5,3 };
 
-	//	m_pCollider->RegisterCollisionShape("Enemy", box, KdCollider::TypeDamage);
+		//	m_pCollider->RegisterCollisionShape("Enemy", box, KdCollider::TypeDamage);
 		m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 	}
+
+	Math::Vector3 pos = { 0.0f,5.0f,0.0f };
+	m_correctionMat = Math::Matrix::CreateTranslation(pos);
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -57,6 +60,8 @@ void Enemy::Update()
 		m_nowAction->Update(m_wpThis, spTarget);
 
 	}
+
+	UpdateCollision();
 }
 
 void Enemy::PostUpdate()
@@ -91,13 +96,34 @@ void Enemy::DrawLit()
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld);
 }
 
+void Enemy::UpdateCollision()
+{
+	DirectX::BoundingOrientedBox box;
+
+	box.Center = GetPos() + Math::Vector3(0.0f, 6.0f, 0.0f);
+	box.Extents = { 2.0f,5.0f,2.0f };
+	UINT type = KdCollider::TypeDamage;
+	KdCollider::BoxInfo boxInfo(type, box);
+
+	auto translation = m_mWorld.Translation();
+
+	for (auto obj : SceneManager::Instance().GetObjList())
+	{
+		if (obj->Intersects(boxInfo, nullptr))
+		{
+			obj->OnHit();
+			HitDamage(obj->GetParameter());
+		}
+	}
+}
+
 bool Enemy::Search()
 {
 	KdCollider::SphereInfo sphere;
 	sphere.m_sphere.Center = m_mWorld.Translation() + m_currection;
 	sphere.m_sphere.Radius = m_radius;
 	sphere.m_type = KdCollider::TypeDamage;
-	
+
 	std::list< KdCollider::CollisionResult> retList;
 	std::list<std::shared_ptr<KdGameObject>> objList;
 
@@ -135,16 +161,16 @@ bool Enemy::Search()
 	if (isHit)
 	{
 		// 視界内にいるかどうかの判定
-		 bool flg = SearchDetect(hitPos, m_mWorld, m_viewAngle);
+		bool flg = SearchDetect(hitPos, m_mWorld, m_viewAngle);
 
-		 if (flg)
-		 {
-			 m_wpTarget = obj;
-		 }
-		 else
-		 {
-			 m_wpTarget.reset();
-		 }
+		if (flg)
+		{
+			m_wpTarget = obj;
+		}
+		else
+		{
+			m_wpTarget.reset();
+		}
 	}
 
 	return true;
@@ -288,7 +314,7 @@ void Enemy::Start::Exit(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGa
 void Enemy::StandUp::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandUp"), 100.0f,false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandUp"), 100.0f, false);
 }
 
 void Enemy::StandUp::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
@@ -428,8 +454,8 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<Kd
 				}
 			}
 
-			if(flg == 0)
-			{ 
+			if (flg == 0)
+			{
 				for (auto& data : pad)
 				{
 					if (data.IsLeftThumbStickLeft())
@@ -462,13 +488,13 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<Kd
 				return;
 			}
 			// 右回り
-			else if(flg == 2)
+			else if (flg == 2)
 			{
 				spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
 				return;
 			}
 			// 左回り
-			else if(flg == 3)
+			else if (flg == 3)
 			{
 				spOwner->ChangeActionState(std::make_shared<MoveLeftRotate>());
 				return;
@@ -602,7 +628,7 @@ void Enemy::BoostStop::Update(std::weak_ptr<Enemy>& owner, const  std::shared_pt
 
 		if (i < 2)
 		{
-			
+
 			return;
 		}
 		else if (i < 4)
@@ -1372,7 +1398,7 @@ void Enemy::Hited::Enter(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdG
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Hited"), 10.0f,false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Hited"), 10.0f, false);
 }
 
 void Enemy::Hited::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
@@ -1429,10 +1455,10 @@ void Enemy::Destoroy::Update(std::weak_ptr<Enemy>& owner, const  std::shared_ptr
 void Enemy::Destoroy::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::shared_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
-	if(spOwner->m_spAnimator->GetProgress()<=0.3)
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 2.0f);
+	if (spOwner->m_spAnimator->GetProgress() <= 0.3)
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 2.0f);
 	else {
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f);
 	}
 }
 

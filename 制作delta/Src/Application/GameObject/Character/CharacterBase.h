@@ -23,6 +23,8 @@ public:
 		return m_spModelWork;
 	}
 
+	const Math::Matrix& GetCorrectionMatrix() const{ return m_correctionMat * m_mWorld; }
+
 	// 右手行動状態かどうかを調べる
 	const bool IsRightAttack()const { return m_isRightAttack; }
 	void ChangeEnableRightAttack(bool attack) { m_isRightAttack = attack; }
@@ -43,7 +45,10 @@ public:
 	void HitDamage(float damage);
 	void SetHitEnable(bool hit) { m_isHit = hit; }
 
+
 protected:
+
+	virtual void UpdateCollision(){}
 
 	bool SearchDetect(const Math::Vector3& hitPos, const Math::Matrix& myPos, float viewRange);
 
@@ -58,6 +63,8 @@ protected:
 	Math::Vector3								m_worldRot;
 
 	Math::Matrix 								m_scale;
+
+	Math::Matrix								m_correctionMat = Math::Matrix::Identity;
 
 	float										m_gravity = 0;
 

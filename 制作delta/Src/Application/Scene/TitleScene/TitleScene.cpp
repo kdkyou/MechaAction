@@ -6,6 +6,7 @@
 void TitleScene::Init()
 {
 	CameraManager::Instance().SetNextType(CameraManager::CameraType::TPS);
+	CameraManager::Instance().EnableChangedCamera(false);
 
 }
 

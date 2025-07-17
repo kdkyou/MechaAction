@@ -11,6 +11,9 @@
 
 #include"../../main.h"
 
+#include"../Character/CharacterBase.h"
+
+
 void CameraManager::Init() 
 {
 	SetNextType(m_nextType);
@@ -54,6 +57,14 @@ bool CameraManager::SetNextType(const CameraType& type)
 	m_nextType = type;
 	
 	return true;
+}
+
+const std::weak_ptr<CharacterBase>& CameraManager::GetLockTarget(UINT num)
+{
+	// TODO: return ステートメントをここに挿入します
+	if (num >= m_multiLockNum) { return std::weak_ptr<CharacterBase>(); }
+
+	return m_wpMultiLocks[num];
 }
 
 const Math::Vector3& CameraManager::ToCameraVec( const Math::Vector3 nowPos)

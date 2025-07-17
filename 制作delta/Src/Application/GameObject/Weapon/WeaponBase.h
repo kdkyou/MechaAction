@@ -25,12 +25,22 @@ public:
 		LeftHand		= 1 << 2,
 		RightShoulder	= 1 << 3,
 		LeftShoulder	= 1 << 4,
-		Max
+		Max,
+	};
+
+	enum CollType
+	{
+		NoneType,
+		Player = 1 << 1,
+		Enemy = 1 << 2,
+		Terrain = 1 << 3,
 	};
 
 	void SetAttackTrigger(TriggerType type) { m_AttackTrigger = type; }
 
 	void CheckTrigger();
+
+	void SetCollisionType(CollType type) { m_collisionType = type; }
 
 
 protected:
@@ -43,14 +53,20 @@ protected:
 	std::shared_ptr<KdAnimator>		m_spAnimator = nullptr;
 	bool							m_animChanged = false;
 
+	Math::Vector3					m_pos = Math::Vector3::Zero;
 
-	Math::Matrix m_mLocalMat = Math::Matrix::Identity;
-	Math::Matrix m_parentAttachMat = Math::Matrix::Identity;
+	Math::Matrix					m_mLocalRot = Math::Matrix::Identity;
+	Math::Matrix					m_parentAttachMat = Math::Matrix::Identity;
 
 	std::shared_ptr<KdModelWork::Node>	m_pNode;
 
-	std::string m_attachPath = "";
+	std::string						m_attachPath = "";
 
-	UINT					 m_nowTrigger = 0;
-	TriggerType				 m_AttackTrigger = NoneTrigger;
+	UINT							m_nowTrigger = 0;
+	TriggerType						m_AttackTrigger = NoneTrigger;
+
+	// 当たり判定対象
+	UINT							m_collisionType = 0;
+
+	
 };

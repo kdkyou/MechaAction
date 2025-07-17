@@ -102,9 +102,13 @@ bool KdWindow::ProcessMessage()
 	return true;
 }
 
+// imgui
+LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 // ウィンドウ関数(Static関数)
 LRESULT CALLBACK KdWindow::callWindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+
 	// ウィンドウプロパティから、GameWindowクラスのインスタンスを取得
 	KdWindow* pThis = (KdWindow*)GetProp(hWnd, L"GameWindowInstance");
 

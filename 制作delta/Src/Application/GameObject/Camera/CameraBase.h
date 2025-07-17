@@ -2,6 +2,8 @@
 
 #include"GamePad.h"
 
+class CharacterBase;
+
 class CameraBase : public KdGameObject
 {
 public:
@@ -15,8 +17,8 @@ public:
 	void PreDraw()			override;
 
 
-	void SetTarget(const std::weak_ptr<KdGameObject>& target);
-	void SetRockTarget(const std::weak_ptr<KdGameObject>& rock);
+	void SetTarget(const std::weak_ptr<CharacterBase>& target);
+	void SetRockTarget(const std::weak_ptr<CharacterBase>& rock);
 
 	// 「絶対変更しません！見るだけ！」な書き方
 	const std::shared_ptr<KdCamera>& GetCamera() const
@@ -66,8 +68,8 @@ protected:
 	void UpdateRotateByMouse();
 
 	std::shared_ptr<KdCamera>					m_spCamera		= nullptr;
-	std::weak_ptr<KdGameObject>					m_wpTarget;
-	std::weak_ptr<KdGameObject>					m_wpRockTarget;
+	std::weak_ptr<CharacterBase>					m_wpTarget;
+	std::weak_ptr<CharacterBase>					m_wpRockTarget;
 
 	
 	std::vector<std::weak_ptr<KdGameObject>>	m_wpHitObjectList{};

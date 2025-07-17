@@ -8,6 +8,8 @@ void WeaponBase::SetParent(std::shared_ptr<CharacterBase> _parent)
 }
 
 void WeaponBase::SetModel(const std::string& path) {
+
+	if (path == "") { return; }
 	if (!m_spModelWork)
 	{
 		m_spModelWork = std::make_shared<KdModelWork>();
@@ -17,6 +19,8 @@ void WeaponBase::SetModel(const std::string& path) {
 
 void WeaponBase::SetModelData(const std::string& path)
 {
+	if (path == "") { return; }
+
 	if (!m_spModelData)
 	{
 		m_spModelData = KdAssets::Instance().m_modeldatas.GetData(path);

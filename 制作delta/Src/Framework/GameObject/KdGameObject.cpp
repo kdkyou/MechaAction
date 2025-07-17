@@ -40,6 +40,7 @@ void KdGameObject::CalcDistSqrFromCamera(const Math::Vector3& camPos)
 	m_distSqrFromCamera = (m_mWorld.Translation() - camPos).LengthSquared();
 }
 
+
 bool KdGameObject::Intersects(const KdCollider::SphereInfo& targetShape, std::list<KdCollider::CollisionResult>* pResults)
 {
 	if (!m_pCollider) { return false; }

@@ -21,6 +21,8 @@ public:
 
 private:
 
+	void UpdateCollision()override;
+
 	bool Search();
 
 	void Editor_ImGui()override;

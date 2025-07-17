@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 class CameraBase;
+class CharacterBase;
 
 class CameraManager
 {
@@ -18,7 +19,7 @@ public:
 
 	struct LockTargetInfo
 	{
-		std::weak_ptr<KdGameObject> wpLockTarget;
+		std::weak_ptr<CharacterBase> wpLockTarget;
 		float						distance = 0.0f;
 
 		// ソート：距離が小さい順
@@ -37,13 +38,15 @@ public:
 	//外部から変更する際に通る関数
 	bool SetNextType(const CameraType& type);
 
-	void SetCameraTarget(const std::shared_ptr<KdGameObject>& target) { m_wpCameraTarget = target; }
-	void SetLockTarget(const std::shared_ptr<KdGameObject>& target) { m_wpRockTarget = target; }
+	void SetCameraTarget(const std::shared_ptr<CharacterBase>& target) { m_wpCameraTarget = target; }
+	void SetLockTarget(const std::shared_ptr<CharacterBase>& target) { m_wpRockTarget = target; }
 
-	void SetMultiLocks(const std::shared_ptr<KdGameObject>& locks) { m_wpMultiLocks .push_back(locks); }
+	void SetMultiLocks(const std::shared_ptr<CharacterBase>& locks) { m_wpMultiLocks .push_back(locks); }
 	void ResetMultiLocks() { m_wpMultiLocks.clear(); }
 	void SetMultiLockNum(int num) { m_multiLockNum = num; }
 	const int	 GetMultiLockNum()const { return m_multiLockNum; }
+	const std::weak_ptr<CharacterBase>& GetLockTarget(UINT num);
+	const std::vector<std::weak_ptr<CharacterBase>>& GetMultiLockList(){ return m_wpMultiLocks; }
 
 	void EnableChangedCamera(bool isEnablechanged) { m_isEnableChanged = isEnablechanged; }
 
@@ -64,10 +67,10 @@ private:
 
 
 	std::shared_ptr<CameraBase>	m_currentCamera = nullptr;
-	std::weak_ptr<KdGameObject> m_wpCameraTarget;
-	std::weak_ptr<KdGameObject> m_wpRockTarget;
+	std::weak_ptr<CharacterBase> m_wpCameraTarget;
+	std::weak_ptr<CharacterBase> m_wpRockTarget;
 
-	std::vector<std::shared_ptr<KdGameObject>>	m_wpMultiLocks;
+	std::vector<std::weak_ptr<CharacterBase>>	m_wpMultiLocks;
 	int											m_multiLockNum = 3;
 
 	

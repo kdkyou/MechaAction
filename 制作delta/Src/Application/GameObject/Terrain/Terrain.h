@@ -10,6 +10,8 @@ public:
 	void Update()			override;
 	void DrawLit()			override;
 
+	void SetMat(const Math::Matrix& mat) { m_mWorld = mat; }
+
 	void SetModel(const std::string& path);
 
 private:

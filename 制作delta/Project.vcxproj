@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="..\Library\imgui\imconfig.h" />
     <ClInclude Include="..\Library\imgui\imgui.h" />
+    <ClInclude Include="..\Library\imgui\ImGuizmo.h" />
     <ClInclude Include="..\Library\imgui\imgui_impl_dx11.h" />
     <ClInclude Include="..\Library\imgui\imgui_impl_win32.h" />
     <ClInclude Include="..\Library\imgui\imgui_internal.h" />
@@ -150,12 +151,12 @@
     <ClInclude Include="..\Library\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\Library\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Library\imgui\imstb_truetype.h" />
-    <ClInclude Include="..\Library\imgui\ja_glyph_ranges.h" />
     <ClInclude Include="..\Library\strconv.h" />
     <ClInclude Include="..\Library\tinygltf\json.hpp" />
     <ClInclude Include="..\Library\tinygltf\stb_image.h" />
     <ClInclude Include="..\Library\tinygltf\stb_image_write.h" />
     <ClInclude Include="..\Library\tinygltf\tiny_gltf.h" />
+    <ClInclude Include="Src\Application\GameObject\Camera\AnimationCamera\AnimationCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\CameraBase.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\CameraManager.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.h" />
@@ -172,9 +173,11 @@
     <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\Terrain.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Blade\Blade.h" />
-    <ClInclude Include="Src\Application\GameObject\Weapon\Missile\Missile.h" />
-    <ClInclude Include="Src\Application\GameObject\Weapon\Rifle\Bullet\Bullet.h" />
-    <ClInclude Include="Src\Application\GameObject\Weapon\Rifle\Rifle.h" />
+    <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Bullet\Bullet.h" />
+    <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Charge\Charge.h" />
+    <ClInclude Include="Src\Application\GameObject\Weapon\Gun\GunBase.h" />
+    <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Missile\Missile.h" />
+    <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Rifle\Rifle.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Shield\Shield.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Sowrd\Sowrd.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase.h" />
@@ -188,6 +191,8 @@
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdPolygon.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdSquarePolygon.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdTrailPolygon.h" />
+    <ClInclude Include="Src\Framework\Editor\EditorData.h" />
+    <ClInclude Include="Src\Framework\Editor\ImGuiHelper.h" />
     <ClInclude Include="Src\Framework\Effekseer\KdEffekseerManager.h" />
     <ClInclude Include="Src\Framework\GameObject\KdGameObject.h" />
     <ClInclude Include="Src\Framework\GameObject\KdGameObjectFactory.h" />
@@ -205,6 +210,7 @@
     <ClInclude Include="Src\Framework\Direct3D\KdModel.h" />
     <ClInclude Include="src\Framework\Direct3D\KdTexture.h" />
     <ClInclude Include="Src\Framework\Math\KdUVAnimation.h" />
+    <ClInclude Include="Src\Framework\RenderSetting\RenderSetting.h" />
     <ClInclude Include="Src\Framework\Shader\KdAmbientController.h" />
     <ClInclude Include="Src\Framework\Shader\KdRenderTargetChange.h" />
     <ClInclude Include="Src\Framework\Shader\StandardShader\KdStandardShader.h" />
@@ -224,6 +230,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Library\imgui\imgui.cpp" />
+    <ClCompile Include="..\Library\imgui\ImGuizmo.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_impl_dx11.cpp" />
@@ -231,6 +238,7 @@
     <ClCompile Include="..\Library\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Camera\AnimationCamera\AnimationCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\CameraBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\CameraManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.cpp" />
@@ -246,9 +254,11 @@
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\Terrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Blade\Blade.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Weapon\Missile\Missile.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Weapon\Rifle\Bullet\Bullet.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Weapon\Rifle\Rifle.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Bullet\Bullet.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Charge\Charge.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Weapon\Gun\GunBase.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Missile\Missile.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Rifle\Rifle.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Shield\Shield.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Sowrd\Sowrd.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase.cpp" />
@@ -265,6 +275,8 @@
     <ClCompile Include="Src\Framework\Direct3D\Polygon\KdPolygon.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\Polygon\KdSquarePolygon.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\Polygon\KdTrailPolygon.cpp" />
+    <ClCompile Include="Src\Framework\Editor\EditorData.cpp" />
+    <ClCompile Include="Src\Framework\Editor\ImGuiHelper.cpp" />
     <ClCompile Include="Src\Framework\Effekseer\KdEffekseerManager.cpp" />
     <ClCompile Include="Src\Framework\GameObject\KdGameObject.cpp" />
     <ClCompile Include="Src\Framework\GameObject\KdGameObjectFactory.cpp" />
@@ -281,6 +293,7 @@
     <ClCompile Include="Src\Framework\Direct3D\KdModel.cpp" />
     <ClCompile Include="src\Framework\Direct3D\KdTexture.cpp" />
     <ClCompile Include="Src\Framework\Math\KdUVAnimation.cpp" />
+    <ClCompile Include="Src\Framework\RenderSetting\RenderSetting.cpp" />
     <ClCompile Include="Src\Framework\Shader\KdAmbientController.cpp" />
     <ClCompile Include="Src\Framework\Shader\KdRenderTargetChange.cpp" />
     <ClCompile Include="Src\Framework\Shader\StandardShader\KdStandardShader.cpp" />

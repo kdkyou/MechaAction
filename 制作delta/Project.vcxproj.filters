@@ -67,9 +67,6 @@
     <Filter Include="Src\Application\Scene\GameScene">
       <UniqueIdentifier>{15b4a73e-7369-4959-bb49-4b163a24b7b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Library\imgui">
-      <UniqueIdentifier>{4a041644-8c5d-42b5-9683-f28b8c790f4f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject">
       <UniqueIdentifier>{c8eeed44-235a-4eda-9689-532350b60789}</UniqueIdentifier>
     </Filter>
@@ -109,9 +106,6 @@
     <Filter Include="Src\Application\GameObject\Camera\NoneCamera">
       <UniqueIdentifier>{abec27ce-a14b-4e18-87c0-47b55d1124b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\Rifle">
-      <UniqueIdentifier>{ad36ca48-56ec-4d1d-b54a-f9cff788bdb0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Effect">
       <UniqueIdentifier>{89852e6a-2aec-48e2-ac46-28629fdd83e2}</UniqueIdentifier>
     </Filter>
@@ -124,14 +118,35 @@
     <Filter Include="Src\Application\GameObject\Camera\HitCamera">
       <UniqueIdentifier>{42391527-06c1-410b-b44e-87bb78891ffc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\Rifle\Bullet">
-      <UniqueIdentifier>{0e86f8d4-6c89-4aa6-bf41-f62dca0b6291}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Camera\LockCamera">
       <UniqueIdentifier>{8576e92e-106b-48d8-862b-0d663ea35511}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\Missile">
+    <Filter Include="Src\Application\GameObject\Weapon\Gun">
+      <UniqueIdentifier>{ead13484-f04f-4deb-a717-250bad268e27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Gun\Rifle">
+      <UniqueIdentifier>{ad36ca48-56ec-4d1d-b54a-f9cff788bdb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Gun\Missile">
       <UniqueIdentifier>{a5c594c6-db16-4af3-9542-7f2f59c3f63b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Gun\Bullet">
+      <UniqueIdentifier>{e86dc28d-b5d6-4eb3-a65b-23ea261200db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Gun\Charge">
+      <UniqueIdentifier>{ecc3ae96-4411-46f8-a0cd-cf1fc919dbb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Camera\AnimationCamera">
+      <UniqueIdentifier>{a7101d54-e00e-4786-9c46-4115d6ac6732}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Framework\Editor">
+      <UniqueIdentifier>{c50b14c1-040c-4850-bac6-de11eedba89d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Framework\RenderSetting">
+      <UniqueIdentifier>{8f8f5031-330c-4c29-9a12-41098189dbd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\imgui">
+      <UniqueIdentifier>{69b635e0-535f-4e67-81a0-bd60c1ee7116}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -270,36 +285,6 @@
     <ClInclude Include="Src\Application\Scene\TitleScene\TitleScene.h">
       <Filter>Src\Application\Scene\TitleScene</Filter>
     </ClInclude>
-    <ClInclude Include="..\Library\imgui\imconfig.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imgui.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imgui_impl_dx11.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imgui_impl_win32.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imgui_internal.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imstb_rectpack.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imstb_textedit.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imstb_truetype.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imgui_stdlib.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\ja_glyph_ranges.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Camera\CameraBase.h">
       <Filter>Src\Application\GameObject\Camera</Filter>
     </ClInclude>
@@ -345,9 +330,6 @@
     <ClInclude Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.h">
       <Filter>Src\Application\GameObject\Camera\NoneCamera</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\Rifle\Rifle.h">
-      <Filter>Src\Application\GameObject\Weapon\Rifle</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Framework\Input\KeyInput.h">
       <Filter>Src\Framework\Input</Filter>
     </ClInclude>
@@ -360,9 +342,6 @@
     <ClInclude Include="Src\Application\GameObject\Weapon\Sowrd\Sowrd.h">
       <Filter>Src\Application\GameObject\Weapon\Sowrd</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\Rifle\Bullet\Bullet.h">
-      <Filter>Src\Application\GameObject\Weapon\Rifle\Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.h">
       <Filter>Src\Application\GameObject\Camera\HitCamera</Filter>
     </ClInclude>
@@ -372,8 +351,62 @@
     <ClInclude Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.h">
       <Filter>Src\Application\GameObject\Camera\LockCamera</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\Missile\Missile.h">
-      <Filter>Src\Application\GameObject\Weapon\Missile</Filter>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Gun\GunBase.h">
+      <Filter>Src\Application\GameObject\Weapon\Gun</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Rifle\Rifle.h">
+      <Filter>Src\Application\GameObject\Weapon\Gun\Rifle</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Missile\Missile.h">
+      <Filter>Src\Application\GameObject\Weapon\Gun\Missile</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Bullet\Bullet.h">
+      <Filter>Src\Application\GameObject\Weapon\Gun\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Charge\Charge.h">
+      <Filter>Src\Application\GameObject\Weapon\Gun\Charge</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\AnimationCamera\AnimationCamera.h">
+      <Filter>Src\Application\GameObject\Camera\AnimationCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\Editor\EditorData.h">
+      <Filter>Src\Framework\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\Editor\ImGuiHelper.h">
+      <Filter>Src\Framework\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\RenderSetting\RenderSetting.h">
+      <Filter>Src\Framework\RenderSetting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imconfig.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imgui.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imgui_impl_dx11.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imgui_impl_win32.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imgui_internal.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imgui_stdlib.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\ImGuizmo.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imstb_rectpack.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imstb_textedit.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imstb_truetype.h">
+      <Filter>Library\imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -491,30 +524,6 @@
     <ClCompile Include="Src\Application\Scene\TitleScene\TitleScene.cpp">
       <Filter>Src\Application\Scene\TitleScene</Filter>
     </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_demo.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_draw.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_impl_dx11.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_impl_win32.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_tables.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_widgets.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_stdlib.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\CameraBase.cpp">
       <Filter>Src\Application\GameObject\Camera</Filter>
     </ClCompile>
@@ -560,9 +569,6 @@
     <ClCompile Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\NoneCamera</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\Rifle\Rifle.cpp">
-      <Filter>Src\Application\GameObject\Weapon\Rifle</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Framework\Input\KeyInput.cpp">
       <Filter>Src\Framework\Input</Filter>
     </ClCompile>
@@ -575,17 +581,65 @@
     <ClCompile Include="Src\Application\GameObject\Weapon\Sowrd\Sowrd.cpp">
       <Filter>Src\Application\GameObject\Weapon\Sowrd</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\Rifle\Bullet\Bullet.cpp">
-      <Filter>Src\Application\GameObject\Weapon\Rifle\Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\HitCamera</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\LockCamera</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\Missile\Missile.cpp">
-      <Filter>Src\Application\GameObject\Weapon\Missile</Filter>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Gun\GunBase.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Gun</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Rifle\Rifle.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Gun\Rifle</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Missile\Missile.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Gun\Missile</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Bullet\Bullet.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Gun\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Charge\Charge.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Gun\Charge</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\AnimationCamera\AnimationCamera.cpp">
+      <Filter>Src\Application\GameObject\Camera\AnimationCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\Editor\EditorData.cpp">
+      <Filter>Src\Framework\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\Editor\ImGuiHelper.cpp">
+      <Filter>Src\Framework\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\RenderSetting\RenderSetting.cpp">
+      <Filter>Src\Framework\RenderSetting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_demo.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_draw.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_impl_dx11.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_impl_win32.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_stdlib.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_tables.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_widgets.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\ImGuizmo.cpp">
+      <Filter>Library\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

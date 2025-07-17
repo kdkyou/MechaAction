@@ -1,6 +1,9 @@
 ﻿
 #include"TrackingCamera.h"
 
+#include"../../Character/CharacterBase.h"
+
+
 void TrackingCamera::Init()
 {
 	// 親クラスの初期化呼び出し

@@ -210,6 +210,8 @@ bool Application::Init(int w, int h)
 	SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 
 	KeyInput::GetInstance().SetWindow(m_window.GetWndHandle());
+
+	EditorData::GetInstance().Initialize();
 	
 	ShowCursor(false);
 
@@ -334,7 +336,7 @@ void Application::Execute()
 
 		KdFPSController::GetInstance().Update();
 
-		std::string titleBar = "Mecha fps=" + std::to_string(KdFPSController::GetInstance().GetFPS());
+		std::string titleBar = "EchoSteel fps=" + std::to_string(KdFPSController::GetInstance().GetFPS());
 		SetWindowTextA(m_window.GetWndHandle(), titleBar.c_str());
 	}
 
@@ -393,6 +395,8 @@ void Application::ImGuiProcess()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+
+	EditorData::GetInstance().UpdateImGui();
 
 	//===========================================================
 	// 以下にImGui描画処理を記述

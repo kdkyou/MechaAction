@@ -28,28 +28,56 @@ private:
 	// SHIFTの入力があったか
 	const bool IsBoost();
 
-	// 左クリック入力
+	// 右クリック入力
 	const bool IsAttack();
 
 	// スペース入力
 	const bool IsFlow();
-	// 右クリック入力
+	// 左クリック入力
 	const bool IsGuard();
 
-	//				移動量　　方向		当たり判定するタイプ（基本地面） キャラが回転するか　レイに補正をかけるか
-	bool Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool camera = true, bool step = false);
+	const bool IsLeftShoulder();
+	const bool IsRightShoulder();
+
+	//				移動量　　方向		当たり判定するタイプ（基本地面） 判定のみか キャラが回転するか 座標補正なし　レイに補正をかけるか
+	bool Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool camera = true,bool direct = false, bool step = false);
 	//bool Move(float speed,const Math::Vector3& dir,const Math::Vector3& step={}, const KdCollider::Type type=KdCollider::TypeGround, bool ray = true, bool sphere = true, bool camera = true);
 
 	// キャラクターの回転行列を作成する
 	void UpdateRotate(const Math::Vector3& srcMoveVec);
 	// 衝突判定とそれに伴う座標の更新
-	void UpdateCollision();
+	void UpdateCollision()override;
 
 	bool  RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length, const KdCollider::Type& type, Math::Vector3& resultPos);
 
 	bool  SphereCast(const Math::Vector3& pos, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos);
 
-	
+	void ResetGravity() { m_gravity = 0.0f; }
+
+	bool IsIgnoreGravityState()const;
+
+	enum CharacterStateName
+	{
+		Stand,
+		StandUp,
+		StandGuard,
+		Walk,
+		WalkGuard,
+		Fly,
+		FlyGuard,
+		Boost,
+		BoostNow,
+		BoostEnd,
+		BoostDush,
+		BoostDushGuard,
+		RightSorwdBef,
+		RightSorwdMid,
+		RightSorwdAf,
+		LeftShoulderAttack,
+		Hited,
+		Destoryed,
+	};
+
 
 	float										m_clampSize = 10.0f;
 
@@ -128,8 +156,9 @@ private:
 		void Checkkey(std::weak_ptr<Character>& owner);
 
 		const std::string& GetName() { return m_animName; }
+		const UINT GetState() { return m_stateNum; }
 
-	protected:
+protected:
 
 		const Math::Vector3 Direct(std::weak_ptr<Character>& owner, bool isCamera);
 
@@ -141,11 +170,21 @@ private:
 
 		bool m_isBoost = false;
 		bool m_isMove = false;
-		bool m_isRightAttack = false;
 		bool m_isFlow = false;
+		bool m_isRightAttack = false;
 		bool m_isGuard =false;
+		bool m_isRightShoulder = false;
+		bool m_isLeftShoulder = false;
+
+		bool m_isOneShot = false;
+
+
+		float m_stiffnessTime = 0.0f;
+		float m_durationStiffness = 0.0f;
 
 		std::string		m_animName;
+		UINT			m_stateNum = 0;
+	
 
 		float m_speed = 0.0f;
 		Math::Vector3 m_direction = Math::Vector3::Zero;
@@ -197,7 +236,6 @@ private:
 	private:
 	};
 
-	//
 	class ActionStandShield : public ActionStateBase
 	{
 	public:
@@ -233,7 +271,6 @@ private:
 		void Exit(std::weak_ptr<Character>& owner)override;
 	};
 
-	//未
 	class ActionMoveShield : public ActionStateBase
 	{
 	public:
@@ -323,6 +360,17 @@ private:
 	private:
 	};
 
+	class ActionRightAttackMid :public ActionStateBase
+	{
+	public:
+		virtual ~ActionRightAttackMid()  override {}
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+
 	class ActionRightAttackAf :public ActionStateBase
 	{
 	public:
@@ -333,6 +381,19 @@ private:
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
+	};
+
+	class ActionLeftShoulderAttack :public ActionStateBase
+	{
+	public:
+		virtual ~ActionLeftShoulderAttack()  override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+
 	};
 
 

@@ -13,7 +13,7 @@ void Terrain::DrawLit()
 {
 	if (!m_spModel) return;
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel,m_mWorld);
 }
 
 void Terrain::SetModel(const std::string& path)
@@ -24,7 +24,7 @@ void Terrain::SetModel(const std::string& path)
 		m_spModel->SetModelData(path);
 
 		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape("Ground", m_spModel, KdCollider::TypeGround + KdCollider::TypeBump);
+		m_pCollider->RegisterCollisionShape("Ground", m_spModel, KdCollider::TypeGround );
 	}
 }
 

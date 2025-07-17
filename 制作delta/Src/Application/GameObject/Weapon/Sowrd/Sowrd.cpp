@@ -32,7 +32,7 @@ void Sowrd::Init()
 		m_spTrail->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Thunder1.png"));
 		m_spTrail->SetColor(Math::Color{ 0.2f,0.3f,2.0f });
 		m_spTrail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
-		m_spTrail->SetWidth(0.3f);
+		m_spTrail->SetWidth(2.3f);
 		m_spTrail->SetLength(10);
 		m_spTrail->ClearPoints();
 	}

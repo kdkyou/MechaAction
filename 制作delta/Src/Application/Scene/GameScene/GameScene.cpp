@@ -8,7 +8,9 @@
 #include"../../GameObject/Weapon/Blade/Blade.h"
 #include"../../GameObject/Weapon/Shield/Shield.h"
 #include"../../GameObject/Weapon/Sowrd/Sowrd.h"
-#include"../../GameObject/Weapon/Rifle/Rifle.h"
+#include"../../GameObject/Weapon/Gun/Rifle/Rifle.h"
+#include"../../GameObject/Weapon/Gun/Missile/Missile.h"
+#include"../../GameObject/Weapon/Gun/Charge/Charge.h"
 
 #include"../../GameObject/Camera/CameraManager.h"
 // 少数第n位で四捨五入する
@@ -24,11 +26,53 @@ void GameScene::Init()
 	//===================================================================
 	// ステージ初期化
 	//===================================================================
-	std::shared_ptr<Terrain> _terrain = std::make_shared<Terrain>();
-	_terrain->Init();
-	_terrain->SetModel("Asset/Models/Stage/Stage.gltf");
-	AddObject(_terrain);
+	
+	Math::Vector3 pos = {0.0f,-0.5f,0.0f};
 
+	
+	std::shared_ptr<Terrain> _terrain = std::make_shared<Terrain>();
+	_terrain->SetModel("Asset/Models/Stage/Tail/Tail.gltf");
+	AddObject(_terrain);
+	AddTerrain(_terrain);
+
+	_terrain = std::make_shared<Terrain>();
+	pos = {30.0f,0.0f,0.0f};
+	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
+	_terrain->SetModel("Asset/Models/Stage/House/House.gltf");
+	AddObject(_terrain);
+	AddTerrain(_terrain);
+
+	_terrain = std::make_shared<Terrain>();
+	pos = { -30.0f,0.0f,0.0f };
+	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
+	_terrain->SetModel("Asset/Models/Stage/Rubble/Rubble.gltf");
+	AddObject(_terrain);
+	AddTerrain(_terrain);
+
+	_terrain = std::make_shared<Terrain>();
+	pos = { 30.0f,0.0f,50.0f };
+	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
+	_terrain->SetModel("Asset/Models/Stage/Rubble2/Rubble2.gltf");
+	AddObject(_terrain);
+	AddTerrain(_terrain);
+
+	_terrain = std::make_shared<Terrain>();
+	pos = { 50.0f,0.0f,300.0f };
+	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
+	_terrain->SetModel("Asset/Models/Stage/LowApartment/LowApartment.gltf");
+	AddObject(_terrain);
+	AddTerrain(_terrain);
+
+	_terrain = std::make_shared<Terrain>();
+	pos = { -100.0f,0.0f,200.0f };
+	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
+	_terrain->SetModel("Asset/Models/Stage/BalconyApartment/BalconyApartment.gltf");
+	AddObject(_terrain);
+	AddTerrain(_terrain);
+
+	_terrain = std::make_shared<Terrain>();
+	_terrain->SetModel("Asset/Models/Stage/Sky/Sky.gltf");
+	AddObject(_terrain);
 
 	/*std::shared_ptr<Terrain> _serrain = std::make_shared<Terrain>();
 	_serrain->Init();
@@ -45,18 +89,17 @@ void GameScene::Init()
 	std::shared_ptr<Character> _character = std::make_shared<Character>();
 	_character->SetThis(_character);
 	_character->Init();
-	_character->RegistHitObject(_terrain);
 	AddObject(_character);
 	AddPlayer(_character);
 
 	// プレイヤー武器
 	{
-		std::shared_ptr<Blade> _blade = std::make_shared<Blade>();
+		/*std::shared_ptr<Blade> _blade = std::make_shared<Blade>();
 		_blade->Init();
 		_blade->SetModel("Asset/Models/Weapon/Blade/Blade.gltf");
 		_blade->SetParent(_character);
 		_blade->SetAttachPath("RightWeapon");
-		AddObject(_blade);
+		AddObject(_blade);*/
 
 		std::shared_ptr<Sowrd> _sowrd = std::make_shared<Sowrd>();
 		_sowrd->Init();
@@ -74,23 +117,34 @@ void GameScene::Init()
 		AddObject(_shield);
 
 
-		std::shared_ptr<Rifle> rifle;
+		std::shared_ptr<Charge> charge;
 
-		rifle = std::make_shared<Rifle>();
-		rifle->SetParent(_character);
-		rifle->SetAttackTrigger(WeaponBase::LeftShoulder);
-		rifle->SetAttachPath("LeftShoulderWeapon");
-		rifle->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 2.5f, 5.0f, 24, 80);
-		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", "Asset/Textures/GameObject/Thunder1.png", 200, 500, 200, 40.0f, 0.95f);
-		AddObject(rifle);
+		charge = std::make_shared<Charge>();
+		charge->SetParent(_character);
+		charge->SetAttackTrigger(WeaponBase::LeftShoulder);
+		charge->SetAttachPath("LeftShoulderWeapon");
+		charge->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 3.5f, 6.0f,0.0f,1, 24, 80);
+		charge->MakeAnimator("Close", 20.0f);
+		charge->Init();
+		charge->SetBulletsParam("", 5.0f, 300, 300, 200, 40.0f, 0.95f);
+		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke2.png",Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
+		AddObject(charge);
 		
-		rifle = std::make_shared<Rifle>();
-		rifle->SetParent(_character);
-		rifle->SetAttackTrigger(WeaponBase::RightShoulder);
-		rifle->SetAttachPath("RightShoulderWeapon");
-		rifle->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/FrontMisail.gltf", 1.8f, 5.0f, 24, 80);
-		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", "Asset/Textures/GameObject/Thunder1.png", 200, 500, 200, 40.0f, 0.95f);
-		AddObject(rifle);
+		std::shared_ptr<Missile> missile;
+		missile = std::make_shared<Missile>();
+		missile->SetParent(_character);
+		missile->SetAttackTrigger(WeaponBase::RightShoulder);
+		missile->SetAttachPath("RightShoulderWeapon");
+		missile->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/3LineMissile.gltf", 1.8f, 7.0f,0.1f,3, 24, 80);
+		missile->MakeAnimator("Close", 20.0f);
+		missile->SetNodeMats("SP1");
+		missile->SetNodeMats("SP2");
+		missile->SetNodeMats("SP3");
+		missile->Init();
+		missile->SetBulletsParam("Asset/Models/Weapon/Bullet/MissileBullet.gltf",50.0f,100, 100.0f, 200, 40.0f, 0.95f);
+		missile->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke.png", Math::Color(0.36f, 0.3f, 0.3f), 3.5f, 30);
+		missile->SetBulletChaisingData(10, 150.0f, 0.8f, 2000.0f);
+		AddObject(missile);
 
 
 	}
@@ -112,16 +166,20 @@ void GameScene::Init()
 		rifle = std::make_shared<Rifle>();
 		rifle->SetParent(enemy);
 		rifle->SetAttachPath("RightWeapon");
-		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 1.8f, 5.0f, 24, 80);
-		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", "Asset/Textures/GameObject/Prazma1.png", 200, 500, 200, 40.0f, 0.95f);
+		rifle->SetAttackTrigger(WeaponBase::RightHand);
+		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 1.8f, 5.0f, 0.0f, 1, 24, 80);
+		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 200, 400, 200, 40.0f, 0.95f);
+		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.7f, 0.4f, 0.8f), 1.7f, 30);
 		AddObject(rifle);
 	}
 	{
 		rifle = std::make_shared<Rifle>();
 		rifle->SetParent(enemy);
 		rifle->SetAttachPath("LeftWeapon");
-		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.5f, 2.0f, 36, 250);
-		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", "Asset/Textures/GameObject/ClockHand.png", 50, 300, 200, 20.0f, 0.9f);
+		rifle->SetAttackTrigger(WeaponBase::LeftHand);
+		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.5f, 2.0f, 0.0f, 1, 36, 250);
+		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 50, 300, 200, 20.0f, 0.9f);
+		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 30);
 		AddObject(rifle);
 	}
 
@@ -131,9 +189,10 @@ void GameScene::Init()
 	//===================================================================
 	// カメラ初期化
 	//===================================================================
+	CameraManager::Instance().EnableChangedCamera(true);
 	CameraManager::Instance().SetCameraTarget(_character);
-	CameraManager::Instance().SetLockTarget(enemy);
-	CameraManager::Instance().SetNextType(CameraManager::CameraType::None);
+	//CameraManager::Instance().SetLockTarget(enemy);
+	CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
 
 
 
