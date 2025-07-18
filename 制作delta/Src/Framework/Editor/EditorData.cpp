@@ -129,6 +129,7 @@ void EditorData::UpdateImGui()
 			ImGui::EndMenuBar();
 		}
 
+
 		ImGui::Checkbox("EdirotMode", &m_editorMode);
 		/*
 		if (m_editorMode)
@@ -198,6 +199,9 @@ void EditorData::UpdateImGui()
 	// ログウィンドウ
 	//===========================
 	//m_logWindow.ImGuiUpdate("Log Window");
+
+	
+	
 
 	////===========================
 	//// GameViewウィンドウ

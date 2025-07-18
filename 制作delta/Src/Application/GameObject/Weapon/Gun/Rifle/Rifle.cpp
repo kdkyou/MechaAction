@@ -99,6 +99,9 @@ void Rifle::Shot()
 	bullet->SetModelData(m_bulletModelPath);
 	bullet->SetBulletParam(m_aliveTime, m_damage, m_range, startPos, direct, m_speed, m_dampingInterval, m_dampingRate);
 	bullet->Init();
+
+	bullet->SetTag(m_tag);
+
 	bullet->SetBulletTrail(m_bulletTrailPath, m_bulletTrailColor,m_bulletTrailWidth,m_bulletTrailLength);
 	SceneManager::Instance().AddObject(bullet);
 

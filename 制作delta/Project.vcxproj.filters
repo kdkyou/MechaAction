@@ -148,6 +148,9 @@
     <Filter Include="Library\imgui">
       <UniqueIdentifier>{69b635e0-535f-4e67-81a0-bd60c1ee7116}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Enemy\Drone">
+      <UniqueIdentifier>{63eb6826-156d-4207-b0d1-be8069faa7c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -408,6 +411,9 @@
     <ClInclude Include="..\Library\imgui\imstb_truetype.h">
       <Filter>Library\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Enemy\Drone\Drone.h">
+      <Filter>Src\Application\GameObject\Enemy\Drone</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -640,6 +646,9 @@
     </ClCompile>
     <ClCompile Include="..\Library\imgui\ImGuizmo.cpp">
       <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Enemy\Drone\Drone.cpp">
+      <Filter>Src\Application\GameObject\Enemy\Drone</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

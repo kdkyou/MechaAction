@@ -126,9 +126,10 @@ void GameScene::Init()
 		charge->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 3.5f, 6.0f,0.0f,1, 24, 80);
 		charge->MakeAnimator("Close", 20.0f);
 		charge->Init();
+		charge->SetTag(KdGameObject::tPlayerAttack);
 		charge->SetBulletsParam("", 5.0f, 300, 300, 200, 40.0f, 0.95f);
 		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke2.png",Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
-		AddObject(charge);
+		AddObject(charge);;
 		
 		std::shared_ptr<Missile> missile;
 		missile = std::make_shared<Missile>();
@@ -141,6 +142,8 @@ void GameScene::Init()
 		missile->SetNodeMats("SP2");
 		missile->SetNodeMats("SP3");
 		missile->Init();
+		charge->SetTag(KdGameObject::tPlayerAttack);
+		
 		missile->SetBulletsParam("Asset/Models/Weapon/Bullet/MissileBullet.gltf",50.0f,100, 100.0f, 200, 40.0f, 0.95f);
 		missile->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke.png", Math::Color(0.36f, 0.3f, 0.3f), 3.5f, 30);
 		missile->SetBulletChaisingData(10, 150.0f, 0.8f, 2000.0f);
@@ -157,6 +160,7 @@ void GameScene::Init()
 	enemy->SetThis(enemy);
 	enemy->SetTarget(_character);
 	enemy->Init();
+	enemy->SetTag(KdGameObject::tEnemy);
 	AddObject(enemy);
 	AddEnemy(enemy);
 
@@ -167,6 +171,7 @@ void GameScene::Init()
 		rifle->SetParent(enemy);
 		rifle->SetAttachPath("RightWeapon");
 		rifle->SetAttackTrigger(WeaponBase::RightHand);
+		rifle->SetTag(KdGameObject::tEnemyAttack);
 		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 1.8f, 5.0f, 0.0f, 1, 24, 80);
 		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 200, 400, 200, 40.0f, 0.95f);
 		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.7f, 0.4f, 0.8f), 1.7f, 30);
@@ -177,6 +182,7 @@ void GameScene::Init()
 		rifle->SetParent(enemy);
 		rifle->SetAttachPath("LeftWeapon");
 		rifle->SetAttackTrigger(WeaponBase::LeftHand);
+		rifle->SetTag(KdGameObject::tEnemyAttack);
 		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.5f, 2.0f, 0.0f, 1, 36, 250);
 		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 50, 300, 200, 20.0f, 0.9f);
 		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 30);

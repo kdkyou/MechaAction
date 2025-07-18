@@ -41,7 +41,7 @@ void Character::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<ActionIdle>());
 
-
+	m_tag = tPlayer;
 
 }
 
@@ -304,64 +304,6 @@ const bool Character::IsRightShoulder()
 	return false;
 }
 
-bool Character::Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool camera, bool direct , bool step)
-{
-	auto direction = dir;
-	direction.Normalize();
-
-	auto pos = m_mWorld.Translation();
-
-	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
-
-	Math::Vector3 move = Math::Vector3::Zero;
-
-	auto deltaSpeed = speed * deltaTime;
-
-	if (step == true)
-	{
-		pos += {0.0f, 0.05f, 0.0f};
-	}
-
-	bool isHit = RayCast(pos, direction, deltaSpeed, type, move);
-	if (ray == true)
-	{
-		return isHit;
-	}
-
-	if (isHit == true)
-	{
-		auto corre = (direction * deltaSpeed) * 0.1f;
-		pos = move - corre;
-
-
-		if (direct == true)
-		{
-			pos = move;
-		}
-	}
-	else
-	{
-		move = direction * deltaSpeed;
-		pos += move;
-	}
-	auto center = pos + Math::Vector3{0.0, 5.0f, 0.0f};
-	//SphereCast(center, direction, 3.0f, KdCollider::TypeGround, pos);
-
-
-
-	if (camera == true)
-	{
-		UpdateRotate(direction);
-	}
-
-
-	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_worldRot.y));
-	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(pos);
-
-
-	return false;
-}
-
 void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 {
 	// 何も入力が無い場合は処理しない
@@ -524,81 +466,6 @@ void Character::UpdateCollision()
 
 }
 
-bool Character::RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length, const KdCollider::Type& type, Math::Vector3& resultPos)
-{
-	KdCollider::RayInfo rayInfo;
-
-	rayInfo.m_pos = startPos;		// レイの発射位置を設定
-
-	rayInfo.m_dir = vec;				// レイの発射方向を設定
-
-	rayInfo.m_range = length;		// レイの長さ
-
-	// 当たり判定をしたいタイプを設定
-	rayInfo.m_type = type;
-
-	if (rayInfo.m_dir.Length() == 0) { return false; }
-
-	bool hit = false;
-
-	std::list<KdCollider::CollisionResult> retRayList;
-
-	if (type & KdCollider::TypeGround)
-	{
-
-		// ②HIT判定対象オブジェクトに総当たり
-		for (auto obj : SceneManager::Instance().GetTerrainList())
-		{
-			{
-				obj->Intersects(rayInfo, &retRayList);
-			}
-		}
-	}
-
-	if (type & KdCollider::TypeDamage)
-	{
-		// ②HIT判定対象オブジェクトに総当たり
-		for (auto obj : SceneManager::Instance().GetEnemyList())
-		{
-			{
-				obj->Intersects(rayInfo, &retRayList);
-			}
-		}
-	}
-
-	// ③結果を使って座標を補完する
-			// レイに当たったリストから一番近いオブジェクトを検出
-	float maxOverLap = 0;
-	Math::Vector3 hitPos = Math::Vector3::Zero;
-	for (auto& ret : retRayList)
-	{
-		// レイを遮断しオーバーした長さが
-		// 一番長いものを探す
-		if (maxOverLap < ret.m_overlapDistance)
-		{
-			maxOverLap = ret.m_overlapDistance;
-			resultPos = ret.m_hitPos;
-
-			hit = true;
-
-		}
-	}
-
-	if (type & KdCollider::TypeGround)
-	{
-		if (hit)
-		{
-			m_isGround = true;
-			m_gravity = 0.0f;
-		}
-		else
-		{
-			m_isGround = false;
-		}
-	}
-
-	return hit;
-}
 
 bool Character::SphereCast(const Math::Vector3& center, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos)
 {

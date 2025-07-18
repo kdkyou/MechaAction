@@ -15,6 +15,17 @@ public:
 		eDrawTypeDepthOfShadow = 1 << 4,
 	};
 
+	enum ObjectTag
+	{
+		tNone,
+		tPlayer,
+		tEnemy,
+		tPlayerAttack,
+		tEnemyAttack,
+		tTerrain,
+		tUI,
+	};
+
 	KdGameObject() {}
 	virtual ~KdGameObject() { Release(); }
 
@@ -73,6 +84,9 @@ public:
 	virtual void OnHit(){}
 	virtual float GetParameter() { return m_parameter; }
 
+	const ObjectTag GetTag()const { return m_tag; }
+	void SetTag(const ObjectTag tag) { m_tag = tag; }
+
 protected:
 
 	void Release() {}
@@ -88,6 +102,8 @@ protected:
 
 	// 3D空間に存在する機能
 	Math::Matrix	m_mWorld;
+
+	ObjectTag m_tag = tNone;
 
 	// 当たり判定クラス
 	std::unique_ptr<KdCollider> m_pCollider = nullptr;

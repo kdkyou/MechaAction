@@ -50,8 +50,14 @@ protected:
 
 	virtual void UpdateCollision(){}
 
+	//				移動量　　方向		当たり判定するタイプ（基本地面） 判定のみか キャラが回転するか 座標補正なし　レイに補正をかけるか
+	bool Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool camera = true, bool direct = false, bool step = false);
+
+	bool  RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length, const KdCollider::Type& type, Math::Vector3& resultPos);
+
 	bool SearchDetect(const Math::Vector3& hitPos, const Math::Matrix& myPos, float viewRange);
 
+	virtual void UpdateRotate(const Math::Vector3& srcMoveVec){}
 
 	std::shared_ptr<KdModelWork>				m_spModelWork;
 	std::shared_ptr<KdModelData>				m_spModelData;
@@ -67,6 +73,8 @@ protected:
 	Math::Matrix								m_correctionMat = Math::Matrix::Identity;
 
 	float										m_gravity = 0;
+	const float									m_gravityPow = 9.16f;
+
 
 	bool										m_isGround = false;
 

@@ -62,7 +62,7 @@ bool CameraManager::SetNextType(const CameraType& type)
 const std::weak_ptr<CharacterBase>& CameraManager::GetLockTarget(UINT num)
 {
 	// TODO: return ステートメントをここに挿入します
-	if (num >= m_multiLockNum) { return std::weak_ptr<CharacterBase>(); }
+	if (num >= m_multiLockNum || m_wpMultiLocks.empty() == true) { return std::weak_ptr<CharacterBase>(); }
 
 	return m_wpMultiLocks[num];
 }

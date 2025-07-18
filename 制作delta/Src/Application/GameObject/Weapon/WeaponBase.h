@@ -68,5 +68,7 @@ protected:
 	// 当たり判定対象
 	UINT							m_collisionType = 0;
 
+	// 当たり判定回数
+	int								m_attackNum = 1;
 	
 };

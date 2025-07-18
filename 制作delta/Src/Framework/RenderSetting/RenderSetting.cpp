@@ -11,12 +11,10 @@ void RenderSetting::Editor_ImGui()
 		KdShaderManager::Instance().WorkAmbientController().SetDirLight(m_dirVec,m_dirColor);
 	}
 
-	ImGui::SameLine();
 
 	if(ImGui::DragFloat4("AmbientColor", &m_ambinetColor.x, 0.01f, 0.0f, 1.0f))
 	{
 		KdShaderManager::Instance().WorkAmbientController().SetAmbientLight(m_ambinetColor);
 	}
 
-	ImGui::SameLine();
 }

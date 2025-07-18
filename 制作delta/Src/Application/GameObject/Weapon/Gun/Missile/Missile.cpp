@@ -39,7 +39,7 @@ void Missile::Update()
 
 void Missile::PostUpdate()
 {
-	m_spAnimator->AdvanceTime(m_spModelWork->WorkNodes(), 20.0f);
+	m_spAnimator->AdvanceTime(m_spModelWork->WorkNodes(), 30.0f);
 
 }
 

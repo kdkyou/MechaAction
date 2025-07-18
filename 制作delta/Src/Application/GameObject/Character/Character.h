@@ -39,16 +39,13 @@ private:
 	const bool IsLeftShoulder();
 	const bool IsRightShoulder();
 
-	//				移動量　　方向		当たり判定するタイプ（基本地面） 判定のみか キャラが回転するか 座標補正なし　レイに補正をかけるか
-	bool Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool camera = true,bool direct = false, bool step = false);
 	//bool Move(float speed,const Math::Vector3& dir,const Math::Vector3& step={}, const KdCollider::Type type=KdCollider::TypeGround, bool ray = true, bool sphere = true, bool camera = true);
 
 	// キャラクターの回転行列を作成する
-	void UpdateRotate(const Math::Vector3& srcMoveVec);
+	void UpdateRotate(const Math::Vector3& srcMoveVec) override;
 	// 衝突判定とそれに伴う座標の更新
 	void UpdateCollision()override;
 
-	bool  RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length, const KdCollider::Type& type, Math::Vector3& resultPos);
 
 	bool  SphereCast(const Math::Vector3& pos, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos);
 
@@ -80,11 +77,6 @@ private:
 
 
 	float										m_clampSize = 10.0f;
-
-
-	const float									m_gravityPow = 9.16f;
-
-	
 	
 	void OverTrans(const std::string& nowAnimName,float animProgress);
 

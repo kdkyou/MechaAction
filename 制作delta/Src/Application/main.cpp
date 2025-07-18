@@ -405,7 +405,6 @@ void Application::ImGuiProcess()
 	// ログウィンドウ
 	m_log.Draw("Log Window");
 
-	SceneManager::Instance().Edit_ImGui();
 
 	//=====================================================
 	// ログ出力 ・・・ 
