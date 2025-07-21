@@ -18,6 +18,8 @@ public:
 
 	void SetThis(const std::shared_ptr<Character>& _this) { m_wpThis = _this; }
 
+	void OnHit()override;
+
 private:
 
 	void Editor_ImGui()override;
@@ -76,7 +78,6 @@ private:
 	};
 
 
-	float										m_clampSize = 10.0f;
 	
 	void OverTrans(const std::string& nowAnimName,float animProgress);
 

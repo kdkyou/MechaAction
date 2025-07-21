@@ -122,8 +122,7 @@ void Bullet::MoveSight()
 	// 移動
 	move = m_direction * m_speed * KdFPSController::GetInstance().GetDeltaTime();
 
-	Application::Instance().m_log.AddLog("MissileDirection x:%.2f,y:%.2f,z:%.2f\n", m_direction.x, m_direction.y, m_direction.z);
-
+	
 	pos += move;
 
 	m_pos = pos;

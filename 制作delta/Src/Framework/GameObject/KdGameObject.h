@@ -82,7 +82,7 @@ public:
 	virtual void Deserialize(){}
 
 	virtual void OnHit(){}
-	virtual float GetParameter() { return m_parameter; }
+	virtual float GetParameter()const{ return m_parameter; }
 
 	const ObjectTag GetTag()const { return m_tag; }
 	void SetTag(const ObjectTag tag) { m_tag = tag; }

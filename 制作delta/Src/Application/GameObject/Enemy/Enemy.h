@@ -37,6 +37,7 @@ public:
 
 	void SetThis(const std::shared_ptr<Enemy>& spthis) { m_wpThis = spthis; }
 
+	void OnHit()override;
 
 private:
 
@@ -44,10 +45,14 @@ private:
 
 	void UpdateCollision()override;
 
+	void UpdateMatrix();
+
 	bool Search(bool areaOnly);
 
 	void Editor_ImGui()override;
 	
+	const AnotherStateType GetPrevState()const { return m_prevAction->GetType(); }
+
 	std::weak_ptr<KdGameObject>				m_wpTarget;
 
 	float									m_angle = 6.0f;
@@ -92,6 +97,8 @@ private:
 			Back,
 		};
 
+		const AnotherStateType GetType()const { return m_type; }
+
 	protected:
 
 
@@ -106,7 +113,7 @@ private:
 		float m_durationState = 0.0f;
 
 		// ステートタイプ
-		AnotherStateType m_type;
+		AnotherStateType m_type = AnotherStateType::tStart;
 
 		Math::Vector3 m_direct = {};
 		float					m_speed = 0.0f;

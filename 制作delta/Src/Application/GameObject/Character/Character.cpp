@@ -43,12 +43,16 @@ void Character::Init()
 
 	m_tag = tPlayer;
 
+	m_hp = 10000;
+
 }
 
 void Character::Update()
 {
 
 	Application::Instance().m_log.Clear();
+
+	Application::Instance().m_log.AddLog("Player\n");
 
 	auto spThis = m_wpThis.lock();
 
@@ -135,6 +139,8 @@ void Character::Update()
 
 	//1m_pCollider->RegisterCollisionShape(KdCollider::TypeBump)
 
+	Application::Instance().m_log.AddLog("HP%.f\n", m_hp);
+
 
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
 	UpdateCollision();
@@ -181,6 +187,23 @@ void Character::DrawUnLit()
 	}
 
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
+}
+
+void Character::OnHit()
+{
+	if (m_hp<=0)
+	{
+		ChangeActionState(std::make_shared<ActionDestroyed>());
+		m_parameter = 0;
+		return;
+	}
+
+	if (m_parameter >= m_nockBackDamage)
+	{
+		ChangeActionState(std::make_shared<ActionHited>());
+		m_parameter = 0;
+		return;
+	}
 }
 
 void Character::Editor_ImGui()
@@ -458,6 +481,21 @@ void Character::UpdateCollision()
 			}
 		}
 	}
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (obj->Intersects(boxInfo, nullptr))
+		{
+			if (obj->GetTag() == tEnemyAttack)
+			{
+				obj->OnHit();
+				m_parameter = obj->GetParameter();
+				HitDamage(obj->GetParameter());
+				OnHit();
+			}
+		 }
+	}
+
 	Application::Instance().m_log.AddLog("length %.2f\n", dist);
 	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 

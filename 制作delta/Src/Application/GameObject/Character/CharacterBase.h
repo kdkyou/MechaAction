@@ -19,7 +19,7 @@ public:
 		m_wpHitObjectList.push_back(object);
 	}
 
-	const std::weak_ptr<KdModelWork>GetModelWork()const {
+	const std::weak_ptr<KdModelWork> GetModelWork()const {
 		return m_spModelWork;
 	}
 
@@ -44,7 +44,9 @@ public:
 	const bool IsHit() const{ return m_isHit; }
 	void HitDamage(float damage);
 	void SetHitEnable(bool hit) { m_isHit = hit; }
+	const Math::Vector3& GetHitDir()const { return m_hitDir; }
 
+	void SetParam(const int hp) { m_hp = hp; }
 
 protected:
 
@@ -75,6 +77,8 @@ protected:
 	float										m_gravity = 0;
 	const float									m_gravityPow = 9.16f;
 
+	float										m_clampSize = 10.0f;
+
 
 	bool										m_isGround = false;
 
@@ -88,5 +92,7 @@ protected:
 	// パラメータ関係
 	float										m_hp = 0;
 	bool										m_isHit = false;
+	Math::Vector3								m_hitDir = {};
+	float										m_nockBackDamage = 0.0f;
 
 };
