@@ -27,6 +27,28 @@ public:
 
 	std::shared_ptr<KdGameObject> CreateGameObject(const std::string_view objName) const;
 
+	template<typename T>
+	void RegisterGameObject(const std::string_view _name)
+	{
+		auto createFunc = []() -> std::shared_ptr<KdGameObject>
+			{
+				return std::make_shared<T>();
+			};
+
+		RegisterCreateFunction(_name, createFunc);
+	}
+
+	const std::vector<std::string> GetRegisterObjectList()
+	{
+		std::vector<std::string> list;
+		for (auto pair : m_createFunctions)
+		{
+			list.push_back(pair.first.data());
+		}
+
+		return list;
+	}
+
 	static KdGameObjectFactory& Instance()
 	{
 		static KdGameObjectFactory instance;

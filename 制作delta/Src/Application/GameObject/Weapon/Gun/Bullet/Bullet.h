@@ -43,7 +43,6 @@ private:
 
 	float m_aliveTime = 0;
 
-	int m_damage = 0;
 	float m_range = 0.0f;
 	Math::Vector3 m_direction = {};
 	float m_speed = 0.0f;

@@ -20,6 +20,8 @@ void Shield::Init()
 	
 	Math::Vector3 pos = { 0.0f,5.0f,3.0f };
 	SetPos(pos);
+
+	m_name = "Shield";
 }
 
 void Shield::Update()
@@ -34,7 +36,7 @@ void Shield::Update()
 		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode("LeftWeapon");
 		if (_pNode)
 		{
-			m_parentAttachMat = _pNode->m_worldTransform;
+			m_mParentAttach = _pNode->m_worldTransform;
 		}
 
 		_parentMat = _spParent->GetMatrix();
@@ -63,7 +65,7 @@ void Shield::Update()
 
 	}
 
-	m_mWorld = m_parentAttachMat * _parentMat;
+	m_mWorld = m_mParentAttach * _parentMat;
 
 
 	WeaponBase::Update();

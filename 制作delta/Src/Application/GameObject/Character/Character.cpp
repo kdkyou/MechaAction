@@ -45,6 +45,10 @@ void Character::Init()
 
 	m_hp = 10000;
 
+	m_nockBackDamage = 200.0f;
+
+	m_name = "Player";
+
 }
 
 void Character::Update()
@@ -115,11 +119,8 @@ void Character::Update()
 		m_speedMag = 1.5f;
 	}
 
-	if (key.L)
-	{
-		ChangeActionState(std::make_shared<ActionDestroyed>());
-		return;
-	}
+	
+
 
 	if (spThis)
 	{
@@ -133,7 +134,7 @@ void Character::Update()
 
 	if (IsIgnoreGravityState() == false)
 	{
-		Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, true, true,false);
+		Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, true, true, false);
 		m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
 	}
 
@@ -191,7 +192,7 @@ void Character::DrawUnLit()
 
 void Character::OnHit()
 {
-	if (m_hp<=0)
+	if (m_hp <= 0)
 	{
 		ChangeActionState(std::make_shared<ActionDestroyed>());
 		m_parameter = 0;
@@ -208,6 +209,8 @@ void Character::OnHit()
 
 void Character::Editor_ImGui()
 {
+	KdGameObject::Editor_ImGui();
+
 	ImGui::Text("CharacterSpeed");
 	ImGui::SliderFloat("Walk", &m_walkSpeed, 0.0f, 100.0f);
 	ImGui::SliderFloat("Jump", &m_jumpSpeed, 0.0f, 100.0f);
@@ -220,6 +223,14 @@ void Character::Editor_ImGui()
 	ImGui::DragFloat3("LimColor", &m_limColor.x, 0.01f);
 	ImGui::DragFloat("LimPow", &m_limPow, 0.01f);
 
+}
+
+void Character::Deserialize(const nlohmann::json& jsonObj)
+{
+}
+
+void Character::Serialize(nlohmann::json& outJson) const
+{
 }
 
 const bool Character::IsMove()
@@ -365,22 +376,22 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 		if (c.y >= 0)
 		{
 			//右回転
-			m_worldRot.y -= ang;
+			m_rot.y -= ang;
 		}
 		else
 		{
 			//左回転
-			m_worldRot.y += ang;
+			m_rot.y += ang;
 		}
 	}
 
-	if (m_worldRot.y > 360)
+	if (m_rot.y > 360)
 	{
-		m_worldRot.y -= 360;
+		m_rot.y -= 360;
 	}
-	else if (m_worldRot.y < 0)
+	else if (m_rot.y < 0)
 	{
-		m_worldRot.y += 360;
+		m_rot.y += 360;
 	}
 
 }
@@ -396,9 +407,9 @@ void Character::UpdateCollision()
 	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 5.0f, 0);
 	sphereInfo.m_sphere.Radius = 3.0f;
 	sphereInfo.m_type = KdCollider::TypeGround;
-	
+
 	Math::Vector3 pos;
-	SphereCast(sphereInfo.m_sphere.Center,m_mWorld.Backward(),sphereInfo.m_sphere.Radius, KdCollider::TypeGround,pos);
+	SphereCast(sphereInfo.m_sphere.Center, m_mWorld.Backward(), sphereInfo.m_sphere.Radius, KdCollider::TypeGround, pos);
 
 
 
@@ -408,7 +419,7 @@ void Character::UpdateCollision()
 
 
 	//
-	m_wpRockTarget.reset();
+	m_wpTarget.reset();
 
 	std::vector<std::shared_ptr<CameraManager::LockTargetInfo>> vec;
 
@@ -449,6 +460,8 @@ void Character::UpdateCollision()
 	{
 		CameraManager::Instance().SetLockTarget(vec[0]->wpLockTarget.lock());
 		dist = vec[0]->distance;
+		m_wpTarget = vec[0]->wpLockTarget;
+
 	}
 
 
@@ -456,7 +469,7 @@ void Character::UpdateCollision()
 
 	DirectX::BoundingOrientedBox box;
 
-	box.Center = GetPos() + Math::Vector3(0.0f, 6.0f, 0.0f);
+	box.Center = GetPos() + m_correctionMat.Translation();
 	box.Extents = { 3.0f,5.0f,3.0f };
 	UINT type = KdCollider::TypeDamage;
 	KdCollider::BoxInfo boxInfo(type, box);
@@ -493,14 +506,14 @@ void Character::UpdateCollision()
 				HitDamage(obj->GetParameter());
 				OnHit();
 			}
-		 }
+		}
 	}
 
 	Application::Instance().m_log.AddLog("length %.2f\n", dist);
 	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 
 	m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, color);
-	m_pDebugWire->AddDebugBox(m_mWorld, box.Extents, {}, true, color);
+	m_pDebugWire->AddDebugBox(m_correctionMat * m_mWorld, box.Extents, {}, true, color);
 
 }
 
@@ -523,9 +536,9 @@ bool Character::SphereCast(const Math::Vector3& center, const Math::Vector3& vec
 		// ②HIT対象オブジェクトに総当たり
 		for (auto obj : SceneManager::Instance().GetTerrainList())
 		{
-			
+
 			obj->Intersects(sphereInfo, &retBumpList);
-		
+
 		}
 
 	}
@@ -539,29 +552,29 @@ bool Character::SphereCast(const Math::Vector3& center, const Math::Vector3& vec
 		}
 	}
 
-		float maxOverLap = 0;
-		Math::Vector3 hitDir = Math::Vector3::Zero;
-		bool hit = false;
-		// ③結果を使って座標を補完する
-		for (auto& ret : retBumpList)
+	float maxOverLap = 0;
+	Math::Vector3 hitDir = Math::Vector3::Zero;
+	bool hit = false;
+	// ③結果を使って座標を補完する
+	for (auto& ret : retBumpList)
+	{
+		if (maxOverLap < ret.m_overlapDistance)
 		{
-			if (maxOverLap < ret.m_overlapDistance)
-			{
-				maxOverLap = ret.m_overlapDistance;
-				resultPos = ret.m_hitPos;
-				hitDir = ret.m_hitDir;
-				hit = true;
-
-			}
+			maxOverLap = ret.m_overlapDistance;
+			resultPos = ret.m_hitPos;
+			hitDir = ret.m_hitDir;
+			hit = true;
 
 		}
 
-		if (hit)
-		{
+	}
 
-			Math::Vector3 newPos = GetPos() + (hitDir * maxOverLap);
-			resultPos = newPos;
-		}
+	if (hit)
+	{
+
+		Math::Vector3 newPos = GetPos() + (hitDir * maxOverLap);
+		resultPos = newPos;
+	}
 
 
 	return true;
@@ -570,10 +583,11 @@ bool Character::SphereCast(const Math::Vector3& center, const Math::Vector3& vec
 bool Character::IsIgnoreGravityState() const
 {
 	// 判定
-	if (m_nowAction->GetState() == CharacterStateName::Fly|| 
+	if (m_nowAction->GetState() == CharacterStateName::Fly ||
 		m_nowAction->GetState() == CharacterStateName::FlyGuard
 		) {
-		return true; }
+		return true;
+	}
 
 	return false;
 }
@@ -1129,13 +1143,15 @@ void Character::ActionJump::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction.Normalize();
 
-	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false, false,true);
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
 
 	m_animName = "Stand";
 
 	m_stateNum = spOwner->CharacterStateName::Fly;
 
 	Application::Instance().m_log.AddLog("FlySuccess\n");
+
+
 
 }
 
@@ -1295,13 +1311,16 @@ void Character::ActionJumpShield::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionMove::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, false);
 
 	m_speed = spOwner->m_walkSpeed * spOwner->m_speedMag;
 
 	m_animName = "Walk";
 
 	m_stateNum = spOwner->CharacterStateName::Walk;
+
+	KdAudioManager::Instance().Play("Asset/Sounds/Sound/walk_2.wav", false);
+
 
 }
 
@@ -1313,10 +1332,6 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 
 	Checkkey(owner);
 
-	if (spOwner->m_spAnimator->GetProgress() == 3.0f || spOwner->m_spAnimator->GetProgress() == 6.0f)
-	{
-		//	KdAudioManager::Instance().Play("Asset/Sounds/Walk.wav");
-	}
 
 	if (m_isFlow) {
 		spOwner->ChangeActionState(std::make_shared<ActionJump>());
@@ -1357,6 +1372,11 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 	}
 	else
 	{
+		if (spOwner->m_spAnimator->IsAnimationEnd())
+		{
+			spOwner->ChangeActionState(std::make_shared<ActionMove>());
+			return;
+		}
 
 		m_direction = ActionStateBase::Direct(owner, true);
 
@@ -1808,7 +1828,7 @@ void Character::ActionBoostEnd::Enter(std::weak_ptr<Character>& owner)
 		}
 
 	}
-	
+
 	m_animName = "BoostEnd";
 
 	m_stateNum = spOwner->CharacterStateName::BoostEnd;
@@ -1937,7 +1957,7 @@ void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 
 
 	m_animName = "BoostDush";
-	
+
 	m_stateNum = spOwner->CharacterStateName::BoostDush;
 
 }
@@ -2220,7 +2240,7 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 	}
 
 	//敵が一定範囲内なら敵のほうに向いて敵に
-	std::shared_ptr<KdGameObject> target = spOwner->m_wpRockTarget.lock();
+	std::shared_ptr<KdGameObject> target = spOwner->m_wpTarget.lock();
 	if (target)
 	{
 		m_direction = target->GetPos() - spOwner->GetPos();
@@ -2272,7 +2292,7 @@ void Character::ActionRightAttackMid::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
-	
+
 
 	m_animName = "RightSowrdMid";
 
@@ -2290,7 +2310,7 @@ void Character::ActionRightAttackMid::Update(std::weak_ptr<Character>& owner)
 
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	
+
 	{
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
 	}
@@ -2368,7 +2388,7 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	//移動
-	if (m_durationStiffness <= m_stiffnessTime / 2)
+	if (m_durationStiffness <= m_stiffnessTime / 4)
 	{
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
 	}
@@ -2454,7 +2474,7 @@ void Character::ActionHited::Enter(std::weak_ptr<Character>& owner)
 	KdAudioManager::Instance().Play("Asset/Sounds/Noize-1.wav");
 
 	m_animName = "Hited";
-	
+
 	m_stateNum = spOwner->CharacterStateName::Hited;
 
 }
@@ -2611,28 +2631,28 @@ void Character::ActionLeftShoulderAttack::Enter(std::weak_ptr<Character>& owner)
 void Character::ActionLeftShoulderAttack::Update(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	
+
 	if (m_isOneShot == false)
 	{
 		m_isLeftShoulder = spOwner->IsLeftShoulder();
 	}
 
-	if (m_isLeftShoulder == true) { 
-		spOwner->ChangeEnableLeftShoulderAttack(true); 
-		return; 
+	if (m_isLeftShoulder == true) {
+		spOwner->ChangeEnableLeftShoulderAttack(true);
+		return;
 	}
 
 	if (m_durationStiffness <= 0.3f)
 	{
-		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround,false,false);
+		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false);
 	}
 
-	if(m_isOneShot == false)
+	if (m_isOneShot == false)
 	{
 		spOwner->ChangeEnableLeftShoulderAttack(false);
 		m_isOneShot = true;
 	}
-	
+
 
 	m_durationStiffness += KdFPSController::GetInstance().GetDeltaTime();
 
@@ -2648,7 +2668,7 @@ void Character::ActionLeftShoulderAttack::Update(std::weak_ptr<Character>& owner
 void Character::ActionLeftShoulderAttack::PostUpdate(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	
+
 	if (m_durationStiffness > 0.0f)
 	{
 		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 60.0f * spOwner->m_speedMag);
@@ -2662,7 +2682,7 @@ void Character::ActionLeftShoulderAttack::PostUpdate(std::weak_ptr<Character>& o
 void Character::ActionLeftShoulderAttack::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	
+
 }
 
 

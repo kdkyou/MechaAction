@@ -34,7 +34,7 @@ void Blade::Update()
 		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode(m_attachPath);
 		if (_pNode)
 		{
-			m_parentAttachMat = _pNode->m_worldTransform;
+			m_mParentAttach = _pNode->m_worldTransform;
 		}
 
 		_parentMat = _spParent->GetMatrix();
@@ -42,7 +42,7 @@ void Blade::Update()
 	}
 
 	
-	m_mWorld =  m_parentAttachMat * _parentMat;
+	m_mWorld =  m_mParentAttach * _parentMat;
 
 
 	WeaponBase::Update();

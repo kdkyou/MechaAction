@@ -99,3 +99,14 @@ Math::Vector3 SlerpDirection(const Math::Vector3& from, const Math::Vector3& to,
 
 	return result;
 }
+
+Math::Matrix LookAtMatrix(const Math::Vector3& forward)
+{
+	Math::Vector3 f = forward;
+	
+	f.Normalize();
+
+
+
+	return Math::Matrix();
+}

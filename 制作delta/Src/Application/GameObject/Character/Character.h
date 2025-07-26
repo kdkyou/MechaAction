@@ -20,10 +20,16 @@ public:
 
 	void OnHit()override;
 
+	virtual void Editor_ImGui() override;
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)override;
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const override;
+
 private:
 
-	void Editor_ImGui()override;
-
+	
 	// WASDの入力があったかどうか
 	const bool IsMove();
 
@@ -97,12 +103,9 @@ private:
 	// デバッグ用
 	Math::Color color = { 0,1,0,1 };
 
-	Math::Vector3 m_limColor = { 0.19f,0.09f,0.09f };
-	float m_limPow = 8.0f;
 
 	bool									    m_transAC = false;
 
-	bool m_limEnable = false;
 
 	//トレイル
 	void InitTrail();
@@ -128,8 +131,7 @@ private:
 
 	std::weak_ptr<Character>					m_wpThis;
 
-	std::weak_ptr<KdGameObject>					m_wpRockTarget;
-
+	
 
 
 

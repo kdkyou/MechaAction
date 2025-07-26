@@ -13,6 +13,17 @@ public:
 	void DrawUnLit()override;
 
 	void SetModel(const std::string& path)override;
+
+	void OnHit()override;
+
+	virtual void Editor_ImGui() override;
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)override;
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const override;
+	
+
 private:
 
 	

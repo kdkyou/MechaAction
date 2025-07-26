@@ -8,6 +8,9 @@
 void Charge::Init()
 {
 	m_durationFire = 0.0f;
+
+	m_chargeSoundPath = "Asset/Sounds/Sound/lazer_charge.wav";
+	m_shotSoundPath = "Asset/Sounds/Sound/lazer_shot.wav";
 }
 
 void Charge::Update()
@@ -22,10 +25,10 @@ void Charge::Update()
 		int i = 0;
 		if (_pNode)
 		{
-			m_parentAttachMat = _pNode->m_worldTransform;
+			m_mParentAttach = _pNode->m_worldTransform;
 		}
 
-		m_mLocalRot = parent->GetMatrix();
+		m_mParent = parent->GetMatrix();
 
 		if ( parent->IsLeftShoulderAttack()) {
 			if (m_animChanged == false)
@@ -47,7 +50,7 @@ void Charge::Update()
 		}
 	}
 
-	m_mWorld = m_parentAttachMat * m_mLocalRot;
+	m_mWorld = m_mParentAttach * m_mParent;
 }
 
 void Charge::Editor_ImGui()
@@ -80,7 +83,6 @@ void Charge::Trigger()
 		return;
 	}
 
-	Application::Instance().m_log.AddLog("RightShoulderNowTrigger:%d\n", m_nowTrigger);
 	// 発射可能か
 	if (!m_trigger && m_durationFire<=0) { return; }
 
@@ -96,11 +98,13 @@ void Charge::Trigger()
 		if (m_durationFire < m_fireRate)
 		{
 			Shot();
+			m_sounds = KdAudioManager::Instance().Play(m_shotSoundPath, false);
 			
 		}
 		else
 		{
 			ShotCharge();
+			m_sounds = KdAudioManager::Instance().Play(m_shotSoundPath, false);
 			
 		}
 	}
@@ -127,7 +131,7 @@ void Charge::Shot()
 		direct = trans.Backward();
 		direct.Normalize();
 
-		KdEffekseerManager::GetInstance().Play("Thruster.efkefc", trans.Translation(), 1.0f, 3.0f, false);
+	//	KdEffekseerManager::GetInstance().Play("Thruster.efkefc", trans.Translation(), 1.0f, 3.0f, false);
 	}
 
 
@@ -185,5 +189,9 @@ void Charge::ShotCharge()
 
 void Charge::OnTrigger()
 {
-	m_trigger = true;
+	if (!m_trigger)
+	{
+		m_trigger = true;
+		m_sounds = KdAudioManager::Instance().Play(m_chargeSoundPath, true);
+	}
 }

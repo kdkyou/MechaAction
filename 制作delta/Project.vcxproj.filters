@@ -151,6 +151,12 @@
     <Filter Include="Src\Application\GameObject\Enemy\Drone">
       <UniqueIdentifier>{63eb6826-156d-4207-b0d1-be8069faa7c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Framework\nlohmann">
+      <UniqueIdentifier>{0d5e5bdd-6d65-4ed9-88da-23f76553e937}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Effect\Polygon">
+      <UniqueIdentifier>{94deacfd-2dac-4420-972f-b54a7df0baf5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -414,6 +420,18 @@
     <ClInclude Include="Src\Application\GameObject\Enemy\Drone\Drone.h">
       <Filter>Src\Application\GameObject\Enemy\Drone</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Framework\nlohmann\json.hpp">
+      <Filter>Src\Framework\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\nlohmann\KdJsonUtility.h">
+      <Filter>Src\Framework\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Effect\Polygon\Polygon.h">
+      <Filter>Src\Application\GameObject\Effect\Polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Effect\Effect.h">
+      <Filter>Src\Application\GameObject\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -649,6 +667,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Enemy\Drone\Drone.cpp">
       <Filter>Src\Application\GameObject\Enemy\Drone</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Effect\Polygon\Polygon.cpp">
+      <Filter>Src\Application\GameObject\Effect\Polygon</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Effect\Effect.cpp">
+      <Filter>Src\Application\GameObject\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

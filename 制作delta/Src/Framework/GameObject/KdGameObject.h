@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "../../Framework/nlohmann/KdJsonUtility.h"
+
 // ゲーム上に存在するすべてのオブジェクトの基底となるクラス
 class KdGameObject : public std::enable_shared_from_this<KdGameObject>
 {
@@ -77,16 +79,37 @@ public:
 	bool Intersects(const KdCollider::BoxInfo& targetBox, std::list<KdCollider::CollisionResult>* pResults);
 	bool Intersects(const KdCollider::RayInfo& targetShape, std::list<KdCollider::CollisionResult>* pResults);
 
-	virtual void Editor_ImGui(){}
-	virtual void Serialize(){}
-	virtual void Deserialize(){}
-
+	
 	virtual void OnHit(){}
 	virtual float GetParameter()const{ return m_parameter; }
 
 	const ObjectTag GetTag()const { return m_tag; }
 	void SetTag(const ObjectTag tag) { m_tag = tag; }
 
+	const std::string& GetName() { return m_name; }
+
+	virtual void Editor_ImGui(){
+		ImGui::DragFloat3("Pos", &m_pos.x, 0.1f, -FLT_MAX, FLT_MAX);
+		ImGui::DragFloat3("Scale", &m_scale.x, 0.1f, -FLT_MAX, FLT_MAX);
+		ImGui::DragFloat3("Rotation", &m_rot.x, 0.1f, -FLT_MAX, FLT_MAX);
+
+	}
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)
+	{
+		m_name = jsonObj["Name"];
+	}
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const
+	{
+		outJson["Name"] = m_name;
+		outJson["Pos"]  = KdJsonUtility::CreateArray(&m_pos.x,3);
+		outJson["Rot"]  = KdJsonUtility::CreateArray(&m_rot.x,3);
+		outJson["Scale"]  = KdJsonUtility::CreateArray(&m_scale.x,3);
+	}
+
+	
 protected:
 
 	void Release() {}
@@ -113,4 +136,11 @@ protected:
 
 	// 受け渡したい何らかの数値一つ(float型) 
 	float m_parameter = 0.0f;
+
+	std::string m_name = "";
+
+	Math::Vector3 m_pos;
+	Math::Vector3 m_scale = { 1,1,1 };
+	Math::Vector3 m_rot;
+	Math::Quaternion m_rotation = {};
 };

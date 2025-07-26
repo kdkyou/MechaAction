@@ -27,7 +27,30 @@ void CharacterBase::HitDamage(float damage)
 	}
 }
 
-bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool camera, bool direct, bool step)
+void CharacterBase::SetModelWork(const std::string& path)
+{
+	if (path == "") { return; }
+
+	//if(){}
+
+	m_spModelWork = std::make_shared<KdModelWork>();
+	m_spModelWork->SetModelData(KdAssets::Instance().m_modeldatas.GetData(path));
+
+}
+
+void CharacterBase::Editor_ImGui()
+{
+}
+
+void CharacterBase::Deserialize(const nlohmann::json& jsonObj)
+{
+}
+
+void CharacterBase::Serialize(nlohmann::json& outJson) const
+{
+}
+
+bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool rotate, bool direct, bool step)
 {
 	auto direction = dir;
 	direction.Normalize();
@@ -67,18 +90,18 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 		move = direction * deltaSpeed;
 		pos += move;
 	}
-	auto center = pos + Math::Vector3{ 0.0, 5.0f, 0.0f };
-	//SphereCast(center, direction, 3.0f, KdCollider::TypeGround, pos);
+	
 
 
-
-	if (camera == true)
+	if (rotate == true)
 	{
 		UpdateRotate(direction);
 	}
 
 
-	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_worldRot.y));
+	m_pos = pos;
+
+	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_rot.y));
 	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(pos);
 
 
@@ -182,4 +205,44 @@ bool CharacterBase::SearchDetect(const Math::Vector3& hitPos, const Math::Matrix
 	}
 
 	return false;
+}
+
+void CharacterBase::BoostRotate(const Math::Vector3& vec)
+{
+	auto nowVec = GetMatrix().Backward();
+
+	//内積を使って回転する角度を求める
+	float d = nowVec.Dot(vec);
+	//dの中にはコサインΘが入っている
+
+	//角度求める
+	float ang = DirectX::XMConvertToDegrees(acos(d));
+
+	if (ang >= 0.1f)
+	{
+		Math::Vector3 c = vec.Cross(nowVec);
+
+
+
+		if (c.y >= 0)
+		{
+			//右回転
+			m_rot.y -= ang;
+		}
+		else
+		{
+			//左回転
+			m_rot.y += ang;
+		}
+	}
+
+	if (m_rot.y > 360)
+	{
+		m_rot.y -= 360;
+	}
+	else if (m_rot.y < 0)
+	{
+		m_rot.y += 360;
+	}
+
 }

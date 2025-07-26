@@ -1,5 +1,12 @@
 ﻿#include"GunBase.h"
 
+#include "../../Character/CharacterBase.h"
+
+void GunBase::SetTarget(const std::weak_ptr<CharacterBase>& target) 
+{
+	m_wpTarget = target;
+}
+
 void GunBase::SetGunsParam(const std::string& gunModelPath, float fireRate, float coolTime, float burst, int burstNum, int maxNumOnes, int maxNum)
 {
 	if (gunModelPath != "")
@@ -70,5 +77,33 @@ bool GunBase::SetNodeMats(const std::string& nodeName)
 	}
 
 	return false;
+
+}
+
+void GunBase::RotateWeaponDirect(const Math::Vector2& enableAngle, const Math::Vector3& targetDir)
+{
+	auto localVec = m_mLocalRot.Backward();
+
+	// 対象の方向をローカル空間に調整
+	Math::Vector3 toVec = targetDir;
+	toVec = DirectX::XMVector3TransformNormal(targetDir, DirectX::XMMatrixInverse(nullptr, m_mParent));
+
+	toVec.Normalize();
+
+	// ヨーとピッチの角度差を取得 
+	float yaw = atan2f(toVec.x, toVec.z);
+	float pitch = asinf(toVec.y);
+
+	yaw = DirectX::XMConvertToDegrees(yaw);
+	pitch = DirectX::XMConvertToDegrees(pitch);
+
+	// クランプ
+	float clampYaw = std::clamp(yaw, -enableAngle.y, enableAngle.y);
+	float clampPitch = std::clamp(pitch, -enableAngle.x, enableAngle.x);
+
+	Math::Matrix matRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(clampPitch)) * Math::Matrix::CreateRotationX(DirectX::XMConvertToRadians(clampYaw));
+
+	// ローカル回転を更新
+	m_mLocalRot = matRot;
 
 }

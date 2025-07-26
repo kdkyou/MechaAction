@@ -130,7 +130,7 @@ void EditorData::UpdateImGui()
 		}
 
 
-		ImGui::Checkbox("EdirotMode", &m_editorMode);
+		ImGui::Checkbox((const char*)u8"エディター", &m_editorMode);
 		/*
 		if (m_editorMode)
 		{
@@ -153,15 +153,15 @@ void EditorData::UpdateImGui()
 				GizmoMode = ImGuizmo::WORLD;
 			}
 
-			if (ImGui::RadioButton("Trans", GizmoOperation == ImGuizmo::TRANSLATE)) {
+			if (ImGui::RadioButton((const char*)u8"座標", GizmoOperation == ImGuizmo::TRANSLATE)) {
 				GizmoOperation = ImGuizmo::TRANSLATE;
 			}
 			ImGui::SameLine();
-			if (ImGui::RadioButton("Rotate", GizmoOperation == ImGuizmo::ROTATE)) {
+			if (ImGui::RadioButton((const char*)u8"回転", GizmoOperation == ImGuizmo::ROTATE)) {
 				GizmoOperation = ImGuizmo::ROTATE;
 			}
 			ImGui::SameLine();
-			if (ImGui::RadioButton("Scale", GizmoOperation == ImGuizmo::SCALE)) {
+			if (ImGui::RadioButton((const char*)u8"Scale", GizmoOperation == ImGuizmo::SCALE)) {
 				GizmoOperation = ImGuizmo::SCALE;
 			}
 		}
@@ -193,7 +193,12 @@ void EditorData::UpdateImGui()
 	//===========================
 	// Hierarchyウィンドウ
 	//===========================
+	if(ImGui::Begin((const char*)u8"オブジェクトリスト", 0, 0))
+	{
+
 	SceneManager::Instance().Edit_ImGui();
+	}
+	ImGui::End();
 
 	//===========================
 	// ログウィンドウ

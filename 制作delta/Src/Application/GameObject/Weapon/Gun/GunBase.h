@@ -15,9 +15,14 @@ public:
 	void SetBulletChaisingData(int bulletRotateAngle, float bulletLockAngle, float bulletLostTime, float bulletTrackingDistance);
 
 	bool SetNodeMats(const std::string& nodeName);
-
+	
+	void SetTarget(const std::weak_ptr<CharacterBase>& target);
 
 protected:
+
+	// 目的の対象に銃口を向ける //xとyのみ考える  targetDirはローカル空間に
+	void RotateWeaponDirect(const Math::Vector2& enableAngle, const Math::Vector3& targetDir);
+
 
 	virtual void Trigger(){}
 	virtual void Shot(){}
@@ -25,6 +30,8 @@ protected:
 	virtual void OnTrigger(){}
 
 	virtual void NoNum(){}
+
+	std::weak_ptr<CharacterBase> m_wpTarget;
 	
 	bool					 m_trigger = false;
 
@@ -50,7 +57,7 @@ protected:
 	int						 m_numShot = 0;			// 発射口カウント
 	std::vector<Math::Matrix> m_nodeMats;			// 発射口行列
 
-	//弾本体の情報
+	// 弾本体の情報
 	std::string				 m_bulletModelPath;
 	float					 m_aliveTime =0.0f;
 	int						 m_damage = 0;
@@ -63,7 +70,7 @@ protected:
 	std::string				 m_bulletTrailPath;
 	Math::Color				 m_bulletTrailColor;
 	float					 m_bulletTrailWidth = 0.5f;
-	UINT						 m_bulletTrailLength = 10;
+	UINT					 m_bulletTrailLength = 10;
 
 	// 追尾式の情報
 	int m_bulletRotateDeg = 0.0f;
@@ -71,4 +78,6 @@ protected:
 	float m_bulletLostTime = 0.0f;
 	float m_bulletTrackingDistance = 0.0f;
 
+	// サウンド関連
+	std::string				m_shotSoundPath;
 };

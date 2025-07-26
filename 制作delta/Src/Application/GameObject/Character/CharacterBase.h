@@ -48,18 +48,36 @@ public:
 
 	void SetParam(const int hp) { m_hp = hp; }
 
+	virtual void SetModelWork(const std::string& path);
+
+	const std::weak_ptr<CharacterBase>& GetTarget()const { return m_wpTarget; }
+
+	const Math::Vector2& GetDist()const { return m_dist; }
+
+	virtual void Editor_ImGui() override;
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)override;
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const override;
+
 protected:
 
 	virtual void UpdateCollision(){}
 
 	//				移動量　　方向		当たり判定するタイプ（基本地面） 判定のみか キャラが回転するか 座標補正なし　レイに補正をかけるか
-	bool Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool camera = true, bool direct = false, bool step = false);
+	bool Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool rotate = true, bool direct = false, bool step = false);
 
 	bool  RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length, const KdCollider::Type& type, Math::Vector3& resultPos);
 
 	bool SearchDetect(const Math::Vector3& hitPos, const Math::Matrix& myPos, float viewRange);
 
 	virtual void UpdateRotate(const Math::Vector3& srcMoveVec){}
+
+	void BoostRotate(const Math::Vector3& vec);
+
+
+	virtual bool Search(bool areaOnly) { return false; }
 
 	std::shared_ptr<KdModelWork>				m_spModelWork;
 	std::shared_ptr<KdModelData>				m_spModelData;
@@ -68,8 +86,9 @@ protected:
 	std::weak_ptr<CameraBase>					m_wpCamera;
 	std::vector<std::weak_ptr<KdGameObject>>	m_wpHitObjectList{};
 
-	Math::Vector3								m_worldRot;
+	std::weak_ptr<CharacterBase>				m_wpTarget;
 
+	
 	Math::Matrix 								m_scale;
 
 	Math::Matrix								m_correctionMat = Math::Matrix::Identity;
@@ -87,6 +106,9 @@ protected:
 	bool										m_isRightShoulderAttack = false;
 	bool										m_isLeftShoulderAttack = false;
 
+
+	Math::Vector3							m_boxExtents;
+
 	Math::Vector3 m_vMove = Math::Vector3::Zero;
 
 	// パラメータ関係
@@ -95,4 +117,12 @@ protected:
 	Math::Vector3								m_hitDir = {};
 	float										m_nockBackDamage = 0.0f;
 
+	//			追いかける範囲　x = Near　y = Far
+	Math::Vector2							m_dist = { 10.0f,180.0f };
+
+	// リムライト
+
+	Math::Vector3 m_limColor = { 0.19f,0.09f,0.09f };
+	float m_limPow = 8.0f;
+	bool m_limEnable = false;
 };

@@ -14,7 +14,24 @@ public:
 
 	void SetModel(const std::string& path);
 
+	virtual void Editor_ImGui() override;
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)override
+	{
+
+	}
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const override
+	{
+		KdGameObject::Serialize(outJson);
+
+		outJson["path"] = m_modelPath;
+	}
+
 private:
-	std::shared_ptr<KdModelWork> m_spModel = nullptr;
+	std::shared_ptr<KdModelData> m_spModel = nullptr;
+
+	std::string m_modelPath = "";
 
 };

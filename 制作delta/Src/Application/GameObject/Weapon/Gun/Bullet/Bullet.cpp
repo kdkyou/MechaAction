@@ -11,7 +11,7 @@ void Bullet::Init()
 	{
 		DirectX::BoundingSphere sphere;
 		sphere.Center = m_mWorld.Translation();
-		sphere.Radius = 0.1f;
+		sphere.Radius = 1.0f;
 		m_pCollider->RegisterCollisionShape("Bullet", sphere, KdCollider::TypeDamage);
 	}
 	else
@@ -141,7 +141,7 @@ void Bullet::MoveChasing()
 	auto pos = m_pos;
 	
 	// 対象の座標取得
-	Math::Vector3 targetPos = spTarget->GetMatrix().Translation();
+	Math::Vector3 targetPos = spTarget->GetCorrectionMatrix().Translation();
 
 	// 対象の方向ベクトル
 	Math::Vector3 toTarget = targetPos - pos;
@@ -187,9 +187,6 @@ void Bullet::MoveChasing()
 
 	// 進行方向を再設定
 	m_direction = newForward;
-
-
-	Application::Instance().m_log.AddLog("MissileDirection x:%.2f,y:%.2f,z:%.2f\n", m_direction.x, m_direction.y, m_direction.z);
 
 	// 移動
 	move = m_direction * m_speed * KdFPSController::GetInstance().GetDeltaTime();

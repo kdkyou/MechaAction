@@ -24,6 +24,32 @@ void Sowrd::SetModel(const std::string& path)
 	}
 }
 
+void Sowrd::OnHit()
+{
+	if (m_attackNum > 0)
+	{
+		KdAudioManager::Instance().Play("Asset/Sounds/Sound/sword_hit.wav", false);
+		m_parameter = m_damage;
+		m_attackNum--;
+		m_pCollider->SetEnableAll(false);
+	}
+}
+
+void Sowrd::Editor_ImGui()
+{
+	KdGameObject::Editor_ImGui();
+}
+
+void Sowrd::Deserialize(const nlohmann::json& jsonObj)
+{
+	KdGameObject::Deserialize(jsonObj);
+}
+
+void Sowrd::Serialize(nlohmann::json& outJson) const
+{
+	KdGameObject::Serialize(outJson);
+}
+
 void Sowrd::Init()
 {
 	if (!m_spTrail)
@@ -37,7 +63,17 @@ void Sowrd::Init()
 		m_spTrail->ClearPoints();
 	}
 
+	m_pCollider = std::make_unique<KdCollider>();
 
+	DirectX::BoundingBox box;
+	box.Center = { 0.0f,5.0f,9.0f };
+	box.Extents = { 10.0f, 6.0f, 9.0f };
+
+	m_pCollider->RegisterCollisionShape("Sowrd", box, KdCollider::TypeDamage);
+
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+	m_name = "Sword";
 }
 
 void Sowrd::Update()
@@ -52,7 +88,7 @@ void Sowrd::Update()
 		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode(m_attachPath);
 		if (_pNode)
 		{
-			m_parentAttachMat = _pNode->m_worldTransform;
+			m_mParentAttach = _pNode->m_worldTransform;
 		}
 
 		_parentMat = _spParent->GetMatrix();
@@ -60,11 +96,23 @@ void Sowrd::Update()
 	}
 
 
-	m_mWorld = m_parentAttachMat * _parentMat;
+	m_mWorld = m_mParentAttach * _parentMat;
 
 	if (_spParent->IsRightAttack())
 	{
-		m_spTrail->SetEnable(true);
+		if (m_isOnece == true)
+		{
+			m_spTrail->SetEnable(true);
+			m_isOnece = false;
+			KdAudioManager::Instance().Play("Asset/Sounds/Sound/sword_swing.wav", false);
+
+		}
+
+		
+		if (m_attackNum > 0)
+		{
+			m_pCollider->SetEnableAll(true);
+		}
 
 
 		static bool flg = false;
@@ -83,7 +131,15 @@ void Sowrd::Update()
 	else {
 		m_spTrail->ClearPoints();
 		m_spTrail->SetEnable(false);
+
+		m_attackNum = m_maxAttackNum;
+		m_pCollider->SetEnableAll(false);
+
+		m_isOnece = true;
 	}
+
+	auto mat =  Math::Matrix::CreateTranslation({ 0.0f,5.0f,9.0f })*m_mWorld;
+	m_pDebugWire->AddDebugBox(mat, Math::Vector3(10.0f, 6.0f, 9.0f));
 
 	WeaponBase::Update();
 }

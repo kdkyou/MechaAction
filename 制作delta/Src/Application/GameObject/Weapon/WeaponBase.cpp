@@ -89,3 +89,5 @@ void WeaponBase::CheckTrigger()
 		}
 	}
 }
+
+

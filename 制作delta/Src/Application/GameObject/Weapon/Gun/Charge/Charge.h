@@ -18,4 +18,8 @@ private:
 	void ShotCharge();
 	void OnTrigger()override;
 
+	std::string m_chargeSoundPath;
+
+	std::weak_ptr<KdSoundInstance> m_sounds;
+
 };

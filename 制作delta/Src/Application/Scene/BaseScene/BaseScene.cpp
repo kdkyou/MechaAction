@@ -168,13 +168,7 @@ const std::list<std::shared_ptr<KdGameObject>>& BaseScene::GetTerrainList()
 	return m_terrainList;
 }
 
-void BaseScene::Edit_ImGui()
-{
-	for (auto& obj : m_objList)
-	{
-		obj->Editor_ImGui();
-	}
-}
+
 
 void BaseScene::Event()
 {

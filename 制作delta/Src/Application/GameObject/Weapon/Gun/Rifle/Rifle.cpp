@@ -5,6 +5,8 @@
 
 #include"../../../../Scene/SceneManager.h"
 
+#include "../../../Effect/Polygon/Polygon.h"
+
 void Rifle::Init()
 {
 
@@ -23,13 +25,13 @@ void Rifle::Update()
 		int i = 0;
 		if (_pNode)
 		{
-			m_parentAttachMat = _pNode->m_worldTransform;
+			m_mParentAttach = _pNode->m_worldTransform;
 		}
 
-		m_mLocalRot = parent->GetMatrix();
+		m_mParent = parent->GetMatrix();
 	}
 
-	m_mWorld = m_parentAttachMat * m_mLocalRot;
+	m_mWorld = m_mParentAttach * m_mParent;
 }
 
 void Rifle::Trigger()
@@ -60,6 +62,21 @@ void Rifle::Trigger()
 	// 発射可能か
 	if (!m_trigger) { return; }
 
+	Math::Vector2 angle = { 30.0f,40.0f };
+	auto parent = m_wpParent.lock();
+	if (parent != nullptr)
+	{
+		if (parent->GetTag() == tEnemyAttack)
+		{
+			auto target = parent->GetTarget().lock();
+			if (target != nullptr)
+			{
+				Math::Vector3 diff = target->GetMatrix().Translation() - m_mWorld.Translation();
+				RotateWeaponDirect(angle, diff);
+				
+			}
+		}
+	}
 
 	m_durationFire +=m_fireRateAccel * KdFPSController::GetInstance().GetDeltaTime();
 
@@ -91,7 +108,7 @@ void Rifle::Shot()
 		direct = trans.Backward();
 		direct.Normalize();
 
-		KdEffekseerManager::GetInstance().Play("Thruster.efkefc",trans.Translation(), 1.0f, 3.0f,false);
+	//	KdEffekseerManager::GetInstance().Play("Thruster.efkefc",trans.Translation(), 1.0f, 3.0f,false);
 	}
 	
 

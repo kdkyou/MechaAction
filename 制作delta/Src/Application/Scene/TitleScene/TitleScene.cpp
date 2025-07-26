@@ -5,7 +5,7 @@
 
 void TitleScene::Init()
 {
-	CameraManager::Instance().SetNextType(CameraManager::CameraType::TPS);
+	CameraManager::Instance().SetNextType(CameraManager::CameraType:: None);
 	CameraManager::Instance().EnableChangedCamera(false);
 
 }
@@ -16,7 +16,7 @@ void TitleScene::Event()
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 	auto& mouse = KeyInput::GetInstance().GetMouseState();
 
-	if (key.Enter || pad.IsAPressed() ||mouse.leftButton)
+	if (key.Enter || pad.IsAPressed())
 	{
 		SceneManager::Instance().SetNextScene
 		(

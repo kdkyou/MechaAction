@@ -54,6 +54,8 @@ bool CameraManager::SetNextType(const CameraType& type)
 	
 	if (IsEnableChanged() == false) { return false; }
 
+	if (m_isEnableChanged == false) { return false; }
+
 	m_nextType = type;
 	
 	return true;

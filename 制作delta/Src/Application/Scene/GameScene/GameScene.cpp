@@ -3,16 +3,17 @@
 
 #include "../../GameObject/Terrain/Terrain.h"
 #include "../../GameObject/Character/Character.h"
-#include"../../GameObject/Enemy/Enemy.h"
+#include "../../GameObject/Enemy/Enemy.h"
+#include "../../GameObject/Enemy/Drone/Drone.h"
 
-#include"../../GameObject/Weapon/Blade/Blade.h"
-#include"../../GameObject/Weapon/Shield/Shield.h"
-#include"../../GameObject/Weapon/Sowrd/Sowrd.h"
-#include"../../GameObject/Weapon/Gun/Rifle/Rifle.h"
-#include"../../GameObject/Weapon/Gun/Missile/Missile.h"
-#include"../../GameObject/Weapon/Gun/Charge/Charge.h"
+#include "../../GameObject/Weapon/Blade/Blade.h"
+#include "../../GameObject/Weapon/Shield/Shield.h"
+#include "../../GameObject/Weapon/Sowrd/Sowrd.h"
+#include "../../GameObject/Weapon/Gun/Rifle/Rifle.h"
+#include "../../GameObject/Weapon/Gun/Missile/Missile.h"
+#include "../../GameObject/Weapon/Gun/Charge/Charge.h"
 
-#include"../../GameObject/Camera/CameraManager.h"
+#include "../../GameObject/Camera/CameraManager.h"
 // 少数第n位で四捨五入する
 void round_n(float& number, int n)
 {
@@ -23,6 +24,12 @@ void round_n(float& number, int n)
 
 void GameScene::Init()
 {
+	KdGameObjectFactory::Instance().RegisterGameObject<Character>("Player");
+	KdGameObjectFactory::Instance().RegisterGameObject<Enemy>("Another");
+	KdGameObjectFactory::Instance().RegisterGameObject<Drone>("Drone");
+	KdGameObjectFactory::Instance().RegisterGameObject<Terrain>("Terrain");
+
+
 	//===================================================================
 	// ステージ初期化
 	//===================================================================
@@ -32,6 +39,7 @@ void GameScene::Init()
 	
 	std::shared_ptr<Terrain> _terrain = std::make_shared<Terrain>();
 	_terrain->SetModel("Asset/Models/Stage/Tail/Tail.gltf");
+	_terrain->Init();
 	AddObject(_terrain);
 	AddTerrain(_terrain);
 
@@ -39,6 +47,7 @@ void GameScene::Init()
 	pos = {30.0f,0.0f,0.0f};
 	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
 	_terrain->SetModel("Asset/Models/Stage/House/House.gltf");
+	_terrain->Init();
 	AddObject(_terrain);
 	AddTerrain(_terrain);
 
@@ -46,6 +55,7 @@ void GameScene::Init()
 	pos = { -30.0f,0.0f,0.0f };
 	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
 	_terrain->SetModel("Asset/Models/Stage/Rubble/Rubble.gltf");
+	_terrain->Init();
 	AddObject(_terrain);
 	AddTerrain(_terrain);
 
@@ -53,6 +63,7 @@ void GameScene::Init()
 	pos = { 30.0f,0.0f,50.0f };
 	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
 	_terrain->SetModel("Asset/Models/Stage/Rubble2/Rubble2.gltf");
+	_terrain->Init();
 	AddObject(_terrain);
 	AddTerrain(_terrain);
 
@@ -60,6 +71,7 @@ void GameScene::Init()
 	pos = { 50.0f,0.0f,300.0f };
 	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
 	_terrain->SetModel("Asset/Models/Stage/LowApartment/LowApartment.gltf");
+	_terrain->Init();
 	AddObject(_terrain);
 	AddTerrain(_terrain);
 
@@ -67,11 +79,13 @@ void GameScene::Init()
 	pos = { -100.0f,0.0f,200.0f };
 	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
 	_terrain->SetModel("Asset/Models/Stage/BalconyApartment/BalconyApartment.gltf");
+	_terrain->Init();
 	AddObject(_terrain);
 	AddTerrain(_terrain);
 
 	_terrain = std::make_shared<Terrain>();
 	_terrain->SetModel("Asset/Models/Stage/Sky/Sky.gltf");
+	_terrain->Init();
 	AddObject(_terrain);
 
 	/*std::shared_ptr<Terrain> _serrain = std::make_shared<Terrain>();
@@ -106,6 +120,8 @@ void GameScene::Init()
 		_sowrd->SetModel("Asset/Models/Weapon/Sowrd/Sowrd.gltf");
 		_sowrd->SetParent(_character);
 		_sowrd->SetAttachPath("RightHand");
+		_sowrd->SetTag(KdGameObject::tPlayerAttack);
+		_sowrd->SetDamage(1000);
 		AddObject(_sowrd);
 
 
@@ -144,11 +160,10 @@ void GameScene::Init()
 		missile->Init();
 		charge->SetTag(KdGameObject::tPlayerAttack);
 		
-		missile->SetBulletsParam("Asset/Models/Weapon/Bullet/MissileBullet.gltf",50.0f,100, 100.0f, 200, 40.0f, 0.95f);
+		missile->SetBulletsParam("Asset/Models/Weapon/Bullet/MissileBullet.gltf",20.0f,200, 100.0f, 200, 40.0f, 0.95f);
 		missile->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke.png", Math::Color(0.36f, 0.3f, 0.3f), 3.5f, 30);
 		missile->SetBulletChaisingData(10, 150.0f, 0.8f, 2000.0f);
 		AddObject(missile);
-
 
 	}
 
@@ -191,6 +206,28 @@ void GameScene::Init()
 
 
 	_character->RegistHitObject(enemy);
+
+	auto drone = std::make_shared<Drone>();
+	drone->SetThis(drone);
+	drone->SetModelWork("Asset/Models/Drone/Drone.gltf");
+	drone->Init();
+	drone->SetParam(100);
+	drone->SetPos({ 0.0f,15.0f,20.0f });
+	drone->SetTag(KdGameObject::tEnemy);
+	AddObject(drone);
+	AddEnemy(drone);
+
+	auto balkan = std::make_shared<Rifle>();
+	rifle = std::make_shared<Rifle>();
+	rifle->SetParent(drone);
+	rifle->SetAttachPath("RightWeapon");
+	rifle->SetAttackTrigger(WeaponBase::RightHand);
+	rifle->SetTag(KdGameObject::tEnemyAttack);
+	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.05f, 5.0f, 0.0f, 1, 80, 300);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 50, 400, 200, 40.0f, 0.95f);
+	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 30);
+	AddObject(rifle);
+
 
 	//===================================================================
 	// カメラ初期化

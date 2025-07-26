@@ -43,11 +43,12 @@ private:
 
 	void UpdateRotate(const Math::Vector3& srcMoveVec)override;
 
+
 	void UpdateCollision()override;
 
-	void UpdateMatrix();
+	const Math::Matrix& UpdateMatrix();
 
-	bool Search(bool areaOnly);
+	bool Search(bool areaOnly)override;
 
 	void Editor_ImGui()override;
 	
@@ -107,7 +108,7 @@ private:
 
 		UINT Serch(const Math::Vector3& nowVec, const Math::Vector3& targetVec);
 		void ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj);
-		void ChangeStateWithDisttance(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj);
+		void ChangeStateWithDistance(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj);
 
 		// ステートの継続時間
 		float m_durationState = 0.0f;

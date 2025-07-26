@@ -42,8 +42,10 @@ public:
 
 	void SetCollisionType(CollType type) { m_collisionType = type; }
 
+	void SetDamage(int damage) { m_damage = damage; }
 
 protected:
+
 	
 	std::weak_ptr<CharacterBase>    m_wpParent;
 
@@ -56,7 +58,8 @@ protected:
 	Math::Vector3					m_pos = Math::Vector3::Zero;
 
 	Math::Matrix					m_mLocalRot = Math::Matrix::Identity;
-	Math::Matrix					m_parentAttachMat = Math::Matrix::Identity;
+	Math::Matrix					m_mParentAttach = Math::Matrix::Identity;
+	Math::Matrix					m_mParent = Math::Matrix::Identity;
 
 	std::shared_ptr<KdModelWork::Node>	m_pNode;
 
@@ -70,5 +73,10 @@ protected:
 
 	// 当たり判定回数
 	int								m_attackNum = 1;
-	
+	int								m_maxAttackNum = 1;
+	int								m_damage = 0;
+
+	// サウンド関連
+	bool							m_isOnece = true;	//重なり防止
+
 };

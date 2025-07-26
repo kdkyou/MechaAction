@@ -26,13 +26,13 @@ void Missile::Update()
 		int i = 0;
 		if (_pNode)
 		{
-			m_parentAttachMat = _pNode->m_worldTransform;
+			m_mParentAttach = _pNode->m_worldTransform;
 		}
 
-		m_mLocalRot = parent->GetMatrix();
+		m_mParent = parent->GetMatrix();
 	}
 
-	m_mWorld = m_parentAttachMat * m_mLocalRot;
+	m_mWorld = m_mParentAttach * m_mParent;
 
 
 }
@@ -143,7 +143,7 @@ void Missile::Shot()
 		direct = trans.Backward();
 		direct.Normalize();
 
-		KdEffekseerManager::GetInstance().Play("Thruster.efkefc", trans.Translation(), 1.0f, 3.0f, false);
+	//	KdEffekseerManager::GetInstance().Play("Thruster.efkefc", trans.Translation(), 1.0f, 3.0f, false);
 	}
 	
 
@@ -153,7 +153,7 @@ void Missile::Shot()
 	bullet->Init();
 	bullet->SetBulletTrail(m_bulletTrailPath, m_bulletTrailColor,m_bulletTrailWidth, m_bulletTrailLength);
 	bullet->SetBulletType(Bullet::SightChasing, CameraManager::Instance().GetLockTarget(0));
-	
+	bullet->SetTag(m_tag);
 	bullet->SetChasingData(m_bulletRotateDeg,m_bulletLockAngle,m_bulletLostTime,m_bulletTrackingDistance);
 	SceneManager::Instance().AddObject(bullet);
 
