@@ -2,11 +2,17 @@
 
 #include "../../../Scene/SceneManager.h"
 
+#include "../../../main.h"
+
 void Drone::Init()
 {
 	m_limEnable = true;
 	m_limColor = { 0.12f,0.1f,0.08f };
 	m_limPow = 1.0f;
+						
+	m_currection = { 0.0f,5.0f,0.0f };
+
+	m_correctionMat = Math::Matrix::CreateTranslation({0.0f,1.0f,0.0f});
 
 	m_boxExtents = { 4.0f,3.0f,3.0f };
 
@@ -16,18 +22,26 @@ void Drone::Init()
 
 	m_pCollider->RegisterCollisionShape("Enemy2", m_spModelWork, KdCollider::TypeDamage);
 
-	m_dist = { 10.0f,300.0f };
+	m_dist = { 30.0f,300.0f };
 
 	ChangeActionState(std::make_shared<Idle>());
 
 	m_name = "FloatEnemy";
+
+	m_hp = 200;
+
+	m_viewAngle = 45.0f;
 }
 
 void Drone::Update()
 {
+
+
 	if (m_nowAction)
 	{
-		std::shared_ptr<KdGameObject> spTarget = m_wpTarget.lock();
+		std::shared_ptr<KdGameObject> spTarget = m_wpCharacterTarget.lock();
+
+		
 
 		std::shared_ptr<Drone> spThis = m_wpThis.lock();
 
@@ -39,7 +53,7 @@ void Drone::Update()
 
 	}
 
-	
+
 	UpdateCollision();
 
 	m_pDebugWire->AddDebugBox(m_mWorld, m_boxExtents);
@@ -50,7 +64,7 @@ void Drone::PostUpdate()
 {
 	if (m_nowAction)
 	{
-		std::shared_ptr<KdGameObject> spTarget = m_wpTarget.lock();
+		std::shared_ptr<KdGameObject> spTarget = m_wpCharacterTarget.lock();
 
 		std::shared_ptr<Drone> spThis = m_wpThis.lock();
 
@@ -87,9 +101,6 @@ void Drone::OnHit()
 		m_parameter = 0;
 		return;
 	}
-
-	
-
 }
 
 void Drone::UpdateRotate(const Math::Vector3& srcMoveVec)
@@ -137,13 +148,28 @@ void Drone::UpdateRotate(const Math::Vector3& srcMoveVec)
 
 void Drone::UpdateCollision()
 {
-	DirectX::BoundingBox box;
-	box.Center = m_mWorld.Translation() + m_currection;
+	DirectX::BoundingOrientedBox box;
 
+	box.Center = GetPos();
 	box.Extents = m_boxExtents;
 	UINT type = KdCollider::TypeDamage;
+	KdCollider::BoxInfo boxInfo(type, box);
 
-	KdCollider::BoxInfo boxInfo(type,box);
+	auto translation = m_mWorld.Translation();
+
+	for (auto obj : SceneManager::Instance().GetObjList())
+	{
+		if (obj->Intersects(boxInfo, nullptr))
+		{
+			if (obj->GetTag() == tPlayerAttack)
+			{
+				obj->OnHit();
+				HitDamage(obj->GetParameter());
+				m_parameter = obj->GetParameter();
+				OnHit();
+			}
+		}
+	}
 
 
 
@@ -168,10 +194,11 @@ bool Drone::Search(bool areaOnly)
 		}
 	}
 
-	if (retList.empty() == true) { return false; }
+	if (retList.empty() == true) { 
+		return false; }
 
 	Math::Vector3 hitPos = {};
-	float overRap = 0.0f;
+	m_overRap = 0.0f;
 	bool isHit = false;
 
 	std::shared_ptr<KdGameObject> obj;
@@ -179,14 +206,14 @@ bool Drone::Search(bool areaOnly)
 
 	for (auto& ret : retList)
 	{
-		if (overRap < ret.m_overlapDistance)
+		if (m_overRap < ret.m_overlapDistance)
 		{
 			obj = *it;
 
 			if (obj->GetTag() == tPlayer || obj->GetTag() == tPlayerAttack)
 			{
 				hitPos = ret.m_hitPos;
-				overRap = ret.m_overlapDistance;
+				m_overRap = ret.m_overlapDistance;
 				isHit = true;
 
 				// 索敵のみ
@@ -209,36 +236,57 @@ bool Drone::Search(bool areaOnly)
 		// 視界内にいるかどうかの判定
 		bool flg = SearchDetect(hitPos, m_mWorld, m_viewAngle);
 
+
 		if (flg)
 		{
-			if (obj->GetTag() == tPlayer)
-			{
-				m_wpTarget = obj;
-			}
 
-			if (obj->GetTag() == tPlayerAttack)
-			{
-				m_isBullet = true;
+			Math::Vector3 vec = hitPos - m_mWorld.Translation();
+			vec.Normalize();
+
+			bool isClear = SeaarchObstacle(hitPos,vec, m_overRap);
+
+			if (isClear) {
+				return true;
 			}
+			else
+			{
+				return false;
+			}
+			
 		}
 	}
 
 	return false;
 }
 
+
+
 void Drone::Editor_ImGui()
 {
+	CharacterBase::Editor_ImGui();
 
+	auto mat = GetCorrectionMatrix();
+	ImGui::Text("CorrectionMat Translation: %.3f %.3f %.3f", mat._41, mat._42, mat._43);
+}
+
+void Drone::Deserialize(const nlohmann::json& jsonObj)
+{
+	KdGameObject::Deserialize(jsonObj);
+}
+
+void Drone::Serialize(nlohmann::json& outJson) const
+{
+	KdGameObject::Serialize(outJson);
 }
 
 
 
 void Drone::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 {
-	if (m_nowAction)m_nowAction->Exit(m_wpThis,m_wpTarget);
+	if (m_nowAction)m_nowAction->Exit(m_wpThis, m_wpTarget);
 	m_prevAction = m_nowAction;
 	m_nowAction = nextAction;
-	m_nowAction->Enter(m_wpThis,m_wpTarget);
+	m_nowAction->Enter(m_wpThis, m_wpTarget);
 }
 
 void Drone::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Drone>& owner, float targetLength)
@@ -246,6 +294,17 @@ void Drone::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Drone>& owner
 	auto spOwner = owner.lock();
 
 	if (spOwner == nullptr) { return; }
+
+	auto target = spOwner->GetCharacterTarget().lock();
+
+	if (target) {
+
+		if (target->IsDestroy())
+		{
+			spOwner->ChangeActionState(std::make_shared<Idle>());
+			return;
+		}
+	}
 
 	float length = spOwner->GetDist().y - spOwner->GetDist().x;
 
@@ -257,15 +316,49 @@ void Drone::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Drone>& owner
 		spOwner->ChangeActionState(std::make_shared<MoveMent>());
 		return;
 	}
-	else if(targetLength< halfLength && targetLength> spOwner->GetDist().x)
+	else if (targetLength< halfLength && targetLength> spOwner->GetDist().x)
 	{
 		spOwner->ChangeActionState(std::make_shared<Attack>());
 		return;
 	}
 	else {
-		spOwner->ChangeActionState(std::make_shared<Idle>());
+		spOwner->ChangeActionState(std::make_shared<Backed>());
 		return;
 	}
+}
+
+void Drone::ActionStateBase::ChangeStateObstacle(std::weak_ptr<Drone>& owner)
+{
+	auto spOwner = owner.lock();
+
+	if (spOwner == nullptr) { return; }
+
+	bool flg = spOwner->Search(false);
+
+	if (!flg)
+	{
+
+		auto target = spOwner->GetCharacterTarget().lock();
+
+		auto vec = target->GetPos() - spOwner->GetPos();
+		vec.Normalize();
+
+		float overRap = spOwner->m_overRap;
+
+		if (spOwner->SeaarchObstacle(target->GetPos(), vec.Left, overRap))
+		{
+			spOwner->ChangeActionState(std::make_shared<MoveMent>());
+			spOwner->m_nowAction->SetMoveDir(Left);
+			return;
+		}
+		else if (spOwner->SeaarchObstacle(target->GetPos(), vec.Right, overRap))
+		{
+			spOwner->ChangeActionState(std::make_shared<MoveMent>());
+			spOwner->m_nowAction->SetMoveDir(Right);
+			return;
+		}
+	}
+
 }
 
 
@@ -286,7 +379,7 @@ void Drone::Idle::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGame
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
-	if (spOwner->Search(true))
+	if (spOwner->SearchPlayer())
 	{
 		if (m_durationState < 0)
 		{
@@ -297,7 +390,7 @@ void Drone::Idle::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGame
 			auto dist = target->GetPos() - spOwner->GetPos();
 			float len = dist.Length();
 
-			ChangeStateWithDistance(owner, len);
+			//ChangeStateWithDistance(owner, len);
 		}
 
 	}
@@ -311,7 +404,7 @@ void Drone::Idle::PostUpdate(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 
 void Drone::Idle::Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
-	
+
 }
 
 void Drone::MoveMent::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
@@ -341,7 +434,21 @@ void Drone::MoveMent::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 
 	diff.Normalize();
 
-	spOwner->Move(m_speed, diff, KdCollider::TypeGround);
+	diff.y = 0.0f;
+
+	Math::Vector3 vec = diff;
+
+	if (m_side == TargetSide::Left)
+	{
+		vec = diff.Left;
+	}
+	else if (m_side == TargetSide::Right)
+	{
+		vec = diff.Right;
+	}
+
+
+	spOwner->Move(m_speed,vec , KdCollider::TypeGround);
 
 	if (m_durationState < 0)
 	{
@@ -371,6 +478,8 @@ void Drone::Attack::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGam
 	m_durationState = 0.36f;
 
 	spOwner->ChangeEnableRightAttack(true);
+
+//	ChangeStateObstacle(owner);
 }
 
 void Drone::Attack::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
@@ -391,6 +500,7 @@ void Drone::Attack::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGa
 
 	auto diff = targetPos - pos;
 
+	diff.y = 0.0f;
 	diff.Normalize();
 
 	spOwner->Move(m_speed, diff, KdCollider::TypeGround);
@@ -420,10 +530,28 @@ void Drone::Attack::Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGame
 
 void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	m_speed = 30.0f;
+
+	m_durationState = 5.0f;
+
 }
 
 void Drone::Destroyed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+
+	if (spOwner == nullptr) { return; }
+
+
+	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
+
+	spOwner->Move(m_speed, Math::Vector3::Down, KdCollider::TypeGround, false,false);
+
+	if (m_durationState <= 0)
+	{
+
+	}
+
 }
 
 void Drone::Destroyed::PostUpdate(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
@@ -431,5 +559,52 @@ void Drone::Destroyed::PostUpdate(std::weak_ptr<Drone>& owner, const std::weak_p
 }
 
 void Drone::Destroyed::Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
+{
+}
+
+void Drone::Backed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
+{
+
+	m_speed = 20.0f;
+
+	m_durationState = 0.85f;
+}
+
+void Drone::Backed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
+{
+	auto spOwner = owner.lock();
+
+	if (spOwner == nullptr) { return; }
+
+	auto spTarget = obj.lock();
+
+	if (spTarget == nullptr) { return; }
+
+	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
+
+	auto pos = spOwner->GetMatrix().Translation();
+
+	auto targetPos = spTarget->GetMatrix().Translation();
+
+	auto diff = pos - targetPos;
+
+	diff.y = 0.0f;
+	diff.Normalize();
+
+	spOwner->Move(m_speed, diff, KdCollider::TypeGround, false, false);
+
+	if (m_durationState < 0)
+	{
+		float len = (targetPos - pos).Length();
+		ChangeStateWithDistance(owner, len);
+		return;
+	}
+}
+
+void Drone::Backed::PostUpdate(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
+{
+}
+
+void Drone::Backed::Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 }

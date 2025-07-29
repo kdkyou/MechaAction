@@ -21,6 +21,8 @@ public:
 	ImGuizmo::MODE			GizmoMode = ImGuizmo::LOCAL;
 	ImGuizmo::OPERATION		GizmoOperation = ImGuizmo::TRANSLATE;
 
+	int					m_selectList;
+
 
 	//// 画面データ
 	//std::shared_ptr<KdScreenData> m_screenData;

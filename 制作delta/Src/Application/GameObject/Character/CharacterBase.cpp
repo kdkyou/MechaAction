@@ -32,22 +32,37 @@ void CharacterBase::SetModelWork(const std::string& path)
 	if (path == "") { return; }
 
 	//if(){}
+	if (!m_spModelWork)
+	{
+		m_spModelWork = std::make_shared<KdModelWork>();
+	}
 
-	m_spModelWork = std::make_shared<KdModelWork>();
 	m_spModelWork->SetModelData(KdAssets::Instance().m_modeldatas.GetData(path));
 
 }
 
 void CharacterBase::Editor_ImGui()
 {
+	KdGameObject::Editor_ImGui();
+
+	if (ImGui::Button((const char*)u8"モデルのロード"))
+	{
+		std::string filepath;
+		if (EditorData::GetInstance().OpenFileDialog(filepath))
+		{
+			SetModelWork(filepath);
+		}
+	}
 }
 
 void CharacterBase::Deserialize(const nlohmann::json& jsonObj)
 {
+	KdGameObject::Deserialize(jsonObj);
 }
 
 void CharacterBase::Serialize(nlohmann::json& outJson) const
 {
+	KdGameObject::Serialize(outJson);
 }
 
 bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool rotate, bool direct, bool step)
@@ -90,7 +105,7 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 		move = direction * deltaSpeed;
 		pos += move;
 	}
-	
+
 
 
 	if (rotate == true)
@@ -207,6 +222,28 @@ bool CharacterBase::SearchDetect(const Math::Vector3& hitPos, const Math::Matrix
 	return false;
 }
 
+bool CharacterBase::SeaarchObstacle(const Math::Vector3& hitPos, const Math::Vector3& vec, const float length)
+{
+	auto rPos = Math::Vector3::Zero;
+
+	Math::Vector3 vTarget = vec;
+	vTarget.Normalize();
+
+
+	auto  flg =  RayCast(hitPos, vTarget, length, KdCollider::TypeGround, rPos);
+
+	if (flg)
+	{
+		return false;
+	}
+	else {
+		return true;
+	}
+
+
+	return true;
+}
+
 void CharacterBase::BoostRotate(const Math::Vector3& vec)
 {
 	auto nowVec = GetMatrix().Backward();
@@ -245,4 +282,87 @@ void CharacterBase::BoostRotate(const Math::Vector3& vec)
 		m_rot.y += 360;
 	}
 
+}
+
+bool CharacterBase::SearchPlayer()
+{
+
+	KdCollider::SphereInfo sphere;
+	sphere.m_sphere.Center = m_mWorld.Translation() + m_currection;
+	sphere.m_sphere.Radius = m_dist.y;
+	sphere.m_type = KdCollider::TypeDamage;
+
+	for (auto& obj : SceneManager::Instance().GetPlayerList())
+	{
+		if (obj->Intersects(sphere, nullptr))
+		{
+			m_wpCharacterTarget = obj;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+bool CharacterBase::SphereCast(const Math::Vector3& center, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos)
+{
+	// その他球による衝突判定
+	// ---- ---- ---- ---- ---- ----
+	// ①当たり判定(球判定)用の情報を作成
+	KdCollider::SphereInfo sphereInfo;
+	sphereInfo.m_sphere.Center = center;
+	sphereInfo.m_sphere.Radius = radius;
+	sphereInfo.m_type = type;
+
+	std::list<KdCollider::CollisionResult> retBumpList;
+
+	if (type & KdCollider::TypeGround)
+	{
+
+		// ②HIT対象オブジェクトに総当たり
+		for (auto obj : SceneManager::Instance().GetTerrainList())
+		{
+
+			obj->Intersects(sphereInfo, &retBumpList);
+
+		}
+
+	}
+
+	if (type & KdCollider::TypeDamage)
+	{
+		// ②HIT対象オブジェクトに総当たり
+		for (auto obj : SceneManager::Instance().GetEnemyList())
+		{
+			obj->Intersects(sphereInfo, &retBumpList);
+		}
+	}
+
+	float maxOverLap = 0;
+	Math::Vector3 hitDir = Math::Vector3::Zero;
+	bool hit = false;
+	// ③結果を使って座標を補完する
+	for (auto& ret : retBumpList)
+	{
+		if (maxOverLap < ret.m_overlapDistance)
+		{
+			maxOverLap = ret.m_overlapDistance;
+			resultPos = ret.m_hitPos;
+			hitDir = ret.m_hitDir;
+			hit = true;
+
+		}
+
+	}
+
+	if (hit)
+	{
+
+		Math::Vector3 newPos = GetPos() + (hitDir * maxOverLap);
+		resultPos = newPos;
+	}
+
+
+	return true;
 }

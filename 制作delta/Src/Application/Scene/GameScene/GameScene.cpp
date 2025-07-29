@@ -173,7 +173,6 @@ void GameScene::Init()
 	//エネミー
 	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
 	enemy->SetThis(enemy);
-	enemy->SetTarget(_character);
 	enemy->Init();
 	enemy->SetTag(KdGameObject::tEnemy);
 	AddObject(enemy);
@@ -187,6 +186,7 @@ void GameScene::Init()
 		rifle->SetAttachPath("RightWeapon");
 		rifle->SetAttackTrigger(WeaponBase::RightHand);
 		rifle->SetTag(KdGameObject::tEnemyAttack);
+	rifle->Init();
 		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 1.8f, 5.0f, 0.0f, 1, 24, 80);
 		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 200, 400, 200, 40.0f, 0.95f);
 		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.7f, 0.4f, 0.8f), 1.7f, 30);
@@ -198,6 +198,7 @@ void GameScene::Init()
 		rifle->SetAttachPath("LeftWeapon");
 		rifle->SetAttackTrigger(WeaponBase::LeftHand);
 		rifle->SetTag(KdGameObject::tEnemyAttack);
+	rifle->Init();
 		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.5f, 2.0f, 0.0f, 1, 36, 250);
 		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 50, 300, 200, 20.0f, 0.9f);
 		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 30);
@@ -223,8 +224,9 @@ void GameScene::Init()
 	rifle->SetAttachPath("RightWeapon");
 	rifle->SetAttackTrigger(WeaponBase::RightHand);
 	rifle->SetTag(KdGameObject::tEnemyAttack);
+	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.05f, 5.0f, 0.0f, 1, 80, 300);
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 50, 400, 200, 40.0f, 0.95f);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 50, 400, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 30);
 	AddObject(rifle);
 

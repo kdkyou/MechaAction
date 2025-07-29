@@ -3,8 +3,12 @@
 
 #include"../../GameObject/Camera/CameraManager.h"
 
+#include "../../GameObject/Effect/Polygon/PolygonEffect.h"
+
 void TitleScene::Init()
 {
+	KdGameObjectFactory::Instance().RegisterGameObject<PolygonEffect>("PolygonEffect");
+
 	CameraManager::Instance().SetNextType(CameraManager::CameraType:: None);
 	CameraManager::Instance().EnableChangedCamera(false);
 

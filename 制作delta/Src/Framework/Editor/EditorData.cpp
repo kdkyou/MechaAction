@@ -1,6 +1,9 @@
 ﻿#include "EditorData.h"
 
 #include "../../Application/Scene/SceneManager.h"
+#include "../../Application/GameObject/Camera/CameraManager.h"
+
+#include "../../Application/GameObject/Character/CharacterBase.h"
 
 
 bool EditorData::OpenFileDialog(std::string& filepath, const std::string& title, const char* filters)
@@ -196,9 +199,59 @@ void EditorData::UpdateImGui()
 	if(ImGui::Begin((const char*)u8"オブジェクトリスト", 0, 0))
 	{
 
-	SceneManager::Instance().Edit_ImGui();
+		if (ImGui::BeginListBox((const char*)u8"カレントリスト"))
+		{
+			for (auto& obj : SceneManager::Instance().GetObjList())
+			{
+				obj->Editor_ImGui();
+			}
+		}
+		ImGui::EndListBox();
+		/*if (ImGui::BeginListBox((const char*)u8"プレイヤーリスト"))
+		{
+			for (auto& obj : SceneManager::Instance().GetPlayerList())
+			{
+				obj->Editor_ImGui();
+			}
+		}
+		ImGui::EndListBox();
+		
+		if (ImGui::BeginListBox((const char*)u8"エネミーリスト"))
+		{
+			for (auto& obj : SceneManager::Instance().GetEnemyList())
+			{
+				obj->Editor_ImGui();
+			}
+		}
+		ImGui::EndListBox();
+		
+		if (ImGui::BeginListBox((const char*)u8"地形リスト"))
+		{
+			for (auto& obj : SceneManager::Instance().GetTerrainList())
+			{
+				obj->Editor_ImGui();
+			}
+		}
+		ImGui::EndListBox();*/
+
+		
 	}
 	ImGui::End();
+
+
+	if (ImGui::Begin((const char*)u8"オブジェクト生成",0,0))
+	{
+		SceneManager::Instance().Edit_ImGui();
+	}
+	ImGui::End();
+	
+	if (ImGui::Begin((const char*)u8"カメラ制御",0,0))
+	{
+		CameraManager::Instance().Editor_ImGui();
+	}
+	ImGui::End();
+	
+
 
 	//===========================
 	// ログウィンドウ

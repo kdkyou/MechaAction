@@ -227,10 +227,13 @@ void Character::Editor_ImGui()
 
 void Character::Deserialize(const nlohmann::json& jsonObj)
 {
+	KdGameObject::Deserialize(jsonObj);
+
 }
 
 void Character::Serialize(nlohmann::json& outJson) const
 {
+	KdGameObject::Serialize(outJson);
 }
 
 const bool Character::IsMove()
@@ -419,7 +422,7 @@ void Character::UpdateCollision()
 
 
 	//
-	m_wpTarget.reset();
+	m_wpCharacterTarget.reset();
 
 	std::vector<std::shared_ptr<CameraManager::LockTargetInfo>> vec;
 
@@ -460,7 +463,7 @@ void Character::UpdateCollision()
 	{
 		CameraManager::Instance().SetLockTarget(vec[0]->wpLockTarget.lock());
 		dist = vec[0]->distance;
-		m_wpTarget = vec[0]->wpLockTarget;
+		m_wpCharacterTarget = vec[0]->wpLockTarget;
 
 	}
 
@@ -515,69 +518,6 @@ void Character::UpdateCollision()
 	m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, color);
 	m_pDebugWire->AddDebugBox(m_correctionMat * m_mWorld, box.Extents, {}, true, color);
 
-}
-
-
-bool Character::SphereCast(const Math::Vector3& center, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos)
-{
-	// その他球による衝突判定
-	// ---- ---- ---- ---- ---- ----
-	// ①当たり判定(球判定)用の情報を作成
-	KdCollider::SphereInfo sphereInfo;
-	sphereInfo.m_sphere.Center = center;
-	sphereInfo.m_sphere.Radius = radius;
-	sphereInfo.m_type = type;
-
-	std::list<KdCollider::CollisionResult> retBumpList;
-
-	if (type & KdCollider::TypeGround)
-	{
-
-		// ②HIT対象オブジェクトに総当たり
-		for (auto obj : SceneManager::Instance().GetTerrainList())
-		{
-
-			obj->Intersects(sphereInfo, &retBumpList);
-
-		}
-
-	}
-
-	if (type & KdCollider::TypeDamage)
-	{
-		// ②HIT対象オブジェクトに総当たり
-		for (auto obj : SceneManager::Instance().GetEnemyList())
-		{
-			obj->Intersects(sphereInfo, &retBumpList);
-		}
-	}
-
-	float maxOverLap = 0;
-	Math::Vector3 hitDir = Math::Vector3::Zero;
-	bool hit = false;
-	// ③結果を使って座標を補完する
-	for (auto& ret : retBumpList)
-	{
-		if (maxOverLap < ret.m_overlapDistance)
-		{
-			maxOverLap = ret.m_overlapDistance;
-			resultPos = ret.m_hitPos;
-			hitDir = ret.m_hitDir;
-			hit = true;
-
-		}
-
-	}
-
-	if (hit)
-	{
-
-		Math::Vector3 newPos = GetPos() + (hitDir * maxOverLap);
-		resultPos = newPos;
-	}
-
-
-	return true;
 }
 
 bool Character::IsIgnoreGravityState() const
@@ -2205,7 +2145,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(),1.0f,3.0f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -2292,7 +2232,19 @@ void Character::ActionRightAttackMid::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction = ActionStateBase::Direct(owner, false);
 
-
+	//エフェクト
+	{
+		KdModelWork::Node* pNode = spOwner->m_spModelWork->FindWorkNode("CBP");
+		if (pNode)
+		{
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->name = "Thruster.efkefc";
+			effect->pNodeMat = pNode->m_worldTransform;
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 3.0f);
+			effect->handle = effect->wpEffect.lock()->GetHandle();
+			m_spEffects.push_back(effect);
+		}
+	}
 
 	m_animName = "RightSowrdMid";
 
@@ -2367,7 +2319,7 @@ void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 3.0f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -2562,6 +2514,7 @@ void Character::ActionDestroyed::Enter(std::weak_ptr<Character>& owner)
 
 	m_stateNum = spOwner->CharacterStateName::Destoryed;
 
+	spOwner->m_isDestroy = true;
 }
 
 void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
@@ -2574,13 +2527,12 @@ void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 	UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
 	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	KdShaderManager::Instance().m_postProcessShader.
-		SetGlitch({ 30,30 }, time, 5.0f, 0.8f, 0, 0, { 0.5f,0.5f });
+		SetGlitch({ 1,1 }, time, 5.0f, 0.8f, 0, 0, { 0.5f,0.5f });
 
 	if (spOwner->m_spAnimator->IsAnimationEnd() == false) { return; }
 
 
-	spOwner->ChangeActionState(std::make_shared<ActionIdle>());
-	return;
+	
 }
 
 void Character::ActionDestroyed::PostUpdate(std::weak_ptr<Character>& owner)

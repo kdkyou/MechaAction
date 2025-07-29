@@ -107,6 +107,9 @@ void BaseScene::Draw()
 		}
 
 		KdEffekseerManager::GetInstance().Draw();
+
+		CameraManager::Instance().DrawUnLit();
+
 	}
 	KdShaderManager::Instance().m_StandardShader.EndUnLit();
 
@@ -132,6 +135,8 @@ void BaseScene::DrawSprite()
 		{
 			obj->DrawSprite();
 		}
+		CameraManager::Instance().DrawSprite();
+
 	}
 	KdShaderManager::Instance().m_spriteShader.End();
 }

@@ -33,7 +33,6 @@ public:
 
 	void DrawLit()			override;
 
-	void SetTarget(const std::shared_ptr<KdGameObject>& target) { m_wpTarget = target; }
 
 	void SetThis(const std::shared_ptr<Enemy>& spthis) { m_wpThis = spthis; }
 
@@ -54,7 +53,6 @@ private:
 	
 	const AnotherStateType GetPrevState()const { return m_prevAction->GetType(); }
 
-	std::weak_ptr<KdGameObject>				m_wpTarget;
 
 	float									m_angle = 6.0f;
 	
@@ -69,9 +67,7 @@ private:
 	// ミサイルかどうか
 	bool									m_isBullet = false;
 
-	// 補正値
-	Math::Vector3							m_currection = { 0.0f,5.0f,0.0f };
-
+	
 
 
 

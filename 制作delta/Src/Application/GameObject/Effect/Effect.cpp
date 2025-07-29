@@ -1,5 +1,10 @@
 ﻿#include "Effect.h"
 
+void Effect::Init()
+{
+
+}
+
 void Effect::SetTexture(const std::string& path)
 {
 	if (m_spTex)
@@ -11,6 +16,8 @@ void Effect::SetTexture(const std::string& path)
 		m_spPoly->SetMaterial(KdAssets::Instance().m_textures.GetData(path));
 	}
 }
+
+
 
 void Effect::Deserialize(const nlohmann::json& jsonObj)
 {

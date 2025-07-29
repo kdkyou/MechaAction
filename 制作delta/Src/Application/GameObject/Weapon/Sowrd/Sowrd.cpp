@@ -1,5 +1,7 @@
 ﻿#include"Sowrd.h"
 
+#include "../../Camera/CameraManager.h"
+
 void Sowrd::SetModel(const std::string& path)
 {
 	if (!m_spModelWork)
@@ -32,6 +34,8 @@ void Sowrd::OnHit()
 		m_parameter = m_damage;
 		m_attackNum--;
 		m_pCollider->SetEnableAll(false);
+
+		CameraManager::Instance().SetNextType(CameraManager::Hit);
 	}
 }
 
@@ -67,7 +71,7 @@ void Sowrd::Init()
 
 	DirectX::BoundingBox box;
 	box.Center = { 0.0f,5.0f,9.0f };
-	box.Extents = { 10.0f, 6.0f, 9.0f };
+	box.Extents = { 10.0f, 9.0f, 10.0f };
 
 	m_pCollider->RegisterCollisionShape("Sowrd", box, KdCollider::TypeDamage);
 
@@ -139,7 +143,7 @@ void Sowrd::Update()
 	}
 
 	auto mat =  Math::Matrix::CreateTranslation({ 0.0f,5.0f,9.0f })*m_mWorld;
-	m_pDebugWire->AddDebugBox(mat, Math::Vector3(10.0f, 6.0f, 9.0f));
+	m_pDebugWire->AddDebugBox(mat, Math::Vector3(10.0f, 9.0f, 10.0f));
 
 	WeaponBase::Update();
 }

@@ -5,10 +5,14 @@
 
 #include"../../../../Scene/SceneManager.h"
 
-#include "../../../Effect/Polygon/Polygon.h"
-
 void Rifle::Init()
 {
+	m_rot.x = 15.0f;
+	m_rot.y = 20.0f;
+
+	m_muzzleFlashPath = "Asset/Textures/GameObject/MuzzleCross.png";
+
+	m_name = "Rifle";
 
 }
 
@@ -31,7 +35,7 @@ void Rifle::Update()
 		m_mParent = parent->GetMatrix();
 	}
 
-	m_mWorld = m_mParentAttach * m_mParent;
+	m_mWorld = m_mLocalRot * m_mParentAttach * m_mParent;
 }
 
 void Rifle::Trigger()
@@ -62,18 +66,18 @@ void Rifle::Trigger()
 	// 発射可能か
 	if (!m_trigger) { return; }
 
-	Math::Vector2 angle = { 30.0f,40.0f };
+	// 砲身調整
+	auto  angle =Math::Vector2{ m_rot.x,m_rot.y };
 	auto parent = m_wpParent.lock();
 	if (parent != nullptr)
 	{
-		if (parent->GetTag() == tEnemyAttack)
+		if (parent->GetTag() == tEnemy)
 		{
-			auto target = parent->GetTarget().lock();
+			auto target = parent->GetCharacterTarget().lock();
 			if (target != nullptr)
 			{
 				Math::Vector3 diff = target->GetMatrix().Translation() - m_mWorld.Translation();
-				RotateWeaponDirect(angle, diff);
-				
+				m_mLocalRot = RotateWeaponDirect(angle, diff,m_mLocalRot);
 			}
 		}
 	}
@@ -108,7 +112,7 @@ void Rifle::Shot()
 		direct = trans.Backward();
 		direct.Normalize();
 
-	//	KdEffekseerManager::GetInstance().Play("Thruster.efkefc",trans.Translation(), 1.0f, 3.0f,false);
+		Flash(trans);
 	}
 	
 

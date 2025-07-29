@@ -8,7 +8,7 @@ public:
 
 	void SetTexture(const std::string& path);
 
-	virtual void Editor_ImGui() override;
+
 	// JSONデータから、クラスの内容を設定
 	virtual void Deserialize(const nlohmann::json& jsonObj)override;
 

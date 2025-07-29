@@ -13,14 +13,23 @@ public:
 
 	void DrawLit()			override;
 
-	void SetTarget(const std::shared_ptr<KdGameObject>& target) { m_wpTarget = target; }
-
+	
 	void SetThis(const std::shared_ptr<Drone>& spthis) { m_wpThis = spthis; }
 
 	void OnHit()override;
 
+	void Editor_ImGui()override;
+
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)override;
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const override;
+
 
 private:
+
+
 
 	void UpdateRotate(const Math::Vector3& srcMoveVec)override;
 
@@ -30,13 +39,13 @@ private:
 
 	bool Search(bool areaOnly)override;
 
-	void Editor_ImGui()override;
-
 	std::weak_ptr<KdGameObject>				m_wpTarget;
 
 	float									m_angle = 6.0f;
 
 	bool									m_isForWard = false;
+
+		float							m_overRap = 0.0f;
 
 
 	// 視野角
@@ -46,9 +55,7 @@ private:
 	// ミサイルかどうか
 	bool									m_isBullet = false;
 
-	// 補正値
-	Math::Vector3							m_currection = { 0.0f,5.0f,0.0f };
-
+	
 	
 	std::weak_ptr<Drone>				    m_wpThis;
 
@@ -81,14 +88,18 @@ private:
 
 		UINT Serch(const Math::Vector3& nowVec, const Math::Vector3& targetVec);
 		void ChangeStateWithDistance(std::weak_ptr<Drone>& owner,float targetLength);
+		void ChangeStateObstacle(std::weak_ptr<Drone>& owner);
+
+		void SetMoveDir(TargetSide side) { m_side = side; }
 
 		// ステートの継続時間
-		float m_durationState = 0.0f;
+		float							m_durationState = 0.0f;
 
-		
+		TargetSide						m_side = TargetSide::Front;
 
-		Math::Vector3 m_direct = {};
-		float					m_speed = 0.0f;
+		Math::Vector3					m_direct = {};
+		float							m_speed = 0.0f;
+
 
 		struct Effect
 		{
@@ -148,6 +159,19 @@ private:
 		void PostUpdate(std::weak_ptr<Drone>& owner, const  std::weak_ptr<KdGameObject>& obj)override;
 		void Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)override;
 	private:
+	};
+
+	class Backed : public ActionStateBase
+	{
+	public:
+		~Backed()override{}
+
+		void Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)override;
+		void Update(std::weak_ptr<Drone>& owner, const  std::weak_ptr<KdGameObject>& obj)override;
+		void PostUpdate(std::weak_ptr<Drone>& owner, const  std::weak_ptr<KdGameObject>& obj)override;
+		void Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)override;
+	private:
+
 	};
 
 

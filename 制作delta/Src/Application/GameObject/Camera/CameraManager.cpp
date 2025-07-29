@@ -48,6 +48,53 @@ void CameraManager::PreDraw()
 	m_currentCamera->PreDraw();
 }
 
+void CameraManager::DrawUnLit()
+{
+	if (m_currentCamera == nullptr) { return; }
+
+	m_currentCamera->DrawUnLit();
+
+}
+
+void CameraManager::DrawSprite()
+{
+	if (m_currentCamera == nullptr) { return; }
+
+	m_currentCamera->DrawSprite();
+
+}
+
+const Math::Vector2 CameraManager::GetLocalDirectionTo(const Math::Vector3& targetWorldPos) const
+{
+	if (m_currentCamera == nullptr) { return; }
+	
+	auto invCam = m_currentCamera->GetMatrix();
+	invCam.Invert();
+	Math::Vector3 pos = m_currentCamera->GetMatrix().Translation();
+
+	Math::Vector3 local = Math::Vector3::Transform(targetWorldPos - pos, invCam);
+
+	// z+正面　x+右
+	Math::Vector2 result = { local.x,local.z };
+
+	result.Normalize();
+
+	return result;
+
+}
+
+void CameraManager::Editor_ImGui() {
+
+	
+
+	if (m_currentCamera == nullptr) { return; }
+
+	auto  deg =  m_currentCamera->GetDeg();
+	ImGui::Text("deg.x%.2f,deg.y%.2f,deg.z%.2f", deg.x, deg.y,deg.z);
+	
+	m_currentCamera->Editor_ImGui();
+}
+
 
 bool CameraManager::SetNextType(const CameraType& type)
 {
@@ -124,9 +171,9 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 
 	m_nowType = m_nextType;
 	m_currentCamera->SetTarget(m_wpCameraTarget);
-	m_currentCamera->SetRockTarget(m_wpRockTarget);
-	m_currentCamera->Init();
+	m_currentCamera->SetLockTarget(m_wpLockTarget);
 	m_currentCamera->SetDeg(deg);
+	m_currentCamera->Init();
 	
 	return true;
 }

@@ -30,6 +30,10 @@ public:
 
 
 	void PreDraw();
+
+	void DrawUnLit();
+	void DrawSprite();
+
 	void PreUpdate();
 	void Update();
 	void PostUpdate();
@@ -39,7 +43,7 @@ public:
 	bool SetNextType(const CameraType& type);
 
 	void SetCameraTarget(const std::shared_ptr<CharacterBase>& target) { m_wpCameraTarget = target; }
-	void SetLockTarget(const std::shared_ptr<CharacterBase>& target) { m_wpRockTarget = target; }
+	void SetLockTarget(const std::shared_ptr<CharacterBase>& target) { m_wpLockTarget = target; }
 
 	void SetMultiLocks(const std::shared_ptr<CharacterBase>& locks) { m_wpMultiLocks .push_back(locks); }
 	void ResetMultiLocks() { m_wpMultiLocks.clear(); }
@@ -56,7 +60,14 @@ public:
 
 	const std::weak_ptr<CameraBase> GetCurrentCamera() { return m_currentCamera; }
 
+	const CameraType GetNowType()const { return m_nowType; }
+
 	const Math::Vector3& ToCameraVec(const Math::Vector3 nowPos);
+
+	// 自身のm_mWorldを使ってターゲットの相対方向(2D予定)を取得
+	const Math::Vector2 GetLocalDirectionTo(const Math::Vector3& targetWorldPos)const;
+
+	void Editor_ImGui();
 
 private:
 
@@ -68,7 +79,7 @@ private:
 
 	std::shared_ptr<CameraBase>	m_currentCamera = nullptr;
 	std::weak_ptr<CharacterBase> m_wpCameraTarget;
-	std::weak_ptr<CharacterBase> m_wpRockTarget;
+	std::weak_ptr<CharacterBase> m_wpLockTarget;
 
 	std::vector<std::weak_ptr<CharacterBase>>	m_wpMultiLocks;
 	int											m_multiLockNum = 3;

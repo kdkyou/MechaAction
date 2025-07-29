@@ -32,8 +32,8 @@ void Enemy::Init()
 		m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 	}
 
-	Math::Vector3 pos = { 0.0f,5.0f,0.0f };
-	m_correctionMat = Math::Matrix::CreateTranslation(pos);
+	m_currection = { 0.0f,5.0f,0.0f };
+	m_correctionMat = Math::Matrix::CreateTranslation(m_currection);
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -42,7 +42,7 @@ void Enemy::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
 
-	m_dist = { 10.0f,40.0f };
+	m_dist = { 10.0f,300.0f };
 
 	m_clampSize = 20.0f;
 
@@ -57,7 +57,7 @@ void Enemy::Update()
 	//各種「状態に応じた」更新処理を実行する
 	if (m_nowAction)
 	{
-		std::shared_ptr<KdGameObject> spTarget = m_wpTarget.lock();
+		std::shared_ptr<KdGameObject> spTarget = m_wpCharacterTarget.lock();
 
 		std::shared_ptr<Enemy> spThis = m_wpThis.lock();
 
@@ -81,7 +81,7 @@ void Enemy::PostUpdate()
 
 	if (m_nowAction)
 	{
-		std::shared_ptr<KdGameObject> spTarget = m_wpTarget.lock();
+		std::shared_ptr<KdGameObject> spTarget = m_wpCharacterTarget.lock();
 
 
 		std::shared_ptr<Enemy> spThis = m_wpThis.lock();
@@ -304,9 +304,9 @@ void Enemy::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 {
 	if (nextAction == nullptr) { return; }
 
-	std::shared_ptr<KdGameObject> spTarget = m_wpTarget.lock();
+	auto spTarget = m_wpTarget.lock();
 
-	if (spTarget == nullptr) { return; }
+	//if (spTarget == nullptr) { return; }
 
 	if (m_nowAction) {
 		m_nowAction->Exit(m_wpThis, spTarget);
@@ -410,11 +410,29 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 
 	auto distance = spTarget->GetPos() - spOwner->GetPos();
 
+	auto target = spOwner->GetCharacterTarget().lock();
+
+	if (target)
+	{
+		if (target->IsDestroy())
+		{
+			spOwner->ChangeActionState(std::make_shared<Stand>());
+			return;
+		}
+	}
+
+
 	if (side == ActionStateBase::TargetSide::Left)
 	{
 		if (spOwner->GetPrevState() == tRotateLeft)
 		{
 			spOwner->ChangeActionState(std::make_shared<AttackLeft>());
+			return;
+		}
+
+		if (spOwner->GetPrevState() == tMoveBack)
+		{
+			spOwner->ChangeActionState(std::make_shared<AttackBack>());
 			return;
 		}
 
@@ -438,7 +456,7 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 
 		if (spOwner->GetPrevState() == tBoostStop)
 		{
-			spOwner->ChangeActionState(std::make_shared<MoveLeftRotate>());
+			spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
 			return;
 		}
 
@@ -566,6 +584,16 @@ void Enemy::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Enemy>& owner
 	auto length = distance.Length();
 	auto halfOnwenrLength = (spOwner->m_dist.y - spOwner->m_dist.x) / 2.0f;
 
+	auto target = spOwner->GetCharacterTarget().lock();
+
+	if (target)
+	{
+		if (target->IsDestroy())
+		{
+			spOwner->ChangeActionState(std::make_shared<Stand>());
+			return;
+		}
+	}
 
 
 	// プレイヤーと自身との差がどれくらいか
@@ -641,7 +669,7 @@ void Enemy::Start::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
-	bool isFind = spOwner->Search(true);
+	bool isFind = spOwner->SearchPlayer();
 
 	if (isFind) {
 		spOwner->ChangeActionState(std::make_shared<StandUp>());
@@ -717,7 +745,7 @@ void Enemy::Stand::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 	auto difference = spOBj->GetMatrix().Translation() - spOwner->m_mWorld.Translation();
 
 
-	ChangeStateWithDistance(owner, spOBj);
+	//ChangeStateWithDistance(owner, spOBj);
 
 }
 

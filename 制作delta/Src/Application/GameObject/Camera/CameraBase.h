@@ -18,7 +18,7 @@ public:
 
 
 	void SetTarget(const std::weak_ptr<CharacterBase>& target);
-	void SetRockTarget(const std::weak_ptr<CharacterBase>& rock);
+	void SetLockTarget(const std::weak_ptr<CharacterBase>& rock);
 
 	// 「絶対変更しません！見るだけ！」な書き方
 	const std::shared_ptr<KdCamera>& GetCamera() const
@@ -56,6 +56,13 @@ public:
 	const Math::Vector3& GetDeg() { return m_DegAng; }
 
 	void SetDeg(const Math::Vector3& ang) { m_DegAng = ang; }
+
+	virtual void Editor_ImGui() override;
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)override;
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const override;
 
 protected:
 

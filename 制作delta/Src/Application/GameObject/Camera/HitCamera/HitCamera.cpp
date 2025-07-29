@@ -17,7 +17,9 @@ void HitCamera::Init()
 
 	if (m_wpTarget.expired() == false)
 	{
-		m_mWorld = m_mLocalPos * m_wpTarget.lock()->GetMatrix();
+		m_mRotation = GetRotationMatrix();
+
+		m_mWorld = m_mLocalPos * m_mRotation * m_wpTarget.lock()->GetMatrix();
 
 		m_pos = m_wpTarget.lock()->GetMatrix().Translation();
 
@@ -31,7 +33,7 @@ void HitCamera::Init()
 
 	m_pos = {};
 
-	m_movePow = { 0.0f,0.25f };
+	m_movePow = { 0.0f,0.6f };
 
 	CameraManager::Instance().EnableChangedCamera(false);
 }
@@ -42,7 +44,7 @@ void HitCamera::PostUpdate()
 
 	if (_spTarget == nullptr) { return; }
 
-	auto targetMat = _spTarget->GetMatrix();
+	auto targetPos = _spTarget->GetMatrix().Translation();
 
 	switch (m_shakeType)
 	{
@@ -75,12 +77,14 @@ void HitCamera::PostUpdate()
 		CameraManager::Instance().SetNextType(CameraManager::Tracking);
 	}
 
-	UpdateRotateByMouse();
+	//UpdateRotateByMouse();
 	m_mRotation = GetRotationMatrix();
 
 	auto trans= Math::Matrix::CreateTranslation(m_pos);
 
-	m_mWorld = trans * m_mLocalPos * m_mRotation * targetMat;
+	auto targetMat = Math::Matrix::CreateTranslation(targetPos);
+
+	m_mWorld =  m_mLocalPos * m_mRotation * trans * targetMat;
 
 	CameraBase::PostUpdate();
 

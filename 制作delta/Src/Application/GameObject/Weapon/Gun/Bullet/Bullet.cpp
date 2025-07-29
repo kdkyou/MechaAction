@@ -3,23 +3,28 @@
 #include"../../../../main.h"
 #include"../../../Character/CharacterBase.h"
 
+#include "../../../../Scene/SceneManager.h"
+
 void Bullet::Init()
 {
 	m_pCollider = std::make_unique<KdCollider>();
 	
-	if (m_spModelData == nullptr)
+//	if (m_spModelData == nullptr)
 	{
 		DirectX::BoundingSphere sphere;
 		sphere.Center = m_mWorld.Translation();
 		sphere.Radius = 1.0f;
 		m_pCollider->RegisterCollisionShape("Bullet", sphere, KdCollider::TypeDamage);
 	}
-	else
+	/*else
 	{
 		m_pCollider->RegisterCollisionShape("Bullet", m_spModelData, KdCollider::TypeDamage);
-	}
+	}*/
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+	m_name = "Bullet";
+
 
 }
 
@@ -90,7 +95,55 @@ void Bullet::Update()
 
 void Bullet::PostUpdate()
 {
+	// その他球による衝突判定
+	// ---- ---- ---- ---- ---- ----
+	// ①当たり判定(球判定)用の情報を作成
+	KdCollider::SphereInfo sphereInfo;
+	sphereInfo.m_sphere.Center = m_mWorld.Translation();
+	sphereInfo.m_sphere.Radius =  0.5f;
+	sphereInfo.m_type = KdCollider::TypeGround;
+
+	std::list<KdCollider::CollisionResult> retBumpList;
+
+	{
+
+		// ②HIT対象オブジェクトに総当たり
+		for (auto obj : SceneManager::Instance().GetTerrainList())
+		{
+
+			obj->Intersects(sphereInfo, &retBumpList);
+
+		}
+
+	}
+
 	
+	float maxOverLap = 0;
+	Math::Vector3 hitDir = Math::Vector3::Zero;
+	bool hit = false;
+	// ③結果を使って座標を補完する
+	for (auto& ret : retBumpList)
+	{
+		if (maxOverLap < ret.m_overlapDistance)
+		{
+			maxOverLap = ret.m_overlapDistance;
+			hitDir = ret.m_hitDir;
+			hit = true;
+
+		}
+
+	}
+
+	if (hit)
+	{
+
+		Math::Vector3 newPos = GetPos() + (hitDir * maxOverLap);
+		OnHit();
+	}
+
+
+	
+
 }
 
 void Bullet::DrawUnLit()

@@ -2,6 +2,10 @@
 
 #include "../../Character/CharacterBase.h"
 
+#include "../../Effect/Polygon/PolygonEffect.h"
+
+#include "../../../Scene/SceneManager.h"
+
 void GunBase::SetTarget(const std::weak_ptr<CharacterBase>& target) 
 {
 	m_wpTarget = target;
@@ -80,30 +84,45 @@ bool GunBase::SetNodeMats(const std::string& nodeName)
 
 }
 
-void GunBase::RotateWeaponDirect(const Math::Vector2& enableAngle, const Math::Vector3& targetDir)
+const Math::Matrix GunBase::RotateWeaponDirect(const Math::Vector2& enableAngle, const Math::Vector3& targetDir,const Math::Matrix& rotMat)
 {
-	auto localVec = m_mLocalRot.Backward();
+	auto localVec = rotMat.Backward();
 
 	// 対象の方向をローカル空間に調整
+	auto parentRotMat = m_mParentAttach * m_mParent;
+	parentRotMat.Translation(Math::Vector3::Zero);
 	Math::Vector3 toVec = targetDir;
-	toVec = DirectX::XMVector3TransformNormal(targetDir, DirectX::XMMatrixInverse(nullptr, m_mParent));
+	toVec = DirectX::XMVector3TransformNormal(targetDir, parentRotMat.Invert());
 
 	toVec.Normalize();
 
-	// ヨーとピッチの角度差を取得 
+	// ヨー(左右)とピッチ(上下)の角度差を取得 
 	float yaw = atan2f(toVec.x, toVec.z);
-	float pitch = asinf(toVec.y);
+	float pitch = atan2f(toVec.y, sqrtf(toVec.x * toVec.x + toVec.z * toVec.z));
 
 	yaw = DirectX::XMConvertToDegrees(yaw);
 	pitch = DirectX::XMConvertToDegrees(pitch);
 
 	// クランプ
-	float clampYaw = std::clamp(yaw, -enableAngle.y, enableAngle.y);
-	float clampPitch = std::clamp(pitch, -enableAngle.x, enableAngle.x);
+	float clampYaw = std::clamp(yaw, -enableAngle.x, enableAngle.x);
+	float clampPitch = std::clamp(pitch, -enableAngle.y, enableAngle.y);
 
-	Math::Matrix matRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(clampPitch)) * Math::Matrix::CreateRotationX(DirectX::XMConvertToRadians(clampYaw));
+	Math::Matrix mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(clampYaw)) * Math::Matrix::CreateRotationX(DirectX::XMConvertToRadians(-clampPitch));
 
 	// ローカル回転を更新
-	m_mLocalRot = matRot;
+	return mRot;
+
+}
+
+bool GunBase::Flash(const Math::Matrix& occurMat)
+{
+	if (m_muzzleFlashPath == "") { return false; }
+
+	auto polygon = std::make_shared<PolygonEffect>();
+
+	polygon->Init();
+	polygon->SetParam(m_muzzleFlashPath, 0.05f, PolygonEffect::eBright, false,occurMat);
+
+	SceneManager::Instance().AddObject(polygon);
 
 }

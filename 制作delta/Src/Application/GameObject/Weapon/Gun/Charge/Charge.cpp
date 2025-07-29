@@ -98,12 +98,22 @@ void Charge::Trigger()
 		if (m_durationFire < m_fireRate)
 		{
 			Shot();
+			auto soundInstance = m_sounds.lock();
+			if (soundInstance)
+			{
+				soundInstance->Stop();
+			}
 			m_sounds = KdAudioManager::Instance().Play(m_shotSoundPath, false);
 			
 		}
 		else
 		{
 			ShotCharge();
+			auto soundInstance = m_sounds.lock();
+			if (soundInstance)
+			{
+				soundInstance->Stop();
+			}
 			m_sounds = KdAudioManager::Instance().Play(m_shotSoundPath, false);
 			
 		}

@@ -19,6 +19,44 @@ void LockCamera::Init()
 
 	ShowCursor(false);
 
+	m_lockPos = {};
+
+	m_spPolygon = std::make_shared<KdSquarePolygon>();
+
+	m_spPolygon->SetMaterial("Asset/Textures/UI/LockOn.png");
+
+	m_spPolygon->SetScale(1.0f);
+
+	m_lockPos = {0.0f,0.0f,0.1f};
+
+	m_texAlpha = 0.2f;
+
+	m_texScale = 0.03f;
+	m_durationScale = 0.2f;
+
+	/*m_spTex = std::make_shared<KdTexture>();
+	m_spTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/UI/LockOn.png");*/
+
+}
+
+void LockCamera::Update()
+{
+	if (!m_isReduce)
+	{
+		m_texAlpha += 5 * KdFPSController::GetInstance().GetDeltaTime();
+		m_durationScale -= KdFPSController::GetInstance().GetDeltaTime();
+
+		if (m_durationScale < m_texScale)
+		{
+			m_durationScale = m_texScale;
+			m_isReduce = true;
+		}
+
+		if (m_texAlpha > 1.0f)
+		{
+			m_texAlpha = 1.0f;
+		}
+	}
 }
 
 void LockCamera::PostUpdate()
@@ -35,70 +73,125 @@ void LockCamera::PostUpdate()
 
 	Lock();
 
-	m_mRotation = GetRotationMatrix();
+	//m_mRotation = GetRotationMatrix();
 	m_mWorld = m_mLocalPos * m_mRotation * _targetMat;
 
+
+	CameraBase::PostUpdate();
+}
+
+void LockCamera::DrawUnLit()
+{
+	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
+
+	auto camMat = m_mWorld;
+	//camMat.Translation(Math::Vector3::Zero);
+
+	Math::Color color = { 1.0f,1.0f,1.0f,m_texAlpha };
+
+	m_spPolygon->SetColor(color);
+
+	Math::Matrix mat = Math::Matrix::CreateScale(m_durationScale) * Math::Matrix::CreateTranslation(m_lockPos) * camMat;
+
+	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spPolygon,mat);
+
+	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
+}
+
+void LockCamera::DrawSprite()
+{
+	//KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
+
+	//KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, m_lockPos.x, m_lockPos.y);
+
+	//KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
 }
 
 void LockCamera::Lock()
 {
-	const std::shared_ptr<const CharacterBase> spTarget = m_wpRockTarget.lock();
+	auto spTarget = m_wpRockTarget.lock();
 	if (spTarget == nullptr) { return; }
 
-	
-	Math::Vector3 targetPos = spTarget->GetCorrectionMatrix().Translation();
+	auto targetMat = spTarget->GetCorrectionMatrix();
+	Math::Vector3 targetPos = targetMat.Translation();
+
 	Math::Vector3 pos = m_mWorld.Translation();
 
 	Math::Vector3 nowVec = m_mWorld.Backward();
 
 	Math::Vector3 toVec = targetPos - pos;
-	//toVec.y = 0.0f;
-	toVec.Normalize();
+	auto distance = toVec.Length();
+	if (distance < 0.001) { return; }
 
-	//float targetYaw = atan2f(toVec.x, toVec.z); // ラジアンでY軸方向の向きを計算
-	//float currentYaw = atan2f(nowVec.x, nowVec.z);
+	//toVec.Normalize();
 
-	//float rotateSpeed = 0.1f; // 補間スピード
-	//float newYaw = (1.0f - rotateSpeed) * currentYaw + rotateSpeed * targetYaw;
+	//float targetYaw = atan2f(toVec.x, toVec.z);
+	//float currentYaw = DirectX::XMConvertToRadians(m_DegAng.y); // m_DegAng.y は度 → ラジアンに変換
 
-	//// ラジアン → 度に変換して角度を設定
-	//m_DegAng.y = DirectX::XMConvertToDegrees(newYaw);
+	//// 差分を求めて -π～+π の範囲に調整（最短角度補間）
+	//float deltaYaw = targetYaw - currentYaw;
 
-	float targetYaw = atan2f(toVec.x, toVec.z);
-	float currentYaw = DirectX::XMConvertToRadians(m_DegAng.y); // m_DegAng.y は度 → ラジアンに変換
+	//while (deltaYaw > DirectX::XM_PI)     deltaYaw -= DirectX::XM_2PI;
+	//while (deltaYaw < -DirectX::XM_PI)    deltaYaw += DirectX::XM_2PI;
 
-	// 差分を求めて -π～+π の範囲に調整（最短角度補間）
-	float deltaYaw = targetYaw - currentYaw;
+	//// 補間
+	//float speedRatio = std::clamp(distance / 20.0f, m_speedRatio.x, m_speedRatio.y);
+	//float rotateSpeed = 90.0f * speedRatio; // deg/s
 
-	while (deltaYaw > DirectX::XM_PI)     deltaYaw -= DirectX::XM_2PI;
-	while (deltaYaw < -DirectX::XM_PI)    deltaYaw += DirectX::XM_2PI;
+	//float delta = DirectX::XMConvertToRadians(rotateSpeed * KdFPSController::GetInstance().GetDeltaTime());
+	//if (fabsf(deltaYaw) < delta)
+	//{
+	//	currentYaw = targetYaw; // 吸収してピタッと止める
+	//}
+	//else
+	//{
+	//	currentYaw += (deltaYaw > 0 ? 1 : -1) * delta;
+	//}
 
-	// 補間
-	float rotateSpeed = 90.0f; // deg/s
-	float delta = DirectX::XMConvertToRadians(rotateSpeed * KdFPSController::GetInstance().GetDeltaTime());
-	if (fabsf(deltaYaw) < delta)
-	{
-		currentYaw = targetYaw; // 吸収してピタッと止める
-	}
-	else
-	{
-		currentYaw += (deltaYaw > 0 ? 1 : -1) * delta;
-	}
+	//// 結果をDegに変換
+	//m_DegAng.y = DirectX::XMConvertToDegrees(currentYaw);
 
-	// 結果をDegに変換
-	m_DegAng.y = DirectX::XMConvertToDegrees(currentYaw);
 
-	if (m_DegAng.y > 360)
+	// 注視用のビュー行列を作る（Z軸がtoVecを向く）
+	Math::Matrix lookMat = Math::Matrix::CreateLookAt(targetPos, pos, { 0, 1, 0 });
+	lookMat = lookMat.Invert(); // LookAt行列をワールド行列に変換
+
+	// 回転をクオータニオンに変換
+	Math::Quaternion targetQuat = Math::Quaternion::CreateFromRotationMatrix(lookMat);
+	Math::Quaternion currentQuat = Math::Quaternion::CreateFromRotationMatrix(m_mWorld);
+
+	// 補間スピード設定
+
+	float baseSpeedDeg = 90.0f;
+	float boostSpeedDeg = 360.0f;
+
+	float boostRate = std::clamp((distance - 5.0f) / 15.0f, 0.0f, 1.0f);
+	float rotateSpeedDeg = baseSpeedDeg + (boostSpeedDeg - baseSpeedDeg) * boostRate;
+	float delta = KdFPSController::GetInstance().GetDeltaTime();
+	float t = std::clamp(rotateSpeedDeg * delta / 180.0f, 0.0f, 1.0f); // normalize補間係数
+
+	// 球面線形補間
+	Math::Quaternion newQuat = Math::Quaternion::Slerp(currentQuat, targetQuat, t);
+
+	// 回転行列へ戻す
+	Math::Matrix rotMat = Math::Matrix::CreateFromQuaternion(newQuat);
+
+	m_mRotation = rotMat;
+
+	/*if (m_DegAng.y > 360)
 	{
 		m_DegAng.y -= 360;
 	}
 	else if (m_DegAng.y < 0)
 	{
 		m_DegAng.y += 360;
-	}
+	}*/
 
-	
+	// 角度保存
+	Math::Vector3 euler;
+	euler = newQuat.ToEuler();
+	m_DegAng.x = DirectX::XMConvertToDegrees(euler.x);
+	m_DegAng.y = DirectX::XMConvertToDegrees(euler.y);
+	m_DegAng.z = DirectX::XMConvertToDegrees(euler.z);
 
-
-	CameraBase::PostUpdate();
 }

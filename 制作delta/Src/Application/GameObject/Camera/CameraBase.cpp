@@ -43,11 +43,26 @@ void CameraBase::SetTarget(const std::weak_ptr<CharacterBase>& target)
 	m_wpTarget = target;
 }
 
-void CameraBase::SetRockTarget(const std::weak_ptr<CharacterBase>& target)
+void CameraBase::SetLockTarget(const std::weak_ptr<CharacterBase>& target)
 {
 	if (target.expired() == true) { return; }
 
 	m_wpRockTarget = target;
+}
+
+void CameraBase::Editor_ImGui()
+{
+	KdGameObject::Editor_ImGui();
+}
+
+void CameraBase::Deserialize(const nlohmann::json& jsonObj)
+{
+	KdGameObject::Deserialize(jsonObj);
+}
+
+void CameraBase::Serialize(nlohmann::json& outJson) const
+{
+	KdGameObject::Serialize(outJson);
 }
 
 void CameraBase::UpdateRotateByMouse()

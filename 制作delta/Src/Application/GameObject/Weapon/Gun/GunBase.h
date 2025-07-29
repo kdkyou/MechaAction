@@ -21,11 +21,12 @@ public:
 protected:
 
 	// 目的の対象に銃口を向ける //xとyのみ考える  targetDirはローカル空間に
-	void RotateWeaponDirect(const Math::Vector2& enableAngle, const Math::Vector3& targetDir);
+	const Math::Matrix RotateWeaponDirect(const Math::Vector2& enableAngle, const Math::Vector3& targetDir,const Math::Matrix& rotMat);
 
 
 	virtual void Trigger(){}
 	virtual void Shot(){}
+	bool Flash(const Math::Matrix& occurMat);
 
 	virtual void OnTrigger(){}
 
@@ -56,6 +57,8 @@ protected:
 
 	int						 m_numShot = 0;			// 発射口カウント
 	std::vector<Math::Matrix> m_nodeMats;			// 発射口行列
+
+	std::string				 m_muzzleFlashPath = "";	// マズルフラッシュ用テクスチャパス
 
 	// 弾本体の情報
 	std::string				 m_bulletModelPath;

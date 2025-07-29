@@ -55,7 +55,6 @@ private:
 	void UpdateCollision()override;
 
 
-	bool  SphereCast(const Math::Vector3& pos, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos);
 
 	void ResetGravity() { m_gravity = 0.0f; }
 
@@ -193,6 +192,9 @@ protected:
 		};
 
 		std::list<std::shared_ptr<Effect>> m_spEffects;
+
+		std::weak_ptr<KdSoundInstance> m_wpRunSound;
+
 	};
 
 	class ActionIdle :public ActionStateBase

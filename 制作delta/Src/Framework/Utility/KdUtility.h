@@ -150,5 +150,5 @@ float BulletDamage(const Math::Vector3& _startPos, const Math::Vector3& _endPos,
 // ベクトルからSlerpして返す
 Math::Vector3 SlerpDirection(const Math::Vector3& from, const Math::Vector3& to, float t);
 
-// 対象を見る行列作成
+// 行列作成
 Math::Matrix LookAtMatrix(const Math::Vector3& forward);

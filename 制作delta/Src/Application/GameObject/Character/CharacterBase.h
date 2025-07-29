@@ -23,7 +23,7 @@ public:
 		return m_spModelWork;
 	}
 
-	const Math::Matrix& GetCorrectionMatrix() const{ return m_correctionMat * m_mWorld; }
+	const Math::Matrix& GetCorrectionMatrix() const{ return m_mWorld * m_correctionMat; }
 
 	// 右手行動状態かどうかを調べる
 	const bool IsRightAttack()const { return m_isRightAttack; }
@@ -50,9 +50,16 @@ public:
 
 	virtual void SetModelWork(const std::string& path);
 
-	const std::weak_ptr<CharacterBase>& GetTarget()const { return m_wpTarget; }
+	void SetTarget(const std::shared_ptr<KdGameObject>& target) { m_wpTarget = target; }
+	const std::weak_ptr<KdGameObject>& GetTarget()const { return m_wpTarget; }
+	
+	void SetCharacterTarget(const std::shared_ptr<CharacterBase>& target) { m_wpCharacterTarget = target; }
+	const std::weak_ptr<CharacterBase>& GetCharacterTarget()const { return m_wpCharacterTarget; }
+
 
 	const Math::Vector2& GetDist()const { return m_dist; }
+
+	const bool IsDestroy()const { return m_isDestroy; }
 
 	virtual void Editor_ImGui() override;
 	// JSONデータから、クラスの内容を設定
@@ -70,7 +77,11 @@ protected:
 
 	bool  RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length, const KdCollider::Type& type, Math::Vector3& resultPos);
 
-	bool SearchDetect(const Math::Vector3& hitPos, const Math::Matrix& myPos, float viewRange);
+	bool  SphereCast(const Math::Vector3& pos, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos);
+
+	bool SearchDetect(const Math::Vector3& hitPos, const Math::Matrix& myMat, float viewRange);
+
+	bool SeaarchObstacle(const Math::Vector3& hitPos, const Math::Vector3& vec,const float length);
 
 	virtual void UpdateRotate(const Math::Vector3& srcMoveVec){}
 
@@ -78,6 +89,7 @@ protected:
 
 
 	virtual bool Search(bool areaOnly) { return false; }
+	bool SearchPlayer();
 
 	std::shared_ptr<KdModelWork>				m_spModelWork;
 	std::shared_ptr<KdModelData>				m_spModelData;
@@ -86,12 +98,16 @@ protected:
 	std::weak_ptr<CameraBase>					m_wpCamera;
 	std::vector<std::weak_ptr<KdGameObject>>	m_wpHitObjectList{};
 
-	std::weak_ptr<CharacterBase>				m_wpTarget;
+	std::weak_ptr<CharacterBase>				m_wpCharacterTarget;
+	std::weak_ptr<KdGameObject>					m_wpTarget;
 
 	
 	Math::Matrix 								m_scale;
 
 	Math::Matrix								m_correctionMat = Math::Matrix::Identity;
+
+	// 補正値
+	Math::Vector3                               m_currection = {};
 
 	float										m_gravity = 0;
 	const float									m_gravityPow = 9.16f;
@@ -106,6 +122,8 @@ protected:
 	bool										m_isRightShoulderAttack = false;
 	bool										m_isLeftShoulderAttack = false;
 
+	bool										m_isDestroy = false;
+
 
 	Math::Vector3							m_boxExtents;
 
@@ -118,7 +136,8 @@ protected:
 	float										m_nockBackDamage = 0.0f;
 
 	//			追いかける範囲　x = Near　y = Far
-	Math::Vector2							m_dist = { 10.0f,180.0f };
+	Math::Vector2								m_dist = { 10.0f,180.0f };
+	float										m_viewRange = 0.0f;
 
 	// リムライト
 
