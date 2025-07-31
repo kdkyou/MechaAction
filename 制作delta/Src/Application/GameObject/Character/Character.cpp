@@ -26,6 +26,7 @@ void Character::Init()
 	m_mWorld = Math::Matrix::Identity;
 	SetPos({ 0, 1.0f, 0 });
 
+	m_correction = { 0.0,6.0f,0.0f };
 	Math::Vector3 pos = { 0.0f,6.0f,0.0f };
 	m_correctionMat = Math::Matrix::CreateTranslation(pos);
 
@@ -491,8 +492,6 @@ void Character::UpdateCollision()
 				for (auto& ret : retList)
 				{
 					Math::Vector3 nowPos = translation + (ret.m_hitDir * ret.m_overlapDistance);
-					Application::Instance().m_log.AddLog("hitPos x:%.2f,y:%.2f,z:%.2f\n", ret.m_hitPos.x, ret.m_hitPos.y, ret.m_hitPos.z);
-					//	SetPos(nowPos);
 				}
 			}
 		}
@@ -515,8 +514,8 @@ void Character::UpdateCollision()
 	Application::Instance().m_log.AddLog("length %.2f\n", dist);
 	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 
-	m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, color);
-	m_pDebugWire->AddDebugBox(m_correctionMat * m_mWorld, box.Extents, {}, true, color);
+	/*m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, color);
+	m_pDebugWire->AddDebugBox(m_correctionMat * m_mWorld, box.Extents, {}, true, color);*/
 
 }
 
@@ -1083,14 +1082,15 @@ void Character::ActionJump::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction.Normalize();
 
-	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
 
 	m_animName = "Stand";
 
 	m_stateNum = spOwner->CharacterStateName::Fly;
 
-	Application::Instance().m_log.AddLog("FlySuccess\n");
+	std::string str = "burstFligit";
 
+	spOwner->m_sounds["burstFlight"] = KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_flight.wav",true);
+	//spOwner->m_sounds["burstFlight"].lock()->SetVolume(0.4f);
 
 
 }
@@ -1117,7 +1117,7 @@ void Character::ActionJump::Update(std::weak_ptr<Character>& owner)
 
 	if (m_isFlow)
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionJump>());
+		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
 		return;
 	}
 
@@ -1146,6 +1146,14 @@ void Character::ActionJump::PostUpdate(std::weak_ptr<Character>& owner)
 
 void Character::ActionJump::Exit(std::weak_ptr<Character>& owner)
 {
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	auto flight = spOwner->m_sounds["burstFlight"].lock();
+
+	if (flight) {
+		flight->Stop();
+	}
+
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -2130,7 +2138,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightBladeAttackBef"), 20.0f, false);
 
-	m_direction = ActionStateBase::Direct(owner, false);
+	m_direction = ActionStateBase::Direct(owner,true);
 
 	m_speed = spOwner->m_bladeAttackSpeed * spOwner->m_speedMag;
 
@@ -2180,10 +2188,11 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 	}
 
 	//敵が一定範囲内なら敵のほうに向いて敵に
-	std::shared_ptr<KdGameObject> target = spOwner->m_wpTarget.lock();
+	auto target = spOwner->m_wpCharacterTarget.lock();
 	if (target)
 	{
-		m_direction = target->GetPos() - spOwner->GetPos();
+		Math::Vector3 targetPos = target->GetCorrectionMatrix().Translation() + target->GetMatrix().Translation();
+		m_direction = targetPos - spOwner->GetPos();
 		m_direction.Normalize();
 	}
 
@@ -2262,6 +2271,16 @@ void Character::ActionRightAttackMid::Update(std::weak_ptr<Character>& owner)
 
 	std::shared_ptr<Character> spOwner = owner.lock();
 
+	//敵が一定範囲内なら敵のほうに向いて敵に
+	auto target = spOwner->m_wpCharacterTarget.lock();
+	if (target)
+	{
+		Math::Vector3 targetPos = target->GetCorrectionMatrix().Translation() + target->GetMatrix().Translation();
+		m_direction = targetPos - spOwner->GetPos();
+		m_direction.Normalize();
+	}
+
+
 
 	{
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
@@ -2311,19 +2330,19 @@ void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 
 	m_stiffnessTime = 1.0f;
 
-	//エフェクト
-	{
-		KdModelWork::Node* pNode = spOwner->m_spModelWork->FindWorkNode("CBP");
-		if (pNode)
-		{
-			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
-			effect->name = "Thruster.efkefc";
-			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 3.0f);
-			effect->handle = effect->wpEffect.lock()->GetHandle();
-			m_spEffects.push_back(effect);
-		}
-	}
+	////エフェクト
+	//{
+	//	KdModelWork::Node* pNode = spOwner->m_spModelWork->FindWorkNode("CBP");
+	//	if (pNode)
+	//	{
+	//		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+	//		effect->name = "Thruster.efkefc";
+	//		effect->pNodeMat = pNode->m_worldTransform;
+	//		effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 3.0f);
+	//		effect->handle = effect->wpEffect.lock()->GetHandle();
+	//		m_spEffects.push_back(effect);
+	//	}
+	//}
 
 	m_animName = "RightSowrd";
 
@@ -2343,20 +2362,16 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 	if (m_durationStiffness <= m_stiffnessTime / 4)
 	{
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
-	}
-
-	if (spOwner->m_spAnimator->IsComp() == false)
-	{
-		spOwner->UnEnableTrail();
-	}
+	}	
 
 	//エフェクト
 	EffectUpdate(owner);
 
 
-
 	if (spOwner->m_spAnimator->IsComp() == false)
 	{
+		spOwner->UnEnableTrail();
+
 		//加算
 		m_durationStiffness += KdFPSController::GetInstance().GetDeltaTime();
 	}

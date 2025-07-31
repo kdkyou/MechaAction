@@ -112,7 +112,7 @@ void LockCamera::Lock()
 	auto spTarget = m_wpRockTarget.lock();
 	if (spTarget == nullptr) { return; }
 
-	auto targetMat = spTarget->GetCorrectionMatrix();
+	auto targetMat = spTarget->GetCorrectionMatrix() * spTarget->GetMatrix();
 	Math::Vector3 targetPos = targetMat.Translation();
 
 	Math::Vector3 pos = m_mWorld.Translation();
@@ -165,7 +165,7 @@ void LockCamera::Lock()
 	float baseSpeedDeg = 90.0f;
 	float boostSpeedDeg = 360.0f;
 
-	float boostRate = std::clamp((distance - 5.0f) / 15.0f, 0.0f, 1.0f);
+	float boostRate = std::clamp((distance - 5.0f) / 10.0f, 0.0f, 1.0f);
 	float rotateSpeedDeg = baseSpeedDeg + (boostSpeedDeg - baseSpeedDeg) * boostRate;
 	float delta = KdFPSController::GetInstance().GetDeltaTime();
 	float t = std::clamp(rotateSpeedDeg * delta / 180.0f, 0.0f, 1.0f); // normalize補間係数

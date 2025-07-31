@@ -160,6 +160,9 @@
     <Filter Include="Src\Application\GameObject\UI">
       <UniqueIdentifier>{532d1ddb-cb4d-4985-b5c1-3fa5b9e16881}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\UI\Alert">
+      <UniqueIdentifier>{ec687ad0-eb1a-467b-8a54-cb75a03d6790}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -435,6 +438,18 @@
     <ClInclude Include="Src\Application\GameObject\Effect\Effect.h">
       <Filter>Src\Application\GameObject\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\Alert\Alert.h">
+      <Filter>Src\Application\GameObject\UI\Alert</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\UIManager.h">
+      <Filter>Src\Application\GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\UIBase.h">
+      <Filter>Src\Application\GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrain\AnimTerrain.h">
+      <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -676,6 +691,18 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Effect\Effect.cpp">
       <Filter>Src\Application\GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\Alert\Alert.cpp">
+      <Filter>Src\Application\GameObject\UI\Alert</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\UIManager.cpp">
+      <Filter>Src\Application\GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp">
+      <Filter>Src\Application\GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrain\AnimTerrain.cpp">
+      <Filter>Src\Application\GameObject\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,7 @@ class Charge :public GunBase
 public:
 	void Init()override;
 	void Update()override;
+	void PostUpdate()override;
 
 
 	void Editor_ImGui()override;

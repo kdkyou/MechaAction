@@ -32,8 +32,8 @@ void Enemy::Init()
 		m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 	}
 
-	m_currection = { 0.0f,5.0f,0.0f };
-	m_correctionMat = Math::Matrix::CreateTranslation(m_currection);
+	m_correction = { 0.0f,5.0f,0.0f };
+	m_correctionMat = Math::Matrix::CreateTranslation({ 0.0f,5.0f,0.0f });
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -93,7 +93,7 @@ void Enemy::PostUpdate()
 		m_nowAction->PostUpdate(m_wpThis, spTarget);
 	}
 
-	m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });
+	//m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });
 
 
 	auto translation = m_mWorld.Translation();
@@ -210,7 +210,7 @@ const Math::Matrix& Enemy::UpdateMatrix()
 bool Enemy::Search(bool areaOnly)
 {
 	KdCollider::SphereInfo sphere;
-	sphere.m_sphere.Center = m_mWorld.Translation() + m_currection;
+	sphere.m_sphere.Center = m_mWorld.Translation() + m_correction;
 	sphere.m_sphere.Radius = m_radius;
 	sphere.m_type = KdCollider::TypeDamage;
 
@@ -745,7 +745,7 @@ void Enemy::Stand::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 	auto difference = spOBj->GetMatrix().Translation() - spOwner->m_mWorld.Translation();
 
 
-	//ChangeStateWithDistance(owner, spOBj);
+	ChangeStateWithDistance(owner, spOBj);
 
 }
 

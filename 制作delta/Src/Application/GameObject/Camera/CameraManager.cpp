@@ -66,18 +66,23 @@ void CameraManager::DrawSprite()
 
 const Math::Vector2 CameraManager::GetLocalDirectionTo(const Math::Vector3& targetWorldPos) const
 {
-	if (m_currentCamera == nullptr) { return; }
+	if (m_currentCamera == nullptr) { return Math::Vector2(); }
 	
-	auto invCam = m_currentCamera->GetMatrix();
-	invCam.Invert();
-	Math::Vector3 pos = m_currentCamera->GetMatrix().Translation();
+	// カメラのビュー行列の逆
+	auto camMat = m_currentCamera->GetMatrix();
+	auto invCam = camMat.Invert();
 
-	Math::Vector3 local = Math::Vector3::Transform(targetWorldPos - pos, invCam);
+	Math::Vector3 pos = camMat.Translation();
+	Math::Vector3 toTarget = targetWorldPos - pos;
+
+	Math::Vector3 localDir = Math::Vector3::TransformNormal(toTarget, invCam);
 
 	// z+正面　x+右
-	Math::Vector2 result = { local.x,local.z };
-
-	result.Normalize();
+	Math::Vector2 result = { localDir.x,localDir.z };
+	if (result.Length() > 0.0001f)
+	{
+		result.Normalize();
+	}
 
 	return result;
 

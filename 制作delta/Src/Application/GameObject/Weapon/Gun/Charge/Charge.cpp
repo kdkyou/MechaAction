@@ -53,6 +53,11 @@ void Charge::Update()
 	m_mWorld = m_mParentAttach * m_mParent;
 }
 
+void Charge::PostUpdate()
+{
+	GunBase::PostUpdate();
+}
+
 void Charge::Editor_ImGui()
 {
 }

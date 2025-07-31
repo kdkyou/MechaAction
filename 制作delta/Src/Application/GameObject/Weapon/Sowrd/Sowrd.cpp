@@ -66,6 +66,17 @@ void Sowrd::Init()
 		m_spTrail->SetLength(10);
 		m_spTrail->ClearPoints();
 	}
+	
+	if (!m_spTrail2)
+	{
+		m_spTrail2 = std::make_shared<KdTrailPolygon>();
+		m_spTrail2->SetMaterial(KdAssets::Instance().m_textures.LoadData("Asset/Textures/GameObject/Slash.png"));
+		m_spTrail2->SetColor(Math::Color{ 0.3f,0.3f,2.0f });
+		m_spTrail2->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
+		m_spTrail2->SetWidth(5.3f);
+		m_spTrail2->SetLength(20);
+		m_spTrail2->ClearPoints();
+	}
 
 	m_pCollider = std::make_unique<KdCollider>();
 
@@ -107,6 +118,7 @@ void Sowrd::Update()
 		if (m_isOnece == true)
 		{
 			m_spTrail->SetEnable(true);
+			m_spTrail2->SetEnable(true);
 			m_isOnece = false;
 			KdAudioManager::Instance().Play("Asset/Sounds/Sound/sword_swing.wav", false);
 
@@ -130,6 +142,8 @@ void Sowrd::Update()
 			m_spTrail->AddPoint(m_endMat * m_mWorld);
 			flg = false;
 		}
+
+		m_spTrail2->AddPoint(m_endMat * m_mWorld);
 	}
 
 	else {
@@ -139,11 +153,15 @@ void Sowrd::Update()
 		m_attackNum = m_maxAttackNum;
 		m_pCollider->SetEnableAll(false);
 
+		m_spTrail2->ClearPoints();
+		m_spTrail2->SetEnable(false);
+
+		
 		m_isOnece = true;
 	}
 
 	auto mat =  Math::Matrix::CreateTranslation({ 0.0f,5.0f,9.0f })*m_mWorld;
-	m_pDebugWire->AddDebugBox(mat, Math::Vector3(10.0f, 9.0f, 10.0f));
+	//m_pDebugWire->AddDebugBox(mat, Math::Vector3(10.0f, 9.0f, 10.0f));
 
 	WeaponBase::Update();
 }
@@ -155,6 +173,7 @@ void Sowrd::DrawUnLit()
 
 	{
 		KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spTrail);
+		KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spTrail2);
 	}
 
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);

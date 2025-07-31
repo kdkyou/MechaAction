@@ -128,6 +128,7 @@ public :
 				{
 					obj->Init();
 					AddObject(obj);
+					AddTerrain(obj);
 				}
 			}
 		}

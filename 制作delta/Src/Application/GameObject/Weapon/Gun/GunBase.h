@@ -5,6 +5,9 @@
 class GunBase :public WeaponBase
 {
 public:
+
+	void PostUpdate()override;
+
 	void TriggerLock(bool flg) { m_trigger = flg; }
 
 	void SetGunsParam(const std::string& gunModelPath, float fireRate, float coolTime,float burst,int burstNum, int maxNumOnes, int maxNum);

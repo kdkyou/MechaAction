@@ -288,7 +288,7 @@ bool CharacterBase::SearchPlayer()
 {
 
 	KdCollider::SphereInfo sphere;
-	sphere.m_sphere.Center = m_mWorld.Translation() + m_currection;
+	sphere.m_sphere.Center = m_mWorld.Translation() + m_correction;
 	sphere.m_sphere.Radius = m_dist.y;
 	sphere.m_type = KdCollider::TypeDamage;
 

@@ -10,7 +10,7 @@ void Drone::Init()
 	m_limColor = { 0.12f,0.1f,0.08f };
 	m_limPow = 1.0f;
 						
-	m_currection = { 0.0f,5.0f,0.0f };
+	m_correction = { 0.0f,1.0f,0.0f };
 
 	m_correctionMat = Math::Matrix::CreateTranslation({0.0f,1.0f,0.0f});
 
@@ -178,7 +178,7 @@ void Drone::UpdateCollision()
 bool Drone::Search(bool areaOnly)
 {
 	KdCollider::SphereInfo sphere;
-	sphere.m_sphere.Center = m_mWorld.Translation() + m_currection;
+	sphere.m_sphere.Center = m_mWorld.Translation() + m_correction;
 	sphere.m_sphere.Radius = m_dist.y;
 	sphere.m_type = KdCollider::TypeDamage;
 
@@ -265,7 +265,7 @@ void Drone::Editor_ImGui()
 {
 	CharacterBase::Editor_ImGui();
 
-	auto mat = GetCorrectionMatrix();
+	auto mat = GetCorrectionMatrix() * GetMatrix();
 	ImGui::Text("CorrectionMat Translation: %.3f %.3f %.3f", mat._41, mat._42, mat._43);
 }
 
@@ -390,7 +390,7 @@ void Drone::Idle::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGame
 			auto dist = target->GetPos() - spOwner->GetPos();
 			float len = dist.Length();
 
-			//ChangeStateWithDistance(owner, len);
+			ChangeStateWithDistance(owner, len);
 		}
 
 	}

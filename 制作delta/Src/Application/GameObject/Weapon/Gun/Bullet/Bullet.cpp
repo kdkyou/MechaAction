@@ -9,17 +9,17 @@ void Bullet::Init()
 {
 	m_pCollider = std::make_unique<KdCollider>();
 	
-//	if (m_spModelData == nullptr)
+	if (m_spModelData == nullptr)
 	{
 		DirectX::BoundingSphere sphere;
 		sphere.Center = m_mWorld.Translation();
 		sphere.Radius = 1.0f;
 		m_pCollider->RegisterCollisionShape("Bullet", sphere, KdCollider::TypeDamage);
 	}
-	/*else
+	else
 	{
 		m_pCollider->RegisterCollisionShape("Bullet", m_spModelData, KdCollider::TypeDamage);
-	}*/
+	}
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -185,7 +185,7 @@ void Bullet::MoveSight()
 void Bullet::MoveChasing()
 {
 	auto spTarget = m_wpTarget.lock();
-	if (!spTarget) { m_isExpired = true; return; }
+	if (!spTarget) { m_moveType = Sight; return; }
 
 
 	Math::Vector3 move = Math::Vector3::Zero;
@@ -194,7 +194,7 @@ void Bullet::MoveChasing()
 	auto pos = m_pos;
 	
 	// 対象の座標取得
-	Math::Vector3 targetPos = spTarget->GetCorrectionMatrix().Translation();
+	Math::Vector3 targetPos = spTarget->GetCorrectionMatrix().Translation() + spTarget->GetMatrix().Translation();
 
 	// 対象の方向ベクトル
 	Math::Vector3 toTarget = targetPos - pos;

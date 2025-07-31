@@ -11,6 +11,14 @@ void GunBase::SetTarget(const std::weak_ptr<CharacterBase>& target)
 	m_wpTarget = target;
 }
 
+void GunBase::PostUpdate()
+{
+	if (m_spAnimator)
+	{
+		m_spAnimator->AdvanceTime(m_spModelWork->WorkNodes(), 30.0f);
+	}
+}
+
 void GunBase::SetGunsParam(const std::string& gunModelPath, float fireRate, float coolTime, float burst, int burstNum, int maxNumOnes, int maxNum)
 {
 	if (gunModelPath != "")

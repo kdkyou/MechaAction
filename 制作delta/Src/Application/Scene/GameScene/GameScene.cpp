@@ -2,6 +2,8 @@
 #include"../SceneManager.h"
 
 #include "../../GameObject/Terrain/Terrain.h"
+#include "../../GameObject/Terrain/AnimTerrain.h"
+
 #include "../../GameObject/Character/Character.h"
 #include "../../GameObject/Enemy/Enemy.h"
 #include "../../GameObject/Enemy/Drone/Drone.h"
@@ -28,6 +30,7 @@ void GameScene::Init()
 	KdGameObjectFactory::Instance().RegisterGameObject<Enemy>("Another");
 	KdGameObjectFactory::Instance().RegisterGameObject<Drone>("Drone");
 	KdGameObjectFactory::Instance().RegisterGameObject<Terrain>("Terrain");
+	KdGameObjectFactory::Instance().RegisterGameObject<AnimTerrain>("AnimTerrain");
 
 
 	//===================================================================
@@ -45,7 +48,7 @@ void GameScene::Init()
 
 	_terrain = std::make_shared<Terrain>();
 	pos = {30.0f,0.0f,0.0f};
-	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
+	_terrain->SetPos(pos);
 	_terrain->SetModel("Asset/Models/Stage/House/House.gltf");
 	_terrain->Init();
 	AddObject(_terrain);
@@ -53,7 +56,7 @@ void GameScene::Init()
 
 	_terrain = std::make_shared<Terrain>();
 	pos = { -30.0f,0.0f,0.0f };
-	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
+	_terrain->SetPos(pos);
 	_terrain->SetModel("Asset/Models/Stage/Rubble/Rubble.gltf");
 	_terrain->Init();
 	AddObject(_terrain);
@@ -61,7 +64,7 @@ void GameScene::Init()
 
 	_terrain = std::make_shared<Terrain>();
 	pos = { 30.0f,0.0f,50.0f };
-	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
+	_terrain->SetPos(pos);
 	_terrain->SetModel("Asset/Models/Stage/Rubble2/Rubble2.gltf");
 	_terrain->Init();
 	AddObject(_terrain);
@@ -69,7 +72,7 @@ void GameScene::Init()
 
 	_terrain = std::make_shared<Terrain>();
 	pos = { 50.0f,0.0f,300.0f };
-	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
+	_terrain->SetPos(pos);
 	_terrain->SetModel("Asset/Models/Stage/LowApartment/LowApartment.gltf");
 	_terrain->Init();
 	AddObject(_terrain);
@@ -77,7 +80,7 @@ void GameScene::Init()
 
 	_terrain = std::make_shared<Terrain>();
 	pos = { -100.0f,0.0f,200.0f };
-	_terrain->SetMat(Math::Matrix::CreateTranslation(pos));
+	_terrain->SetPos(pos);
 	_terrain->SetModel("Asset/Models/Stage/BalconyApartment/BalconyApartment.gltf");
 	_terrain->Init();
 	AddObject(_terrain);
@@ -158,7 +161,7 @@ void GameScene::Init()
 		missile->SetNodeMats("SP2");
 		missile->SetNodeMats("SP3");
 		missile->Init();
-		charge->SetTag(KdGameObject::tPlayerAttack);
+		missile->SetTag(KdGameObject::tPlayerAttack);
 		
 		missile->SetBulletsParam("Asset/Models/Weapon/Bullet/MissileBullet.gltf",20.0f,200, 100.0f, 200, 40.0f, 0.95f);
 		missile->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke.png", Math::Color(0.36f, 0.3f, 0.3f), 3.5f, 30);
@@ -225,8 +228,8 @@ void GameScene::Init()
 	rifle->SetAttackTrigger(WeaponBase::RightHand);
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
-	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.05f, 5.0f, 0.0f, 1, 80, 300);
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 50, 400, 50, 10.0f, 0.9f);
+	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.15f, 5.0f, 0.0f, 1, 80, 300);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 400, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 30);
 	AddObject(rifle);
 

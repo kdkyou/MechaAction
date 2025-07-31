@@ -1,13 +1,14 @@
 ﻿#pragma once
 
-class Terrain : public KdGameObject
+class AnimTerrain : public KdGameObject
 {
 public:
-	Terrain() {}
-	virtual ~Terrain()		override {}
+	AnimTerrain() {}
+	virtual ~AnimTerrain()		override {}
 
 	void Init()				override;
 	void Update()			override;
+	void PostUpdate()		override;
 	void DrawLit()			override;
 
 	void SetPos(const Math::Vector3& vec)override { m_pos = vec; }
@@ -30,8 +31,10 @@ public:
 	}
 
 private:
-	std::shared_ptr<KdModelData> m_spModel = nullptr;
+	std::shared_ptr<KdModelWork> m_spModel = nullptr;
 
 	std::string m_modelPath = "";
+
+	std::shared_ptr<KdAnimator> m_spAnimator = nullptr;
 
 };

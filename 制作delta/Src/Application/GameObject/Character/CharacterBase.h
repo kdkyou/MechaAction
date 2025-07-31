@@ -23,7 +23,7 @@ public:
 		return m_spModelWork;
 	}
 
-	const Math::Matrix& GetCorrectionMatrix() const{ return m_mWorld * m_correctionMat; }
+	const Math::Matrix& GetCorrectionMatrix() const{ return m_correctionMat; }
 
 	// 右手行動状態かどうかを調べる
 	const bool IsRightAttack()const { return m_isRightAttack; }
@@ -107,7 +107,7 @@ protected:
 	Math::Matrix								m_correctionMat = Math::Matrix::Identity;
 
 	// 補正値
-	Math::Vector3                               m_currection = {};
+	Math::Vector3                               m_correction = {};
 
 	float										m_gravity = 0;
 	const float									m_gravityPow = 9.16f;
@@ -144,4 +144,8 @@ protected:
 	Math::Vector3 m_limColor = { 0.19f,0.09f,0.09f };
 	float m_limPow = 8.0f;
 	bool m_limEnable = false;
+
+	// サウンドインスタンス管理
+	std::unordered_map<std::string,std::weak_ptr<KdSoundInstance>> m_sounds;
+
 };

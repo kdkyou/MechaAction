@@ -1,12 +1,11 @@
-﻿#include "Terrain.h"
+﻿#include "AnimTerrain.h"
 
-void Terrain::Init()
+void AnimTerrain::Init()
 {
 	m_name = "GroundTerrain";
-
 }
 
-void Terrain::Update()
+void AnimTerrain::Update()
 {
 	auto angle = KdToRadians * m_rot;
 
@@ -14,19 +13,32 @@ void Terrain::Update()
 
 }
 
-void Terrain::DrawLit()
+void AnimTerrain::PostUpdate()
+{
+	if (m_spModel)
+	{
+		m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+		m_spModel->CalcNodeMatrices();
+	}
+}
+
+void AnimTerrain::DrawLit()
 {
 	if (!m_spModel) return;
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
 
-void Terrain::SetModel(const std::string& path)
+void AnimTerrain::SetModel(const std::string& path)
 {
 	if (!m_spModel) {}
-	m_spModel = KdAssets::Instance().m_modeldatas.GetData(path);
+	m_spModel = std::make_shared<KdModelWork>();
+	m_spModel->SetModelData(KdAssets::Instance().m_modeldatas.GetData(path));
 
 	m_modelPath = path;
+
+	m_spAnimator = std::make_shared<KdAnimator>();
+	m_spAnimator->SetAnimation(m_spModel->GetAnimation("Open"), 10.0f, false);
 
 	if (!m_pCollider)
 	{
@@ -36,7 +48,7 @@ void Terrain::SetModel(const std::string& path)
 	m_pCollider->RegisterCollisionShape("Ground", m_spModel, KdCollider::TypeGround);
 }
 
-void Terrain::Editor_ImGui()
+void AnimTerrain::Editor_ImGui()
 {
 	KdGameObject::Editor_ImGui();
 

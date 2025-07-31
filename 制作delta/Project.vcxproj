@@ -174,7 +174,11 @@
     <ClInclude Include="Src\Application\GameObject\Enemy\Drone\Drone.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrain\AnimTerrain.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\Terrain.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\Alert\Alert.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\UIBase.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\UIManager.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Blade\Blade.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Bullet\Bullet.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Charge\Charge.h" />
@@ -260,7 +264,11 @@
     <ClCompile Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Drone\Drone.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrain\AnimTerrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\Terrain.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\Alert\Alert.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\UIManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Blade\Blade.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Bullet\Bullet.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Charge\Charge.cpp" />

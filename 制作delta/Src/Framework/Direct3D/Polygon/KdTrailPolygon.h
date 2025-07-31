@@ -74,7 +74,7 @@ public:
 	// 帯状ポリゴンの長さを設定
 	inline void SetLength(UINT length) { m_length = length; }
 	inline void SetWidth(float width) { m_width = width; }
-	inline void SetHeigh(float width) { m_heigth = width; }
+	inline void SetHeigh(float height) { m_heigth = height; }
 
 private:
 

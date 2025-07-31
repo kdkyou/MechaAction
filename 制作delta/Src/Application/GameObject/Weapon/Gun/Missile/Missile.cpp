@@ -39,8 +39,7 @@ void Missile::Update()
 
 void Missile::PostUpdate()
 {
-	m_spAnimator->AdvanceTime(m_spModelWork->WorkNodes(), 30.0f);
-
+	GunBase::PostUpdate();
 }
 
 void Missile::Trigger()
@@ -152,7 +151,8 @@ void Missile::Shot()
 	bullet->SetBulletParam(m_aliveTime,m_damage, m_range, startPos, direct, m_speed, m_dampingInterval, m_dampingRate);
 	bullet->Init();
 	bullet->SetBulletTrail(m_bulletTrailPath, m_bulletTrailColor,m_bulletTrailWidth, m_bulletTrailLength);
-	bullet->SetBulletType(Bullet::SightChasing, CameraManager::Instance().GetLockTarget(0));
+	auto spParent = CameraManager::Instance().GetLockTarget(0);
+	bullet->SetBulletType(Bullet::SightChasing, spParent);
 	bullet->SetTag(m_tag);
 	bullet->SetChasingData(m_bulletRotateDeg,m_bulletLockAngle,m_bulletLostTime,m_bulletTrackingDistance);
 	SceneManager::Instance().AddObject(bullet);

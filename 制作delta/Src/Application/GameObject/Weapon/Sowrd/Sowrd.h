@@ -28,6 +28,7 @@ private:
 
 	
 	std::shared_ptr<KdTrailPolygon> m_spTrail;
+	std::shared_ptr<KdTrailPolygon> m_spTrail2;
 
 	Math::Matrix					m_startMat;
 	Math::Matrix					m_endMat;
