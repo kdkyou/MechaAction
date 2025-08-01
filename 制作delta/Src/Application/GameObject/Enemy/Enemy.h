@@ -163,17 +163,7 @@ private:
 	private:
 	};
 
-	class Alert :public ActionStateBase
-	{
-	public:
-		~Alert()override {}
-
-		void Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
-		void Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
-		void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
-		void Exit(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
-	private:
-	};
+	
 
 	class Boost : public ActionStateBase
 	{

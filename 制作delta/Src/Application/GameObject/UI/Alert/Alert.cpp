@@ -12,7 +12,7 @@ void Alert::Init()
 
 	m_spTex = KdAssets::Instance().m_textures.GetData(str);
 
-	m_durationAlive = 0.05f;
+	m_durationAlive = 0.25f;
 }
 
 void Alert::Update()

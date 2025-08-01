@@ -73,6 +73,7 @@ void Character::Update()
 	if (key.I || mouse.middleButton || pad.IsRightStickPressed())
 	{
 		CameraManager::Instance().SetNextType(CameraManager::Rock);
+		LockOn();
 	}
 	if (key.U)
 	{
@@ -92,7 +93,6 @@ void Character::Update()
 	{
 		ChangeActionState(std::make_shared<ActionHited>());
 		return;
-
 	}
 
 	if (key.O)
@@ -415,61 +415,7 @@ void Character::UpdateCollision()
 	Math::Vector3 pos;
 	SphereCast(sphereInfo.m_sphere.Center, m_mWorld.Backward(), sphereInfo.m_sphere.Radius, KdCollider::TypeGround, pos);
 
-
-
-	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 3.5f, 0);
-	sphereInfo.m_sphere.Radius = 300.0f;
-	sphereInfo.m_type = KdCollider::TypeDamage;
-
-
-	//
-	m_wpCharacterTarget.reset();
-
-	std::vector<std::shared_ptr<CameraManager::LockTargetInfo>> vec;
-
-	// ②HIT対象オブジェクトに総当たり
-	for (auto& obj : SceneManager::Instance().GetEnemyList())
-	{
-		if (obj->Intersects(sphereInfo, nullptr))
-		{
-			std::shared_ptr<CameraManager::LockTargetInfo> info = std::make_shared<CameraManager::LockTargetInfo>();
-			auto targetPos = obj->GetMatrix().Translation();
-			targetPos.y = 0.0f;
-			auto pos = m_mWorld.Translation();
-			pos.y = 0.0f;
-			float distance = (targetPos - pos).Length();
-
-			if (SearchDetect(targetPos, m_mWorld, 100) == true)
-			{
-				info->wpLockTarget = obj;
-				info->distance = distance;
-				vec.push_back(info);
-			}
-		}
-	}
-
-	std::sort(vec.begin(), vec.end());
-	if (vec.empty() == false) {
-		CameraManager::Instance().ResetMultiLocks();
-	}
-
 	float dist = 0;
-
-
-	for (int i = 0; i < std::min((int)vec.size(), CameraManager::Instance().GetMultiLockNum()); i++)
-	{
-		CameraManager::Instance().SetMultiLocks(vec[i]->wpLockTarget.lock());
-	}
-	if (vec.empty() == false)
-	{
-		CameraManager::Instance().SetLockTarget(vec[0]->wpLockTarget.lock());
-		dist = vec[0]->distance;
-		m_wpCharacterTarget = vec[0]->wpLockTarget;
-
-	}
-
-
-
 
 	DirectX::BoundingOrientedBox box;
 
@@ -517,6 +463,65 @@ void Character::UpdateCollision()
 	/*m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, color);
 	m_pDebugWire->AddDebugBox(m_correctionMat * m_mWorld, box.Extents, {}, true, color);*/
 
+}
+
+void Character::LockOn()
+{
+	KdCollider::SphereInfo sphereInfo;
+
+	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 3.5f, 0);
+	sphereInfo.m_sphere.Radius = 200.0f;
+	sphereInfo.m_type = KdCollider::TypeDamage;
+
+
+	//
+	m_wpCharacterTarget.reset();
+
+	std::vector<std::shared_ptr<CameraManager::LockTargetInfo>> vec;
+
+	// ②HIT対象オブジェクトに総当たり
+	for (auto& obj : SceneManager::Instance().GetEnemyList())
+	{
+		if (obj->IsDestroy() == true) { continue; }
+
+
+		if (obj->Intersects(sphereInfo, nullptr))
+		{
+			std::shared_ptr<CameraManager::LockTargetInfo> info = std::make_shared<CameraManager::LockTargetInfo>();
+			auto targetPos = obj->GetMatrix().Translation();
+			targetPos.y = 0.0f;
+			auto pos = m_mWorld.Translation();
+			pos.y = 0.0f;
+			float distance = (targetPos - pos).Length();
+
+			if (SearchDetect(targetPos, m_mWorld, 100) == true)
+			{
+				info->wpLockTarget = obj;
+				info->distance = distance;
+				vec.push_back(info);
+			}
+		}
+	}
+
+	std::sort(vec.begin(), vec.end());
+	if (vec.empty() == false) {
+		CameraManager::Instance().ResetMultiLocks();
+	}
+
+	float dist = 0;
+
+
+	for (int i = 0; i < std::min((int)vec.size(), CameraManager::Instance().GetMultiLockNum()); i++)
+	{
+		CameraManager::Instance().SetMultiLocks(vec[i]->wpLockTarget.lock());
+	}
+	if (vec.empty() == false)
+	{
+		CameraManager::Instance().SetLockTarget(vec[0]->wpLockTarget.lock());
+		dist = vec[0]->distance;
+		m_wpCharacterTarget = vec[0]->wpLockTarget;
+
+	}
 }
 
 bool Character::IsIgnoreGravityState() const
@@ -1495,7 +1500,8 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 			m_spEffects.push_back(effect);
 
 			//効果音
-			KdAudioManager::Instance().Play("Asset/Sounds/Thruster2.wav");
+			KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(0.3f);
+
 			/*	auto instance = KdAudioManager::Instance().Play3D("Asset/Sounds/Thruster2.wav", spOwner->GetPos());
 				auto vec = CameraManager::Instance().ToCameraVec(mat.Translation());
 				instance->SetEmitterMatrix(mat,mat.Forward());
@@ -2135,6 +2141,8 @@ void Character::ActionBoostShield::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
+
+	spOwner->LockOn();
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightBladeAttackBef"), 20.0f, false);
 

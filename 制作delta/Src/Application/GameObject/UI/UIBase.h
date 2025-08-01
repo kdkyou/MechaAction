@@ -24,6 +24,7 @@ public:
 		KdGameObject::Serialize(outJson);
 	}
 
+	void SetTexture(const std::string& path);
 
 protected:
 

@@ -20,7 +20,7 @@ void Drone::Init()
 
 	m_pCollider = std::make_unique<KdCollider>();
 
-	m_pCollider->RegisterCollisionShape("Enemy2", m_spModelWork, KdCollider::TypeDamage);
+	m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 
 	m_dist = { 30.0f,300.0f };
 
@@ -479,7 +479,7 @@ void Drone::Attack::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGam
 
 	spOwner->ChangeEnableRightAttack(true);
 
-//	ChangeStateObstacle(owner);
+	ChangeStateObstacle(owner);
 }
 
 void Drone::Attack::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
@@ -534,6 +534,9 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 
 	m_durationState = 5.0f;
 
+	auto spOwner = owner.lock();
+
+	spOwner->m_isDestroy = true;
 }
 
 void Drone::Destroyed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)

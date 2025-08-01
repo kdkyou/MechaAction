@@ -162,6 +162,7 @@ void Bullet::OnHit()
 	 damage = BulletDamage(m_startPos, m_mWorld.Translation(), m_damage, m_range, m_dampingInterval, m_dampingRate);
 	 m_parameter = damage;
 	 m_isExpired = true;
+	 m_trail->SetEnable(false);
 	 KdEffekseerManager::GetInstance().Play("burn.efkefc", GetMatrix().Translation(),1.0f,1.0f,false);
 
 }

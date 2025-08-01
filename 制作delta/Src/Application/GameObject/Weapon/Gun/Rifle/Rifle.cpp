@@ -5,7 +5,6 @@
 
 #include"../../../../Scene/SceneManager.h"
 
-#include "../../../UI/Alert/Alert.h"
 #include "../../../Camera/CameraManager.h"
 
 void Rifle::Init()
@@ -91,14 +90,6 @@ void Rifle::Trigger()
 	if (m_durationFire >= m_fireRate)
 	{
 		m_durationFire = 0;
-		if (parent->GetTag() == tEnemy)
-		{
-			auto alert = std::make_shared<Alert>();
-			auto pos = CameraManager::Instance().GetLocalDirectionTo(m_mWorld.Translation());
-			alert->CalcPos(pos);
-			alert->Init();
-			SceneManager::Instance().AddObject(alert);
-		}
 		Shot();
 		m_num -= 1;
 		m_numOnce -= 1;

@@ -160,13 +160,22 @@ void LockCamera::Lock()
 	Math::Quaternion targetQuat = Math::Quaternion::CreateFromRotationMatrix(lookMat);
 	Math::Quaternion currentQuat = Math::Quaternion::CreateFromRotationMatrix(m_mWorld);
 
+	// 回転差（角度）を取得
+	float angleDiffRad = currentQuat.Dot(targetQuat);
+	angleDiffRad = std::clamp(angleDiffRad, -1.0f, 1.0f);
+	float deg = DirectX::XMConvertToDegrees(acosf(angleDiffRad) * 2.0f); // クオータニオンの角度差
+
+	//float deg = Math::Quaternion::Angle(currentQuat, targetQuat);
 	// 補間スピード設定
-
 	float baseSpeedDeg = 90.0f;
-	float boostSpeedDeg = 360.0f;
+	float boostSpeedDeg = 720.0f;
 
-	float boostRate = std::clamp((distance - 5.0f) / 10.0f, 0.0f, 1.0f);
+	
+	//float boostRate = std::clamp((distance - 5.0f) / 10.0f, 0.0f, 1.0f);
+	float boostRate = std::clamp(deg / 45.0f, 0.0f, 1.0f);
 	float rotateSpeedDeg = baseSpeedDeg + (boostSpeedDeg - baseSpeedDeg) * boostRate;
+	
+	
 	float delta = KdFPSController::GetInstance().GetDeltaTime();
 	float t = std::clamp(rotateSpeedDeg * delta / 180.0f, 0.0f, 1.0f); // normalize補間係数
 
@@ -177,15 +186,6 @@ void LockCamera::Lock()
 	Math::Matrix rotMat = Math::Matrix::CreateFromQuaternion(newQuat);
 
 	m_mRotation = rotMat;
-
-	/*if (m_DegAng.y > 360)
-	{
-		m_DegAng.y -= 360;
-	}
-	else if (m_DegAng.y < 0)
-	{
-		m_DegAng.y += 360;
-	}*/
 
 	// 角度保存
 	Math::Vector3 euler;

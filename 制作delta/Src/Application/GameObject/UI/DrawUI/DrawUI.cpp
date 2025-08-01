@@ -1,0 +1,15 @@
+﻿#include "DrawUI.h"
+
+void DrawUI::Init()
+{
+	m_spTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/UI/UI.png");
+}
+
+void DrawUI::DrawSprite()
+{
+	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
+
+	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, 0, 0);
+
+	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
+}

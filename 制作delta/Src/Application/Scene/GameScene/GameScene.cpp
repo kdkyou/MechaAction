@@ -16,6 +16,8 @@
 #include "../../GameObject/Weapon/Gun/Charge/Charge.h"
 
 #include "../../GameObject/Camera/CameraManager.h"
+
+#include "../../GameObject/UI/DrawUI/DrawUI.h"
 // 少数第n位で四捨五入する
 void round_n(float& number, int n)
 {
@@ -90,6 +92,14 @@ void GameScene::Init()
 	_terrain->SetModel("Asset/Models/Stage/Sky/Sky.gltf");
 	_terrain->Init();
 	AddObject(_terrain);
+
+	auto ta = std::make_shared<AnimTerrain>();
+	ta->SetModel("Asset/Models/Stage/Door/Door.gltf");
+	pos = { 0.0f,0.0f,10.0f };
+	ta->SetPos(pos);
+	ta->Init();
+	AddObject(ta);
+	AddTerrain(ta);
 
 	/*std::shared_ptr<Terrain> _serrain = std::make_shared<Terrain>();
 	_serrain->Init();
@@ -233,6 +243,10 @@ void GameScene::Init()
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 30);
 	AddObject(rifle);
 
+
+	auto ui = std::make_shared<DrawUI>();
+	ui->Init();
+	AddObject(ui);
 
 	//===================================================================
 	// カメラ初期化

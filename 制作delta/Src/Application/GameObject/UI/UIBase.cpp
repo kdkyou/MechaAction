@@ -16,3 +16,11 @@ void UIBase::Editor_ImGui()
 {
 	KdGameObject::Editor_ImGui();
 }
+
+void UIBase::SetTexture(const std::string& path)
+{
+	if (!m_spTex)
+	{
+		m_spTex = KdAssets::Instance().m_textures.GetData(path);
+	}
+}

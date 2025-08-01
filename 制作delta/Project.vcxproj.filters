@@ -163,6 +163,9 @@
     <Filter Include="Src\Application\GameObject\UI\Alert">
       <UniqueIdentifier>{ec687ad0-eb1a-467b-8a54-cb75a03d6790}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\UI\DrawUI">
+      <UniqueIdentifier>{9801215f-cae9-4766-9000-4ee1cacb84dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -450,6 +453,9 @@
     <ClInclude Include="Src\Application\GameObject\Terrain\AnimTerrain.h">
       <Filter>Src\Application\GameObject\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\DrawUI\DrawUI.h">
+      <Filter>Src\Application\GameObject\UI\DrawUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -703,6 +709,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Terrain\AnimTerrain.cpp">
       <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\DrawUI\DrawUI.cpp">
+      <Filter>Src\Application\GameObject\UI\DrawUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

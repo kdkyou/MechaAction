@@ -7,6 +7,8 @@
 
 #include"../Character/CharacterBase.h"
 
+#include "../Camera/CameraManager.h"
+#include "../UI/Alert/Alert.h"
 
 void Enemy::Init()
 {
@@ -761,28 +763,6 @@ void Enemy::Stand::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGame
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-// 警戒
-//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-void Enemy::Alert::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj)
-{
-	std::shared_ptr<Enemy> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Stand"), 3.0f);
-}
-
-void Enemy::Alert::Update(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj)
-{
-}
-
-void Enemy::Alert::PostUpdate(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj)
-{
-}
-
-void Enemy::Alert::Exit(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj)
-{
-}
-
-
-//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //ブースト
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 void Enemy::Boost::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -926,8 +906,7 @@ void Enemy::MoveForward::Update(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 	auto& mat = spOwner->UpdateMatrix();
 
 	auto vect = mat.Backward();
-	Application::Instance().m_log.AddLog("drect x:%.2f,y:%.2f,z:%.2f\n", vec.x, vec.y, vec.z);
-
+	
 
 	m_direct = mat.Backward();
 
@@ -986,8 +965,7 @@ void Enemy::MoveBack::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<K
 	auto& mat = spOwner->UpdateMatrix();
 
 	auto vect = mat.Forward();
-	Application::Instance().m_log.AddLog("drect x:%.2f,y:%.2f,z:%.2f\n", vec.x, vec.y, vec.z);
-
+	
 	m_direct = mat.Forward();
 
 	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround, false, false);
@@ -1037,13 +1015,10 @@ void Enemy::MoveRightRotate::Update(std::weak_ptr<Enemy>& owner, const  std::wea
 	std::shared_ptr<KdGameObject> spTarget = spObj.lock();
 	auto vec = spTarget->GetPos() - spOwner->GetMatrix().Translation();
 
+	vec.Normalize();
+
 	spOwner->UpdateRotate(vec);
 	auto& mat = spOwner->UpdateMatrix();
-
-	auto vect = mat.Right();
-	Application::Instance().m_log.AddLog("drect x:%.2f,y:%.2f,z:%.2f\n", vec.x, vec.y, vec.z);
-
-
 
 	m_direct = mat.Right();
 
@@ -1092,15 +1067,13 @@ void Enemy::MoveLeftRotate::Update(std::weak_ptr<Enemy>& owner, const  std::weak
 
 	std::shared_ptr<KdGameObject> spTarget = spObj.lock();
 	auto vec = spTarget->GetPos() - spOwner->GetMatrix().Translation();
+	
+	vec.Normalize();
 
 	spOwner->UpdateRotate(vec);
 	spOwner->UpdateMatrix();
 
 	auto& mat = spOwner->UpdateMatrix();
-
-	auto vect = mat.Left();
-	Application::Instance().m_log.AddLog("drect x:%.2f,y:%.2f,z:%.2f\n", vec.x, vec.y, vec.z);
-
 
 	m_direct = mat.Left();
 
@@ -1145,6 +1118,13 @@ void Enemy::AttackStand::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<
 
 	m_speed = 0.0f;
 
+
+	auto alert = std::make_shared<Alert>();
+	auto pos = CameraManager::Instance().GetLocalDirectionTo(spOwner->GetMatrix().Translation());
+	alert->CalcPos(pos);
+	alert->Init();
+	SceneManager::Instance().AddObject(alert);
+
 }
 
 void Enemy::AttackStand::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1155,7 +1135,8 @@ void Enemy::AttackStand::Update(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 
 	std::shared_ptr<KdGameObject> spTarget = spObj.lock();
 	auto vec = spTarget->GetPos() - spOwner->GetMatrix().Translation();
-
+	vec.Normalize();
+	
 	spOwner->UpdateRotate(vec);
 	spOwner->UpdateMatrix();
 
@@ -1199,6 +1180,12 @@ void Enemy::AttackForWard::Enter(std::weak_ptr<Enemy>& owner, const std::weak_pt
 
 	spOwner->ChangeEnableRightAttack(true);
 	spOwner->ChangeEnableLeftAttack(true);
+
+	auto alert = std::make_shared<Alert>();
+	auto pos = CameraManager::Instance().GetLocalDirectionTo(spOwner->GetMatrix().Translation());
+	alert->CalcPos(pos);
+	alert->Init();
+	SceneManager::Instance().AddObject(alert);
 }
 
 void Enemy::AttackForWard::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1262,6 +1249,13 @@ void Enemy::AttackBack::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<K
 	spOwner->ChangeEnableRightAttack(true);
 	spOwner->ChangeEnableLeftAttack(true);
 
+
+	auto alert = std::make_shared<Alert>();
+	auto pos = CameraManager::Instance().GetLocalDirectionTo(spOwner->GetMatrix().Translation());
+	alert->CalcPos(pos);
+	alert->Init();
+	SceneManager::Instance().AddObject(alert);
+
 }
 
 void Enemy::AttackBack::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1279,8 +1273,6 @@ void Enemy::AttackBack::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr
 	auto& mat = spOwner->UpdateMatrix();
 
 	auto vect = mat.Forward();
-	Application::Instance().m_log.AddLog("drect x:%.2f,y:%.2f,z:%.2f\n", vec.x, vec.y, vec.z);
-
 
 	m_direct = mat.Forward();
 
@@ -1324,6 +1316,12 @@ void Enemy::AttackLeft::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<K
 
 	spOwner->ChangeEnableRightAttack(true);
 	spOwner->ChangeEnableLeftAttack(true);
+
+	auto alert = std::make_shared<Alert>();
+	auto pos = CameraManager::Instance().GetLocalDirectionTo(spOwner->GetMatrix().Translation());
+	alert->CalcPos(pos);
+	alert->Init();
+	SceneManager::Instance().AddObject(alert);
 }
 
 void Enemy::AttackLeft::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1339,10 +1337,6 @@ void Enemy::AttackLeft::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr
 
 	spOwner->UpdateRotate(vec);
 	auto& mat = spOwner->UpdateMatrix();
-
-	auto vect = mat.Left();
-	Application::Instance().m_log.AddLog("drect x:%.2f,y:%.2f,z:%.2f\n", vec.x, vec.y, vec.z);
-
 
 	m_direct = mat.Left();
 
@@ -1387,6 +1381,13 @@ void Enemy::AttackRight::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<
 
 	spOwner->ChangeEnableRightAttack(true);
 	spOwner->ChangeEnableLeftAttack(true);
+
+
+	auto alert = std::make_shared<Alert>();
+	auto pos = CameraManager::Instance().GetLocalDirectionTo(spOwner->GetMatrix().Translation());
+	alert->CalcPos(pos);
+	alert->Init();
+	SceneManager::Instance().AddObject(alert);
 }
 
 void Enemy::AttackRight::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1401,10 +1402,6 @@ void Enemy::AttackRight::Update(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 
 	spOwner->UpdateRotate(vec);
 	auto& mat = spOwner->UpdateMatrix();
-
-	auto vect = mat.Right();
-	Application::Instance().m_log.AddLog("drect x:%.2f,y:%.2f,z:%.2f\n", vec.x, vec.y, vec.z);
-
 
 	m_direct = mat.Right();
 
@@ -1489,6 +1486,8 @@ void Enemy::Destoroy::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdG
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Destroyed"), 5.0f, false);
+
+	spOwner->m_isDestroy = true;
 }
 
 void Enemy::Destoroy::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)

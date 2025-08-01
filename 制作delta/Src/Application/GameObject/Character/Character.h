@@ -54,7 +54,7 @@ private:
 	// 衝突判定とそれに伴う座標の更新
 	void UpdateCollision()override;
 
-
+	void LockOn();
 
 	void ResetGravity() { m_gravity = 0.0f; }
 
