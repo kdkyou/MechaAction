@@ -34,18 +34,21 @@ public:
 
 
 		//水面表現3　定数バッファ作成
-		int WaterEnable = 0;
-		Math::Vector2 WaterUVOffset = { 0,0 }; //オフセット：補正値
-		float dimmy1 = 0.0f;
+		int				WaterEnable = 0;
+		Math::Vector2	WaterUVOffset = { 0,0 }; //オフセット：補正値
+		// 波打つ表現
+		int				WaveEnable = 0; //隙間埋めのため飛び飛び
 
-		Math::Matrix mR;	//90度回転
+		Math::Matrix	mR;	//90度回転
 
 		//リムライト有効化
-		int LimLightEnable = 0;
+		int				LimLightEnable = 0;
 		Math::Vector3	LimLightColor = { 1.0f,1.0f,1.0f };
 
 		float			LimLightPow = 1;
-		float dimmy[3] = { 0.0f,0.0f,0.0f };
+		// 波打つ表現
+		float			WaveTime = 0.0f;
+		float dimmy[2] = { 0.0f,0.0f};
 
 	};
 
@@ -90,6 +93,16 @@ public:
 		m_cb0_Obj.Work().LimLightColor = _color;
 		m_cb0_Obj.Work().LimLightPow = _pow;
 
+		m_dirtyCBObj = true;
+	}
+
+	void SetWaveEnable(bool enable) {
+		m_cb0_Obj.Work().WaveEnable = enable;
+		m_dirtyCBObj = true;
+	}
+
+	void SetWaveTime(float time) {
+		m_cb0_Obj.Work().WaveTime = time;
 		m_dirtyCBObj = true;
 	}
 

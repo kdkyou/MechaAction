@@ -93,13 +93,13 @@ void GameScene::Init()
 	_terrain->Init();
 	AddObject(_terrain);
 
-	auto ta = std::make_shared<AnimTerrain>();
+	/*auto ta = std::make_shared<AnimTerrain>();
 	ta->SetModel("Asset/Models/Stage/Door/Door.gltf");
 	pos = { 0.0f,0.0f,10.0f };
 	ta->SetPos(pos);
 	ta->Init();
 	AddObject(ta);
-	AddTerrain(ta);
+	AddTerrain(ta);*/
 
 	/*std::shared_ptr<Terrain> _serrain = std::make_shared<Terrain>();
 	_serrain->Init();
@@ -144,6 +144,7 @@ void GameScene::Init()
 		_shield->SetParent(_character);
 		_shield->SetAttachPath("LeftWeapon");
 		AddObject(_shield);
+		AddTerrain(_shield);
 
 
 		std::shared_ptr<Charge> charge;
@@ -200,9 +201,9 @@ void GameScene::Init()
 		rifle->SetAttackTrigger(WeaponBase::RightHand);
 		rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
-		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 1.8f, 5.0f, 0.0f, 1, 24, 80);
-		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 200, 400, 200, 40.0f, 0.95f);
-		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.7f, 0.4f, 0.8f), 1.7f, 30);
+		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 0.7f, 3.0f, 0.0f, 1, 24, 80);
+		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 400, 400, 200, 40.0f, 0.95f);
+		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.7f, 0.4f, 0.8f), 1.7f, 10);
 		AddObject(rifle);
 	}
 	{
@@ -212,9 +213,9 @@ void GameScene::Init()
 		rifle->SetAttackTrigger(WeaponBase::LeftHand);
 		rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
-		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.5f, 2.0f, 0.0f, 1, 36, 250);
-		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 50, 300, 200, 20.0f, 0.9f);
-		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 30);
+		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.2f, 2.0f, 0.0f, 1, 36, 250);
+		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 56, 300, 200, 20.0f, 0.9f);
+		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 20);
 		AddObject(rifle);
 	}
 
@@ -238,14 +239,41 @@ void GameScene::Init()
 	rifle->SetAttackTrigger(WeaponBase::RightHand);
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
-	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.15f, 5.0f, 0.0f, 1, 80, 300);
+	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.078f, 5.0f, 0.0f, 1, 80, 300);
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 400, 50, 10.0f, 0.9f);
-	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 30);
+	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
 	AddObject(rifle);
 
 
+	drone = std::make_shared<Drone>();
+	drone->SetThis(drone);
+	drone->SetModelWork("Asset/Models/4LegMT/5LegMT.gltf");
+	drone->Init();
+	drone->SetParam(100);
+	drone->SetPos({ -100.0f,0.0f,20.0f });
+	drone->SetTag(KdGameObject::tEnemy);
+	AddObject(drone);
+	AddEnemy(drone);
+
+	rifle = std::make_shared<Rifle>();
+	rifle->SetParent(drone);
+	rifle->SetAttachPath("RightWeapon");
+	rifle->SetAttackTrigger(WeaponBase::RightHand);
+	rifle->SetTag(KdGameObject::tEnemyAttack);
+	rifle->Init();
+	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
+	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
+	AddObject(rifle);
+
 	auto ui = std::make_shared<DrawUI>();
 	ui->Init();
+	ui->SetTexture("Asset/Textures/UI/BlueUI.png");
+	AddObject(ui);
+
+	ui = std::make_shared<DrawUI>();
+	ui->Init();
+	ui->SetTexture("Asset/Textures/UI/MainLock.png");
 	AddObject(ui);
 
 	//===================================================================

@@ -337,13 +337,41 @@ void KdStandardShader::DrawPolygon(const KdPolygon& rPolygon, const Math::Matrix
 		// ポリゴンの法線を光に向ける処理：どの方向に向いていても光の影響を正面からに受けるように変換
 		ConvertNormalsFor2D(_2DVertices, mWorld);
 
+		const auto& indices = rPolygon.GetIndices();
+
+		// インデックス対応描画
+		if (indices.empty() == false)
+		{
+			KdDirect3D::Instance().DrawIndexedVertices(
+				D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+				vertices, indices,
+				sizeof(KdPolygon::Vertex)
+			);
+		}
+		else {
 		// 2DObject用に変換した頂点配列を描画
 		KdDirect3D::Instance().DrawVertices(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, _2DVertices.size(), &_2DVertices[0], sizeof(KdPolygon::Vertex));
+		}
 	}
 	else
 	{
-		// 頂点配列を描画
-		KdDirect3D::Instance().DrawVertices(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, vertices.size(), &vertices[0], sizeof(KdPolygon::Vertex));
+		const auto& indices = rPolygon.GetIndices();
+
+		// インデックス対応描画
+		if (indices.empty() == false)
+		{
+			KdDirect3D::Instance().DrawIndexedVertices(
+				D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+				vertices, indices,
+				sizeof(KdPolygon::Vertex)
+			);
+		}
+		//しない場合
+		else
+		{
+			// 頂点配列を描画
+			KdDirect3D::Instance().DrawVertices(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, vertices.size(), &vertices[0], sizeof(KdPolygon::Vertex));
+		}
 	}
 
 	KdShaderManager::Instance().UndoSamplerState();

@@ -88,7 +88,7 @@ private:
 
 		UINT Serch(const Math::Vector3& nowVec, const Math::Vector3& targetVec);
 		void ChangeStateWithDistance(std::weak_ptr<Drone>& owner,float targetLength);
-		void ChangeStateObstacle(std::weak_ptr<Drone>& owner);
+		bool ChangeStateObstacle(std::weak_ptr<Drone>& owner);
 
 		void SetMoveDir(TargetSide side) { m_side = side; }
 

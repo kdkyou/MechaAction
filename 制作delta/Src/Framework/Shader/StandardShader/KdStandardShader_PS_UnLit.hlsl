@@ -21,6 +21,33 @@ float4 main(VSOutputNoLighting In) : SV_Target0
 
 	float4 baseColor = g_tex.Sample(g_ss, In.UV) * In.Color * g_BaseColor;
 	float3 outColor = baseColor.rgb;
+
+	//------------------------------------------
+	// 波表現
+	//------------------------------------------
+	if (g_waveEnable)
+	{
+		float2 center = float2(0.5, 0.5); // UVの中心
+
+		float2  dir = In.UV - center;
+
+		
+
+		float dist = length(dir);
+		float angle = atan2(dir.y, dir.x);
+
+		// 時間を加味した波の動き
+		float wave = sin(dist * 20.0f - g_waveTime * 10.0f); // 波紋の周期と速度
+
+		// 光の強さ (距離ベースで減衰)
+		float strength = saturate(1.0f - dist * 1.5f);
+		
+		// 波の境界を際立たせる
+		float intensity = smoothstep(0.4, 0.6, wave * strength);
+
+		outColor += float3(0.2f, 0.8f, 1.0f) * intensity;
+
+	}
 	
 	// Alphaテスト
 	if (baseColor.a < 0.05f)
@@ -69,6 +96,8 @@ float4 main(VSOutputNoLighting In) : SV_Target0
 			}
 		}
 	}
+
+	
 	
 	//------------------------------------------
 	// 高さフォグ

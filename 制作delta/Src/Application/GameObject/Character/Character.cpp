@@ -2446,7 +2446,7 @@ void Character::ActionHited::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction = spOwner->m_mWorld.Forward();
 
-	KdAudioManager::Instance().Play("Asset/Sounds/Noize-1.wav");
+	KdAudioManager::Instance().Play("Asset/Sounds/Noize1.wav");
 
 	m_animName = "Hited";
 

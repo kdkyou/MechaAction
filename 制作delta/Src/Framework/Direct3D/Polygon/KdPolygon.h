@@ -26,6 +26,11 @@ public:
 
 	// 描画時に使用する頂点リストの取得
 	const std::vector<Vertex>& GetVertices() const { return m_vertices; };
+	const std::vector<UINT>& GetIndices() const { return m_indices; }
+
+	void SetVertices(const std::vector<Vertex>& verts) { m_vertices = verts; }
+	void SetIndices(const std::vector<UINT>& indices) { m_indices = indices; }
+
 	// 判定用ポリゴン頂点座標のコピー
 	void GetPositions(std::vector<Math::Vector3>& res) const;
 
@@ -47,6 +52,7 @@ public:
 	bool Is2DObject() const { return m_2DObject; }
 	void Set2DObject(bool is2DObject) { m_2DObject = is2DObject; }
 
+
 protected:
 
 	// ポリゴンに描画するテクスチャ
@@ -54,6 +60,9 @@ protected:
 
 	// 頂点リスト
 	std::vector<Vertex>		m_vertices;
+
+	// インデックスリスト
+	std::vector<UINT> m_indices;
 
 	// 描画有効フラグ
 	bool m_enable = true;

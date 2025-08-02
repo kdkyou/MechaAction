@@ -81,7 +81,7 @@ protected:
 
 	bool SearchDetect(const Math::Vector3& hitPos, const Math::Matrix& myMat, float viewRange);
 
-	bool SeaarchObstacle(const Math::Vector3& hitPos, const Math::Vector3& vec,const float length);
+	bool SeaarchObstacle(const Math::Vector3& pos, const Math::Vector3& vec,const float length);
 
 	virtual void UpdateRotate(const Math::Vector3& srcMoveVec){}
 

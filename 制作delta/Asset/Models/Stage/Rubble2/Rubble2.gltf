@@ -8,7 +8,8 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				0,
+				1
 			]
 		}
 	],
@@ -16,6 +17,21 @@
 		{
 			"mesh":0,
 			"name":"\u7acb\u65b9\u4f53_cell"
+		},
+		{
+			"mesh":1,
+			"name":"COL",
+			"rotation":[
+				0,
+				0.3826834559440613,
+				0,
+				0.9238795638084412
+			],
+			"translation":[
+				0,
+				11.6899995803833,
+				0
+			]
 		}
 	],
 	"materials":[
@@ -49,6 +65,19 @@
 					},
 					"indices":3,
 					"material":0
+				}
+			]
+		},
+		{
+			"name":"\u5186\u9310.001",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":4,
+						"NORMAL":5,
+						"TEXCOORD_0":6
+					},
+					"indices":7
 				}
 			]
 		}
@@ -118,6 +147,40 @@
 			"componentType":5123,
 			"count":2058,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":4,
+			"componentType":5126,
+			"count":24,
+			"max":[
+				51.040000915527344,
+				11.369999885559082,
+				51.040000915527344
+			],
+			"min":[
+				-51.040000915527344,
+				-11.369999885559082,
+				-51.040000915527344
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":5,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":6,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":7,
+			"componentType":5123,
+			"count":36,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -144,6 +207,30 @@
 			"byteLength":4116,
 			"byteOffset":39552,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":43668,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":43956,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":192,
+			"byteOffset":44244,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":72,
+			"byteOffset":44436,
+			"target":34963
 		}
 	],
 	"samplers":[
@@ -154,7 +241,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":43668,
+			"byteLength":44508,
 			"uri":"Rubble2.bin"
 		}
 	]

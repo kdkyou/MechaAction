@@ -173,6 +173,7 @@
     <ClInclude Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Drone\Drone.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Enemy.h" />
+    <ClInclude Include="Src\Application\GameObject\Enemy\MT\MT.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\AnimTerrain.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\Terrain.h" />
@@ -199,6 +200,7 @@
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdPolygon.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdSquarePolygon.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdTrailPolygon.h" />
+    <ClInclude Include="Src\Framework\Direct3D\Polygon\ShieldPolygon.h" />
     <ClInclude Include="Src\Framework\Editor\EditorData.h" />
     <ClInclude Include="Src\Framework\Editor\ImGuiHelper.h" />
     <ClInclude Include="Src\Framework\Effekseer\KdEffekseerManager.h" />
@@ -265,6 +267,7 @@
     <ClCompile Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Drone\Drone.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Enemy\MT\MT.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\AnimTerrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\Terrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\Alert\Alert.cpp" />
@@ -293,6 +296,7 @@
     <ClCompile Include="Src\Framework\Direct3D\Polygon\KdPolygon.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\Polygon\KdSquarePolygon.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\Polygon\KdTrailPolygon.cpp" />
+    <ClCompile Include="Src\Framework\Direct3D\Polygon\ShieldPolygon.cpp" />
     <ClCompile Include="Src\Framework\Editor\EditorData.cpp" />
     <ClCompile Include="Src\Framework\Editor\ImGuiHelper.cpp" />
     <ClCompile Include="Src\Framework\Effekseer\KdEffekseerManager.cpp" />

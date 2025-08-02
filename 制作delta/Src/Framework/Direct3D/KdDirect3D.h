@@ -137,6 +137,8 @@ public:
 	// ・stride			… １頂点のバイトサイズ
 	void DrawVertices(D3D_PRIMITIVE_TOPOLOGY topology, int vertexCount, const void* pVertexStream, UINT stride);
 
+	void DrawIndexedVertices(D3D_PRIMITIVE_TOPOLOGY topology, const std::vector<KdPolygon::Vertex>& vertices, const std::vector<UINT>& indices, UINT stride);
+
 	//==============================================================
 
 	void SetBackBufferColor(const Math::Color& col) { m_backBafferClearColor = col; }

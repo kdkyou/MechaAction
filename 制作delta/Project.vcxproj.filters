@@ -166,6 +166,9 @@
     <Filter Include="Src\Application\GameObject\UI\DrawUI">
       <UniqueIdentifier>{9801215f-cae9-4766-9000-4ee1cacb84dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Enemy\MT">
+      <UniqueIdentifier>{bb6cf74b-db6c-42ca-ba65-3c4c6e9cc13b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -456,6 +459,12 @@
     <ClInclude Include="Src\Application\GameObject\UI\DrawUI\DrawUI.h">
       <Filter>Src\Application\GameObject\UI\DrawUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Enemy\MT\MT.h">
+      <Filter>Src\Application\GameObject\Enemy\MT</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\Direct3D\Polygon\ShieldPolygon.h">
+      <Filter>Src\Framework\Direct3D\Polygon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -712,6 +721,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\DrawUI\DrawUI.cpp">
       <Filter>Src\Application\GameObject\UI\DrawUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Enemy\MT\MT.cpp">
+      <Filter>Src\Application\GameObject\Enemy\MT</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\Direct3D\Polygon\ShieldPolygon.cpp">
+      <Filter>Src\Framework\Direct3D\Polygon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

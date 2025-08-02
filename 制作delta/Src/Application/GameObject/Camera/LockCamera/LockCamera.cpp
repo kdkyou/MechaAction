@@ -172,7 +172,7 @@ void LockCamera::Lock()
 
 	
 	//float boostRate = std::clamp((distance - 5.0f) / 10.0f, 0.0f, 1.0f);
-	float boostRate = std::clamp(deg / 45.0f, 0.0f, 1.0f);
+	float boostRate = std::clamp(deg / 20.0f, 0.0f, 1.0f);
 	float rotateSpeedDeg = baseSpeedDeg + (boostSpeedDeg - baseSpeedDeg) * boostRate;
 	
 	

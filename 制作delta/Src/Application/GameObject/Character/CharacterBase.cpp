@@ -53,6 +53,8 @@ void CharacterBase::Editor_ImGui()
 			SetModelWork(filepath);
 		}
 	}
+
+	ImGui::DragFloat((const char*)u8"HP", &m_hp);
 }
 
 void CharacterBase::Deserialize(const nlohmann::json& jsonObj)
@@ -222,7 +224,7 @@ bool CharacterBase::SearchDetect(const Math::Vector3& hitPos, const Math::Matrix
 	return false;
 }
 
-bool CharacterBase::SeaarchObstacle(const Math::Vector3& hitPos, const Math::Vector3& vec, const float length)
+bool CharacterBase::SeaarchObstacle(const Math::Vector3& pos, const Math::Vector3& vec, const float length)
 {
 	auto rPos = Math::Vector3::Zero;
 
@@ -230,7 +232,7 @@ bool CharacterBase::SeaarchObstacle(const Math::Vector3& hitPos, const Math::Vec
 	vTarget.Normalize();
 
 
-	auto  flg =  RayCast(hitPos, vTarget, length, KdCollider::TypeGround, rPos);
+	auto  flg =  RayCast(pos, vTarget, length, KdCollider::TypeGround, rPos);
 
 	if (flg)
 	{

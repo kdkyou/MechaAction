@@ -15,6 +15,43 @@ void Shield::SetModel(const std::string& path)
 	}
 }
 
+void Shield::CreateShield()
+{
+	if (!m_spModelWork) { return; }
+
+	std::vector<Math::Vector3> positions;
+	std::vector<Math::Vector2> uvs;
+
+	for (int i = 0; i < 5; i++)
+	{
+		const auto& pNode = m_spModelWork->FindWorkNode(m_pointName[i]);
+		if (pNode)
+		{
+			positions.push_back(pNode->m_worldTransform.Translation());
+
+			if (i < 4)
+			{
+				uvs.push_back(Math::Vector2(i % 2 , i / 2));
+			}
+			else {
+				uvs.push_back(Math::Vector2(0.5f, 0.5f));
+				
+			}
+		}
+
+	}
+
+	if (positions.size() == 5)
+	{
+		m_spShieldPoly->SetVertices(positions, uvs);
+	}
+}
+
+void Shield::ClearShield()
+{
+	m_spShieldPoly->ClearVertices();
+}
+
 void Shield::Init()
 {
 	
@@ -22,6 +59,14 @@ void Shield::Init()
 	SetPos(pos);
 
 	m_name = "Shield";
+
+	m_spShieldPoly = std::make_shared<ShieldPolygon>();
+	m_spShieldPoly->SetMaterial("Asset/Textures/GameObject/wave.png");
+
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape("Shield", m_spShieldPoly, KdCollider::TypeGround);
+	m_pCollider->SetEnable("Shield",false);
+
 }
 
 void Shield::Update()
@@ -50,7 +95,9 @@ void Shield::Update()
 			if (m_animChanged == false)
 			{
 
-				m_animChanged = true; m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Open"), 30.0f, false);
+				m_animChanged = true; 
+				m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Open"), 30.0f, false);
+				m_pCollider->SetEnable("Shield",true);
 			}
 		}
 		else
@@ -58,18 +105,24 @@ void Shield::Update()
 			if (m_animChanged == true)
 			{
 
-				m_animChanged = false; m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Close"), 30.0f, false);
+				m_animChanged = false; 
+				m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Close"), 30.0f, false);
+				m_pCollider->SetEnable("Shield",false);
 			}
 
 		}
+	}
 
+	if (m_animChanged == true)
+	{
+		CreateShield();
+	}
+	else
+	{
+		ClearShield();
 	}
 
 	m_mWorld = m_mParentAttach * _parentMat;
-
-
-	WeaponBase::Update();
-
 
 }
 
@@ -78,9 +131,14 @@ void Shield::PostUpdate()
 	m_spAnimator->AdvanceTime(m_spModelWork->WorkNodes(), 30.0f);
 }
 
-void Shield::DrawBright()
+void Shield::DrawUnLit()
 {
-	Math::Color colr = { 1,1,1 };
-
-
+	if (m_spShieldPoly == nullptr) { return; }
+	KdShaderManager::Instance().m_StandardShader.SetWaveEnable(true);
+	float delta = KdFPSController::GetInstance().GetDeltaTime();
+	KdShaderManager::Instance().m_StandardShader.SetWaveTime(delta);
+	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add); // 加算で光らせる
+	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spShieldPoly,m_mWorld);
+	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha); // 元に戻す
+	KdShaderManager::Instance().m_StandardShader.SetWaveEnable(false);
 }

@@ -134,8 +134,12 @@ void Rifle::Shot()
 
 void Rifle::OnTrigger()
 {
-	m_trigger = true;
-	m_durationFire = m_fireRate;
+	if (m_trigger == false)
+	{
+
+		m_trigger = true;
+		m_durationFire = m_fireRate;
+	}
 }
 
 

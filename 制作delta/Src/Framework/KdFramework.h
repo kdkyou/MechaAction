@@ -38,6 +38,8 @@
 #include "Direct3D/Polygon/KdSquarePolygon.h"
 // 軌跡ポリゴン
 #include "Direct3D/Polygon/KdTrailPolygon.h"
+// シールドポリゴン
+#include "Direct3D/Polygon/ShieldPolygon.h"
 
 // Direct3D
 #include "Direct3D/KdDirect3D.h"

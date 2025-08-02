@@ -2,7 +2,7 @@
 
 void DrawUI::Init()
 {
-	m_spTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/UI/UI.png");
+
 }
 
 void DrawUI::DrawSprite()

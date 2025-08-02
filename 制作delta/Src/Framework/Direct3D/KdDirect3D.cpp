@@ -561,6 +561,55 @@ void KdDirect3D::DrawVertices(D3D_PRIMITIVE_TOPOLOGY topology, int vertexCount, 
 	m_pDeviceContext->Draw(vertexCount, 0);
 }
 
+void KdDirect3D::DrawIndexedVertices(D3D_PRIMITIVE_TOPOLOGY topology, const std::vector<KdPolygon::Vertex>& vertices, const std::vector<UINT>& indices, UINT stride)
+{
+	assert(m_pDeviceContext && "デバイスコンテキストが見つかりません");
+
+	if (vertices.empty() || indices.empty()) { return; }
+
+	ID3D11DeviceContext* ctx = WorkDevContext();
+
+	// 頂点バッファ
+	ID3D11Buffer* vertexBuffer = nullptr;
+	D3D11_BUFFER_DESC vbDesc = {};
+
+	vbDesc.Usage = D3D11_USAGE_DEFAULT;
+	vbDesc.ByteWidth = stride * (UINT)vertices.size();
+	vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA vbData = {};
+	vbData.pSysMem = vertices.data();
+
+	m_pDevice->CreateBuffer(&vbDesc, &vbData, &vertexBuffer);
+
+	// プリミティブトポロジーをセット
+	m_pDeviceContext->IASetPrimitiveTopology(topology);
+
+	// インデックスバッファ
+	ID3D11Buffer* indexBuffer = nullptr;
+	D3D11_BUFFER_DESC ibDesc = {};
+	ibDesc.Usage = D3D11_USAGE_DEFAULT;
+	ibDesc.ByteWidth = sizeof(UINT) * (UINT)indices.size();
+	ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA ibData = {};
+	ibData.pSysMem = indices.data();
+
+	m_pDevice->CreateBuffer(&ibDesc, &ibData, &indexBuffer);
+
+	// セット
+	UINT offset = 0;
+	ctx->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	ctx->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	ctx->IASetPrimitiveTopology(topology);
+
+	ctx->DrawIndexed((UINT)indices.size(), 0, 0);
+
+	KdSafeRelease(vertexBuffer);
+	KdSafeRelease(indexBuffer);
+
+}
+
 
 void KdDirect3D::ClearBackBuffer()
 {

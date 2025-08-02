@@ -4,6 +4,9 @@
 
 #include "../../../main.h"
 
+#include "../../UI/Alert/Alert.h"
+#include "../../Camera/CameraManager.h"
+
 void Drone::Init()
 {
 	m_limEnable = true;
@@ -327,11 +330,11 @@ void Drone::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Drone>& owner
 	}
 }
 
-void Drone::ActionStateBase::ChangeStateObstacle(std::weak_ptr<Drone>& owner)
+bool Drone::ActionStateBase::ChangeStateObstacle(std::weak_ptr<Drone>& owner)
 {
 	auto spOwner = owner.lock();
 
-	if (spOwner == nullptr) { return; }
+	if (spOwner == nullptr) { return false; }
 
 	bool flg = spOwner->Search(false);
 
@@ -345,20 +348,21 @@ void Drone::ActionStateBase::ChangeStateObstacle(std::weak_ptr<Drone>& owner)
 
 		float overRap = spOwner->m_overRap;
 
-		if (spOwner->SeaarchObstacle(target->GetPos(), vec.Left, overRap))
+		if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Left, overRap))
 		{
 			spOwner->ChangeActionState(std::make_shared<MoveMent>());
 			spOwner->m_nowAction->SetMoveDir(Left);
-			return;
+			return true;
 		}
-		else if (spOwner->SeaarchObstacle(target->GetPos(), vec.Right, overRap))
+		else if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Right, overRap))
 		{
 			spOwner->ChangeActionState(std::make_shared<MoveMent>());
 			spOwner->m_nowAction->SetMoveDir(Right);
-			return;
+			return true;
 		}
 	}
 
+	return false;
 }
 
 
@@ -477,9 +481,17 @@ void Drone::Attack::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGam
 
 	m_durationState = 0.36f;
 
-	spOwner->ChangeEnableRightAttack(true);
+	bool flg = ChangeStateObstacle(owner);
+	if (!flg)
+	{
+		spOwner->ChangeEnableRightAttack(true);
 
-	ChangeStateObstacle(owner);
+		auto alert = std::make_shared<Alert>();
+		auto pos = CameraManager::Instance().GetLocalDirectionTo(spOwner->GetMatrix().Translation());
+		alert->CalcPos(pos);
+		alert->Init();
+		SceneManager::Instance().AddObject(alert);
+	}
 }
 
 void Drone::Attack::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
