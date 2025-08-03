@@ -13,6 +13,9 @@ void Shield::SetModel(const std::string& path)
 		m_spAnimator = std::make_shared<KdAnimator>();
 		m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Close"), 10.0f,false);
 	}
+
+	//auto tex = KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/wave_nml.png");
+	//KdShaderManager::Instance().m_StandardShader.SetWaterNormalTexture(*tex);
 }
 
 void Shield::CreateShield()
@@ -61,7 +64,11 @@ void Shield::Init()
 	m_name = "Shield";
 
 	m_spShieldPoly = std::make_shared<ShieldPolygon>();
-	m_spShieldPoly->SetMaterial("Asset/Textures/GameObject/wave.png");
+	auto material = std::make_shared<KdMaterial>();
+	auto baseTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/wave.png");
+	auto nmlTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/wave_nml.png");
+	material->SetTextures(baseTex, nullptr, nullptr, nmlTex);
+	m_spShieldPoly->SetMaterial(material);
 
 	m_pCollider = std::make_unique<KdCollider>();
 	m_pCollider->RegisterCollisionShape("Shield", m_spShieldPoly, KdCollider::TypeGround);
@@ -137,6 +144,8 @@ void Shield::DrawUnLit()
 	KdShaderManager::Instance().m_StandardShader.SetWaveEnable(true);
 	float delta = KdFPSController::GetInstance().GetDeltaTime();
 	KdShaderManager::Instance().m_StandardShader.SetWaveTime(delta);
+
+	
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add); // 加算で光らせる
 	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spShieldPoly,m_mWorld);
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha); // 元に戻す

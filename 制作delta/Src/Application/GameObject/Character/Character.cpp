@@ -923,7 +923,7 @@ void Character::ActionStandUp::Update(std::weak_ptr<Character>& owner)
 
 	if (m_isMove && !m_isBoost)
 	{
-		if (spOwner->GetPrvAction().lock()->GetName() == "BoostEnd")
+		if (spOwner->m_prvAction->GetName() == "BoostEnd")
 		{
 			spOwner->ChangeActionState(std::make_shared<ActionBoostDush>());
 			return;

@@ -121,6 +121,11 @@ const std::weak_ptr<CharacterBase>& CameraManager::GetLockTarget(UINT num)
 	return m_wpMultiLocks[num];
 }
 
+void CameraManager::AnimationChange(std::shared_ptr<CameraBase> next)
+{
+
+}
+
 const Math::Vector3& CameraManager::ToCameraVec( const Math::Vector3 nowPos)
 {
 	Math::Vector3 toVec = {};

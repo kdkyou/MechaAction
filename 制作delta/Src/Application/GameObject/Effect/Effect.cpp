@@ -2,7 +2,7 @@
 
 void Effect::Init()
 {
-
+	m_name = "Effect";
 }
 
 void Effect::SetTexture(const std::string& path)

@@ -98,7 +98,7 @@ private:
 
 	protected:
 
-
+		void CreateEffect(std::weak_ptr<Enemy>& owner,const std::string& effectName, const std::string& nodeName);
 		void EffectUpdate(std::weak_ptr<Enemy>& owner);
 		void EffectExit();
 

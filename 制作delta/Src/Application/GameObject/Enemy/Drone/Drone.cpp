@@ -11,7 +11,7 @@ void Drone::Init()
 {
 	m_limEnable = true;
 	m_limColor = { 0.12f,0.1f,0.08f };
-	m_limPow = 1.0f;
+	m_limPow = 0.3f;
 						
 	m_correction = { 0.0f,1.0f,0.0f };
 
@@ -325,6 +325,9 @@ void Drone::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Drone>& owner
 		return;
 	}
 	else {
+
+		//spOwner->SeaarchObstacle();
+
 		spOwner->ChangeActionState(std::make_shared<Backed>());
 		return;
 	}

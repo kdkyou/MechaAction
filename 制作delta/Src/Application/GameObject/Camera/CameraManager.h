@@ -56,7 +56,7 @@ public:
 
 	bool IsEnableChanged() { return m_isEnableChanged; }
 
-	void AnimationChange(std::shared_ptr<CameraBase> next) {}
+	void AnimationChange(std::shared_ptr<CameraBase> next);
 
 	const std::weak_ptr<CameraBase> GetCurrentCamera() { return m_currentCamera; }
 

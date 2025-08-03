@@ -8,6 +8,22 @@ public:
 
 	void Init()override;
 
+	void Editor_ImGui()override;
+
+	virtual void Deserialize(const nlohmann::json& jsonObj)
+	{
+		KdGameObject::Deserialize(jsonObj);
+
+
+	}
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const
+	{
+		KdGameObject::Serialize(outJson);
+	}
+	
+
 	void DrawSprite()override;
 
 private:

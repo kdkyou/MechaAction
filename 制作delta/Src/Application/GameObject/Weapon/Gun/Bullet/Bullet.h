@@ -52,7 +52,7 @@ private:
 
 	//追尾用
 	float m_durationChase = 0.0f;
-	int   m_rotateSpeedDeg = 90.0f;
+	float   m_rotateSpeedDeg = 90.0f;
 	float m_maxLockAngle = 150.0f;
 	float m_durationLost = 0.0f;
 	float m_lockLostTime = 1.0f;

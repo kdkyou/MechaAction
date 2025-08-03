@@ -46,7 +46,7 @@ public:
 	void SetHitEnable(bool hit) { m_isHit = hit; }
 	const Math::Vector3& GetHitDir()const { return m_hitDir; }
 
-	void SetParam(const int hp) { m_hp = hp; }
+	void SetParam(const float hp) { m_hp = hp; }
 
 	virtual void SetModelWork(const std::string& path);
 

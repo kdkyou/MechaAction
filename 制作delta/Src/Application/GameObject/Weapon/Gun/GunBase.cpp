@@ -11,6 +11,11 @@ void GunBase::SetTarget(const std::weak_ptr<CharacterBase>& target)
 	m_wpTarget = target;
 }
 
+void GunBase::Init()
+{
+	m_name = "Gun";
+}
+
 void GunBase::PostUpdate()
 {
 	if (m_spAnimator)
@@ -132,5 +137,7 @@ bool GunBase::Flash(const Math::Matrix& occurMat)
 	polygon->SetParam(m_muzzleFlashPath, 0.05f, PolygonEffect::eBright, false,occurMat);
 
 	SceneManager::Instance().AddObject(polygon);
+
+	return true;
 
 }

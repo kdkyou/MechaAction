@@ -50,7 +50,7 @@ void Enemy::Init()
 
 	m_hp = 10320.0f;
 
-	m_nockBackDamage = 1600.0f;
+	m_nockBackDamage = 800.0f;
 }
 
 void Enemy::Update()
@@ -317,6 +317,20 @@ void Enemy::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 	m_nowAction = nextAction;
 	m_nowAction->Enter(m_wpThis, spTarget);
 
+}
+
+void Enemy::ActionStateBase::CreateEffect(std::weak_ptr<Enemy>& owner,const std::string& effectName, const std::string& nodeName)
+{
+	auto spOwner = owner.lock();
+	KdModelWork::Node* pNode = spOwner->m_spModelWork->FindWorkNode(nodeName);
+	if (pNode)
+	{
+		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+		effect->name = effectName;
+		effect->pNodeMat = pNode->m_worldTransform;
+		effect->wpEffect = KdEffekseerManager::GetInstance().Play(effectName, pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(),1.0f,3.0f);
+		m_spEffects.push_back(effect);
+	}
 }
 
 void Enemy::ActionStateBase::EffectUpdate(std::weak_ptr<Enemy>& owner)
@@ -771,15 +785,7 @@ void Enemy::Boost::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGam
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Boost"), 60.0f, false);
 
 
-	KdModelWork::Node* pNode = spOwner->m_spModelWork->FindWorkNode("CBP");
-	if (pNode)
-	{
-		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
-		effect->name = "ThrusterE.efkefc";
-		effect->pNodeMat = pNode->m_worldTransform;
-		effect->wpEffect = KdEffekseerManager::GetInstance().Play("ThrusterE.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
-		m_spEffects.push_back(effect);
-	}
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 
 	m_type = tBoost;
 }
@@ -790,8 +796,7 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
-	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
-
+	
 	if (spOwner->m_spAnimator->IsAnimationEnd() == true)
 	{
 		spOwner->ChangeActionState(std::make_shared<BoostStop>());
@@ -887,6 +892,8 @@ void Enemy::MoveForward::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr
 	m_speed = 90.0f;
 
 	m_type = tMoveForward;
+
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 }
 
 void Enemy::MoveForward::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -920,6 +927,7 @@ void Enemy::MoveForward::Update(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 		return;
 	}
 
+	EffectUpdate(owner);
 }
 
 void Enemy::MoveForward::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -931,6 +939,8 @@ void Enemy::MoveForward::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::wea
 void Enemy::MoveForward::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
+
+	EffectExit();
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -946,6 +956,8 @@ void Enemy::MoveBack::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<Kd
 	m_speed = 70.0f;
 
 	m_type = tMoveBack;
+
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 
 }
 
@@ -978,6 +990,8 @@ void Enemy::MoveBack::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<K
 		return;
 	}
 
+	EffectUpdate(owner);
+
 }
 
 void Enemy::MoveBack::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -988,7 +1002,7 @@ void Enemy::MoveBack::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_p
 
 void Enemy::MoveBack::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
 {
-
+	EffectExit();
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -1004,6 +1018,8 @@ void Enemy::MoveRightRotate::Enter(std::weak_ptr<Enemy>& owner, const  std::weak
 	m_durationState = 1.0f;
 
 	m_type = tRotateRight;
+
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 }
 
 void Enemy::MoveRightRotate::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1032,6 +1048,8 @@ void Enemy::MoveRightRotate::Update(std::weak_ptr<Enemy>& owner, const  std::wea
 		return;
 	}
 
+	EffectUpdate(owner);
+
 }
 void Enemy::MoveRightRotate::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
 {
@@ -1041,6 +1059,7 @@ void Enemy::MoveRightRotate::PostUpdate(std::weak_ptr<Enemy>& owner, const  std:
 
 void Enemy::MoveRightRotate::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
 {
+	EffectExit();
 
 }
 
@@ -1057,6 +1076,9 @@ void Enemy::MoveLeftRotate::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_
 	m_durationState = 1.0f;
 
 	m_type = tRotateLeft;
+
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
+
 }
 
 void Enemy::MoveLeftRotate::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1087,6 +1109,7 @@ void Enemy::MoveLeftRotate::Update(std::weak_ptr<Enemy>& owner, const  std::weak
 		return;
 	}
 
+	EffectUpdate(owner);
 }
 
 void Enemy::MoveLeftRotate::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1097,7 +1120,7 @@ void Enemy::MoveLeftRotate::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::
 
 void Enemy::MoveLeftRotate::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
 {
-
+	EffectExit();
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -1186,7 +1209,11 @@ void Enemy::AttackForWard::Enter(std::weak_ptr<Enemy>& owner, const std::weak_pt
 	alert->CalcPos(pos);
 	alert->Init();
 	SceneManager::Instance().AddObject(alert);
+
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
+
 }
+
 
 void Enemy::AttackForWard::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
 {
@@ -1216,6 +1243,8 @@ void Enemy::AttackForWard::Update(std::weak_ptr<Enemy>& owner, const  std::weak_
 		ChangeStateWithDistance(owner, spObj);
 		return;
 	}
+
+	EffectUpdate(owner);
 }
 
 void Enemy::AttackForWard::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1230,6 +1259,8 @@ void Enemy::AttackForWard::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 
 	spOwner->ChangeEnableRightAttack(false);
 	spOwner->ChangeEnableLeftAttack(false);
+
+	EffectExit();
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -1255,6 +1286,9 @@ void Enemy::AttackBack::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<K
 	alert->CalcPos(pos);
 	alert->Init();
 	SceneManager::Instance().AddObject(alert);
+
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
+
 
 }
 
@@ -1285,6 +1319,8 @@ void Enemy::AttackBack::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr
 		ChangeStateWithDistance(owner, spObj);
 		return;
 	}
+
+	EffectUpdate(owner);
 }
 
 void Enemy::AttackBack::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1299,6 +1335,8 @@ void Enemy::AttackBack::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<K
 
 	spOwner->ChangeEnableRightAttack(false);
 	spOwner->ChangeEnableLeftAttack(false);
+
+	EffectExit();
 
 }
 
@@ -1322,6 +1360,9 @@ void Enemy::AttackLeft::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<K
 	alert->CalcPos(pos);
 	alert->Init();
 	SceneManager::Instance().AddObject(alert);
+
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
+
 }
 
 void Enemy::AttackLeft::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1350,6 +1391,7 @@ void Enemy::AttackLeft::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr
 		return;
 	}
 
+	EffectUpdate(owner);
 }
 
 void Enemy::AttackLeft::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1364,6 +1406,8 @@ void Enemy::AttackLeft::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<K
 
 	spOwner->ChangeEnableRightAttack(false);
 	spOwner->ChangeEnableLeftAttack(false);
+
+	EffectExit();
 
 }
 
@@ -1388,6 +1432,9 @@ void Enemy::AttackRight::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<
 	alert->CalcPos(pos);
 	alert->Init();
 	SceneManager::Instance().AddObject(alert);
+
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
+
 }
 
 void Enemy::AttackRight::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1425,6 +1472,8 @@ void Enemy::AttackRight::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::wea
 void Enemy::AttackRight::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
+
+	EffectExit();
 
 	spOwner->ChangeEnableRightAttack(false);
 	spOwner->ChangeEnableLeftAttack(false);

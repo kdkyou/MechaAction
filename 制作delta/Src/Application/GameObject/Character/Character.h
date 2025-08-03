@@ -421,7 +421,6 @@ protected:
 
 
 	void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction);
-	const std::weak_ptr<ActionStateBase>& GetPrvAction() { return m_prvAction; }
 	std::shared_ptr<ActionStateBase>		m_nowAction = nullptr;
 	std::shared_ptr<ActionStateBase>		m_prvAction = nullptr;
 };

@@ -143,6 +143,7 @@ void GameScene::Init()
 		_shield->SetModel("Asset/Models/Weapon/Shield/Shield.gltf");
 		_shield->SetParent(_character);
 		_shield->SetAttachPath("LeftWeapon");
+		_sowrd->SetTag(KdGameObject::tPlayerAttack);
 		AddObject(_shield);
 		AddTerrain(_shield);
 
@@ -259,6 +260,17 @@ void GameScene::Init()
 	rifle->SetParent(drone);
 	rifle->SetAttachPath("RightWeapon");
 	rifle->SetAttackTrigger(WeaponBase::RightHand);
+	rifle->SetTag(KdGameObject::tEnemyAttack);
+	rifle->Init();
+	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
+	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
+	AddObject(rifle);
+
+	rifle = std::make_shared<Rifle>();
+	rifle->SetParent(drone);
+	rifle->SetAttachPath("LeftWeapon");
+	rifle->SetAttackTrigger(WeaponBase::LeftHand);
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);

@@ -32,4 +32,6 @@ protected:
 
 	Math::Rectangle			   m_rect;
 
+	std::string				   m_fileName;
+
 };

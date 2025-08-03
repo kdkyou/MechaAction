@@ -150,6 +150,7 @@ bool CharacterBase::RayCast(const Math::Vector3& startPos, const Math::Vector3& 
 		// ②HIT判定対象オブジェクトに総当たり
 		for (auto obj : SceneManager::Instance().GetTerrainList())
 		{
+			if(obj->GetTag() != tPlayerAttack)
 			{
 				obj->Intersects(rayInfo, &retRayList);
 			}
@@ -241,9 +242,6 @@ bool CharacterBase::SeaarchObstacle(const Math::Vector3& pos, const Math::Vector
 	else {
 		return true;
 	}
-
-
-	return true;
 }
 
 void CharacterBase::BoostRotate(const Math::Vector3& vec)

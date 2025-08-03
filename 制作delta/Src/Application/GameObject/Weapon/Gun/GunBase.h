@@ -5,6 +5,7 @@
 class GunBase :public WeaponBase
 {
 public:
+	void Init()override;
 
 	void PostUpdate()override;
 
@@ -79,7 +80,7 @@ protected:
 	UINT					 m_bulletTrailLength = 10;
 
 	// 追尾式の情報
-	int m_bulletRotateDeg = 0.0f;
+	float m_bulletRotateDeg = 0.0f;
 	float m_bulletLockAngle = 0.0f;
 	float m_bulletLostTime = 0.0f;
 	float m_bulletTrackingDistance = 0.0f;

@@ -8,6 +8,8 @@
 void Missile::Init()
 {
 	m_durationFire = 0.0f;
+
+	m_name = "Missile";
 }
 
 void Missile::Update()
