@@ -29,7 +29,6 @@ public:
 	void SetBulletType(const moveType _type,const std::weak_ptr<CharacterBase>& _chasigTarget);
 	void SetChasingData(int rotateSpeedDeg,float lockAngle,float lostTime,float trackingDistance );
 
-
 	void OnHit()override;
 
 
@@ -40,6 +39,9 @@ private:
 	void MoveSight();
 	void MoveChasing();
 
+	void Intersects();
+
+	bool Ray(const Math::Vector3& pos, const Math::Vector3& vec, float length);
 
 	float m_aliveTime = 0;
 

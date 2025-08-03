@@ -10,14 +10,14 @@
 void MT::Init()
 {
 	m_limEnable = true;
-	m_limColor = { 0.12f,0.1f,0.08f };
+	m_limColor = { 0.52f,0.5f,0.58f };
 	m_limPow = 1.0f;
 
-	m_correction = { 0.0f,1.0f,0.0f };
+	m_correction = { 0.0f,5.0f,0.0f };
 
-	m_correctionMat = Math::Matrix::CreateTranslation({ 0.0f,1.0f,0.0f });
+	m_correctionMat = Math::Matrix::CreateTranslation(m_correction);
 
-	m_boxExtents = { 4.0f,3.0f,3.0f };
+	m_boxExtents = { 4.0f,5.0f,3.0f };
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -31,11 +31,9 @@ void MT::Init()
 
 	m_name = "MT";
 
-	m_hp = 200;
+	m_viewAngle = 140.0f;
 
-	m_viewAngle = 45.0f;
-
-	m_nockBackDamage = 500;
+	m_nockBackDamage = 800;
 }
 
 void MT::Update()
@@ -46,7 +44,10 @@ void MT::Update()
 	{
 		std::shared_ptr<KdGameObject> spTarget = m_wpCharacterTarget.lock();
 
-
+		if (spTarget == nullptr)
+		{
+			spTarget = m_wpTarget.lock();
+		}
 
 		std::shared_ptr<MT> spThis = m_wpThis.lock();
 
@@ -63,7 +64,7 @@ void MT::Update()
 
 	UpdateCollision();
 
-	
+
 }
 
 void MT::PostUpdate()
@@ -71,6 +72,11 @@ void MT::PostUpdate()
 	if (m_nowAction)
 	{
 		std::shared_ptr<KdGameObject> spTarget = m_wpCharacterTarget.lock();
+
+		if (spTarget == nullptr)
+		{
+			spTarget = m_wpTarget.lock();
+		}
 
 		std::shared_ptr<MT> spThis = m_wpThis.lock();
 
@@ -279,8 +285,6 @@ void MT::Editor_ImGui()
 {
 	CharacterBase::Editor_ImGui();
 
-	auto mat = GetCorrectionMatrix() * GetMatrix();
-	ImGui::Text("CorrectionMat Translation: %.3f %.3f %.3f", mat._41, mat._42, mat._43);
 }
 
 void MT::Deserialize(const nlohmann::json& jsonObj)
@@ -399,17 +403,18 @@ bool MT::ActionStateBase::ChangeStateObstacle(std::weak_ptr<MT>& owner)
 
 	if (spOwner == nullptr) { return false; }
 
-	bool flg = spOwner->Search(false);
+	auto target = spOwner->GetCharacterTarget().lock();
 
-	if (!flg)
+	if (target == nullptr) { return false; }
+
+	auto vec = target->GetPos() - spOwner->GetPos();
+	auto overRap = vec.Length();
+	vec.Normalize();
+
+	bool isClear = spOwner->SeaarchObstacle(spOwner->GetPos(), vec, overRap);
+
+	if (!isClear)
 	{
-
-		auto target = spOwner->GetCharacterTarget().lock();
-
-		auto vec = target->GetPos() - spOwner->GetPos();
-		vec.Normalize();
-
-		float overRap = spOwner->m_overRap;
 
 		if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Left, overRap))
 		{
@@ -423,16 +428,18 @@ bool MT::ActionStateBase::ChangeStateObstacle(std::weak_ptr<MT>& owner)
 			spOwner->m_nowAction->SetMoveDir(Right);
 			return true;
 		}
+
 	}
 
 	return false;
+
 }
 
 
 void MT::StandUp::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
-	m_durationState = 1.0f;
+	m_durationState = 5.0f;
 
 	m_speed = 0.0f;
 
@@ -448,34 +455,40 @@ void MT::StandUp::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObj
 
 	if (spOwner == nullptr) { return; }
 
-	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
+	// 範囲内にプレイヤーがいるか
+	if (!spOwner->SearchPlayer()) { return; }
+	else {
+		m_anyFlg = true;
+	}
 
-	if (spOwner->SearchPlayer())
+	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
-		if (m_durationState < 0)
-		{
-			auto target = obj.lock();
+		auto target = obj.lock();
 
-			if (target == nullptr) { return; }
+		if (target == nullptr) { return; }
 
-			auto dist = target->GetPos() - spOwner->GetPos();
-			float len = dist.Length();
+		auto dist = target->GetPos() - spOwner->GetPos();
+		float len = dist.Length();
 
-			ChangeStateWithDistance(owner, len);
-		}
-
+		spOwner->ChangeActionState(std::make_shared<Idle>());
+		return;
 	}
 }
 
 void MT::StandUp::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+
 	auto spOwner = owner.lock();
 	auto animator = spOwner->m_spAnimator;
 	// おそらくエフェクト関連
+
 	if (animator)
 	{
-		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f);
-		
+		if (m_anyFlg)
+		{
+			animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f);
+		}
+
 	}
 }
 
@@ -500,7 +513,7 @@ void MT::Idle::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
-	if (spOwner->SearchPlayer())
+	//if (spOwner->SearchPlayer())
 	{
 		if (m_durationState < 0)
 		{
@@ -525,7 +538,7 @@ void MT::Idle::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameOb
 	if (animator)
 	{
 		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f);
-		
+
 	}
 }
 

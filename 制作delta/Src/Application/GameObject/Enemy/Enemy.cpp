@@ -44,7 +44,7 @@ void Enemy::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
 
-	m_dist = { 10.0f,300.0f };
+	m_dist = { 50.0f,600.0f };
 
 	m_clampSize = 20.0f;
 
@@ -193,6 +193,8 @@ void Enemy::UpdateCollision()
 			if (obj->GetTag() == tPlayerAttack)
 			{
 				obj->OnHit();
+				m_hitDir = GetPos() - obj->GetMatrix().Translation();
+				m_hitDir.Normalize();
 				HitDamage(obj->GetParameter());
 				m_parameter = obj->GetParameter();
 				OnHit();
@@ -1496,7 +1498,7 @@ void Enemy::Hited::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGam
 		m_direct = spOwner->GetMatrix().Forward();
 	}
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Hited"), 10.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Hited"), 20.0f, false);
 }
 
 void Enemy::Hited::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1518,7 +1520,7 @@ void Enemy::Hited::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 void Enemy::Hited::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f);
 }
 
 void Enemy::Hited::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)

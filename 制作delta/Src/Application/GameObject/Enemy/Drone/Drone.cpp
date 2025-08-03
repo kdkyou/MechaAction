@@ -33,7 +33,7 @@ void Drone::Init()
 
 	m_hp = 200;
 
-	m_viewAngle = 45.0f;
+	m_viewAngle = 60.0f;
 }
 
 void Drone::Update()
@@ -44,7 +44,10 @@ void Drone::Update()
 	{
 		std::shared_ptr<KdGameObject> spTarget = m_wpCharacterTarget.lock();
 
-		
+		if (!spTarget)
+		{
+			spTarget = m_wpTarget.lock();
+		}
 
 		std::shared_ptr<Drone> spThis = m_wpThis.lock();
 
@@ -68,6 +71,11 @@ void Drone::PostUpdate()
 	if (m_nowAction)
 	{
 		std::shared_ptr<KdGameObject> spTarget = m_wpCharacterTarget.lock();
+
+		if (!spTarget)
+		{
+			spTarget = m_wpTarget.lock();
+		}
 
 		std::shared_ptr<Drone> spThis = m_wpThis.lock();
 
@@ -242,7 +250,24 @@ bool Drone::Search(bool areaOnly)
 
 		if (flg)
 		{
+			if (obj)
+			{
+				auto toEnemy = m_mWorld.Translation() - obj->GetPos();
+				toEnemy.Normalize();
 
+				auto playerView = obj->GetMatrix().Backward();
+				playerView.Normalize();
+
+				float dot = playerView.Dot(toEnemy);
+				float angle = DirectX::XMConvertToDegrees(acos(dot));
+
+				if (angle < 100.0f) // プレイヤーが敵をある程度向いている
+				{
+					m_wpTarget = obj;
+					return true;
+				}
+			}
+			
 			Math::Vector3 vec = hitPos - m_mWorld.Translation();
 			vec.Normalize();
 
@@ -341,29 +366,30 @@ bool Drone::ActionStateBase::ChangeStateObstacle(std::weak_ptr<Drone>& owner)
 
 	bool flg = spOwner->Search(false);
 
-	if (!flg)
+	if (flg)
 	{
+		return false;
+	}
 
 		auto target = spOwner->GetCharacterTarget().lock();
 
 		auto vec = target->GetPos() - spOwner->GetPos();
+		auto length = vec.Length();
 		vec.Normalize();
 
-		float overRap = spOwner->m_overRap;
-
-		if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Left, overRap))
+		if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Left, length))
 		{
 			spOwner->ChangeActionState(std::make_shared<MoveMent>());
 			spOwner->m_nowAction->SetMoveDir(Left);
 			return true;
 		}
-		else if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Right, overRap))
+		else if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Right, length))
 		{
 			spOwner->ChangeActionState(std::make_shared<MoveMent>());
 			spOwner->m_nowAction->SetMoveDir(Right);
 			return true;
 		}
-	}
+	
 
 	return false;
 }
@@ -488,6 +514,7 @@ void Drone::Attack::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGam
 	if (!flg)
 	{
 		spOwner->ChangeEnableRightAttack(true);
+		spOwner->ChangeEnableLeftAttack(true);
 
 		auto alert = std::make_shared<Alert>();
 		auto pos = CameraManager::Instance().GetLocalDirectionTo(spOwner->GetMatrix().Translation());

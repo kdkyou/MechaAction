@@ -7,6 +7,7 @@
 #include "../../GameObject/Character/Character.h"
 #include "../../GameObject/Enemy/Enemy.h"
 #include "../../GameObject/Enemy/Drone/Drone.h"
+#include "../../GameObject/Enemy/MT/MT.h"
 
 #include "../../GameObject/Weapon/Blade/Blade.h"
 #include "../../GameObject/Weapon/Shield/Shield.h"
@@ -143,7 +144,7 @@ void GameScene::Init()
 		_shield->SetModel("Asset/Models/Weapon/Shield/Shield.gltf");
 		_shield->SetParent(_character);
 		_shield->SetAttachPath("LeftWeapon");
-		_sowrd->SetTag(KdGameObject::tPlayerAttack);
+		_shield->SetTag(KdGameObject::tPlayerAttack);
 		AddObject(_shield);
 		AddTerrain(_shield);
 
@@ -182,9 +183,6 @@ void GameScene::Init()
 
 	}
 
-
-
-
 	//エネミー
 	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
 	enemy->SetThis(enemy);
@@ -221,6 +219,8 @@ void GameScene::Init()
 	}
 
 
+
+
 	_character->RegistHitObject(enemy);
 
 	auto drone = std::make_shared<Drone>();
@@ -233,7 +233,7 @@ void GameScene::Init()
 	AddObject(drone);
 	AddEnemy(drone);
 
-	auto balkan = std::make_shared<Rifle>();
+	// バルカン想定
 	rifle = std::make_shared<Rifle>();
 	rifle->SetParent(drone);
 	rifle->SetAttachPath("RightWeapon");
@@ -245,12 +245,12 @@ void GameScene::Init()
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
 	AddObject(rifle);
 
-
+	// 4脚
 	drone = std::make_shared<Drone>();
 	drone->SetThis(drone);
 	drone->SetModelWork("Asset/Models/4LegMT/5LegMT.gltf");
 	drone->Init();
-	drone->SetParam(100);
+	drone->SetParam(500);
 	drone->SetPos({ -100.0f,0.0f,20.0f });
 	drone->SetTag(KdGameObject::tEnemy);
 	AddObject(drone);
@@ -277,6 +277,18 @@ void GameScene::Init()
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
 	AddObject(rifle);
+
+	/*auto mt = std::make_shared<MT>();
+	mt->SetThis(mt);
+	mt->SetModelWork("Asset/Models/Leg/Leg.gltf");
+	mt->Init();
+	mt->SetParam(3000);
+	mt->SetPos({ -100.0f,0.0f,20.0f });
+	mt->SetTag(KdGameObject::tEnemy);
+	AddObject(mt);
+	AddEnemy(drone);*/
+
+
 
 	auto ui = std::make_shared<DrawUI>();
 	ui->Init();

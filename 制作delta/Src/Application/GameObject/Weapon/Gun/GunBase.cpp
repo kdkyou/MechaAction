@@ -11,6 +11,16 @@ void GunBase::SetTarget(const std::weak_ptr<CharacterBase>& target)
 	m_wpTarget = target;
 }
 
+void GunBase::Deserialize(const nlohmann::json& jsonObj)
+{
+	Deserialize(jsonObj);
+}
+
+void GunBase::Serialize(nlohmann::json& outJson) const
+{
+	Serialize(outJson);
+}
+
 void GunBase::Init()
 {
 	m_name = "Gun";

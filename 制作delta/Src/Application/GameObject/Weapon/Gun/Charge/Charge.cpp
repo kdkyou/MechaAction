@@ -60,6 +60,7 @@ void Charge::PostUpdate()
 
 void Charge::Editor_ImGui()
 {
+	GunBase::Editor_ImGui();
 }
 
 void Charge::Trigger()

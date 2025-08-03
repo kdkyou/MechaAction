@@ -148,7 +148,7 @@ bool CharacterBase::RayCast(const Math::Vector3& startPos, const Math::Vector3& 
 	{
 
 		// ②HIT判定対象オブジェクトに総当たり
-		for (auto obj : SceneManager::Instance().GetTerrainList())
+		for (auto& obj : SceneManager::Instance().GetTerrainList())
 		{
 			if(obj->GetTag() != tPlayerAttack)
 			{
@@ -160,7 +160,7 @@ bool CharacterBase::RayCast(const Math::Vector3& startPos, const Math::Vector3& 
 	if (type & KdCollider::TypeDamage)
 	{
 		// ②HIT判定対象オブジェクトに総当たり
-		for (auto obj : SceneManager::Instance().GetEnemyList())
+		for (auto& obj : SceneManager::Instance().GetEnemyList())
 		{
 			{
 				obj->Intersects(rayInfo, &retRayList);
@@ -231,7 +231,6 @@ bool CharacterBase::SeaarchObstacle(const Math::Vector3& pos, const Math::Vector
 
 	Math::Vector3 vTarget = vec;
 	vTarget.Normalize();
-
 
 	auto  flg =  RayCast(pos, vTarget, length, KdCollider::TypeGround, rPos);
 

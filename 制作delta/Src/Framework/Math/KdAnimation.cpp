@@ -286,20 +286,23 @@ void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed
 
 	auto delta= KdFPSController::GetInstance().GetDeltaTime();
 
-	// アニメーションのフレームを進める
-	m_time += delta* speed;
-
-	// アニメーションデータの最後のフレームを超えたら
-	if (m_time >= m_spAnimation->m_maxLength)
+	if (!m_isComp)
 	{
-		if (m_isLoop)
+		// アニメーションのフレームを進める
+		m_time += delta * speed;
+
+		// アニメーションデータの最後のフレームを超えたら
+		if (m_time >= m_spAnimation->m_maxLength)
 		{
-			// アニメーションの最初に戻る（ループさせる
-			m_time = 0.0f;
-		}
-		else
-		{
-			m_time = m_spAnimation->m_maxLength;
+			if (m_isLoop)
+			{
+				// アニメーションの最初に戻る（ループさせる
+				m_time = 0.0f;
+			}
+			else
+			{
+				m_time = m_spAnimation->m_maxLength;
+			}
 		}
 	}
 

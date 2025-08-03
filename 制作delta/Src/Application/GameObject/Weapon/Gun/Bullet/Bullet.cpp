@@ -87,20 +87,25 @@ void Bullet::Update()
 	Math::Matrix trans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mLocalRot * trans;
 	
-	// トレイル
-	m_trail->AddPoint(m_mWorld);
-
+	Intersects();
 
 }
 
 void Bullet::PostUpdate()
+{
+
+	// トレイル
+	m_trail->AddPoint(m_mWorld);
+}
+
+void Bullet::Intersects()
 {
 	// その他球による衝突判定
 	// ---- ---- ---- ---- ---- ----
 	// ①当たり判定(球判定)用の情報を作成
 	KdCollider::SphereInfo sphereInfo;
 	sphereInfo.m_sphere.Center = m_mWorld.Translation();
-	sphereInfo.m_sphere.Radius =  0.5f;
+	sphereInfo.m_sphere.Radius = 0.5f;
 	sphereInfo.m_type = KdCollider::TypeGround;
 
 	std::list<KdCollider::CollisionResult> retBumpList;
@@ -110,14 +115,12 @@ void Bullet::PostUpdate()
 		// ②HIT対象オブジェクトに総当たり
 		for (auto obj : SceneManager::Instance().GetTerrainList())
 		{
-
 			obj->Intersects(sphereInfo, &retBumpList);
-
 		}
 
 	}
 
-	
+
 	float maxOverLap = 0;
 	Math::Vector3 hitDir = Math::Vector3::Zero;
 	bool hit = false;
@@ -136,14 +139,57 @@ void Bullet::PostUpdate()
 
 	if (hit)
 	{
-
-		Math::Vector3 newPos = GetPos() + (hitDir * maxOverLap);
 		OnHit();
 	}
 
+}
 
-	
+bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float length)
+{
 
+	// レイ情報作成
+	KdCollider::RayInfo rayInfo;
+	rayInfo.m_pos = pos;
+	rayInfo.m_dir = vec;
+	rayInfo.m_range = length;
+	rayInfo.m_type = KdCollider::TypeGround;
+
+	std::list<KdCollider::CollisionResult> retBumpList;
+
+	{
+
+		// ②HIT対象オブジェクトに総当たり
+		for (auto obj : SceneManager::Instance().GetTerrainList())
+		{
+			obj->Intersects(rayInfo, &retBumpList);
+		}
+
+	}
+
+
+	float maxOverLap = 0;
+	Math::Vector3 hitPos = Math::Vector3::Zero;
+	bool hit = false;
+	// ③結果を使って座標を補完する
+	for (auto& ret : retBumpList)
+	{
+		if (maxOverLap < ret.m_overlapDistance)
+		{
+			maxOverLap = ret.m_overlapDistance;
+			hitPos = ret.m_hitPos;
+			hit = true;
+
+		}
+
+	}
+
+	if (hit)
+	{
+		m_pos = hitPos;
+		return true;
+	}
+
+	return false;
 }
 
 void Bullet::DrawUnLit()
@@ -174,13 +220,14 @@ void Bullet::MoveSight()
 	Math::Vector3 move = Math::Vector3::Zero;
 
 	// 移動
-	move = m_direction * m_speed * KdFPSController::GetInstance().GetDeltaTime();
+	float len = m_speed * KdFPSController::GetInstance().GetDeltaTime();
+	move = m_direction *len;
 
-	
-	pos += move;
+	if (!Ray(pos, m_direction, len)) {
+		pos += move;
 
-	m_pos = pos;
-	
+		m_pos = pos;
+	}
 }
 
 void Bullet::MoveChasing()
@@ -243,13 +290,16 @@ void Bullet::MoveChasing()
 	m_direction = newForward;
 
 	// 移動
-	move = m_direction * m_speed * KdFPSController::GetInstance().GetDeltaTime();
-	pos += move;
+	float len = m_speed * KdFPSController::GetInstance().GetDeltaTime();
+	move = m_direction * len;
+	if (!Ray(pos, m_direction, len)) {
+		pos += move;
 
-	//Application::Instance().m_log.AddLog("MissileMove x:%.2f,y:%.2f,z:%.2f\n", move.x, move.y, move.z);
-	
-	m_pos = pos;
+		m_pos = pos;
+	}
 }
+
+
 
 void Bullet::SetBulletParam(float _aliveTime, int _damage, float _range, const Math::Vector3& _startPos, const Math::Vector3 direction, float _speed, float _dampingInterval, float _dampingRate)
 {

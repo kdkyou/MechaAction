@@ -1110,7 +1110,26 @@ bool KdPolygonCollision::Intersects(const DirectX::BoundingBox& target, const Ma
 bool KdPolygonCollision::Intersects(const DirectX::BoundingOrientedBox& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	// TODO: 当たり計算は各自必要に応じて拡張して下さい
-	return false;
+	if (!m_enable || !m_shape) { return false; }
+
+	CollisionMeshResult result;
+	CollisionMeshResult* pTmpResult = pRes ? &result : nullptr;
+
+	// メッシュと球形の当たり判定実行
+	if (!PolygonsIntersect(*m_shape, target, world, pTmpResult))
+	{
+		// 当たっていなければ無条件に返る
+		return false;
+	}
+
+	if (pRes)
+	{
+		pRes->m_hitPos = result.m_hitPos;
+
+		pRes->m_hitDir = result.m_hitDir;
+
+		pRes->m_overlapDistance = result.m_overlapDistance;
+	}
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////

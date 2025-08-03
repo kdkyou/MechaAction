@@ -36,15 +36,23 @@ float4 main(VSOutputNoLighting In) : SV_Target0
 		float dist = length(dir);
 		float angle = atan2(dir.y, dir.x);
 
+		float fade =  1.0 -saturate(dist * 1.5);
+		baseColor.a *= fade;
+		
+		
 		// 時間を加味した波の動き
-		float wave = sin(dist * 20.0f - g_waveTime * 10.0f); // 波紋の周期と速度
+		float wave = sin(dist * 20.0f+angle* - g_waveTime * 10.0f); // 波紋の周期と速度
 
 		// 光の強さ (距離ベースで減衰)
 		float strength = saturate(1.0f - dist * 1.5f);
 		
 		// 波の境界を際立たせる
-		float intensity = smoothstep(0.4, 0.6, wave * strength);
+		//float intensity = smoothstep(0.4, 0.6, wave * strength);
 
+		float wave1 = sin(dist * 30.0 - g_waveTime * 15.0);
+		float wave2 = sin(dist * 50.0 - g_waveTime * 25.0 + angle * 6.0);
+		float intensity = smoothstep(0.5, 0.6, wave1) + 0.3 * smoothstep(0.4, 0.5, wave2);
+		
 		outColor += float3(0.2f, 0.8f, 1.0f) * intensity;
 
 	}

@@ -46,7 +46,7 @@ void Character::Init()
 
 	m_hp = 10000;
 
-	m_nockBackDamage = 200.0f;
+	m_nockBackDamage = 600.0f;
 
 	m_name = "Player";
 
@@ -420,7 +420,7 @@ void Character::UpdateCollision()
 	DirectX::BoundingOrientedBox box;
 
 	box.Center = GetPos() + m_correctionMat.Translation();
-	box.Extents = { 3.0f,5.0f,3.0f };
+	box.Extents = { 2.0f,5.0f,2.0f };
 	UINT type = KdCollider::TypeDamage;
 	KdCollider::BoxInfo boxInfo(type, box);
 
@@ -460,8 +460,8 @@ void Character::UpdateCollision()
 	Application::Instance().m_log.AddLog("length %.2f\n", dist);
 	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 
-	/*m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, color);
-	m_pDebugWire->AddDebugBox(m_correctionMat * m_mWorld, box.Extents, {}, true, color);*/
+	m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, color);
+	m_pDebugWire->AddDebugBox(m_correctionMat * m_mWorld, box.Extents, {}, true, color);
 
 }
 

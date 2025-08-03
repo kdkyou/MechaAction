@@ -22,6 +22,17 @@ public:
 	
 	void SetTarget(const std::weak_ptr<CharacterBase>& target);
 
+	void Editor_ImGui()override;
+
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)override;
+	
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const override;
+	
+
+
 protected:
 
 	// 目的の対象に銃口を向ける //xとyのみ考える  targetDirはローカル空間に

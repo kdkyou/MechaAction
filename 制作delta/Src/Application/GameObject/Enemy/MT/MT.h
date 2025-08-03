@@ -4,13 +4,15 @@
 
 class MT :public CharacterBase
 {
+
+public:
+
 	void Init()override;
 
 	void Update()override;
 	void PostUpdate()override;
 
-	void DrawLit()			override;
-
+	void DrawLit()	override;
 
 	void SetThis(const std::shared_ptr<MT>& spthis) { m_wpThis = spthis; }
 
@@ -99,6 +101,8 @@ private:
 		float							m_speed = 0.0f;
 
 		float							m_sin = 0.0f;
+
+		bool							m_anyFlg = false;
 
 		struct Effect
 		{

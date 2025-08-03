@@ -79,7 +79,8 @@ void Rifle::Trigger()
 			auto target = parent->GetCharacterTarget().lock();
 			if (target != nullptr)
 			{
-				Math::Vector3 diff = target->GetMatrix().Translation() - m_mWorld.Translation();
+				auto current = target->GetCorrectionMatrix().Translation();
+				Math::Vector3 diff = target->GetMatrix().Translation() + current - m_mWorld.Translation();
 				m_mLocalRot = RotateWeaponDirect(angle, diff,m_mLocalRot);
 			}
 		}
