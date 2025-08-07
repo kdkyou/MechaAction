@@ -13,7 +13,7 @@ public:
 		TPS,
 		Tracking,
 		Animation,
-		Rock,
+		Lock,
 		Hit,
 	};
 
@@ -49,7 +49,7 @@ public:
 	void ResetMultiLocks() { m_wpMultiLocks.clear(); }
 	void SetMultiLockNum(int num) { m_multiLockNum = num; }
 	const int	 GetMultiLockNum()const { return m_multiLockNum; }
-	const std::weak_ptr<CharacterBase>& GetLockTarget(UINT num);
+	const std::weak_ptr<CharacterBase> GetLockTarget(UINT num);
 	const std::vector<std::weak_ptr<CharacterBase>>& GetMultiLockList(){ return m_wpMultiLocks; }
 
 	void EnableChangedCamera(bool isEnablechanged) { m_isEnableChanged = isEnablechanged; }
@@ -86,7 +86,7 @@ private:
 
 	
 
-	CameraType					m_nowType  = None;
+	CameraType					m_nowType  = TPS;
 	CameraType					m_nextType = None;
 
 	bool						m_isEnableChanged = true;

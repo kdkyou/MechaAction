@@ -23,7 +23,6 @@ void Terrain::DrawLit()
 
 void Terrain::SetModel(const std::string& path)
 {
-	if (!m_spModel) {}
 	m_spModel = KdAssets::Instance().m_modeldatas.GetData(path);
 
 	m_modelPath = path;
@@ -40,6 +39,7 @@ void Terrain::Editor_ImGui()
 {
 	KdGameObject::Editor_ImGui();
 
+	ImGui::Text((const char*)"アセットパス:%s", m_modelPath);
 
 	if (ImGui::Button((const char*)u8"モデルのロード"))
 	{

@@ -2,6 +2,7 @@
 
 #include "../../GameObject/Camera/CameraManager.h"
 #include "../../GameObject/Character/CharacterBase.h"
+#include "../../GameObject/UI/UIManager.h"
 
 void BaseScene::PreUpdate()
 {
@@ -30,6 +31,8 @@ void BaseScene::PreUpdate()
 	}
 
 	CameraManager::Instance().PreUpdate();
+
+	UIManager::GetInstance().PreUpdate();
 }
 
 void BaseScene::Update()
@@ -46,6 +49,8 @@ void BaseScene::Update()
 	KdEffekseerManager::GetInstance().Update();
 
 	CameraManager::Instance().Update();
+
+	UIManager::GetInstance().Update();
 
 
 	// シーン毎のイベント処理
@@ -137,6 +142,7 @@ void BaseScene::DrawSprite()
 		}
 		CameraManager::Instance().DrawSprite();
 
+		UIManager::GetInstance().DrawSprite();
 	}
 	KdShaderManager::Instance().m_spriteShader.End();
 }

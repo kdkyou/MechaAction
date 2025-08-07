@@ -5,6 +5,7 @@
 
 #include"../../../../main.h"
 
+
 void Charge::Init()
 {
 	m_durationFire = 0.0f;
@@ -16,7 +17,7 @@ void Charge::Init()
 void Charge::Update()
 {
 	//
-	Trigger();
+	Trigger();	
 
 	auto parent = m_wpParent.lock();
 	if (parent)
@@ -51,6 +52,9 @@ void Charge::Update()
 	}
 
 	m_mWorld = m_mParentAttach * m_mParent;
+
+	GunBase::Update();
+
 }
 
 void Charge::PostUpdate()

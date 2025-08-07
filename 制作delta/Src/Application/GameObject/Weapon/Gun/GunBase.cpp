@@ -6,24 +6,64 @@
 
 #include "../../../Scene/SceneManager.h"
 
+#include "../../UI/UIManager.h"
+
+
 void GunBase::SetTarget(const std::weak_ptr<CharacterBase>& target) 
 {
 	m_wpTarget = target;
 }
 
+void GunBase::Editor_ImGui() 
+{
+	WeaponBase::Editor_ImGui();
+
+	ImGui::DragInt((const char*)"ダメージ", &m_damage, 1, 0,10000);
+	ImGui::DragFloat((const char*)"発射時間", &m_fireRate, 0.01f, 0.01f, 10.0f);
+	ImGui::DragFloat((const char*)"リロード時間", &m_reloadTime, 0.01f, 0.01f, 15.0f);
+	ImGui::DragFloat((const char*)"バースト時間", &m_burst, 0.01f, 0.01f, 15.0f);
+	ImGui::DragInt((const char*)"バースト回数", &m_numBurst,1, 1, 15);
+	ImGui::DragInt((const char*)"総弾数", &m_maxNum, 1,0);
+	ImGui::DragInt((const char*)"装填数", &m_maxNumofOnce, 1,0);
+
+	if (ImGui::Button((const char*)u8"テクスチャのロード"))
+	{
+		std::string filepath;
+		if (EditorData::GetInstance().OpenFileDialog(filepath))
+		{
+			m_muzzleFlashPath = filepath;
+		}
+	}
+}
+
 void GunBase::Deserialize(const nlohmann::json& jsonObj)
 {
-	Deserialize(jsonObj);
+	WeaponBase::Deserialize(jsonObj);
 }
 
 void GunBase::Serialize(nlohmann::json& outJson) const
 {
-	Serialize(outJson);
+	WeaponBase::Serialize(outJson);
 }
 
 void GunBase::Init()
 {
 	m_name = "Gun";
+}
+
+void GunBase::Update()
+{
+	if (m_tag == tPlayerAttack)
+	{
+		if (m_attachPath == "RightShoulderWeapon")
+		{
+			UIManager::GetInstance().SetRightAmmo(m_num);
+		}
+		else if (m_attachPath == "LeftShoulderWeapon")
+		{
+			UIManager::GetInstance().SetLeftAmmo(m_num);
+		}
+	}
 }
 
 void GunBase::PostUpdate()

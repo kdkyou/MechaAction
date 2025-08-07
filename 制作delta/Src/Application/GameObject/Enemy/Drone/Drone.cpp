@@ -579,6 +579,8 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 	auto spOwner = owner.lock();
 
 	spOwner->m_isDestroy = true;
+
+	spOwner->ChangeEnableRightAttack(false);
 }
 
 void Drone::Destroyed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)

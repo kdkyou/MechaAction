@@ -7,6 +7,7 @@ class GunBase :public WeaponBase
 public:
 	void Init()override;
 
+	void Update()override;
 	void PostUpdate()override;
 
 	void TriggerLock(bool flg) { m_trigger = flg; }
@@ -31,7 +32,12 @@ public:
 	// このクラスの内容をJSONデータ化する
 	virtual void Serialize(nlohmann::json& outJson) const override;
 	
+	const float GetReloadTime()const { return m_reloadTime; }
+	const float GetReloadDuration()const { return m_durationReload; }
 
+	const int GetRemainingNumber()const { return m_num; }
+	const int GetRemainingOnce()const { return m_numOnce; }
+	const int GetNumberOnce()const { return m_maxNumofOnce; }
 
 protected:
 

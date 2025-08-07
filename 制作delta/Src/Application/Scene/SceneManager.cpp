@@ -75,6 +75,36 @@ void SceneManager::AddObject(const std::shared_ptr<KdGameObject>& obj)
 
 void SceneManager::Edit_ImGui()
 {
+	nlohmann::json outJson;
+	if (ImGui::Button((const char*)u8"シーン保存"))
+	{
+		for (auto obj : m_currentScene->GetObjList())
+		{
+			nlohmann::json json;
+			obj->Serialize(json);
+			outJson.push_back(json);
+		}
+
+		std::string str = "";
+		switch (m_currentSceneType)
+		{
+		case SceneManager::SceneType::Title:
+			str = "Asset/Data/Title.Scene";
+			break;
+		case SceneManager::SceneType::Game:
+			str = "Asset/Data/Game.Scene";
+			break;
+		default:
+			break;
+		}
+
+		std::ofstream ofs(str);
+		if (ofs.is_open())
+		{
+			ofs << outJson.dump();
+		}
+	}
+
 	m_currentScene->Edit_ImGui();
 }
 

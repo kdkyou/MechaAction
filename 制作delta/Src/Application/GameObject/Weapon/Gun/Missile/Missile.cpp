@@ -36,7 +36,7 @@ void Missile::Update()
 
 	m_mWorld = m_mParentAttach * m_mParent;
 
-
+	GunBase::Update();
 }
 
 void Missile::PostUpdate()

@@ -44,6 +44,15 @@ public:
 
 	void SetDamage(int damage) { m_damage = damage; }
 
+	void Editor_ImGui()override;
+
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)override;
+
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const override;
+
 protected:
 
 	
@@ -64,6 +73,8 @@ protected:
 	std::shared_ptr<KdModelWork::Node>	m_pNode;
 
 	std::string						m_attachPath = "";
+
+	std::string						m_modelPath = "";
 
 	UINT							m_nowTrigger = 0;
 	TriggerType						m_AttackTrigger = NoneTrigger;

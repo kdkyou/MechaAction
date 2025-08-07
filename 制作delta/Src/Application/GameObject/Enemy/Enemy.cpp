@@ -196,7 +196,7 @@ void Enemy::UpdateCollision()
 				m_hitDir = GetPos() - obj->GetMatrix().Translation();
 				m_hitDir.Normalize();
 				HitDamage(obj->GetParameter());
-				m_parameter = obj->GetParameter();
+ 				m_parameter = obj->GetParameter();
 				OnHit();
 			}
 		}
@@ -298,6 +298,8 @@ bool Enemy::Search(bool areaOnly)
 
 void Enemy::Editor_ImGui()
 {
+
+	CharacterBase::Editor_ImGui();
 
 	ImGui::DragFloat2("distance", &m_dist.x, 0.1f);
 	ImGui::DragFloat("SerchRadius", &m_radius, 0.1f);
@@ -468,14 +470,28 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 		}
 
 		if (spOwner->GetPrevState() == tBoost) {
-			spOwner->ChangeActionState(std::make_shared<AttackBack>());
-			return;
+			if (spOwner->m_rand.GetInt(1, 2) == 1)
+			{
+				spOwner->ChangeActionState(std::make_shared<AttackBack>());
+				return;
+			}
+			else {
+				spOwner->ChangeActionState(std::make_shared<AttackRight>());
+				return;
+			}
 		}
 
 		if (spOwner->GetPrevState() == tBoostStop)
 		{
-			spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
-			return;
+			if (spOwner->m_rand.GetInt(1, 2) == 1)
+			{
+				spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
+				return;
+			}
+			else {
+				spOwner->ChangeActionState(std::make_shared<MoveLeftRotate>());
+				return;
+			}
 		}
 
 	}
@@ -501,14 +517,21 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 		}
 
 		if (spOwner->GetPrevState() == tBoost) {
-			spOwner->ChangeActionState(std::make_shared<MoveLeftRotate>());
+			spOwner->ChangeActionState(std::make_shared<AttackLeft>());
 			return;
 		}
 
 		if (spOwner->GetPrevState() == tBoostStop)
 		{
-			spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
-			return;
+			if (spOwner->m_rand.GetInt(1, 2) == 1)
+			{
+				spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
+				return;
+			}
+			else {
+				spOwner->ChangeActionState(std::make_shared<MoveLeftRotate>());
+				return;
+			}
 		}
 
 
@@ -545,8 +568,15 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 		}
 
 		if (spOwner->GetPrevState() == tBoost) {
-			spOwner->ChangeActionState(std::make_shared<AttackStand>());
-			return;
+			if (spOwner->m_rand.GetInt(1, 2) == 1)
+			{
+				spOwner->ChangeActionState(std::make_shared<AttackStand>());
+				return;
+			}
+			else {
+				spOwner->ChangeActionState(std::make_shared<AttackBack>());
+				return;
+			}
 		}
 
 		if (spOwner->GetPrevState() == tBoostStop)
@@ -556,9 +586,36 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 		}
 	}
 
-	//else if (side == ActionStateBase::TargetSide::Front)
+	else if (side == ActionStateBase::TargetSide::Front)
 	{
+		if (spOwner->GetPrevState() == tMoveForward)
+		{
+			spOwner->ChangeActionState(std::make_shared<Boost>());
+			auto vec = distance;
+			vec.Normalize();
+			spOwner->BoostRotate(vec);
+			spOwner->UpdateMatrix();
+			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Forward());
+			return;
+		}
 
+		if (spOwner->GetPrevState() == tBoost) {
+			if (spOwner->m_rand.GetInt(1, 2) == 1)
+			{
+				spOwner->ChangeActionState(std::make_shared<AttackStand>());
+				return;
+			}
+			else {
+				spOwner->ChangeActionState(std::make_shared<AttackBack>());
+				return;
+			}
+		}
+
+		if (spOwner->GetPrevState() == tBoostStop)
+		{
+			spOwner->ChangeActionState(std::make_shared<AttackForWard>());
+			return;
+		}
 	}
 
 	if (spOwner->GetPrevState() == tMoveBack)

@@ -33,6 +33,8 @@ void TrackingCamera::Init()
 
 void TrackingCamera::PostUpdate()
 {
+	ShowCursor(false);
+
 	Math::Vector3 vMove=Math::Vector3::Zero;
 
 	const std::shared_ptr<const KdGameObject>	_spTarget = m_wpTarget.lock();

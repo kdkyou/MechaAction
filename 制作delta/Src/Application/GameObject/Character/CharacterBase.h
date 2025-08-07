@@ -41,6 +41,9 @@ public:
 	const bool IsLeftShoulderAttack()const { return m_isLeftShoulderAttack; }
 	void ChangeEnableLeftShoulderAttack(bool attack) { m_isLeftShoulderAttack = attack; }
 
+	const bool IsEnableAttack()const { return m_isEnableAttackCollision; }
+	void ChangeEnableAttack(bool attack) { m_isEnableAttackCollision = attack; }
+
 	const bool IsHit() const{ return m_isHit; }
 	void HitDamage(float damage);
 	void SetHitEnable(bool hit) { m_isHit = hit; }
@@ -121,6 +124,7 @@ protected:
 	bool										m_isLeftAttack = false;
 	bool										m_isRightShoulderAttack = false;
 	bool										m_isLeftShoulderAttack = false;
+	bool										m_isEnableAttackCollision = false;
 
 	bool										m_isDestroy = false;
 
@@ -139,8 +143,9 @@ protected:
 	Math::Vector2								m_dist = { 10.0f,180.0f };
 	float										m_viewRange = 0.0f;
 
-	// リムライト
 
+
+	// リムライト
 	Math::Vector3 m_limColor = { 0.19f,0.09f,0.09f };
 	float m_limPow = 8.0f;
 	bool m_limEnable = false;
@@ -148,4 +153,6 @@ protected:
 	// サウンドインスタンス管理
 	std::unordered_map<std::string,std::weak_ptr<KdSoundInstance>> m_sounds;
 
+
+	KdRandomGenerator						m_rand;
 };

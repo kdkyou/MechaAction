@@ -98,6 +98,9 @@ public:
 	virtual void Deserialize(const nlohmann::json& jsonObj)
 	{
 		m_name = jsonObj["Name"];
+		KdJsonUtility::GetArray(jsonObj,"Pos",&m_pos.x, 3);
+		KdJsonUtility::GetArray(jsonObj,"Rot",&m_rot.x, 3);
+		KdJsonUtility::GetArray(jsonObj,"Scale",&m_scale.x, 3);
 	}
 
 	// このクラスの内容をJSONデータ化する

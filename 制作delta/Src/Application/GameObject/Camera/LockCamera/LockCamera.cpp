@@ -41,6 +41,8 @@ void LockCamera::Init()
 
 void LockCamera::Update()
 {
+	ShowCursor(false);
+
 	if (!m_isReduce)
 	{
 		m_texAlpha += 5 * KdFPSController::GetInstance().GetDeltaTime();

@@ -19,4 +19,7 @@ void NoneCamera::Init()
 
 void NoneCamera::PostUpdate()
 {
+	ShowCursor(true);
+
+	CameraBase::PostUpdate();
 }

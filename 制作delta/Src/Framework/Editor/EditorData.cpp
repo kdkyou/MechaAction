@@ -2,8 +2,10 @@
 
 #include "../../Application/Scene/SceneManager.h"
 #include "../../Application/GameObject/Camera/CameraManager.h"
+#include "../../Application/GameObject/UI/UIManager.h"
 
 #include "../../Application/GameObject/Character/CharacterBase.h"
+
 
 
 bool EditorData::OpenFileDialog(std::string& filepath, const std::string& title, const char* filters)
@@ -181,12 +183,12 @@ void EditorData::UpdateImGui()
 		{
 			nowSelectedObj->Editor_ImGui();
 
-			ImGui::Separator();
+			/*ImGui::Separator();
 
 			if (ImGui::Button(""))
 			{
 
-			}
+			}*/
 
 		}
 
@@ -198,42 +200,76 @@ void EditorData::UpdateImGui()
 	//===========================
 	if(ImGui::Begin((const char*)u8"オブジェクトリスト", 0, 0))
 	{
+		static int sel = 0;	// 
+		if (ImGui::BeginListBox((const char*)u8"リスト選択"))
+		{
+			if (ImGui::Selectable("None")) { sel = 0; }
+			if (ImGui::Selectable((const char*)u8"カレント")) { sel = 1; }
+			if (ImGui::Selectable((const char*)u8"プレイヤー")) { sel = 2; }
+			if (ImGui::Selectable((const char*)u8"エネミー")) { sel = 3; }
+			if (ImGui::Selectable((const char*)u8"地形")) { sel = 4; }
+			ImGui::EndListBox();
+		}
 
+		if (sel == 1)
+		{
 		if (ImGui::BeginListBox((const char*)u8"カレントリスト"))
-		{
-			for (auto& obj : SceneManager::Instance().GetObjList())
 			{
-				obj->Editor_ImGui();
+				for (auto& obj : SceneManager::Instance().GetObjList())
+				{
+					if (ImGui::Selectable((const char*)u8""))
+					{
+						SelectObj = obj;
+					}
+				}
+				ImGui::EndListBox();
 			}
 		}
-		ImGui::EndListBox();
-		/*if (ImGui::BeginListBox((const char*)u8"プレイヤーリスト"))
-		{
-			for (auto& obj : SceneManager::Instance().GetPlayerList())
-			{
-				obj->Editor_ImGui();
-			}
-		}
-		ImGui::EndListBox();
-		
-		if (ImGui::BeginListBox((const char*)u8"エネミーリスト"))
-		{
-			for (auto& obj : SceneManager::Instance().GetEnemyList())
-			{
-				obj->Editor_ImGui();
-			}
-		}
-		ImGui::EndListBox();
-		
-		if (ImGui::BeginListBox((const char*)u8"地形リスト"))
-		{
-			for (auto& obj : SceneManager::Instance().GetTerrainList())
-			{
-				obj->Editor_ImGui();
-			}
-		}
-		ImGui::EndListBox();*/
 
+		if (sel == 2)
+		{
+			if (ImGui::BeginListBox((const char*)u8"プレイヤーリスト"))
+			{
+				for (auto& obj : SceneManager::Instance().GetPlayerList())
+				{
+					if (ImGui::Selectable((const char*)u8"取得"))
+					{
+						SelectObj = obj;
+					}
+				}
+			ImGui::EndListBox();
+			}
+		}
+
+		if (sel == 3)
+		{
+			if (ImGui::BeginListBox((const char*)u8"エネミーリスト"))
+			{
+				for (auto& obj : SceneManager::Instance().GetEnemyList())
+				{
+					if (ImGui::Selectable((const char*)u8"取得"))
+					{
+						SelectObj = obj;
+					}
+				}
+				ImGui::EndListBox();
+			}
+		}
+
+		if (sel == 4)
+		{
+			if (ImGui::BeginListBox((const char*)u8"地形リスト"))
+			{
+				for (auto& obj : SceneManager::Instance().GetTerrainList())
+				{
+					if (ImGui::Selectable((const char*)u8"取得"))
+					{
+						SelectObj = obj;
+					}
+				}
+				ImGui::EndListBox();
+			}
+		}
 		
 	}
 	ImGui::End();
@@ -251,7 +287,11 @@ void EditorData::UpdateImGui()
 	}
 	ImGui::End();
 	
-
+	if (ImGui::Begin((const char*)u8"UIエディター", 0, 0))
+	{
+		UIManager::GetInstance().Editor_ImGui();
+	}
+	ImGui::End();
 
 	//===========================
 	// ログウィンドウ

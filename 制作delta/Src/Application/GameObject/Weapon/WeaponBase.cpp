@@ -14,6 +14,7 @@ void WeaponBase::SetModel(const std::string& path) {
 	{
 		m_spModelWork = std::make_shared<KdModelWork>();
 		m_spModelWork->SetModelData(path);
+		m_modelPath = path;
 	}
 }
 
@@ -88,6 +89,30 @@ void WeaponBase::CheckTrigger()
 			m_nowTrigger |= TriggerType::RightShoulder;
 		}
 	}
+}
+
+void WeaponBase::Editor_ImGui()
+{
+	KdGameObject::Editor_ImGui();
+
+	if (ImGui::Button((const char*)u8"モデルのロード"))
+	{
+		std::string filepath;
+		if (EditorData::GetInstance().OpenFileDialog(filepath))
+		{
+			SetModel(filepath);
+		}
+	}
+}
+
+void WeaponBase::Deserialize(const nlohmann::json& jsonObj)
+{
+	KdGameObject::Deserialize(jsonObj);
+}
+
+void WeaponBase::Serialize(nlohmann::json& outJson) const
+{
+	KdGameObject::Serialize(outJson);
 }
 
 

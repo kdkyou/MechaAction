@@ -67,7 +67,6 @@ private:
 	// ミサイルかどうか
 	bool									m_isBullet = false;
 
-	
 
 
 

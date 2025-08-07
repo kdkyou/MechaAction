@@ -86,6 +86,8 @@ void Sowrd::Init()
 
 	m_pCollider->RegisterCollisionShape("Sowrd", box, KdCollider::TypeDamage);
 
+	m_pCollider->SetEnableAll(false);
+
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
 	m_name = "Sword";
@@ -130,6 +132,12 @@ void Sowrd::Update()
 			m_pCollider->SetEnableAll(true);
 		}
 
+		if (!_spParent->IsEnableAttack())
+		{
+			m_pCollider->SetEnableAll(false);
+		}
+
+
 
 		static bool flg = false;
 		if (flg == false)
@@ -151,10 +159,11 @@ void Sowrd::Update()
 		m_spTrail->SetEnable(false);
 
 		m_attackNum = m_maxAttackNum;
-		m_pCollider->SetEnableAll(false);
 
 		m_spTrail2->ClearPoints();
 		m_spTrail2->SetEnable(false);
+
+		m_pCollider->SetEnableAll(false);
 
 		
 		m_isOnece = true;

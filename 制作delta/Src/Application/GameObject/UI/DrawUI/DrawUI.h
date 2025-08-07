@@ -12,7 +12,7 @@ public:
 
 	virtual void Deserialize(const nlohmann::json& jsonObj)
 	{
-		KdGameObject::Deserialize(jsonObj);
+		UIBase::Deserialize(jsonObj);
 
 
 	}
@@ -20,7 +20,7 @@ public:
 	// このクラスの内容をJSONデータ化する
 	virtual void Serialize(nlohmann::json& outJson) const
 	{
-		KdGameObject::Serialize(outJson);
+		UIBase::Serialize(outJson);
 	}
 	
 

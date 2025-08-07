@@ -113,10 +113,11 @@ bool CameraManager::SetNextType(const CameraType& type)
 	return true;
 }
 
-const std::weak_ptr<CharacterBase>& CameraManager::GetLockTarget(UINT num)
+const std::weak_ptr<CharacterBase> CameraManager::GetLockTarget(UINT num)
 {
 	// TODO: return ステートメントをここに挿入します
-	if (num >= m_multiLockNum || m_wpMultiLocks.empty() == true) { return std::weak_ptr<CharacterBase>(); }
+	if (num >= m_multiLockNum || m_wpMultiLocks.empty() == true) { 
+		return {};}
 
 	return m_wpMultiLocks[num];
 }
@@ -167,7 +168,7 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 	case CameraManager::Animation:
 		Application::Instance().m_log.AddLog("Animation\n");
 		break;
-	case CameraManager::Rock:
+	case CameraManager::Lock:
 		m_currentCamera = std::make_shared<LockCamera>();
 		Application::Instance().m_log.AddLog("Lock\n");
 		break;

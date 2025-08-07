@@ -67,6 +67,11 @@ void Bullet::Update()
 	}
 
 		break;
+	case Bullet::SightScale:
+		
+		MoveSight();
+
+		break;
 	default:
 		break;
 	}
@@ -200,6 +205,15 @@ void Bullet::DrawUnLit()
 
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
 
+}
+
+void Bullet::DrawBright()
+{
+	if (m_moveType == SightScale)
+	{
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData,m_mWorld);
+
+	}
 }
 
 void Bullet::OnHit()

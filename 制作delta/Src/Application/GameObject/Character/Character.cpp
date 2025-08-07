@@ -5,6 +5,7 @@
 
 #include"../../Scene/SceneManager.h"
 #include"../Camera/CameraManager.h"
+#include "../UI/UIManager.h"
 
 //#include"../Effect/ConcentrationLine/ConcentrationLine.h"
 
@@ -42,6 +43,12 @@ void Character::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<ActionIdle>());
 
+	ChangeEnableAttack(false);
+	ChangeEnableLeftAttack(false);
+	ChangeEnableLeftShoulderAttack(false);
+	ChangeEnableRightAttack(false);
+	ChangeEnableRightShoulderAttack(false);
+
 	m_tag = tPlayer;
 
 	m_hp = 10000;
@@ -72,7 +79,7 @@ void Character::Update()
 
 	if (key.I || mouse.middleButton || pad.IsRightStickPressed())
 	{
-		CameraManager::Instance().SetNextType(CameraManager::Rock);
+		CameraManager::Instance().SetNextType(CameraManager::Lock);
 		LockOn();
 	}
 	if (key.U)
@@ -142,7 +149,7 @@ void Character::Update()
 	//1m_pCollider->RegisterCollisionShape(KdCollider::TypeBump)
 
 	Application::Instance().m_log.AddLog("HP%.f\n", m_hp);
-
+	UIManager::GetInstance().SetPlayerHP(m_hp);
 
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
 	UpdateCollision();
@@ -408,13 +415,13 @@ void Character::UpdateCollision()
 	// ---- ---- ---- ---- ---- ----
 	// ①当たり判定(球判定)用の情報を作成
 	KdCollider::SphereInfo sphereInfo;
-	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 5.0f, 0);
-	sphereInfo.m_sphere.Radius = 3.0f;
+	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 1.8f, 0);
+	sphereInfo.m_sphere.Radius = 2.0f;
 	sphereInfo.m_type = KdCollider::TypeGround;
 
 	Math::Vector3 pos;
 	SphereCast(sphereInfo.m_sphere.Center, m_mWorld.Backward(), sphereInfo.m_sphere.Radius, KdCollider::TypeGround, pos);
-
+	//SetPos(pos);
 	float dist = 0;
 
 	DirectX::BoundingOrientedBox box;
@@ -437,7 +444,7 @@ void Character::UpdateCollision()
 				color = { 1,0,1,1 };
 				for (auto& ret : retList)
 				{
-					Math::Vector3 nowPos = translation + (ret.m_hitDir * ret.m_overlapDistance);
+				//	Math::Vector3 nowPos = translation + (ret.m_hitDir * ret.m_overlapDistance);
 				}
 			}
 		}
@@ -1264,7 +1271,34 @@ void Character::ActionJumpShield::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionMove::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, false);
+	if (CameraManager::Instance().GetNowType() != CameraManager::Lock)
+	{
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, false);
+	}
+	else {
+		Checkkey(owner);
+		auto move = spOwner->m_vMove;
+		if (move.x>0){
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightWalk"), 6.0f, false);
+			if (move.z < 0) {
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, false);
+			}
+			else if(move.z > 0) {
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, false);
+			}
+		}
+		else if(move.x < 0){
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("LeftWalk"), 6.0f, false);
+
+			if (move.z < 0) {
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, false);
+			}
+			else if (move.z > 0) {
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, false);
+			}
+		}
+		
+	}
 
 	m_speed = spOwner->m_walkSpeed * spOwner->m_speedMag;
 
@@ -1331,7 +1365,7 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 			return;
 		}
 
-		m_direction = ActionStateBase::Direct(owner, true);
+		m_direction = Direct(owner, true);
 
 
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
@@ -1500,14 +1534,15 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 			m_spEffects.push_back(effect);
 
 			//効果音
-			KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(0.3f);
+			//KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(0.3f);
 
-			/*	auto instance = KdAudioManager::Instance().Play3D("Asset/Sounds/Thruster2.wav", spOwner->GetPos());
+				auto instance = KdAudioManager::Instance().Play3D("Asset/Sounds/Thruster2.wav", spOwner->GetPos());
 				auto vec = CameraManager::Instance().ToCameraVec(mat.Translation());
+				instance->SetVolume(1.0f);
 				instance->SetEmitterMatrix(mat,mat.Forward());
 				instance->SetVelocity(m_direction);
 				instance->SetCurveDistanceScaler(1.0f);
-				instance->SetInnerRadiusAngle(45);*/
+				instance->SetInnerRadiusAngle(45);
 		}
 	}
 
@@ -2170,6 +2205,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 	m_animName = "RightBladeAttackBef";
 
 	m_stateNum = spOwner->CharacterStateName::RightSorwdBef;
+	
 
 }
 
@@ -2269,6 +2305,7 @@ void Character::ActionRightAttackMid::Enter(std::weak_ptr<Character>& owner)
 
 
 	spOwner->ChangeEnableRightAttack(true);
+	spOwner->ChangeEnableAttack(true);
 
 }
 
@@ -2379,6 +2416,7 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 	if (spOwner->m_spAnimator->IsComp() == false)
 	{
 		spOwner->UnEnableTrail();
+		spOwner->ChangeEnableAttack(false);
 
 		//加算
 		m_durationStiffness += KdFPSController::GetInstance().GetDeltaTime();

@@ -38,6 +38,8 @@ void Rifle::Update()
 	}
 
 	m_mWorld = m_mLocalRot * m_mParentAttach * m_mParent;
+
+	GunBase::Update();
 }
 
 void Rifle::Trigger()

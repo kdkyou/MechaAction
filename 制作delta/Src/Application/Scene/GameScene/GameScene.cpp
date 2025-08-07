@@ -19,6 +19,9 @@
 #include "../../GameObject/Camera/CameraManager.h"
 
 #include "../../GameObject/UI/DrawUI/DrawUI.h"
+#include "../../GameObject/UI/NumberUI/NumberUI.h"
+#include "../../GameObject/UI/UIManager.h"
+
 // 少数第n位で四捨五入する
 void round_n(float& number, int n)
 {
@@ -34,6 +37,7 @@ void GameScene::Init()
 	KdGameObjectFactory::Instance().RegisterGameObject<Drone>("Drone");
 	KdGameObjectFactory::Instance().RegisterGameObject<Terrain>("Terrain");
 	KdGameObjectFactory::Instance().RegisterGameObject<AnimTerrain>("AnimTerrain");
+	KdGameObjectFactory::Instance().RegisterGameObject<NumberUI>("NumberUI");
 
 
 	//===================================================================
@@ -77,6 +81,14 @@ void GameScene::Init()
 	pos = { 50.0f,0.0f,300.0f };
 	_terrain->SetPos(pos);
 	_terrain->SetModel("Asset/Models/Stage/LowApartment/LowApartment.gltf");
+	_terrain->Init();
+	AddObject(_terrain);
+	AddTerrain(_terrain);
+	
+	_terrain = std::make_shared<Terrain>();
+	pos = { -100.0f,0.0f,100.0f };
+	_terrain->SetPos(pos);
+	_terrain->SetModel("Asset/Models/Stage/dai.gltf");
 	_terrain->Init();
 	AddObject(_terrain);
 	AddTerrain(_terrain);
@@ -155,11 +167,11 @@ void GameScene::Init()
 		charge->SetParent(_character);
 		charge->SetAttackTrigger(WeaponBase::LeftShoulder);
 		charge->SetAttachPath("LeftShoulderWeapon");
-		charge->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 3.5f, 6.0f,0.0f,1, 24, 80);
+		charge->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 3.5f, 6.0f,0.0f,1, 12, 72);
 		charge->MakeAnimator("Close", 20.0f);
 		charge->Init();
 		charge->SetTag(KdGameObject::tPlayerAttack);
-		charge->SetBulletsParam("", 5.0f, 300, 300, 200, 40.0f, 0.95f);
+		charge->SetBulletsParam("Asset/Models/Weapon/Bullet/RaserBullet.gltf", 5.0f, 300, 3, 200, 40.0f, 0.95f);
 		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke2.png",Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
 		AddObject(charge);;
 		
@@ -242,7 +254,7 @@ void GameScene::Init()
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.078f, 5.0f, 0.0f, 1, 80, 300);
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 400, 50, 10.0f, 0.9f);
-	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
+	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(1.0f, 0.17f, 0.19f), 1.7f, 10);
 	AddObject(rifle);
 
 	// 4脚
@@ -263,7 +275,7 @@ void GameScene::Init()
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
 	AddObject(rifle);
 
@@ -274,11 +286,11 @@ void GameScene::Init()
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
-	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
+	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.1f, 0.1f), 1.7f, 10);
 	AddObject(rifle);
 
-	/*auto mt = std::make_shared<MT>();
+	auto mt = std::make_shared<MT>();
 	mt->SetThis(mt);
 	mt->SetModelWork("Asset/Models/Leg/Leg.gltf");
 	mt->Init();
@@ -286,19 +298,20 @@ void GameScene::Init()
 	mt->SetPos({ -100.0f,0.0f,20.0f });
 	mt->SetTag(KdGameObject::tEnemy);
 	AddObject(mt);
-	AddEnemy(drone);*/
+	AddEnemy(mt);
 
+	rifle = std::make_shared<Rifle>();
+	rifle->SetParent(mt);
+	rifle->SetAttachPath("RightWeapon");
+	rifle->SetAttackTrigger(WeaponBase::RightHand);
+	rifle->SetTag(KdGameObject::tEnemyAttack);
+	rifle->Init();
+	rifle->SetGunsParam("Asset/Models/Weapon/SMG/MP5.gltf", 0.08f, 5.0f, 0.0f, 1, 40, 250);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 45, 300, 50, 10.0f, 0.9f);
+	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.3f, 0.2f), 1.7f, 10);
+	AddObject(rifle);	
 
-
-	auto ui = std::make_shared<DrawUI>();
-	ui->Init();
-	ui->SetTexture("Asset/Textures/UI/BlueUI.png");
-	AddObject(ui);
-
-	ui = std::make_shared<DrawUI>();
-	ui->Init();
-	ui->SetTexture("Asset/Textures/UI/MainLock.png");
-	AddObject(ui);
+	UIManager::GetInstance().UIInit();
 
 	//===================================================================
 	// カメラ初期化

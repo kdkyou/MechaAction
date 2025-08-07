@@ -16,6 +16,7 @@ public:
 		Sight,
 		Chasing,
 		SightChasing,
+		SightScale,
 	};
 
 	void Init()override;
@@ -23,6 +24,7 @@ public:
 	void PostUpdate()override;
 
 	void DrawUnLit()override;
+	void DrawBright()override;
 
 	void SetBulletParam(float _aliveTime,int _damage, float _range, const Math::Vector3& _startPos, const Math::Vector3 direction,float _speed,float _dampingInterval,float _dampingRate);
 	void SetBulletTrail(const std::string& _path, const Math::Color _color, float _width, UINT _length);

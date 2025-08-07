@@ -87,22 +87,7 @@ public :
 
 	void Edit_ImGui()
 	{
-		nlohmann::json outJson;
-		if (ImGui::Button((const char*)u8"シーン保存"))
-		{
-			for (auto obj : m_objList)
-			{
-				nlohmann::json json;
-				obj->Serialize(json);
-				outJson.push_back(json);
-			}
-
-			std::ofstream ofs("Asset/Data/Game.scene");
-			if (ofs.is_open())
-			{
-				ofs << outJson.dump();
-			}
-		}
+		
 
 		static std::string str = "";
 		if (ImGui::BeginCombo("SelectObject", str.empty() ? (const char*)u8"選択してください" : str.c_str()))

@@ -19,7 +19,7 @@ public:
 	// JSONデータから、クラスの内容を設定
 	virtual void Deserialize(const nlohmann::json& jsonObj)override
 	{
-
+		KdGameObject::Deserialize(jsonObj);
 	}
 
 	// このクラスの内容をJSONデータ化する
