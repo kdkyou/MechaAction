@@ -8,6 +8,7 @@ void UIBase::DrawSprite()
 {
 	if (m_spTex)
 	{
+		m_rect = { m_rectX,m_rectY,m_rectWi,m_rectHe };
 
 		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex,m_pos.x,m_pos.y, m_drawWi, m_drawHe,&m_rect);
 	}
@@ -30,8 +31,7 @@ void UIBase::Editor_ImGui()
 	ImGui::DragInt((const char*)u8"切り取り範囲:X", &m_rectWi, 1.0);
 	ImGui::DragInt((const char*)u8"切り取り範囲:Y", &m_rectHe, 1.0);
 
-
-	m_rect = { m_rectX,m_rectY,m_rectWi,m_rectHe };
+	ImGui::DragFloat2((const char*)u8"pivot", &m_pivot.x, 0.01f, 0.0f, 1.0f);
 
 
 if (ImGui::Button((const char*)u8"テクスチャのロード"))
@@ -55,8 +55,6 @@ void UIBase::SetTexture(const std::string& path)
 
 		m_drawWi = m_spTex->GetWidth();
 		m_drawHe = m_spTex->GetHeight();
-
-	
 
 		m_rectWi = m_spTex->GetWidth();
 		m_rectHe = m_spTex->GetHeight();

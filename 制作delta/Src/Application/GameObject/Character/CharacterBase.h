@@ -80,7 +80,7 @@ protected:
 
 	bool  RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length, const KdCollider::Type& type, Math::Vector3& resultPos);
 
-	bool  SphereCast(const Math::Vector3& pos, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos);
+	bool  SphereCast(const Math::Vector3& pos, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos);
 
 	bool SearchDetect(const Math::Vector3& hitPos, const Math::Matrix& myMat, float viewRange);
 

@@ -13,6 +13,28 @@ void UIManager::UIInit()
 
 }
 
+void UIManager::SceneUICreate()
+{
+	std::string str = "";
+
+	auto sceneType = SceneManager::Instance().GetSceneType();
+	switch (sceneType)
+	{
+	case SceneManager::SceneType::Title:
+		str = "Asset/Data/TitleUI.Scene";
+		break;
+	case SceneManager::SceneType::Game:
+		str = "Asset/Data/GameUI.Scene";
+		break;
+	default:
+		break;
+	}
+
+	m_uiList.clear();
+
+	Deserialize(str);
+}
+
 void UIManager::PreUpdate()
 {
 	auto it = m_uiList.begin();

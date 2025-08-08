@@ -63,4 +63,7 @@ protected:
 
 	std::string				   m_fileName;
 
+	Math::Color				   m_color = { 1,1,1,1 };
+	Math::Vector2			   m_pivot = { 0.5f,0.5f };
+
 };

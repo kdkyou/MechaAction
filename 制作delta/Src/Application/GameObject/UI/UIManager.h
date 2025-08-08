@@ -16,6 +16,8 @@ public:
 
 	void UIInit();
 
+	void SceneUICreate();
+
 	void PreUpdate();
 	void Update();
 

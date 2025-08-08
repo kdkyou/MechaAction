@@ -159,7 +159,7 @@ void Charge::Shot()
 	bullet->SetModelData(m_bulletModelPath);
 	bullet->SetBulletParam(m_aliveTime, m_damage, m_range, startPos, direct, m_speed, m_dampingInterval, m_dampingRate);
 	bullet->Init();
-
+	bullet->SetBulletType(Bullet::SightScale, {});
 	bullet->SetTag(m_tag);
 
 	float width = m_durationFire / m_fireRate;
@@ -196,7 +196,7 @@ void Charge::ShotCharge()
 	bullet->SetModelData(m_bulletModelPath);
 	bullet->SetBulletParam(m_aliveTime, damage, m_range, startPos, direct, m_speed, m_dampingInterval, m_dampingRate);
 	bullet->Init();
-
+	bullet->SetBulletType(Bullet::SightScale, {});
 	bullet->SetTag(m_tag);
 
 	bullet->SetBulletTrail(m_bulletTrailPath, m_bulletTrailColor, m_bulletTrailWidth, m_bulletTrailLength);

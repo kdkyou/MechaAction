@@ -13,9 +13,14 @@ void DrawUI::Editor_ImGui()
 
 void DrawUI::DrawSprite()
 {
-	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
+	if (m_spTex)
+	{
+		m_rect = { m_rectX,m_rectY,m_rectWi,m_rectHe };
 
-	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, m_pos.x, m_pos.y,&m_rect);
+		KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
 
-	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
+		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, m_pos.x, m_pos.y, m_drawWi, m_drawHe, &m_rect,&m_color,m_pivot);
+
+		KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
+	}
 }

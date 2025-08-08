@@ -10,11 +10,11 @@ public:
 
 	void Editor_ImGui()override;
 
+
+
 	virtual void Deserialize(const nlohmann::json& jsonObj)
 	{
 		UIBase::Deserialize(jsonObj);
-
-
 	}
 
 	// このクラスの内容をJSONデータ化する

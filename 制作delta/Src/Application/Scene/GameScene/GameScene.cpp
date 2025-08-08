@@ -62,7 +62,7 @@ void GameScene::Init()
 	AddTerrain(_terrain);
 
 	_terrain = std::make_shared<Terrain>();
-	pos = { -30.0f,0.0f,0.0f };
+	pos = { -50.0f,0.0f,0.0f };
 	_terrain->SetPos(pos);
 	_terrain->SetModel("Asset/Models/Stage/Rubble/Rubble.gltf");
 	_terrain->Init();
@@ -70,7 +70,7 @@ void GameScene::Init()
 	AddTerrain(_terrain);
 
 	_terrain = std::make_shared<Terrain>();
-	pos = { 30.0f,0.0f,50.0f };
+	pos = { 50.0f,0.0f,50.0f };
 	_terrain->SetPos(pos);
 	_terrain->SetModel("Asset/Models/Stage/Rubble2/Rubble2.gltf");
 	_terrain->Init();
@@ -171,7 +171,7 @@ void GameScene::Init()
 		charge->MakeAnimator("Close", 20.0f);
 		charge->Init();
 		charge->SetTag(KdGameObject::tPlayerAttack);
-		charge->SetBulletsParam("Asset/Models/Weapon/Bullet/RaserBullet.gltf", 5.0f, 300, 3, 200, 40.0f, 0.95f);
+		charge->SetBulletsParam("Asset/Models/Weapon/Bullet/RaserBullet.gltf", 5.0f, 300, 100.0f, 200, 40.0f, 0.95f);
 		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke2.png",Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
 		AddObject(charge);;
 		
@@ -311,7 +311,8 @@ void GameScene::Init()
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.3f, 0.2f), 1.7f, 10);
 	AddObject(rifle);	
 
-	UIManager::GetInstance().UIInit();
+	UIManager::GetInstance().SceneUICreate();
+
 
 	//===================================================================
 	// カメラ初期化

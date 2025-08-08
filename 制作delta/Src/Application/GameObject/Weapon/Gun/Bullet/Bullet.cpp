@@ -197,6 +197,16 @@ bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float lengt
 	return false;
 }
 
+void Bullet::DrawLit()
+{
+
+	if (m_moveType != SightScale)
+	{
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld);
+
+	}
+}
+
 void Bullet::DrawUnLit()
 {
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
@@ -212,7 +222,6 @@ void Bullet::DrawBright()
 	if (m_moveType == SightScale)
 	{
 		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData,m_mWorld);
-
 	}
 }
 

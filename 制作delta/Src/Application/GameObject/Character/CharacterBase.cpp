@@ -101,6 +101,8 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 		{
 			pos = move;
 		}
+		auto center = pos +Math::Vector3(0.0f, 1.0f, 0.0f);
+		SphereCast(center, 1.0f, KdCollider::TypeGround, pos);
 	}
 	else
 	{
@@ -304,7 +306,7 @@ bool CharacterBase::SearchPlayer()
 }
 
 
-bool CharacterBase::SphereCast(const Math::Vector3& center, const Math::Vector3& vec, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos)
+bool CharacterBase::SphereCast(const Math::Vector3& center, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos)
 {
 	// その他球による衝突判定
 	// ---- ---- ---- ---- ---- ----
@@ -360,8 +362,8 @@ bool CharacterBase::SphereCast(const Math::Vector3& center, const Math::Vector3&
 
 		Math::Vector3 newPos = GetPos() + (hitDir * maxOverLap);
 		resultPos = newPos;
+		return true;
 	}
 
-
-	return true;
+	return false;
 }

@@ -416,12 +416,13 @@ void Character::UpdateCollision()
 	// ①当たり判定(球判定)用の情報を作成
 	KdCollider::SphereInfo sphereInfo;
 	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 1.8f, 0);
-	sphereInfo.m_sphere.Radius = 2.0f;
+	sphereInfo.m_sphere.Radius = 1.6f;
 	sphereInfo.m_type = KdCollider::TypeGround;
 
 	Math::Vector3 pos;
-	SphereCast(sphereInfo.m_sphere.Center, m_mWorld.Backward(), sphereInfo.m_sphere.Radius, KdCollider::TypeGround, pos);
-	//SetPos(pos);
+	if (SphereCast(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, KdCollider::TypeGround, pos)) {
+		SetPos(pos);
+	}
 	float dist = 0;
 
 	DirectX::BoundingOrientedBox box;
@@ -2206,15 +2207,22 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 
 	m_stateNum = spOwner->CharacterStateName::RightSorwdBef;
 	
-
+	m_isDuration = true;
 }
 
 void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 {
-	Application::Instance().m_log.AddLog("Attack\n");
+	Application::Instance().m_log.AddLog("AttackBef\n");
 
 	std::shared_ptr<Character> spOwner = owner.lock();
 	Checkkey(owner);
+
+	if (!m_isRightAttack)
+	{
+		if (m_isDuration) {
+			m_isDuration = false;
+		}
+	}
 
 	if (spOwner->m_spAnimator->GetProgress() > 0.6f)
 	{
@@ -2227,8 +2235,14 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 
 	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionRightAttackMid>());
-		return;
+		if (!m_isDuration)
+		{
+			spOwner->ChangeActionState(std::make_shared<ActionRightAttackMid>());
+			return;
+		}
+		else {
+
+		}
 	}
 
 	//敵が一定範囲内なら敵のほうに向いて敵に

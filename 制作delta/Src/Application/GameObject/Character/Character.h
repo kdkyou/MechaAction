@@ -170,6 +170,8 @@ protected:
 		bool m_isRightShoulder = false;
 		bool m_isLeftShoulder = false;
 
+		bool m_isDuration = false;
+
 		bool m_isOneShot = false;
 
 
@@ -349,6 +351,18 @@ protected:
 	{
 	public:
 		virtual ~ActionRightAttack() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+
+	class ActionRightChargeAttack :public ActionStateBase
+	{
+	public:
+		virtual ~ActionRightChargeAttack() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;

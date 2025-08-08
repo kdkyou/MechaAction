@@ -172,6 +172,9 @@
     <Filter Include="Src\Application\GameObject\UI\NumberUI">
       <UniqueIdentifier>{d0c2bfe5-1965-4afa-9b8a-3d9cdb8503ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\UI\GaugeUI">
+      <UniqueIdentifier>{feb2561c-98ce-49e5-ba39-99a28ecebb4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -471,6 +474,9 @@
     <ClInclude Include="Src\Application\GameObject\UI\NumberUI\NumberUI.h">
       <Filter>Src\Application\GameObject\UI\NumberUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\GuageUI\GuageUI.h">
+      <Filter>Src\Application\GameObject\UI\GaugeUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -736,6 +742,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\NumberUI\NumberUI.cpp">
       <Filter>Src\Application\GameObject\UI\NumberUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\GuageUI\GuageUI.cpp">
+      <Filter>Src\Application\GameObject\UI\GaugeUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
