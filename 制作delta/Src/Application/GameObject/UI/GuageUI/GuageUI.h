@@ -8,6 +8,7 @@ public:
 	void Init()override;
 
 	void Update()override;
+	void DrawSprite()override;
 
 	void Editor_ImGui()override;
 
@@ -16,14 +17,18 @@ public:
 	// このクラスの内容をJSONデータ化する
 	virtual void Serialize(nlohmann::json& outJson) const override;
 
-//	void DrawSprite()override;
-
-	void SetBaseNum(const int num) { m_baseNum = num; }
-	void SetIndeNum(const int num) { m_indeNum = num; }
+	void SetValue(int current, int max) { m_current = current; m_max = max; }
+	void SetHorizontal(bool horizontal) { m_isHorizontal = horizontal; }
+	void SetReverse(bool reverse) { m_isReverse = reverse; }
 
 private:
 
-	int m_baseNum;
-	int m_indeNum;
+	void DrawGuage();
+
+	int m_current;
+	int m_max =1;
+
+	bool m_isHorizontal = true;	// true 横方向ゲージ
+	bool m_isReverse = false;	// true = 右からor 下から
 
 };
