@@ -11,6 +11,7 @@ public:
 		No,
 		Draw,
 		Number,
+		Guage,
 
 	};
 

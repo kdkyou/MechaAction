@@ -13,11 +13,12 @@ void GuageUI::Init()
 	m_rectHe = m_drawHe;
 
 	m_rect = { 0, 0, m_rectWi, m_rectHe };
+
+	m_fillDir = FillDirection::TopToBottom;
 }
 
 void GuageUI::Update()
 {
-
 }
 
 void GuageUI::DrawSprite()
@@ -34,6 +35,16 @@ void GuageUI::Editor_ImGui()
 	ImGui::Checkbox("Horizontal", &m_isHorizontal);
 	ImGui::Checkbox("Reverse", &m_isReverse);
 
+	static const char* dirNames[] = { "Left->Right", "Right->Left", "Bottom->Top", "Top->Bottom" };
+	int dir = static_cast<int>(m_fillDir);
+	if (ImGui::Combo("Fill Dir", &dir, dirNames, IM_ARRAYSIZE(dirNames)))
+	{
+		m_fillDir = static_cast<FillDirection>(dir);
+	}
+
+	ImGui::SliderFloat("Ammo Ratio", &m_ratio, 0.0f, 1.0f);
+
+
 }
 
 void GuageUI::Deserialize(const nlohmann::json& jsonObj)
@@ -47,38 +58,55 @@ void GuageUI::Serialize(nlohmann::json& outJson) const
 	UIBase::Serialize(outJson);
 }
 
+
+
 void GuageUI::DrawGuage()
 {
+	if (m_spTex == nullptr) { return; }
+
 	if (m_max <= 0) { return; }
 
-	float ratio = std::clamp((float)m_current / (float)m_max, 0.0f, 1.0f);
+	
+	Math::Rectangle uvRect = m_rect;
+	Math::Vector2 drawPos = { m_pos.x, m_pos.y };
+	int drawW = m_drawWi;
+	int drawH = m_drawHe;
 
-	Math::Rectangle rect = m_rect;
-
-	if (m_isHorizontal)
+	switch (m_fillDir)
 	{
-		int cutWidth = static_cast<int>(m_rectWi * ratio);
+	case FillDirection::LeftToRight:
+		uvRect.width = static_cast<int>(m_rectWi * m_ratio);
+		drawW = static_cast<int>(m_drawWi * m_ratio);
+		break;
 
-		if (m_isReverse)
-		{
-			rect.x = m_rectWi - cutWidth; //右端から
-		}
+	case FillDirection::RightToLeft:
+		uvRect.x = m_rect.x + static_cast<int>(m_rectWi * (1.0f - m_ratio));
+		uvRect.width = static_cast<int>(m_rectWi * m_ratio);
+		//drawPos.x += m_drawWi * (1.0f - m_ratio);
+		drawW = static_cast<int>(m_drawWi * m_ratio);
+		break;
 
-		rect.width = cutWidth;
+	case FillDirection::BottomToTop:
+		uvRect.y = m_rect.y + static_cast<int>(m_rectHe * (1.0f - m_ratio));
+		uvRect.height = static_cast<int>(m_rectHe * m_ratio);
+		drawPos.y += m_drawHe * (1.0f - m_ratio);
+		drawH = static_cast<int>(m_drawHe * m_ratio);
+		break;
 
+	case FillDirection::TopToBottom:
+		uvRect.height = static_cast<int>(m_rectHe * m_ratio);
+		drawH = static_cast<int>(m_drawHe * m_ratio);
+		break;
 	}
-	else {
-		int cutHeight = static_cast<int>(m_rectHe * ratio);
 
-		if (m_isReverse)
-		{
-			rect.y = m_rectHe - cutHeight;
-		}
 
-		rect.height = cutHeight;
-	}
 
-	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, m_pos.x, m_pos.y, m_drawWi, m_drawHe, &rect);
+	auto& sm = KdShaderManager::Instance();
+
+	sm.ChangeBlendState(KdBlendState::Add);
+	sm.m_spriteShader.DrawTex(m_spTex, drawPos.x, drawPos.y, drawW, drawH, &uvRect);
+	sm.ChangeBlendState(KdBlendState::Alpha);
+
 }
 
 

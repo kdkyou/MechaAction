@@ -5,6 +5,15 @@
 class GuageUI :public UIBase
 {
 public:
+
+	enum class FillDirection
+	{
+		LeftToRight,
+		RightToLeft,
+		BottomToTop,
+		TopToBottom,
+	};
+
 	void Init()override;
 
 	void Update()override;
@@ -20,10 +29,22 @@ public:
 	void SetValue(int current, int max) { m_current = current; m_max = max; }
 	void SetHorizontal(bool horizontal) { m_isHorizontal = horizontal; }
 	void SetReverse(bool reverse) { m_isReverse = reverse; }
+	
+	// 残弾割合を設定（0.0f〜1.0f）
+	void SetRatio(float ratio) { m_ratio = std::clamp(ratio, 0.0f, 1.0f); }
+
+
+
+
 
 private:
 
+
 	void DrawGuage();
+
+	FillDirection m_fillDir = FillDirection::TopToBottom;
+	
+	float m_ratio = 1.0f;
 
 	int m_current;
 	int m_max =1;

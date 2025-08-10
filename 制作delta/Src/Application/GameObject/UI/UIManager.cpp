@@ -3,6 +3,8 @@
 //#include "UIBase.h"
 #include "DrawUI/DrawUI.h"
 #include "NumberUI/NumberUI.h"
+#include "GuageUI/GuageUI.h"
+
 #include "../Weapon/Gun/GunBase.h"
 
 #include "../../Scene/SceneManager.h"
@@ -136,7 +138,7 @@ void UIManager::Editor_ImGui()
 	
 	if (ImGui::BeginMenu((const char*)u8"UI作成"))
 	{
-		const char* alignStr[] = { "None","Draw", "Number" };
+		const char* alignStr[] = { "None","Draw", "Number","Guage"};
 		int alignIndex = static_cast<int>(m_nowCreateType);
 		if (ImGui::Combo("Create", &alignIndex, alignStr, IM_ARRAYSIZE(alignStr)))
 		{
@@ -165,6 +167,7 @@ void UIManager::CreateUI()
 {
 	std::shared_ptr<DrawUI> draw; 
 	std::shared_ptr<NumberUI> number;
+	std::shared_ptr<GuageUI> guage;
 	switch (m_nowCreateType)
 	{
 	case UIManager::CreateType::No:
@@ -178,6 +181,11 @@ void UIManager::CreateUI()
 		number = std::make_shared<NumberUI>();
 		number->Init();
 		AddUI(number);
+		break;
+	case UIManager::CreateType::Guage:
+		guage = std::make_shared<GuageUI>();
+		guage->Init();
+		AddUI(guage);
 		break;
 	default:
 		break;
