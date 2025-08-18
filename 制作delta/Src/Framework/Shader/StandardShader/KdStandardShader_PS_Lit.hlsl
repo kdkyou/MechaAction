@@ -73,6 +73,7 @@ float4 main(VSOutput In) : SV_Target0
 	vCam = normalize(vCam);
 
 	//アルファディザ
+	if(g_alphaEnalbe > 0)
 	{
 		//fmod :　「%」余りを求める演算子
 		// In : ピクセルの情報　Pos : 2D座標

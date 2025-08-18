@@ -162,6 +162,7 @@
     <ClInclude Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.h" />
+    <ClInclude Include="Src\Application\GameObject\Camera\LookAtCamera\LookAtCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.h" />
@@ -176,6 +177,8 @@
     <ClInclude Include="Src\Application\GameObject\Enemy\MT\MT.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\AnimTerrain.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrain\DrawTerrain.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrain\MoveTerrain.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\Terrain.h" />
     <ClInclude Include="Src\Application\GameObject\UI\Alert\Alert.h" />
     <ClInclude Include="Src\Application\GameObject\UI\DrawUI\DrawUI.h" />
@@ -258,6 +261,7 @@
     <ClCompile Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Camera\LookAtCamera\LookAtCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.cpp" />
@@ -271,6 +275,8 @@
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\MT\MT.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\AnimTerrain.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrain\DrawTerrain.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrain\MoveTerrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\Terrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\Alert\Alert.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\DrawUI\DrawUI.cpp" />

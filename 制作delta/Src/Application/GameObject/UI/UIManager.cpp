@@ -131,6 +131,7 @@ void UIManager::Editor_ImGui()
 			m_uiList.clear();
 
 			Deserialize(str);
+
 		}
 
 		ImGui::EndMenu();
@@ -214,16 +215,16 @@ void UIManager::Deserialize(const std::string& path)
 				if (str == "DrawUI")
 				{
 					auto obj = std::make_shared<DrawUI>();
-					obj->Init();
 					obj->Deserialize(json);
+					obj->Init();
 					AddUI(obj);	
 				}
 
 				if (str == "NumberUI")
 				{
 					auto obj = std::make_shared<NumberUI>();
-					obj->Init();
 					obj->Deserialize(json);
+					obj->Init();
 					AddUI(obj);	
 
 					auto& tag = obj->GetUIByTag();
@@ -238,6 +239,11 @@ void UIManager::Deserialize(const std::string& path)
 					{
 						m_leftWeaponUI = obj;
 					}
+
+				}
+
+				if (str == "")
+				{
 
 				}
 				

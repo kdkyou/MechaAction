@@ -167,7 +167,7 @@ void GameScene::Init()
 		charge->SetParent(_character);
 		charge->SetAttackTrigger(WeaponBase::LeftShoulder);
 		charge->SetAttachPath("LeftShoulderWeapon");
-		charge->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 3.5f, 6.0f,0.0f,1, 12, 72);
+		charge->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 3.5f, 6.0f,0.0f,1, 12, 48);
 		charge->MakeAnimator("Close", 20.0f);
 		charge->Init();
 		charge->SetTag(KdGameObject::tPlayerAttack);
@@ -180,7 +180,7 @@ void GameScene::Init()
 		missile->SetParent(_character);
 		missile->SetAttackTrigger(WeaponBase::RightShoulder);
 		missile->SetAttachPath("RightShoulderWeapon");
-		missile->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/3LineMissile.gltf", 1.8f, 7.0f,0.1f,3, 24, 80);
+		missile->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/3LineMissile.gltf", 1.8f, 7.0f,0.1f,3, 12, 36);
 		missile->MakeAnimator("Close", 20.0f);
 		missile->SetNodeMats("SP1");
 		missile->SetNodeMats("SP2");

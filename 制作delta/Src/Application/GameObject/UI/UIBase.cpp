@@ -47,7 +47,7 @@ if (ImGui::Button((const char*)u8"テクスチャのロード"))
 
 void UIBase::SetTexture(const std::string& path)
 {
-	if (!m_spTex)
+//	if (!m_spTex)
 	{
 		m_spTex = KdAssets::Instance().m_textures.GetData(path);
 

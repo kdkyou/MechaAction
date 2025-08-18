@@ -1,20 +1,21 @@
-﻿#include"CameraManager.h"
+﻿#include "CameraManager.h"
 
-#include"FPSCamera/FPSCamera.h"
-#include"NoneCamera/NoneCamera.h"
-#include"LockCamera/LockCamera.h"
-#include"TPSCamera/TPSCamera.h"
-#include"TrackingCamera/TrackingCamera.h"
-#include"HitCamera/HitCamera.h"
+#include "FPSCamera/FPSCamera.h"
+#include "NoneCamera/NoneCamera.h"
+#include "LockCamera/LockCamera.h"
+#include "TPSCamera/TPSCamera.h"
+#include "TrackingCamera/TrackingCamera.h"
+#include "HitCamera/HitCamera.h"
+#include "LookAtCamera/LookAtCamera.h"
 
-#include"../../Scene/SceneManager.h"
+#include "../../Scene/SceneManager.h"
 
-#include"../../main.h"
+#include "../../main.h"
 
-#include"../Character/CharacterBase.h"
+#include "../Character/CharacterBase.h"
 
 
-void CameraManager::Init() 
+void CameraManager::Init()
 {
 	SetNextType(m_nextType);
 	KdEffekseerManager::GetInstance().Create(1280, 720);
@@ -29,8 +30,8 @@ void CameraManager::Update()
 {
 	if (m_currentCamera == nullptr) { return; }
 
-	Application::Instance().m_log.AddLog(m_currentCamera->GetName().c_str()+'\n');
-	
+	Application::Instance().m_log.AddLog(m_currentCamera->GetName().c_str() + '\n');
+
 	m_currentCamera->Update();
 }
 
@@ -67,7 +68,7 @@ void CameraManager::DrawSprite()
 const Math::Vector2 CameraManager::GetLocalDirectionTo(const Math::Vector3& targetWorldPos) const
 {
 	if (m_currentCamera == nullptr) { return Math::Vector2(); }
-	
+
 	// カメラのビュー行列の逆
 	auto camMat = m_currentCamera->GetMatrix();
 	auto invCam = camMat.Invert();
@@ -90,34 +91,108 @@ const Math::Vector2 CameraManager::GetLocalDirectionTo(const Math::Vector3& targ
 
 void CameraManager::Editor_ImGui() {
 
-	
-
 	if (m_currentCamera == nullptr) { return; }
+	if (ImGui::BeginMenu((const char*)u8"カメラ"))
+	{
+		nlohmann::json outJson;
 
-	auto  deg =  m_currentCamera->GetDeg();
-	ImGui::Text("deg.x%.2f,deg.y%.2f,deg.z%.2f", deg.x, deg.y,deg.z);
-	
+		std::string str = "";
+
+		auto sceneType = SceneManager::Instance().GetSceneType();
+		switch (sceneType)
+		{
+		case SceneManager::SceneType::Title:
+			str = "Asset/Data/TitleCamera.Scene";
+			break;
+		case SceneManager::SceneType::Game:
+			str = "Asset/Data/GameCamera.Scene";
+			break;
+		default:
+			break;
+		}
+
+		if (ImGui::Button((const char*)u8"保存"))
+		{
+			nlohmann::json json;
+			m_currentCamera->Serialize(json);
+			outJson.push_back(json);
+
+			std::ofstream ofs(str);
+			if (ofs.is_open())
+			{
+				ofs << outJson.dump();
+			}
+		}
+
+		if (ImGui::Button((const char*)u8"読み込み"))
+		{
+			Deserialize();
+		}
+
+		
+		ImGui::EndMenu();
+	}
+
 	m_currentCamera->Editor_ImGui();
+}
+
+void CameraManager::Deserialize()
+{
+	auto scene = SceneManager::Instance().GetSceneType();
+
+	std::string file = "";
+	switch (scene)
+	{
+	case SceneManager::SceneType::Title:
+		file = "Asset/Data/TitleCamera.scene";
+		break;
+	case SceneManager::SceneType::Game:
+		file = "Asset/Data/GameCamera.scene";
+		break;
+	default:
+		break;
+	}
+
+	std::ifstream ifs(file);
+	if (ifs.is_open())
+	{
+		nlohmann::json j;
+		ifs >> j;
+		for (auto& json : j)
+		{
+			std::string str;
+			CameraType type = CameraType::None;
+			KdJsonUtility::GetValue(json, "Name", &str);
+			KdJsonUtility::GetValue(json, "Type", &type);
+
+		//if (!str.empty())
+			{
+				ChangeCamera(type);
+				m_currentCamera->Deserialize(json);
+			}
+		}
+	}
 }
 
 
 bool CameraManager::SetNextType(const CameraType& type)
 {
-	
+
 	if (IsEnableChanged() == false) { return false; }
 
 	if (m_isEnableChanged == false) { return false; }
 
 	m_nextType = type;
-	
+
 	return true;
 }
 
 const std::weak_ptr<CharacterBase> CameraManager::GetLockTarget(UINT num)
 {
 	// TODO: return ステートメントをここに挿入します
-	if (num >= m_multiLockNum || m_wpMultiLocks.empty() == true) { 
-		return {};}
+	if (num >= m_multiLockNum || m_wpMultiLocks.empty() == true) {
+		return {};
+	}
 
 	return m_wpMultiLocks[num];
 }
@@ -127,7 +202,7 @@ void CameraManager::AnimationChange(std::shared_ptr<CameraBase> next)
 
 }
 
-const Math::Vector3& CameraManager::ToCameraVec( const Math::Vector3 nowPos)
+const Math::Vector3& CameraManager::ToCameraVec(const Math::Vector3 nowPos)
 {
 	Math::Vector3 toVec = {};
 	toVec = m_currentCamera->GetPos() - nowPos;
@@ -176,6 +251,10 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 		m_currentCamera = std::make_shared<HitCamera>();
 		Application::Instance().m_log.AddLog("Hit\n");
 		break;
+	case CameraManager::LookAt:
+		m_currentCamera = std::make_shared<LookAtCamera>();
+		Application::Instance().m_log.AddLog("LookAt\n");
+		break;
 	default:
 		break;
 	}
@@ -185,6 +264,6 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 	m_currentCamera->SetLockTarget(m_wpLockTarget);
 	m_currentCamera->SetDeg(deg);
 	m_currentCamera->Init();
-	
+
 	return true;
 }

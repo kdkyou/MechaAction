@@ -18,6 +18,7 @@ void CameraBase::Init()
 
 	KdEffekseerManager::GetInstance().SetCamera(m_spCamera);
 
+	ShowCursor(false);
 }
 
 void CameraBase::PostUpdate()
@@ -47,7 +48,7 @@ void CameraBase::SetLockTarget(const std::weak_ptr<CharacterBase>& target)
 {
 	if (target.expired() == true) { return; }
 
-	m_wpRockTarget = target;
+	m_wpLockTarget = target;
 }
 
 void CameraBase::Editor_ImGui()
@@ -57,12 +58,19 @@ void CameraBase::Editor_ImGui()
 
 void CameraBase::Deserialize(const nlohmann::json& jsonObj)
 {
-	KdGameObject::Deserialize(jsonObj);
+	KdJsonUtility::GetArray(jsonObj, "Pos", &m_pos.x, 3);
+	KdJsonUtility::GetArray(jsonObj, "Rot", &m_rot.x, 3);
+	KdJsonUtility::GetArray(jsonObj, "Scale", &m_scale.x, 3);
+
+	
 }
 
 void CameraBase::Serialize(nlohmann::json& outJson) const
 {
+	outJson["Type"] = CameraManager::Instance().GetNowType();
+	
 	KdGameObject::Serialize(outJson);
+
 }
 
 void CameraBase::UpdateRotateByMouse()

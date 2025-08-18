@@ -23,6 +23,7 @@ cbuffer cbObject : register(b0)
 	float3 g_limLightColor; //カラー
 	float g_limLightPow; //強さ
 	float g_waveTime;	//波の時間
+	int g_alphaEnalbe;	//アルファディザ有効化
 };
 
 // 定数バッファ(メッシュ単位)

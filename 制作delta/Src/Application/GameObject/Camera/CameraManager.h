@@ -15,6 +15,7 @@ public:
 		Animation,
 		Lock,
 		Hit,
+		LookAt,
 	};
 
 	struct LockTargetInfo
@@ -68,6 +69,8 @@ public:
 	const Math::Vector2 GetLocalDirectionTo(const Math::Vector3& targetWorldPos)const;
 
 	void Editor_ImGui();
+
+	void Deserialize();
 
 private:
 

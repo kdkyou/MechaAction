@@ -76,7 +76,7 @@ protected:
 
 	std::shared_ptr<KdCamera>					m_spCamera		= nullptr;
 	std::weak_ptr<CharacterBase>					m_wpTarget;
-	std::weak_ptr<CharacterBase>					m_wpRockTarget;
+	std::weak_ptr<CharacterBase>					m_wpLockTarget;
 
 	
 	std::vector<std::weak_ptr<KdGameObject>>	m_wpHitObjectList{};
@@ -88,4 +88,6 @@ protected:
 	POINT										m_FixMousePos{};
 
 	Math::Vector2								m_mouseSpeed = { 10.0f,10.0f };
+
+
 };

@@ -48,7 +48,9 @@ public:
 		float			LimLightPow = 1;
 		// 波打つ表現
 		float			WaveTime = 0.0f;
-		float dimmy[2] = { 0.0f,0.0f};
+		// アルファディザ切り替え
+		int				AlphaDitherEnable = 1;
+		float dimmy =  0.0f;
 
 	};
 
@@ -106,6 +108,11 @@ public:
 		m_dirtyCBObj = true;
 	}
 
+	// アルファディザ設定
+	void SetAlphaDitherEnable(bool _enable){
+		m_cb0_Obj.Work().AlphaDitherEnable = _enable;
+		m_dirtyCBObj = true;
+	}
 
 	//テクスチャを転送する関数
 	void SetWaterNormalTexture(KdTexture& _normalTex)

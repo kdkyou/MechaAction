@@ -16,7 +16,7 @@ public:
 
 	Math::Vector2 m_distance;
 
-	float m_bloom = 0.0f;
+	float m_bloom = 1.0f;
 
 	void Editor_ImGui();
 

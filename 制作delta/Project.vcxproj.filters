@@ -175,6 +175,12 @@
     <Filter Include="Src\Application\GameObject\UI\GaugeUI">
       <UniqueIdentifier>{feb2561c-98ce-49e5-ba39-99a28ecebb4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Camera\LookAtCamera">
+      <UniqueIdentifier>{6c51a429-f566-442b-bd72-9fd19416a31a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Scene\GameMoveScene">
+      <UniqueIdentifier>{77a5f179-62cf-4085-868f-6de96d582e7d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -477,6 +483,15 @@
     <ClInclude Include="Src\Application\GameObject\UI\GuageUI\GuageUI.h">
       <Filter>Src\Application\GameObject\UI\GaugeUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\LookAtCamera\LookAtCamera.h">
+      <Filter>Src\Application\GameObject\Camera\LookAtCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrain\DrawTerrain.h">
+      <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrain\MoveTerrain.h">
+      <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -745,6 +760,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\GuageUI\GuageUI.cpp">
       <Filter>Src\Application\GameObject\UI\GaugeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\LookAtCamera\LookAtCamera.cpp">
+      <Filter>Src\Application\GameObject\Camera\LookAtCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrain\DrawTerrain.cpp">
+      <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrain\MoveTerrain.cpp">
+      <Filter>Src\Application\GameObject\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -6,13 +6,17 @@
 #include "../../GameObject/Effect/Polygon/PolygonEffect.h"
 #include "../../GameObject/UI/NumberUI/NumberUI.h"
 #include "../../GameObject/UI/DrawUI/DrawUI.h"
-
+#include "../../GameObject/Terrain/AnimTerrain.h"
+#include "../../GameObject/Terrain/MoveTerrain.h"
 
 void TitleScene::Init()
 {
 	KdGameObjectFactory::Instance().RegisterGameObject<PolygonEffect>("PolygonEffect");
 	KdGameObjectFactory::Instance().RegisterGameObject<NumberUI>("NumberUI");
 	KdGameObjectFactory::Instance().RegisterGameObject<DrawUI>("DrawUI");
+	KdGameObjectFactory::Instance().RegisterGameObject<AnimTerrain>("AnimTerrain");
+	KdGameObjectFactory::Instance().RegisterGameObject<MoveTerrain>("MoveTerrain");
+
 
 
 	CameraManager::Instance().SetNextType(CameraManager::CameraType:: None);
@@ -33,4 +37,6 @@ void TitleScene::Event()
 			SceneManager::SceneType::Game
 		);
 	}
+
+	
 }

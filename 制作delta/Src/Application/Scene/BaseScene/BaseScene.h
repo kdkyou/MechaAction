@@ -87,7 +87,20 @@ public :
 
 	void Edit_ImGui()
 	{
-		
+		if (ImGui::Button((const char*)u8"シーン読み込み"))
+		{
+			std::string filepath;
+			if (EditorData::GetInstance().OpenFileDialog(filepath))
+			{
+				std::ifstream ifs(filepath);
+				if (ifs.is_open())
+				{
+					nlohmann::json j;
+					ifs >> j;
+					Deserialize(j);
+				}
+			}
+		}
 
 		static std::string str = "";
 		if (ImGui::BeginCombo("SelectObject", str.empty() ? (const char*)u8"選択してください" : str.c_str()))

@@ -75,6 +75,11 @@ void SceneManager::AddObject(const std::shared_ptr<KdGameObject>& obj)
 
 void SceneManager::Edit_ImGui()
 {
+
+	static std::string fileName = "";
+
+	ImGui::InputText((const char*)u8"ファイル名", &fileName);
+
 	nlohmann::json outJson;
 	if (ImGui::Button((const char*)u8"シーン保存"))
 	{
@@ -98,6 +103,13 @@ void SceneManager::Edit_ImGui()
 			break;
 		}
 
+		if (fileName != "")
+		{
+			str = fileName;
+		}
+
+
+
 		std::ofstream ofs(str);
 		if (ofs.is_open())
 		{
@@ -111,6 +123,9 @@ void SceneManager::Edit_ImGui()
 void SceneManager::ChangeScene(SceneType sceneType)
 {
 	// 次のシーンを作成し、現在のシーンにする
+	// 現在のシーン情報を更新
+	m_currentSceneType = sceneType;
+	
 	std::shared_ptr<GameScene> scene;
 	switch (sceneType)
 	{
@@ -118,12 +133,10 @@ void SceneManager::ChangeScene(SceneType sceneType)
 		m_currentScene = std::make_shared<TitleScene>();
 		break;
 	case SceneType::Game:
-		m_currentSceneType = sceneType;
 		scene =  std::make_shared<GameScene>();
 		m_currentScene = scene;
 		break;
 	}
 
-	// 現在のシーン情報を更新
-	m_currentSceneType = sceneType;
+	
 }

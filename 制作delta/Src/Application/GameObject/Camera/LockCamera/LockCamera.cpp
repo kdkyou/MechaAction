@@ -111,7 +111,7 @@ void LockCamera::DrawSprite()
 
 void LockCamera::Lock()
 {
-	auto spTarget = m_wpRockTarget.lock();
+	auto spTarget = m_wpLockTarget.lock();
 	if (spTarget == nullptr) { return; }
 
 	auto targetMat = spTarget->GetCorrectionMatrix() * spTarget->GetMatrix();
@@ -124,35 +124,6 @@ void LockCamera::Lock()
 	Math::Vector3 toVec = targetPos - pos;
 	auto distance = toVec.Length();
 	if (distance < 0.001) { return; }
-
-	//toVec.Normalize();
-
-	//float targetYaw = atan2f(toVec.x, toVec.z);
-	//float currentYaw = DirectX::XMConvertToRadians(m_DegAng.y); // m_DegAng.y は度 → ラジアンに変換
-
-	//// 差分を求めて -π～+π の範囲に調整（最短角度補間）
-	//float deltaYaw = targetYaw - currentYaw;
-
-	//while (deltaYaw > DirectX::XM_PI)     deltaYaw -= DirectX::XM_2PI;
-	//while (deltaYaw < -DirectX::XM_PI)    deltaYaw += DirectX::XM_2PI;
-
-	//// 補間
-	//float speedRatio = std::clamp(distance / 20.0f, m_speedRatio.x, m_speedRatio.y);
-	//float rotateSpeed = 90.0f * speedRatio; // deg/s
-
-	//float delta = DirectX::XMConvertToRadians(rotateSpeed * KdFPSController::GetInstance().GetDeltaTime());
-	//if (fabsf(deltaYaw) < delta)
-	//{
-	//	currentYaw = targetYaw; // 吸収してピタッと止める
-	//}
-	//else
-	//{
-	//	currentYaw += (deltaYaw > 0 ? 1 : -1) * delta;
-	//}
-
-	//// 結果をDegに変換
-	//m_DegAng.y = DirectX::XMConvertToDegrees(currentYaw);
-
 
 	// 注視用のビュー行列を作る（Z軸がtoVecを向く）
 	Math::Matrix lookMat = Math::Matrix::CreateLookAt(targetPos, pos, { 0, 1, 0 });

@@ -82,7 +82,7 @@ void GuageUI::DrawGuage()
 	case FillDirection::RightToLeft:
 		uvRect.x = m_rect.x + static_cast<int>(m_rectWi * (1.0f - m_ratio));
 		uvRect.width = static_cast<int>(m_rectWi * m_ratio);
-		//drawPos.x += m_drawWi * (1.0f - m_ratio);
+		//drawPos.x -= m_drawWi * (1.0f - m_ratio);
 		drawW = static_cast<int>(m_drawWi * m_ratio);
 		break;
 
