@@ -22,11 +22,11 @@ void LookAtCamera::PostUpdate()
 
 void LookAtCamera::Look()
 {
-	auto spTarget = m_wpTarget.lock();
+	auto spTarget = m_wpLook.lock();
 
 	if (!spTarget) { return; }
 
-	auto targetMat = spTarget->GetCorrectionMatrix() * spTarget->GetMatrix();
+	auto targetMat = spTarget->GetMatrix();
 	Math::Vector3 targetPos = targetMat.Translation();
 
 	Math::Vector3 pos = m_mWorld.Translation();
@@ -50,13 +50,10 @@ void LookAtCamera::Look()
 	angleDiffRad = std::clamp(angleDiffRad, -1.0f, 1.0f);
 	float deg = DirectX::XMConvertToDegrees(acosf(angleDiffRad) * 2.0f); // クオータニオンの角度差
 
-	//float deg = Math::Quaternion::Angle(currentQuat, targetQuat);
 	// 補間スピード設定
 	float baseSpeedDeg = 90.0f;
 	float boostSpeedDeg = 720.0f;
 
-
-	//float boostRate = std::clamp((distance - 5.0f) / 10.0f, 0.0f, 1.0f);
 	float boostRate = std::clamp(deg / 20.0f, 0.0f, 1.0f);
 	float rotateSpeedDeg = baseSpeedDeg + (boostSpeedDeg - baseSpeedDeg) * boostRate;
 
@@ -72,11 +69,6 @@ void LookAtCamera::Look()
 
 	m_mRotation = rotMat;
 
-	// 角度保存
-	Math::Vector3 euler;
-	euler = newQuat.ToEuler();
-	m_DegAng.x = DirectX::XMConvertToDegrees(euler.x);
-	m_DegAng.y = DirectX::XMConvertToDegrees(euler.y);
-	m_DegAng.z = DirectX::XMConvertToDegrees(euler.z);
+	
 
 }

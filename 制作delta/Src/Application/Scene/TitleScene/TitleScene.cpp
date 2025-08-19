@@ -17,10 +17,11 @@ void TitleScene::Init()
 	KdGameObjectFactory::Instance().RegisterGameObject<AnimTerrain>("AnimTerrain");
 	KdGameObjectFactory::Instance().RegisterGameObject<MoveTerrain>("MoveTerrain");
 
-
+	CurrentSceneCreate("Asset/Data/Title.scene");
 
 	CameraManager::Instance().SetNextType(CameraManager::CameraType:: None);
 	CameraManager::Instance().EnableChangedCamera(false);
+	//CameraManager::Instance().Deserialize();
 
 }
 

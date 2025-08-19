@@ -131,7 +131,7 @@ public :
 			}
 		}
 
-		for (auto obj : m_objList)
+		/*for (auto obj : m_objList)
 		{
 			ImGui::PushID(obj.get());
 			if (ImGui::CollapsingHeader(obj->GetName().c_str()))
@@ -140,13 +140,14 @@ public :
 			}
 			ImGui::PopID();
 
-		}
+		}*/
 	}
-
 
 	
 protected :
 
+	void CurrentSceneCreate(const std::string& fileName);
+	
 	// 継承先シーンで必要ならオーバーライドする
 	virtual void Event();
 	virtual void Init();

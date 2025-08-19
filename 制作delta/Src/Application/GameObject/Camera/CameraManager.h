@@ -81,6 +81,7 @@ private:
 
 
 	std::shared_ptr<CameraBase>	m_currentCamera = nullptr;
+	std::weak_ptr<KdGameObject>  m_wpLookTarget;
 	std::weak_ptr<CharacterBase> m_wpCameraTarget;
 	std::weak_ptr<CharacterBase> m_wpLockTarget;
 

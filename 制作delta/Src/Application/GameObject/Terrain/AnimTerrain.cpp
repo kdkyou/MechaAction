@@ -53,6 +53,7 @@ void AnimTerrain::Editor_ImGui()
 {
 	KdGameObject::Editor_ImGui();
 
+	ImGui::Text((const char*)m_modelPath.c_str());
 
 	if (ImGui::Button((const char*)u8"モデルのロード"))
 	{

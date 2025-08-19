@@ -179,6 +179,51 @@ const std::list<std::shared_ptr<KdGameObject>>& BaseScene::GetTerrainList()
 	return m_terrainList;
 }
 
+void BaseScene::CurrentSceneCreate(const std::string& fileName)
+{
+	if (fileName == "") { return; }
+
+	std::ifstream ifs(fileName);
+	if (ifs.is_open())
+	{
+		nlohmann::json j;
+		ifs >> j;
+		for (auto& json : j)
+		{
+			std::string str;
+
+			KdJsonUtility::GetValue(json, "Name", &str);
+
+			auto obj = KdGameObjectFactory::Instance().CreateGameObject(str);
+			if (obj)
+			{
+				obj->Init();
+				obj->Deserialize(json);
+				auto tag = obj->GetTag();
+				switch (tag)
+				{
+				case KdGameObject::tPlayer:
+				//	AddPlayer(obj);
+					break;
+				case KdGameObject::tEnemy:
+				//	AddEnemy(obj);
+					break;
+				case KdGameObject::tTerrain:
+					AddTerrain(obj);
+					break;
+				case KdGameObject::tUI:
+					break;
+				case KdGameObject::tNone:
+				case KdGameObject::tPlayerAttack:
+				case KdGameObject::tEnemyAttack:
+				default:
+					break;
+				}
+				AddObject(obj);
+			}
+		}
+	}
+}
 
 
 void BaseScene::Event()

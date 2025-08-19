@@ -17,6 +17,7 @@ public:
 	void PreDraw()			override;
 
 
+	void SetLook(const std::weak_ptr<KdGameObject>& target);
 	void SetTarget(const std::weak_ptr<CharacterBase>& target);
 	void SetLockTarget(const std::weak_ptr<CharacterBase>& rock);
 
@@ -75,6 +76,7 @@ protected:
 	void UpdateRotateByMouse();
 
 	std::shared_ptr<KdCamera>					m_spCamera		= nullptr;
+	std::weak_ptr<KdGameObject>						m_wpLook;
 	std::weak_ptr<CharacterBase>					m_wpTarget;
 	std::weak_ptr<CharacterBase>					m_wpLockTarget;
 

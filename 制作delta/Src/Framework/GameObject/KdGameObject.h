@@ -93,6 +93,13 @@ public:
 		ImGui::DragFloat3("Scale", &m_scale.x, 0.1f, -FLT_MAX, FLT_MAX);
 		ImGui::DragFloat3("Rotation", &m_rot.x, 0.1f, -FLT_MAX, FLT_MAX);
 
+		static const char* dirNames[] = { "tNone", "tPlayer", "tEnemy", "tPlayerAttack","tEnemyAttack" ,"tTerrain","tUI"};
+		int tag = static_cast<int>(m_tag);
+		if (ImGui::Combo((const char*)u8"タグ設定", &tag, dirNames, IM_ARRAYSIZE(dirNames)))
+		{
+			m_tag = static_cast<ObjectTag>(tag);
+		}
+
 	}
 	// JSONデータから、クラスの内容を設定
 	virtual void Deserialize(const nlohmann::json& jsonObj)
@@ -101,15 +108,19 @@ public:
 		KdJsonUtility::GetArray(jsonObj,"Pos",&m_pos.x, 3);
 		KdJsonUtility::GetArray(jsonObj,"Rot",&m_rot.x, 3);
 		KdJsonUtility::GetArray(jsonObj,"Scale",&m_scale.x, 3);
+		KdJsonUtility::GetValue(jsonObj, "IsTarget", &m_isCameraTarget);
 	}
 
 	// このクラスの内容をJSONデータ化する
 	virtual void Serialize(nlohmann::json& outJson) const
 	{
 		outJson["Name"] = m_name;
+		outJson["Tag"] = m_tag;
 		outJson["Pos"]  = KdJsonUtility::CreateArray(&m_pos.x,3);
 		outJson["Rot"]  = KdJsonUtility::CreateArray(&m_rot.x,3);
 		outJson["Scale"]  = KdJsonUtility::CreateArray(&m_scale.x,3);
+		outJson["IsTarget"] = m_isCameraTarget;
+
 	}
 
 	
@@ -130,6 +141,8 @@ protected:
 	Math::Matrix	m_mWorld;
 
 	ObjectTag m_tag = tNone;
+
+	bool						m_isCameraTarget = false;
 
 	// 当たり判定クラス
 	std::unique_ptr<KdCollider> m_pCollider = nullptr;

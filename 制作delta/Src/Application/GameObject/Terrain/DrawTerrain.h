@@ -26,7 +26,7 @@ public:
 		KdJsonUtility::GetValue(jsonObj, "AnimPath", &m_animPath);
 		KdJsonUtility::GetArray(jsonObj, "Emmisive", &m_emmisive.x, 3);
 		KdJsonUtility::GetValue(jsonObj, "AnimSpeed", &m_animSpeed);
-
+		
 		SetModel(m_modelPath);
 	}
 
@@ -39,7 +39,6 @@ public:
 		outJson["AnimPath"] = m_animPath;
 		outJson["Emmisive"] = KdJsonUtility::CreateArray(&m_emmisive.x, 3);
 		outJson["AnimSpeed"] = m_animSpeed;
-
 	}
 
 private:
@@ -59,5 +58,6 @@ private:
 	float						m_animSpeed = 0.0f;
 
 	Math::Vector3				m_emmisive = Math::Vector3::Zero;
+
 
 };

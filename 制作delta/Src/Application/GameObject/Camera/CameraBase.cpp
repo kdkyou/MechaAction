@@ -37,6 +37,13 @@ void CameraBase::PreDraw()
 	m_spCamera->SetToShader();
 }
 
+void CameraBase::SetLook(const std::weak_ptr<KdGameObject>& target)
+{
+	if (target.expired() == true) { return; }
+
+	m_wpLook = target;
+}
+
 void CameraBase::SetTarget(const std::weak_ptr<CharacterBase>& target)
 {
 	if (target.expired() == true) { return; }

@@ -2,6 +2,7 @@
 
 void AnimationCamera::Init()
 {
+	m_name = "Animation";
 }
 
 void AnimationCamera::Update()

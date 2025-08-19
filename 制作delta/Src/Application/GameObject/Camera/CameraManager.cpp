@@ -260,6 +260,7 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 	}
 
 	m_nowType = m_nextType;
+	m_currentCamera->SetLook(m_wpLookTarget);
 	m_currentCamera->SetTarget(m_wpCameraTarget);
 	m_currentCamera->SetLockTarget(m_wpLockTarget);
 	m_currentCamera->SetDeg(deg);

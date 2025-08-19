@@ -46,6 +46,8 @@ public :
 
 	void Edit_ImGui();
 
+	
+
 private :
 
 	// マネージャーの初期化

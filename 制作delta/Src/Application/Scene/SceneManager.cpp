@@ -105,7 +105,7 @@ void SceneManager::Edit_ImGui()
 
 		if (fileName != "")
 		{
-			str = fileName;
+			str ="Asset/Data/" + fileName;
 		}
 
 
@@ -119,6 +119,7 @@ void SceneManager::Edit_ImGui()
 
 	m_currentScene->Edit_ImGui();
 }
+
 
 void SceneManager::ChangeScene(SceneType sceneType)
 {

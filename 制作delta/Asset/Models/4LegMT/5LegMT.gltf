@@ -36,6 +36,28 @@
 			]
 		}
 	],
+	"materials":[
+		{
+			"doubleSided":true,
+			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
+			"normalTexture":{
+				"index":0,
+				"scale":0.7000000476837158
+			},
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.0158054381608963,
+					0.3149421811103821,
+					0,
+					1
+				],
+				"metallicRoughnessTexture":{
+					"index":1
+				},
+				"roughnessFactor":0.6540785431861877
+			}
+		}
+	],
 	"meshes":[
 		{
 			"name":"\u7acb\u65b9\u4f53.006",
@@ -46,9 +68,32 @@
 						"NORMAL":1,
 						"TEXCOORD_0":2
 					},
-					"indices":3
+					"indices":3,
+					"material":0
 				}
 			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/png",
+			"name":"mecha_Nol",
+			"uri":"mecha_Nol.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"mecha",
+			"uri":"mecha.png"
 		}
 	],
 	"accessors":[
@@ -111,6 +156,12 @@
 			"byteLength":8844,
 			"byteOffset":77952,
 			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
 		}
 	],
 	"buffers":[
