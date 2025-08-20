@@ -45,6 +45,7 @@ public:
 
 	void SetCameraTarget(const std::shared_ptr<CharacterBase>& target) { m_wpCameraTarget = target; }
 	void SetLockTarget(const std::shared_ptr<CharacterBase>& target) { m_wpLockTarget = target; }
+	void SetLookTarget(const std::shared_ptr<KdGameObject>& target) { m_wpLookTarget = target; }
 
 	void SetMultiLocks(const std::shared_ptr<CharacterBase>& locks) { m_wpMultiLocks .push_back(locks); }
 	void ResetMultiLocks() { m_wpMultiLocks.clear(); }
@@ -71,6 +72,8 @@ public:
 	void Editor_ImGui();
 
 	void Deserialize();
+
+	void Setting(const std::string& path);
 
 private:
 

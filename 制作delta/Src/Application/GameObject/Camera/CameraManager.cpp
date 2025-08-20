@@ -138,22 +138,14 @@ void CameraManager::Editor_ImGui() {
 
 void CameraManager::Deserialize()
 {
-	auto scene = SceneManager::Instance().GetSceneType();
+	
+}
 
-	std::string file = "";
-	switch (scene)
-	{
-	case SceneManager::SceneType::Title:
-		file = "Asset/Data/TitleCamera.scene";
-		break;
-	case SceneManager::SceneType::Game:
-		file = "Asset/Data/GameCamera.scene";
-		break;
-	default:
-		break;
-	}
+void CameraManager::Setting(const std::string& path)
+{
+	if (path == "") { return; }
 
-	std::ifstream ifs(file);
+	std::ifstream ifs(path);
 	if (ifs.is_open())
 	{
 		nlohmann::json j;
@@ -165,7 +157,7 @@ void CameraManager::Deserialize()
 			KdJsonUtility::GetValue(json, "Name", &str);
 			KdJsonUtility::GetValue(json, "Type", &type);
 
-		//if (!str.empty())
+			//if (!str.empty())
 			{
 				ChangeCamera(type);
 				m_currentCamera->Deserialize(json);

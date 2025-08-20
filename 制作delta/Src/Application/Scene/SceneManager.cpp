@@ -5,7 +5,7 @@
 #include "BaseScene/BaseScene.h"
 #include "TitleScene/TitleScene.h"
 #include "GameScene/GameScene.h"
-
+#include "TileMovieScene/TitleMovieScene.h"
 
 void SceneManager::PreUpdate()
 {
@@ -127,15 +127,21 @@ void SceneManager::ChangeScene(SceneType sceneType)
 	// 現在のシーン情報を更新
 	m_currentSceneType = sceneType;
 	
-	std::shared_ptr<GameScene> scene;
+	std::shared_ptr<GameScene> game;
+	std::shared_ptr<TitleScene> title;
+	std::shared_ptr<TitleMovieScene> titleMovie;
+
 	switch (sceneType)
 	{
 	case SceneType::Title:
 		m_currentScene = std::make_shared<TitleScene>();
 		break;
+	case SceneType::TitleMovie:
+		m_currentScene = std::make_shared<TitleMovieScene>();
+		break;
 	case SceneType::Game:
-		scene =  std::make_shared<GameScene>();
-		m_currentScene = scene;
+		game =  std::make_shared<GameScene>();
+		m_currentScene = game;
 		break;
 	}
 

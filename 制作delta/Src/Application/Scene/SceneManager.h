@@ -12,6 +12,7 @@ public :
 	enum class SceneType
 	{
 		Title,
+		TitleMovie,
 		Game,
 	};
 

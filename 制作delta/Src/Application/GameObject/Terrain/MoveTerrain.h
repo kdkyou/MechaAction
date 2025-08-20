@@ -32,6 +32,7 @@ public:
 		KdJsonUtility::GetValue(jsonObj, "WaitTime", &m_waitTime);
 
 		SetModel(m_modelPath);
+		AnimationPlay(m_animPath);
 	}
 
 	// このクラスの内容をJSONデータ化する

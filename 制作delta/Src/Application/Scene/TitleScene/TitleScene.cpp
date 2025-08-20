@@ -21,7 +21,7 @@ void TitleScene::Init()
 
 	CameraManager::Instance().SetNextType(CameraManager::CameraType:: None);
 	CameraManager::Instance().EnableChangedCamera(false);
-	//CameraManager::Instance().Deserialize();
+	CameraManager::Instance().Setting("Asset/Data/TitleCamera.scene");
 
 }
 
@@ -35,7 +35,7 @@ void TitleScene::Event()
 	{
 		SceneManager::Instance().SetNextScene
 		(
-			SceneManager::SceneType::Game
+			SceneManager::SceneType::TitleMovie
 		);
 	}
 

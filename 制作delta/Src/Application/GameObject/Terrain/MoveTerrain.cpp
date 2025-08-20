@@ -10,9 +10,9 @@ void MoveTerrain::Update()
 {
 	auto angle = KdToRadians * m_rot;
 
-	m_durationWait -= KdFPSController::GetInstance().GetDeltaTime();
+	m_durationWait += KdFPSController::GetInstance().GetDeltaTime();
 
-	if (m_durationWait < 0.0f)
+	if (m_durationWait > m_waitTime)
 	{
 		if (m_moveVec.Length() <= 0.001f)
 		{
@@ -100,7 +100,7 @@ void MoveTerrain::Editor_ImGui()
 
 	if (ImGui::DragFloat((const char*)u8"移動待機時間", &m_waitTime, 0.01f, 0.0f, 100.0f))
 	{
-		m_durationWait = m_waitTime;
+		m_durationWait = 0;
 	}
 	ImGui::DragFloat((const char*)u8"スピード",&m_moveSpeed,0.1f,0.0f,100.0f);
 	ImGui::DragFloat3((const char*)u8"方向", &m_moveVec.x, 0.01f, 0.0f, 1.0f);

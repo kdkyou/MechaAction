@@ -183,9 +183,12 @@ void BaseScene::CurrentSceneCreate(const std::string& fileName)
 {
 	if (fileName == "") { return; }
 
+
 	std::ifstream ifs(fileName);
 	if (ifs.is_open())
 	{
+		ListClear();
+
 		nlohmann::json j;
 		ifs >> j;
 		for (auto& json : j)
@@ -220,6 +223,14 @@ void BaseScene::CurrentSceneCreate(const std::string& fileName)
 					break;
 				}
 				AddObject(obj);
+
+				bool isTarget = false;
+			//	KdJsonUtility::GetValue(json, "IsCameraTarget", &isTarget);
+				if (isTarget)
+				{
+					CameraManager::Instance().SetLookTarget(obj);
+				}
+
 			}
 		}
 	}
@@ -234,4 +245,12 @@ void BaseScene::Event()
 void BaseScene::Init()
 {
 	// 各シーンで必要な内容を実装(オーバーライド)する
+}
+
+void BaseScene::ListClear()
+{
+	m_enemyList.clear();
+	m_playerList.clear();
+	m_terrainList.clear();
+	m_objList.clear();
 }

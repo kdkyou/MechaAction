@@ -178,7 +178,7 @@
     <Filter Include="Src\Application\GameObject\Camera\LookAtCamera">
       <UniqueIdentifier>{6c51a429-f566-442b-bd72-9fd19416a31a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\Scene\GameMoveScene">
+    <Filter Include="Src\Application\Scene\TitleMovieScene">
       <UniqueIdentifier>{77a5f179-62cf-4085-868f-6de96d582e7d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -492,6 +492,9 @@
     <ClInclude Include="Src\Application\GameObject\Terrain\MoveTerrain.h">
       <Filter>Src\Application\GameObject\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Scene\TileMovieScene\TitleMovieScene.h">
+      <Filter>Src\Application\Scene\TitleMovieScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -769,6 +772,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Terrain\MoveTerrain.cpp">
       <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Scene\TileMovieScene\TitleMovieScene.cpp">
+      <Filter>Src\Application\Scene\TitleMovieScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

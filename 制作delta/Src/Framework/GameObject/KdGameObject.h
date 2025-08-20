@@ -100,6 +100,8 @@ public:
 			m_tag = static_cast<ObjectTag>(tag);
 		}
 
+		ImGui::Checkbox((const char*)u8"カメラ対象", &m_isCameraTarget);
+
 	}
 	// JSONデータから、クラスの内容を設定
 	virtual void Deserialize(const nlohmann::json& jsonObj)

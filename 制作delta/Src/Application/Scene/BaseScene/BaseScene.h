@@ -95,6 +95,8 @@ public :
 				std::ifstream ifs(filepath);
 				if (ifs.is_open())
 				{
+					ListClear();
+
 					nlohmann::json j;
 					ifs >> j;
 					Deserialize(j);
@@ -152,6 +154,8 @@ protected :
 	virtual void Event();
 	virtual void Init();
 	
+	void ListClear();
+
 	// 全オブジェクトのアドレスをリストで管理
 	std::list<std::shared_ptr<KdGameObject>> m_objList;
 	std::list<std::shared_ptr<CharacterBase>> m_playerList;
