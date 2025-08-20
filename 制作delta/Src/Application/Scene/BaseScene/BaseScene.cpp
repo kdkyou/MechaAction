@@ -225,7 +225,7 @@ void BaseScene::CurrentSceneCreate(const std::string& fileName)
 				AddObject(obj);
 
 				bool isTarget = false;
-			//	KdJsonUtility::GetValue(json, "IsCameraTarget", &isTarget);
+				KdJsonUtility::GetValue(json, "IsTarget", &isTarget);
 				if (isTarget)
 				{
 					CameraManager::Instance().SetLookTarget(obj);

@@ -50,19 +50,21 @@ void LookAtCamera::Look()
 	angleDiffRad = std::clamp(angleDiffRad, -1.0f, 1.0f);
 	float deg = DirectX::XMConvertToDegrees(acosf(angleDiffRad) * 2.0f); // クオータニオンの角度差
 
-	// 補間スピード設定
-	float baseSpeedDeg = 90.0f;
-	float boostSpeedDeg = 720.0f;
+	//// 補間スピード設定
+	//float baseSpeedDeg = 90.0f;
+	//float boostSpeedDeg = 720.0f;
 
-	float boostRate = std::clamp(deg / 20.0f, 0.0f, 1.0f);
-	float rotateSpeedDeg = baseSpeedDeg + (boostSpeedDeg - baseSpeedDeg) * boostRate;
+	//float boostRate = std::clamp(deg / 20.0f, 0.0f, 1.0f);
+	//float rotateSpeedDeg = baseSpeedDeg + (boostSpeedDeg - baseSpeedDeg) * boostRate;
 
 
-	float delta = KdFPSController::GetInstance().GetDeltaTime();
-	float t = std::clamp(rotateSpeedDeg * delta / 180.0f, 0.0f, 1.0f); // normalize補間係数
+	//float delta = KdFPSController::GetInstance().GetDeltaTime();
+	//float t = std::clamp(rotateSpeedDeg * delta / 180.0f, 0.0f, 1.0f); // normalize補間係数
 
-	// 球面線形補間
-	Math::Quaternion newQuat = Math::Quaternion::Slerp(currentQuat, targetQuat, t);
+	//// 球面線形補間
+	//Math::Quaternion newQuat = Math::Quaternion::Slerp(currentQuat, targetQuat, t);
+
+	auto newQuat = targetQuat;
 
 	// 回転行列へ戻す
 	Math::Matrix rotMat = Math::Matrix::CreateFromQuaternion(newQuat);

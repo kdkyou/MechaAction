@@ -104,6 +104,9 @@ void CameraManager::Editor_ImGui() {
 		case SceneManager::SceneType::Title:
 			str = "Asset/Data/TitleCamera.Scene";
 			break;
+		case SceneManager::SceneType::TitleMovie:
+			str = "Asset/Data/TitleMovieCamera.Scene";
+			break;
 		case SceneManager::SceneType::Game:
 			str = "Asset/Data/GameCamera.Scene";
 			break;
