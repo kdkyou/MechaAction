@@ -1,1 +1,106 @@
-[{"Name":"GroundTerrain","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0],"path":"Asset/Models/Stage/Tail/Tail.gltf"},{"Name":"GroundTerrain","Pos":[30.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0],"path":"Asset/Models/Stage/House/House.gltf"},{"Name":"GroundTerrain","Pos":[-30.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0],"path":"Asset/Models/Stage/Rubble/Rubble.gltf"},{"Name":"GroundTerrain","Pos":[30.0,0.0,50.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0],"path":"Asset/Models/Stage/Rubble2/Rubble2.gltf"},{"Name":"GroundTerrain","Pos":[50.0,0.0,300.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0],"path":"Asset/Models/Stage/LowApartment/LowApartment.gltf"},{"Name":"GroundTerrain","Pos":[-100.0,0.0,200.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0],"path":"Asset/Models/Stage/BalconyApartment/BalconyApartment.gltf"},{"Name":"GroundTerrain","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0],"path":"Asset/Models/Stage/Sky/Sky.gltf"},{"Name":"Player","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Sword","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Shield","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Missile","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"","Pos":[115.78435516357422,0.0,-134.44482421875],"Rot":[0.0,319.2646484375,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Rifle","Pos":[0.0,0.0,0.0],"Rot":[15.0,20.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Rifle","Pos":[0.0,0.0,0.0],"Rot":[15.0,20.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"FloatEnemy","Pos":[-124.97288513183594,15.0,3.578500986099243],"Rot":[0.0,91.64014434814453,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Rifle","Pos":[0.0,0.0,0.0],"Rot":[15.0,20.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"FloatEnemy","Pos":[-37.37482452392578,0.0,4.74660587310791],"Rot":[0.0,97.23784637451172,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Rifle","Pos":[0.0,0.0,0.0],"Rot":[15.0,20.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Rifle","Pos":[0.0,0.0,0.0],"Rot":[15.0,20.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"UI","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"UI","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"PolygonEffect","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"Bullet","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]},{"Name":"","Pos":[0.0,0.0,0.0],"Rot":[0.0,0.0,0.0],"Scale":[1.0,1.0,1.0]}]
+[
+	{
+		"Bright": false,
+		"Generate": true,
+		"IsTarget": false,
+		"Lit": true,
+		"Name": "Terrain",
+		"Pos": [ 0.0, 0.0, 0.0 ],
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 5,
+		"UnLit": false,
+		"path": "Asset/Models/Stage/Tail/Tail.gltf"
+	},
+	{
+		"Bright": false,
+		"Generate": true,
+		"IsTarget": false,
+		"Lit": true,
+		"Name": "Terrain",
+		"Pos": [ 30.0, 0.0, 0.0 ],
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 5,
+		"UnLit": false,
+		"path": "Asset/Models/Stage/House/House.gltf"
+	},
+	{
+		"Bright": false,
+		"Generate": true,
+		"IsTarget": false,
+		"Lit": true,
+		"Name": "Terrain",
+		"Pos": [ -50.0, 0.0, 0.0 ],
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 5,
+		"UnLit": false,
+		"path": "Asset/Models/Stage/Rubble/Rubble.gltf"
+	},
+	{
+		"Bright": false,
+		"Generate": true,
+		"IsTarget": false,
+		"Lit": true,
+		"Name": "Terrain",
+		"Pos": [ 50.0, 0.0, 50.0 ],
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 5,
+		"UnLit": false,
+		"path": "Asset/Models/Stage/Rubble2/Rubble2.gltf"
+	},
+	{
+		"Bright": false,
+		"Generate": true,
+		"IsTarget": false,
+		"Lit": true,
+		"Name": "Terrain",
+		"Pos": [ 50.0, 0.0, 300.0 ],
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 5,
+		"UnLit": false,
+		"path": "Asset/Models/Stage/LowApartment/LowApartment.gltf"
+	},
+	{
+		"Bright": false,
+		"Generate": true,
+		"IsTarget": false,
+		"Lit": true,
+		"Name": "Terrain",
+		"Pos": [ -100.0, 0.0, 100.0 ],
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 5,
+		"UnLit": false,
+		"path": "Asset/Models/Stage/dai.gltf"
+	},
+	{
+		"Bright": false,
+		"Generate": true,
+		"IsTarget": false,
+		"Lit": true,
+		"Name": "Terrain",
+		"Pos": [ -100.0, 0.0, 200.0 ],
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 5,
+		"UnLit": false,
+		"path": "Asset/Models/Stage/BalconyApartment/BalconyApartment.gltf"
+	},
+	{
+		"Bright": false,
+		"Generate": false,
+		"IsTarget": false,
+		"Lit": false,
+		"Name": "Terrain",
+		"Pos": [ 0.0, 0.0, 0.0 ],
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 5,
+		"UnLit": true,
+		"path": "Asset/Models/Stage/Sky/Sky.gltf"
+	}
+]

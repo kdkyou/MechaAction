@@ -48,7 +48,7 @@ void Enemy::Init()
 
 	m_clampSize = 20.0f;
 
-	m_hp = 10320.0f;
+	m_hp = 5320.0f;
 
 	m_nockBackDamage = 800.0f;
 }
@@ -1596,6 +1596,9 @@ void Enemy::Destoroy::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdG
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Destroyed"), 5.0f, false);
 
 	spOwner->m_isDestroy = true;
+
+	KdAudioManager::Instance().Play("Asset/Sounds/Sound/down_enemy.wav")->SetVolume(0.3f);
+
 }
 
 void Enemy::Destoroy::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)

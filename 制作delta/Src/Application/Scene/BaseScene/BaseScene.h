@@ -85,66 +85,7 @@ public :
 		}
 	}
 
-	void Edit_ImGui()
-	{
-		if (ImGui::Button((const char*)u8"シーン読み込み"))
-		{
-			std::string filepath;
-			if (EditorData::GetInstance().OpenFileDialog(filepath))
-			{
-				std::ifstream ifs(filepath);
-				if (ifs.is_open())
-				{
-					ListClear();
-
-					nlohmann::json j;
-					ifs >> j;
-					Deserialize(j);
-				}
-			}
-		}
-
-		static std::string str = "";
-		if (ImGui::BeginCombo("SelectObject", str.empty() ? (const char*)u8"選択してください" : str.c_str()))
-		{
-			for (auto obj : KdGameObjectFactory::Instance().GetRegisterObjectList())
-			{
-				if (ImGui::Selectable(obj.c_str(), obj == str))
-				{
-					str = obj;
-				}
-			}
-
-			ImGui::EndCombo();
-		}
-
-
-		if (ImGui::Button((const char*)u8"オブジェクト追加"))
-		{
-			if (!str.empty())
-			{
-				auto obj = KdGameObjectFactory::Instance().CreateGameObject(str);
-				if (obj)
-				{
-					obj->Init();
-					AddObject(obj);
-					AddTerrain(obj);
-				}
-			}
-		}
-
-		/*for (auto obj : m_objList)
-		{
-			ImGui::PushID(obj.get());
-			if (ImGui::CollapsingHeader(obj->GetName().c_str()))
-			{
-				obj->Editor_ImGui();
-			}
-			ImGui::PopID();
-
-		}*/
-	}
-
+	void Edit_ImGui();
 	
 protected :
 
@@ -161,4 +102,6 @@ protected :
 	std::list<std::shared_ptr<CharacterBase>> m_playerList;
 	std::list<std::shared_ptr<CharacterBase>> m_enemyList;
 	std::list<std::shared_ptr<KdGameObject>> m_terrainList;
+
+	bool m_once;
 };

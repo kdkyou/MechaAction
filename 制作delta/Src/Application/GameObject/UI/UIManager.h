@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-
 class NumberUI;
+
+#include "../Effect/Fade/Fade.h"
 
 class UIManager
 {
@@ -18,6 +19,7 @@ public:
 	void UIInit();
 
 	void SceneUICreate();
+	void SceneUICreate(const std::string& path);
 
 	void PreUpdate();
 	void Update();
@@ -32,11 +34,17 @@ public:
 
 	void CreateUI();
 
+	void ListClear() { m_uiList.clear(); }
+	
 	void AddUI(std::shared_ptr<KdGameObject> obj);
+
+	//												 true = In
+	void SetFade(Fade::FadeType type, float time, bool OutorIn = true);
+	const bool IsFadeComplete()const;
 
 private:
 	
-	UIManager() { }
+	UIManager() { UIInit(); }
 
 	void Deserialize(const std::string& path);
 	
@@ -49,6 +57,8 @@ private:
 	std::weak_ptr<NumberUI> m_hpUI;
 	std::weak_ptr<NumberUI> m_rightWeaponUI;
 	std::weak_ptr<NumberUI> m_leftWeaponUI;
+
+	std::shared_ptr<Fade> m_fade;
 
 	std::list<std::shared_ptr<KdGameObject>> m_uiList;
 

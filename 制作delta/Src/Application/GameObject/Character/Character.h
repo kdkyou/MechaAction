@@ -174,7 +174,6 @@ protected:
 
 		bool m_isOneShot = false;
 
-
 		float m_stiffnessTime = 0.0f;
 		float m_durationStiffness = 0.0f;
 

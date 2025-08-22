@@ -18,12 +18,14 @@ public:
 	virtual void Deserialize(const nlohmann::json& jsonObj)override
 	{
 		KdGameObject::Deserialize(jsonObj);
-		KdJsonUtility::GetValue(jsonObj, "Tag", &m_uiTag);
+		KdJsonUtility::GetValue(jsonObj, "UITag", &m_uiTag);
 		KdJsonUtility::GetValue(jsonObj,"Path",&m_fileName);
 		KdJsonUtility::GetValue(jsonObj, "DrawWidth", & m_drawWi);
 		KdJsonUtility::GetValue(jsonObj,"DrawHeight",&m_drawHe);
 		KdJsonUtility::GetValue(jsonObj, "RectWidth", &m_rectWi);
 		KdJsonUtility::GetValue(jsonObj, "RectHeight", &m_rectHe);
+		KdJsonUtility::GetArray(jsonObj, "Color", &m_color.x,4);
+		KdJsonUtility::GetArray(jsonObj, "Pivot", &m_pivot.x,2);
 
 		if (m_fileName != "")
 		{
@@ -35,12 +37,15 @@ public:
 	virtual void Serialize(nlohmann::json& outJson) const override
 	{
 		KdGameObject::Serialize(outJson);
-		outJson["Tag"] = m_uiTag;
+		outJson["UITag"] = m_uiTag;
 		outJson["Path"] = m_fileName;
 		outJson["DrawWidth"] = m_drawWi;
 		outJson["DrawHeight"] = m_drawHe;
 		outJson["RectWidth"] = m_rectWi;
 		outJson["RectHeight"] = m_rectHe;
+		outJson["Color"] = KdJsonUtility::CreateArray(&m_color.x, 4);
+		outJson["Pivot"] = KdJsonUtility::CreateArray(&m_pivot.x, 2);
+
 	}
 
 	void SetTexture(const std::string& path);

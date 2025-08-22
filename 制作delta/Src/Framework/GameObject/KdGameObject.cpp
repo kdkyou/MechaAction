@@ -8,6 +8,13 @@ void KdGameObject::DrawDebug()
 	m_pDebugWire->Draw();
 }
 
+void KdGameObject::DebugClear()
+{
+	if (!m_pDebugWire)return;
+	
+	m_pDebugWire->VertexClear();
+}
+
 void KdGameObject::SetScale(float scalar)
 {
 	Math::Vector3 scale(scalar);

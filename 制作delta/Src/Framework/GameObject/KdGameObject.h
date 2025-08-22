@@ -47,6 +47,7 @@ public:
 	virtual void DrawSprite() {}
 
 	virtual void DrawDebug();
+	virtual void DebugClear();
 
 	virtual void SetAsset(const std::string&) {}
 
@@ -111,6 +112,7 @@ public:
 		KdJsonUtility::GetArray(jsonObj,"Rot",&m_rot.x, 3);
 		KdJsonUtility::GetArray(jsonObj,"Scale",&m_scale.x, 3);
 		KdJsonUtility::GetValue(jsonObj, "IsTarget", &m_isCameraTarget);
+		KdJsonUtility::GetValue(jsonObj, "Tag", &m_tag);
 	}
 
 	// このクラスの内容をJSONデータ化する

@@ -18,3 +18,10 @@ std::shared_ptr<KdGameObject> KdGameObjectFactory::CreateGameObject(const std::s
 
 	return  creater->second();
 }
+
+std::shared_ptr<CharacterBase> KdGameObjectFactory::CreateCharacterBase(const std::string_view objName) const
+{
+
+
+	return std::shared_ptr<CharacterBase>();
+}

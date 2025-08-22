@@ -7,6 +7,8 @@ mutable { return KdGameObjectFactory::Instance().CreateGameObject<_name>(); });\
 
 class KdGameObject;
 
+class CharacterBase;
+
 class KdGameObjectFactory
 {
 public:
@@ -26,6 +28,9 @@ public:
 	}
 
 	std::shared_ptr<KdGameObject> CreateGameObject(const std::string_view objName) const;
+	
+	// キャラ
+	std::shared_ptr<CharacterBase> CreateCharacterBase(const std::string_view objName) const;
 
 	template<typename T>
 	void RegisterGameObject(const std::string_view _name)
@@ -61,6 +66,9 @@ private:
 
 	// GameObjectの生成関数：文字列検索可能
 	std::unordered_map<std::string_view, std::function<std::shared_ptr<KdGameObject>(void)>> m_createFunctions;
+
+	// CharacterBaseの生成関数：文字列検索可能
+	std::unordered_map<std::string_view, std::function<std::shared_ptr<CharacterBase>(void)>> m_createCharaFunction;
 
 	KdGameObjectFactory() {}
 };

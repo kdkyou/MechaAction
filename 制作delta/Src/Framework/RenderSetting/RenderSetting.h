@@ -4,24 +4,29 @@ class RenderSetting
 {
 public:
 
+	void Editor_ImGui();
+
+	void RenderLoad(const std::string& path);
+
+private:
+
+	void Deserialize(const nlohmann::json& jsonObj);
+	
+
 	Math::Vector3 m_dirVec;
 	Math::Vector3 m_dirColor;
 
 	Math::Color	  m_ambinetColor;
-	
-	Math::Vector3 m_;
 
-	int 		  m_enableFog;
-	Math::Vector3 m_fogColor;
+
+	bool 		  m_fogWidth = false;
+	bool 		  m_fogHeight = false;
+	Math::Vector3 m_widthColor;
+	Math::Vector3 m_heightColor;
 
 	Math::Vector2 m_distance;
 
 	float m_bloom = 1.0f;
-
-	void Editor_ImGui();
-
-
-private:
 
 	RenderSetting()
 	{

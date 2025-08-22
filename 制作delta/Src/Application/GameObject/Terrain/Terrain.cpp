@@ -2,7 +2,7 @@
 
 void Terrain::Init()
 {
-	m_name = "GroundTerrain";
+	m_name = "Terrain";
 
 }
 
@@ -14,9 +14,34 @@ void Terrain::Update()
 
 }
 
+void Terrain::GenerateDepthMapFromLight()
+{
+	if (!m_spModel) return;
+	if (!m_isGenerate)return;
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+}
+
 void Terrain::DrawLit()
 {
 	if (!m_spModel) return;
+	if (!m_isLit)return;
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+}
+
+void Terrain::DrawUnLit()
+{
+	if (!m_spModel) return;
+	if (!m_isUnLit)return;
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+}
+
+void Terrain::DrawBright()
+{
+	if (!m_spModel) return;
+	if (!m_isBright)return;
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
@@ -49,6 +74,11 @@ void Terrain::Editor_ImGui()
 			SetModel(filepath);
 		}
 	}
+
+	ImGui::Checkbox((const char*)u8"Generate", &m_isGenerate);
+	ImGui::Checkbox((const char*)u8"Lit", &m_isLit);
+	ImGui::Checkbox((const char*)u8"UnLit", &m_isUnLit);
+	ImGui::Checkbox((const char*)u8"Bright", &m_isBright);
 
 }
 

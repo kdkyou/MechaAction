@@ -16,6 +16,11 @@ void DrawTerrain::DrawLit()
 {
 }
 
+void DrawTerrain::DrawUnLit()
+{
+
+}
+
 void DrawTerrain::SetModel(const std::string& path)
 {
 }

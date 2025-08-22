@@ -23,13 +23,37 @@ void BaseScene::PreUpdate()
 		}
 	}
 
+	auto itr = m_enemyList.begin();
+	while (itr != m_enemyList.end())
+	{
+		if ((*itr)->IsExpired())	// IsExpired() ・・・ 無効ならtrue
+		{
+			// 無効なオブジェクトをリストから削除
+			itr = m_enemyList.erase(itr);
+		}
+		else
+		{
+			++itr;	// 次の要素へイテレータを進める
+		}
+	}
+
 	// ↑の後には有効なオブジェクトだけのリストになっている
+
+	for (auto& obj : m_playerList)
+	{
+		obj->PreUpdate();
+	}
+
+	for (auto& obj : m_enemyList)
+	{
+		obj->PreUpdate();
+	}
 
 	for (auto& obj : m_objList)
 	{
 		obj->PreUpdate();
 	}
-
+	
 	CameraManager::Instance().PreUpdate();
 
 	UIManager::GetInstance().PreUpdate();
@@ -38,12 +62,31 @@ void BaseScene::PreUpdate()
 void BaseScene::Update()
 {
 
-
-
 	// KdGameObjectを継承した全てのオブジェクトの更新 (ポリモーフィズム)
-	for (auto& obj : m_objList)
+//	if (EditorData::GetInstance().IsEditorMode() == true)
+	{
+
+	for (auto& obj : m_terrainList)
 	{
 		obj->Update();
+	}
+	}
+//	else 
+	 {
+		for (auto& obj : m_playerList)
+		{
+			obj->Update();
+		}
+
+		for (auto& obj : m_enemyList)
+		{
+			obj->Update();
+		}
+
+		for (auto& obj : m_objList)
+		{
+			obj->Update();
+		}
 	}
 
 	KdEffekseerManager::GetInstance().Update();
@@ -84,7 +127,22 @@ void BaseScene::Draw()
 	// 光を遮るオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginGenerateDepthMapFromLight();
 	{
+		for (auto& obj : m_terrainList)
+		{
+			obj->GenerateDepthMapFromLight();
+		}
+
 		for (auto& obj : m_objList)
+		{
+			obj->GenerateDepthMapFromLight();
+		}
+
+		for (auto& obj : m_enemyList)
+		{
+			obj->GenerateDepthMapFromLight();
+		}
+
+		for (auto& obj : m_playerList)
 		{
 			obj->GenerateDepthMapFromLight();
 		}
@@ -95,7 +153,23 @@ void BaseScene::Draw()
 	// 陰影のあるオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginLit();
 	{
+
+		for (auto& obj : m_terrainList)
+		{
+			obj->DrawLit();
+		}
+
 		for (auto& obj : m_objList)
+		{
+			obj->DrawLit();
+		}
+
+		for (auto& obj : m_enemyList)
+		{
+			obj->DrawLit();
+		}
+
+		for (auto& obj : m_playerList)
 		{
 			obj->DrawLit();
 		}
@@ -107,6 +181,16 @@ void BaseScene::Draw()
 	KdShaderManager::Instance().m_StandardShader.BeginUnLit();
 	{
 		for (auto& obj : m_objList)
+		{
+			obj->DrawUnLit();
+		}
+
+		for (auto& obj : m_enemyList)
+		{
+			obj->DrawUnLit();
+		}
+
+		for (auto& obj : m_playerList)
 		{
 			obj->DrawUnLit();
 		}
@@ -153,10 +237,38 @@ void BaseScene::DrawDebug()
 	// デバッグ情報の描画はこの間で行う
 	KdShaderManager::Instance().m_StandardShader.BeginUnLit();
 	{
-		for (auto& obj : m_objList)
+		if (EditorData::GetInstance().IsEditorMode() == true)
 		{
-			obj->DrawDebug();
+
+			for (auto& obj : m_objList)
+			{
+				obj->DrawDebug();
+			}
+			for (auto& obj : m_playerList)
+			{
+				obj->DrawDebug();
+			}
+			for (auto& obj : m_enemyList)
+			{
+				obj->DrawDebug();
+			}
 		}
+		else{
+			for (auto& obj : m_objList)
+			{
+				obj->DebugClear();
+			}
+			for (auto& obj : m_playerList)
+			{
+				obj->DebugClear();
+			}
+			for (auto& obj : m_enemyList)
+			{
+				obj->DebugClear();
+			}
+
+		}
+
 	}
 	KdShaderManager::Instance().m_StandardShader.EndUnLit();
 }
@@ -220,9 +332,9 @@ void BaseScene::CurrentSceneCreate(const std::string& fileName)
 				case KdGameObject::tPlayerAttack:
 				case KdGameObject::tEnemyAttack:
 				default:
+				AddObject(obj);
 					break;
 				}
-				AddObject(obj);
 
 				bool isTarget = false;
 				KdJsonUtility::GetValue(json, "IsTarget", &isTarget);
@@ -235,6 +347,94 @@ void BaseScene::CurrentSceneCreate(const std::string& fileName)
 		}
 	}
 }
+
+void BaseScene::Edit_ImGui()
+{
+	if (ImGui::Button((const char*)u8"シーン読み込み"))
+	{
+		std::string filepath;
+		if (EditorData::GetInstance().OpenFileDialog(filepath))
+		{
+			std::ifstream ifs(filepath);
+			if (ifs.is_open())
+			{
+				ListClear();
+
+				nlohmann::json j;
+				ifs >> j;
+				Deserialize(j);
+			}
+		}
+	}
+
+	static std::string str = "";
+	if (ImGui::BeginCombo("SelectObject", str.empty() ? (const char*)u8"選択してください" : str.c_str()))
+	{
+		for (auto obj : KdGameObjectFactory::Instance().GetRegisterObjectList())
+		{
+			if (ImGui::Selectable(obj.c_str(), obj == str))
+			{
+				str = obj;
+			}
+		}
+
+		ImGui::EndCombo();
+	}
+
+
+	if (ImGui::Button((const char*)u8"オブジェクト追加"))
+	{
+		if (!str.empty())
+		{
+			auto obj = KdGameObjectFactory::Instance().CreateGameObject(str);
+			if (obj)
+			{
+				obj->Init();
+				AddObject(obj);
+			}
+		}
+	}
+
+	if (ImGui::Button((const char*)u8"地形追加"))
+	{
+		if (!str.empty())
+		{
+			auto obj = KdGameObjectFactory::Instance().CreateGameObject(str);
+			if (obj)
+			{
+				obj->Init();
+				AddTerrain(obj);
+			}
+		}
+	}
+
+	if (ImGui::Button((const char*)u8"敵追加"))
+	{
+		if (!str.empty())
+		{
+			auto obj = KdGameObjectFactory::Instance().CreateCharacterBase(str);
+			if (obj)
+			{
+				obj->Init();
+				AddEnemy(obj);
+			}
+		}
+	}
+
+
+
+	/*for (auto obj : m_objList)
+	{
+		ImGui::PushID(obj.get());
+		if (ImGui::CollapsingHeader(obj->GetName().c_str()))
+		{
+			obj->Editor_ImGui();
+		}
+		ImGui::PopID();
+
+	}*/
+}
+
 
 
 void BaseScene::Event()

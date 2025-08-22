@@ -828,6 +828,8 @@ void MT::Destroyed::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameOb
 	
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("Destroyed"), 10.0f, false);
 
+	KdAudioManager::Instance().Play("Asset/Sounds/Sound/down_enemy.wav")->SetVolume(0.3f);
+
 }
 
 void MT::Destroyed::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)

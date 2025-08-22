@@ -152,6 +152,8 @@ void Character::Update()
 	UIManager::GetInstance().SetPlayerHP(m_hp);
 
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
+	LockOn();
+
 	UpdateCollision();
 }
 
@@ -460,6 +462,7 @@ void Character::UpdateCollision()
 				obj->OnHit();
 				m_parameter = obj->GetParameter();
 				HitDamage(obj->GetParameter());
+
 				OnHit();
 			}
 		}
@@ -478,7 +481,7 @@ void Character::LockOn()
 	KdCollider::SphereInfo sphereInfo;
 
 	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 3.5f, 0);
-	sphereInfo.m_sphere.Radius = 200.0f;
+	sphereInfo.m_sphere.Radius = 100.0f;
 	sphereInfo.m_type = KdCollider::TypeDamage;
 
 
@@ -2498,7 +2501,7 @@ void Character::ActionHited::Enter(std::weak_ptr<Character>& owner)
 
 	m_direction = spOwner->m_mWorld.Forward();
 
-	KdAudioManager::Instance().Play("Asset/Sounds/Noize1.wav");
+	//KdAudioManager::Instance().Play("Asset/Sounds/Noize1.wav");
 
 	m_animName = "Hited";
 
@@ -2590,6 +2593,11 @@ void Character::ActionDestroyed::Enter(std::weak_ptr<Character>& owner)
 	m_stateNum = spOwner->CharacterStateName::Destoryed;
 
 	spOwner->m_isDestroy = true;
+
+	KdAudioManager::Instance().Play("Asset/Sounds/Sound/down_player.wav")->SetVolume(0.3f);
+
+	
+	
 }
 
 void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
@@ -2597,6 +2605,7 @@ void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	//グリッチ表現
+	if (spOwner->m_spAnimator->IsAnimationEnd() == false) {
 	auto time = KdFPSController::GetInstance().GetFPS();
 
 	UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
@@ -2604,8 +2613,10 @@ void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 	KdShaderManager::Instance().m_postProcessShader.
 		SetGlitch({ 1,1 }, time, 5.0f, 0.8f, 0, 0, { 0.5f,0.5f });
 
-	if (spOwner->m_spAnimator->IsAnimationEnd() == false) { return; }
+	}
+	else {
 
+	}
 
 	
 }

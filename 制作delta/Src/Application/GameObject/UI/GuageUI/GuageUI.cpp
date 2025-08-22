@@ -19,6 +19,19 @@ void GuageUI::Init()
 
 void GuageUI::Update()
 {
+	if (m_isIncDec)
+	{
+		m_duration += KdFPSController::GetInstance().GetDeltaTime();
+	}
+	else {
+		m_duration -= KdFPSController::GetInstance().GetDeltaTime();
+	}
+
+	m_ratio = 1.0f / m_time * m_duration;
+	if (m_ratio > 1.0f)
+	{
+		m_ratio = 1.0f;
+	}
 }
 
 void GuageUI::DrawSprite()
@@ -43,19 +56,29 @@ void GuageUI::Editor_ImGui()
 	}
 
 	ImGui::SliderFloat("Ammo Ratio", &m_ratio, 0.0f, 1.0f);
-
-
+	ImGui::SliderFloat("Time", &m_time, 0.0f, 10.0f);
+	ImGui::Checkbox("IncDec", &m_isIncDec);
 }
 
 void GuageUI::Deserialize(const nlohmann::json& jsonObj)
 {
 	UIBase::Deserialize(jsonObj);
-
+	KdJsonUtility::GetValue(jsonObj, "FillDirection", &m_fillDir);
+	KdJsonUtility::GetValue(jsonObj, "Ratio", &m_ratio);
+	KdJsonUtility::GetValue(jsonObj, "Time", &m_time);
+	KdJsonUtility::GetValue(jsonObj, "IncDec", &m_isIncDec);
+	KdJsonUtility::GetValue(jsonObj, "Auto", &m_isAuto);
 }
 
 void GuageUI::Serialize(nlohmann::json& outJson) const
 {
 	UIBase::Serialize(outJson);
+
+	outJson["FillDirection"] = m_fillDir;
+	outJson["Ratio"] = m_ratio;
+	outJson["Time"] = m_time;
+	outJson["IncDec"] = m_isIncDec;
+	outJson["Auto"] = m_isAuto;
 }
 
 
@@ -66,7 +89,8 @@ void GuageUI::DrawGuage()
 
 	if (m_max <= 0) { return; }
 
-	
+	m_rect = { m_rectX,m_rectY,m_rectWi,m_rectHe };
+
 	Math::Rectangle uvRect = m_rect;
 	Math::Vector2 drawPos = { m_pos.x, m_pos.y };
 	int drawW = m_drawWi;
@@ -82,7 +106,7 @@ void GuageUI::DrawGuage()
 	case FillDirection::RightToLeft:
 		uvRect.x = m_rect.x + static_cast<int>(m_rectWi * (1.0f - m_ratio));
 		uvRect.width = static_cast<int>(m_rectWi * m_ratio);
-		//drawPos.x -= m_drawWi * (1.0f - m_ratio);
+		drawPos.x -= m_drawWi * (1.0f - m_ratio);
 		drawW = static_cast<int>(m_drawWi * m_ratio);
 		break;
 
@@ -104,7 +128,7 @@ void GuageUI::DrawGuage()
 	auto& sm = KdShaderManager::Instance();
 
 	sm.ChangeBlendState(KdBlendState::Add);
-	sm.m_spriteShader.DrawTex(m_spTex, drawPos.x, drawPos.y, drawW, drawH, &uvRect);
+	sm.m_spriteShader.DrawTex(m_spTex, drawPos.x, drawPos.y, drawW, drawH, &m_rect,&m_color,m_pivot);
 	sm.ChangeBlendState(KdBlendState::Alpha);
 
 }

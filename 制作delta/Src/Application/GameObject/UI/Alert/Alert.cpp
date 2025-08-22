@@ -14,7 +14,7 @@ void Alert::Init()
 
 	m_durationAlive = 0.25f;
 
-	KdAudioManager::Instance().Play("Asset/Sounds/Alert1.wav")->SetVolume(0.4f);
+	KdAudioManager::Instance().Play("Asset/Sounds/Alert1.wav")->SetVolume(0.15f);
 }
 
 void Alert::Update()

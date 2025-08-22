@@ -45,9 +45,10 @@ void GameScene::Init()
 	//===================================================================
 	
 	Math::Vector3 pos = {0.0f,-0.5f,0.0f};
-
 	
-	std::shared_ptr<Terrain> _terrain = std::make_shared<Terrain>();
+	CurrentSceneCreate("Asset/Data/Game.scene");
+	
+	/*std::shared_ptr<Terrain> _terrain = std::make_shared<Terrain>();
 	_terrain->SetModel("Asset/Models/Stage/Tail/Tail.gltf");
 	_terrain->Init();
 	AddObject(_terrain);
@@ -104,15 +105,9 @@ void GameScene::Init()
 	_terrain = std::make_shared<Terrain>();
 	_terrain->SetModel("Asset/Models/Stage/Sky/Sky.gltf");
 	_terrain->Init();
-	AddObject(_terrain);
+	AddObject(_terrain);*/
 
-	/*auto ta = std::make_shared<AnimTerrain>();
-	ta->SetModel("Asset/Models/Stage/Door/Door.gltf");
-	pos = { 0.0f,0.0f,10.0f };
-	ta->SetPos(pos);
-	ta->Init();
-	AddObject(ta);
-	AddTerrain(ta);*/
+	
 
 	/*std::shared_ptr<Terrain> _serrain = std::make_shared<Terrain>();
 	_serrain->Init();
@@ -328,16 +323,5 @@ void GameScene::Init()
 
 void GameScene::Event()
 {
-	if (KeyInput::GetInstance().GetKeyboardState().H)
-	{
-		auto instance = KdAudioManager::Instance().Play3D("Asset/Sounds/Thruster2.wav", { 0.0f,0.0f,10.0f });
-		instance->SetVelocity({ 0.0f,0.0f,1.0f });
-		instance->SetCurveDistanceScaler(1.0f);
-		instance->SetVolume(1);
-		instance->SetInnerRadiusAngle(45);
-	}
-	if (KeyInput::GetInstance().GetKeyboardState().J)
-	{
-		KdAudioManager::Instance().Play("Asset/Sounds/Thruster2.wav");
-	}
+	
 }

@@ -14,13 +14,15 @@ void MoveTerrain::Update()
 
 	if (m_durationWait > m_waitTime)
 	{
-		if (m_moveVec.Length() <= 0.001f)
+		if (m_spAnimator->IsAnimationEnd())
 		{
-			m_moveVec = m_mWorld.Backward();
+			if (m_moveVec.Length() <= 0.001f)
+			{
+				m_moveVec = m_mWorld.Backward();
+			}
+			auto vec = m_moveVec * m_moveSpeed;
+			m_pos += vec;
 		}
-		auto vec = m_moveVec * m_moveSpeed;
-		m_pos += vec;
-		
 	}
 
 	m_mWorld = Math::Matrix::CreateScale(m_scale) * Math::Matrix::CreateFromYawPitchRoll(angle) * Math::Matrix::CreateTranslation(m_pos);
@@ -29,10 +31,13 @@ void MoveTerrain::Update()
 
 void MoveTerrain::PostUpdate()
 {
-	if (m_spModel)
+	if (m_durationWait > m_waitTime)
 	{
-		m_spAnimator->AdvanceTime(m_spModel->WorkNodes(), m_animSpeed);
-		m_spModel->CalcNodeMatrices();
+		if (m_spModel)
+		{
+			m_spAnimator->AdvanceTime(m_spModel->WorkNodes(), m_animSpeed);
+			m_spModel->CalcNodeMatrices();
+		}
 	}
 }
 

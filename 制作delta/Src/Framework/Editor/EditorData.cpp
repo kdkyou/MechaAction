@@ -121,57 +121,57 @@ void EditorData::UpdateImGui()
 	//===========================
 	// システム
 	//===========================
-	//if (ImGui::Begin("System", 0, ImGuiWindowFlags_MenuBar))
-	//{
-	//	// メニュー 
-	//	if (ImGui::BeginMenuBar()) {
-	//		if (ImGui::BeginMenu("Fail"))
-	//		{
+	if (ImGui::Begin("System", 0, ImGuiWindowFlags_MenuBar))
+	{
+		// メニュー 
+		if (ImGui::BeginMenuBar()) {
+			if (ImGui::BeginMenu("Fail"))
+			{
 
-	//			ImGui::EndMenu();
-	//		}
+				ImGui::EndMenu();
+			}
 
-	//		ImGui::EndMenuBar();
-	//	}
+			ImGui::EndMenuBar();
+		}
 
 
-	//	ImGui::Checkbox((const char*)u8"エディター", &m_editorMode);
-	//	/*
-	//	if (m_editorMode)
-	//	{
-	//		ImGui::Text(u8"エディターモード");
-	//	}
-	//	else
-	//	{
-	//		ImGui::Text(u8"ゲームモード");
-	//	}
-	//	*/
+		ImGui::Checkbox((const char*)u8"エディター", &m_editorMode);
+		
+		if (m_editorMode)
+		{
+			ImGui::Text((const char*)u8"エディターモード");
+		}
+		else
+		{
+			ImGui::Text((const char*)u8"ゲームモード");
+		}
+		
 
-	//	// ImGuizmo
-	//	if (ImGui::CollapsingHeader("Gizmo", ImGuiTreeNodeFlags_DefaultOpen))
-	//	{
-	//		if (ImGui::RadioButton("Local", GizmoMode == ImGuizmo::LOCAL)) {
-	//			GizmoMode = ImGuizmo::LOCAL;
-	//		}
-	//		ImGui::SameLine();
-	//		if (ImGui::RadioButton("World", GizmoMode == ImGuizmo::WORLD)) {
-	//			GizmoMode = ImGuizmo::WORLD;
-	//		}
+		// ImGuizmo
+		/*if (ImGui::CollapsingHeader("Gizmo", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			if (ImGui::RadioButton("Local", GizmoMode == ImGuizmo::LOCAL)) {
+				GizmoMode = ImGuizmo::LOCAL;
+			}
+			ImGui::SameLine();
+			if (ImGui::RadioButton("World", GizmoMode == ImGuizmo::WORLD)) {
+				GizmoMode = ImGuizmo::WORLD;
+			}
 
-	//		if (ImGui::RadioButton((const char*)u8"座標", GizmoOperation == ImGuizmo::TRANSLATE)) {
-	//			GizmoOperation = ImGuizmo::TRANSLATE;
-	//		}
-	//		ImGui::SameLine();
-	//		if (ImGui::RadioButton((const char*)u8"回転", GizmoOperation == ImGuizmo::ROTATE)) {
-	//			GizmoOperation = ImGuizmo::ROTATE;
-	//		}
-	//		ImGui::SameLine();
-	//		if (ImGui::RadioButton((const char*)u8"Scale", GizmoOperation == ImGuizmo::SCALE)) {
-	//			GizmoOperation = ImGuizmo::SCALE;
-	//		}
-	//	}
-	//}
-	//ImGui::End();
+			if (ImGui::RadioButton((const char*)u8"座標", GizmoOperation == ImGuizmo::TRANSLATE)) {
+				GizmoOperation = ImGuizmo::TRANSLATE;
+			}
+			ImGui::SameLine();
+			if (ImGui::RadioButton((const char*)u8"回転", GizmoOperation == ImGuizmo::ROTATE)) {
+				GizmoOperation = ImGuizmo::ROTATE;
+			}
+			ImGui::SameLine();
+			if (ImGui::RadioButton((const char*)u8"Scale", GizmoOperation == ImGuizmo::SCALE)) {
+				GizmoOperation = ImGuizmo::SCALE;
+			}
+		}*/
+	}
+	ImGui::End();
 
 	//===========================
 	// Inspectorウィンドウ

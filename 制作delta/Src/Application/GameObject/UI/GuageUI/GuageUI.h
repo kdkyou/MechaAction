@@ -45,6 +45,11 @@ private:
 	FillDirection m_fillDir = FillDirection::TopToBottom;
 	
 	float m_ratio = 1.0f;
+	float m_time = 0.0f;
+	float m_duration = 0.0f;
+
+	bool m_isIncDec = true; // true=Inc
+	bool m_isAuto = false;
 
 	int m_current;
 	int m_max =1;

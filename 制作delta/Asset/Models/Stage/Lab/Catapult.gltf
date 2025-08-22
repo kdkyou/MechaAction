@@ -34,11 +34,17 @@
 		},
 		{
 			"mesh":1,
-			"name":"ICO\u7403",
+			"name":"\u5e73\u9762",
+			"rotation":[
+				-0.7071068286895752,
+				0,
+				0,
+				0.7071068286895752
+			],
 			"translation":[
-				5.140000343322754,
-				2.8164048194885254,
-				7.639999866485596
+				0,
+				5.294299602508545,
+				12.885394096374512
 			]
 		}
 	],
@@ -83,33 +89,6 @@
 				"metallicFactor":0.7613292932510376,
 				"roughnessFactor":0.5
 			}
-		},
-		{
-			"doubleSided":true,
-			"emissiveFactor":[
-				1,
-				1,
-				1
-			],
-			"emissiveTexture":{
-				"index":5
-			},
-			"extensions":{
-				"KHR_materials_emissive_strength":{
-					"emissiveStrength":11.600000381469727
-				}
-			},
-			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.800000011920929,
-					0.800000011920929,
-					0.800000011920929,
-					1
-				],
-				"metallicFactor":0,
-				"roughnessFactor":0.5
-			}
 		}
 	],
 	"meshes":[
@@ -137,7 +116,7 @@
 			]
 		},
 		{
-			"name":"ICO\u7403",
+			"name":"\u5e73\u9762",
 			"primitives":[
 				{
 					"attributes":{
@@ -146,7 +125,7 @@
 						"TEXCOORD_0":10
 					},
 					"indices":11,
-					"material":2
+					"material":1
 				}
 			]
 		}
@@ -171,10 +150,6 @@
 		{
 			"sampler":0,
 			"source":4
-		},
-		{
-			"sampler":0,
-			"source":5
 		}
 	],
 	"images":[
@@ -202,11 +177,6 @@
 			"mimeType":"image/png",
 			"name":"mecha",
 			"uri":"mecha.png"
-		},
-		{
-			"mimeType":"image/png",
-			"name":"Light",
-			"uri":"Light.png"
 		}
 	],
 	"accessors":[
@@ -281,35 +251,35 @@
 		{
 			"bufferView":8,
 			"componentType":5126,
-			"count":1200,
+			"count":4,
 			"max":[
-				0.5366550087928772,
-				0.6000000238418579,
-				0.5103840231895447
+				11.53499984741211,
+				0,
+				11.53499984741211
 			],
 			"min":[
-				-10.816656112670898,
-				-0.6000000238418579,
-				-121.30806732177734
+				-11.53499984741211,
+				0,
+				-11.53499984741211
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":9,
 			"componentType":5126,
-			"count":1200,
+			"count":4,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":10,
 			"componentType":5126,
-			"count":1200,
+			"count":4,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":11,
 			"componentType":5123,
-			"count":1200,
+			"count":6,
 			"type":"SCALAR"
 		}
 	],
@@ -364,26 +334,26 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":14400,
+			"byteLength":48,
 			"byteOffset":204480,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":14400,
-			"byteOffset":218880,
+			"byteLength":48,
+			"byteOffset":204528,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":9600,
-			"byteOffset":233280,
+			"byteLength":32,
+			"byteOffset":204576,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2400,
-			"byteOffset":242880,
+			"byteLength":12,
+			"byteOffset":204608,
 			"target":34963
 		}
 	],
@@ -395,7 +365,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":245280,
+			"byteLength":204620,
 			"uri":"Catapult.bin"
 		}
 	]

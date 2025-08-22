@@ -131,13 +131,17 @@ void SceneManager::ChangeScene(SceneType sceneType)
 	std::shared_ptr<TitleScene> title;
 	std::shared_ptr<TitleMovieScene> titleMovie;
 
+	auto type = GetSceneType();
+
 	switch (sceneType)
 	{
 	case SceneType::Title:
-		m_currentScene = std::make_shared<TitleScene>();
+		title = std::make_shared<TitleScene>();
+		m_currentScene = title;
 		break;
 	case SceneType::TitleMovie:
-		m_currentScene = std::make_shared<TitleMovieScene>();
+		titleMovie = std::make_shared<TitleMovieScene>();
+		m_currentScene = titleMovie;
 		break;
 	case SceneType::Game:
 		game =  std::make_shared<GameScene>();

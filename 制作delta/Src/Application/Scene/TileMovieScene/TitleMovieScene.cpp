@@ -1,6 +1,9 @@
 ﻿#include "TitleMovieScene.h"
 
 #include "../../GameObject/Camera/CameraManager.h"
+#include "../SceneManager.h"
+
+#include "../../GameObject/UI/UIManager.h"
 
 void TitleMovieScene::Init()
 {
@@ -14,8 +17,23 @@ void TitleMovieScene::Init()
 	
 	CameraManager::Instance().EnableChangedCamera(false);
 
+	UIManager::GetInstance().ListClear();
+	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.5f, false);
 }
 
 void TitleMovieScene::Event()
 {
+	auto flg = UIManager::GetInstance().IsFadeComplete();
+	if (flg)
+	{
+		duration -= KdFPSController::GetInstance().GetDeltaTime();
+
+		if (duration < 0.0f)
+		{
+			SceneManager::Instance().SetNextScene
+			(
+				SceneManager::SceneType::Game
+			);
+		}
+	}
 }

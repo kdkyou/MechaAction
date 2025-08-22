@@ -13,6 +13,7 @@ public:
 	void AddDebugBox(const Math::Matrix& matrix, const Math::Vector3& size, const Math::Vector3& offset = { 0, 0, 0 }, const bool isOriented = false, const Math::Color& col = kWhiteColor);
 
 	void Draw();
+	void VertexClear() { Release(); }
 
 private:
 	void Release();

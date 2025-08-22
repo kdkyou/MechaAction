@@ -24,6 +24,8 @@ void UIBase::Editor_ImGui()
 		m_uiTag = buf;
 	}
 
+	ImGui::ColorEdit4((const char*)u8"カラー",&m_color.x);
+
 	ImGui::DragInt((const char*)u8"描画範囲：X", &m_drawWi, 1, 0);
 	ImGui::DragInt((const char*)u8"描画範囲：Y", &m_drawHe, 1, 0);
 	ImGui::DragInt((const char*)u8"切り取り位置:X", &m_rectX, 1.0);

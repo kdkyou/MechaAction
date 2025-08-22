@@ -12,6 +12,8 @@ public:
 	uint32_t	m_ScreenW = 1920;
 	uint32_t	m_screenH = 1080;
 
+	const bool IsEditorMode()const { return m_editorMode; }
+
 	bool		m_editorMode = true;
 
 	// エディターカメラ

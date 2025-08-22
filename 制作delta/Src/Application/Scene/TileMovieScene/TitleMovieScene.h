@@ -11,6 +11,8 @@ public:
 
 private:
 
+	float duration = 4.0f;
+
 	void Init()override;
 	void Event()override;
 

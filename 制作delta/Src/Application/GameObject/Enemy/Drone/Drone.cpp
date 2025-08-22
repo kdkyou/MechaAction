@@ -25,7 +25,7 @@ void Drone::Init()
 
 	m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 
-	m_dist = { 30.0f,300.0f };
+	m_dist = { 20.0f,80.0f };
 
 	ChangeActionState(std::make_shared<Idle>());
 
@@ -582,6 +582,8 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 
 	spOwner->ChangeEnableRightAttack(false);
 	spOwner->ChangeEnableLeftAttack(false);
+
+	KdAudioManager::Instance().Play("Asset/Sounds/Sound/drone_explode.wav")->SetVolume(0.3f);
 }
 
 void Drone::Destroyed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)

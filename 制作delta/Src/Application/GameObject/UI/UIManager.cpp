@@ -5,6 +5,7 @@
 #include "NumberUI/NumberUI.h"
 #include "GuageUI/GuageUI.h"
 
+
 #include "../Weapon/Gun/GunBase.h"
 
 #include "../../Scene/SceneManager.h"
@@ -12,7 +13,8 @@
 
 void UIManager::UIInit()
 {
-
+	m_fade = std::make_shared<Fade>();
+	m_fade->Init();
 }
 
 void UIManager::SceneUICreate()
@@ -37,6 +39,15 @@ void UIManager::SceneUICreate()
 	Deserialize(str);
 }
 
+void UIManager::SceneUICreate(const std::string& path)
+{
+	if (path == "") { return; }
+
+	m_uiList.clear();
+
+	Deserialize(path);
+}
+
 void UIManager::PreUpdate()
 {
 	auto it = m_uiList.begin();
@@ -58,6 +69,12 @@ void UIManager::PreUpdate()
 	{
 		obj->PreUpdate();
 	}
+
+	if (m_fade)
+	{
+		m_fade->PreUpdate();
+	}
+	
 }
 
 void UIManager::Update()
@@ -79,6 +96,11 @@ void UIManager::Update()
 		obj->Update();
 	}
 
+	if (m_fade)
+	{
+		m_fade->Update();
+	}
+
 }
 
 void UIManager::DrawSprite()
@@ -86,6 +108,11 @@ void UIManager::DrawSprite()
 	for (auto& obj : m_uiList)
 	{
 		obj->DrawSprite();
+	}
+
+	if (m_fade)
+	{
+		m_fade->DrawSprite();
 	}
 }
 
@@ -126,12 +153,23 @@ void UIManager::Editor_ImGui()
 				ofs << outJson.dump();
 			}
 		}
-		if (ImGui::MenuItem((const char*)u8"呼び出し"))
+		if (ImGui::MenuItem((const char*)u8"シーン呼び出し"))
 		{
 			m_uiList.clear();
 
 			Deserialize(str);
 
+		}
+
+		if (ImGui::MenuItem((const char*)u8"読み込み"))
+		{
+			m_uiList.clear();
+
+			std::string filepath;
+			if (EditorData::GetInstance().OpenFileDialog(filepath))
+			{
+				Deserialize(filepath);
+			}
 		}
 
 		ImGui::EndMenu();
@@ -199,6 +237,16 @@ void UIManager::AddUI(std::shared_ptr<KdGameObject> obj)
 	m_uiList.push_back(obj); 
 }
 
+void UIManager::SetFade(Fade::FadeType type, float time, bool OutorIn)
+{
+	m_fade->SetFade(type, time, OutorIn);
+}
+
+const bool UIManager::IsFadeComplete() const
+{
+	return m_fade->IsCompleteFade();
+}
+
 void UIManager::Deserialize(const std::string& path)
 {
 	std::ifstream ifs(path);
@@ -240,6 +288,14 @@ void UIManager::Deserialize(const std::string& path)
 						m_leftWeaponUI = obj;
 					}
 
+				}
+
+				if (str == "GuageUI")
+				{
+					auto obj = std::make_shared<GuageUI>();
+					obj->Init();
+					obj->Deserialize(json);
+					AddUI(obj);
 				}
 
 				if (str == "")
