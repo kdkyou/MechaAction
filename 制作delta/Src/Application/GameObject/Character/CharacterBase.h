@@ -94,6 +94,8 @@ protected:
 	virtual bool Search(bool areaOnly) { return false; }
 	bool SearchPlayer();
 
+	const bool Burn();
+
 	std::shared_ptr<KdModelWork>				m_spModelWork;
 	std::shared_ptr<KdModelData>				m_spModelData;
 	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
@@ -128,6 +130,7 @@ protected:
 
 	bool										m_isDestroy = false;
 
+	std::string									m_burnPath;
 
 	Math::Vector3							m_boxExtents;
 

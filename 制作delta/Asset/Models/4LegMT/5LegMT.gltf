@@ -45,15 +45,10 @@
 				"scale":0.7000000476837158
 			},
 			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.0158054381608963,
-					0.3149421811103821,
-					0,
-					1
-				],
-				"metallicRoughnessTexture":{
+				"baseColorTexture":{
 					"index":1
 				},
+				"metallicFactor":0.03021148033440113,
 				"roughnessFactor":0.6540785431861877
 			}
 		}
@@ -92,8 +87,8 @@
 		},
 		{
 			"mimeType":"image/png",
-			"name":"mecha",
-			"uri":"mecha.png"
+			"name":"arm",
+			"uri":"arm.png"
 		}
 	],
 	"accessors":[

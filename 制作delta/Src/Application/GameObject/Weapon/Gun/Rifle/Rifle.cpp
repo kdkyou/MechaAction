@@ -122,6 +122,7 @@ void Rifle::Shot()
 	}
 
 	
+	KdAudioManager::Instance().Play(m_shotSoundPath)->SetVolume(0.1f);
 
 	std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
 	bullet->SetModelData(m_bulletModelPath);

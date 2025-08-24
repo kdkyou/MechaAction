@@ -54,7 +54,7 @@ Fade::~Fade()
 void Fade::Init()
 {
 	m_spTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/UI/BlackBack.png");
-	m_completeFade = true;
+	m_completeFade = false;
 	fadeFrame = 0;
 	fadeTime = 20;
 	m_fillDisplay = false;

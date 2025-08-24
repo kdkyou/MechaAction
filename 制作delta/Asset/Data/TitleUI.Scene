@@ -13,5 +13,20 @@
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"UITag": "None"
+	},
+	{
+		"Color": [ 1.0, 1.0, 1.0, 1.0 ],
+		"DrawHeight": 64,
+		"DrawWidth": 320,
+		"IsTarget": false,
+		"Name": "BlinkUI",
+		"Path": "Asset\\Textures\\Text\\Enter.png",
+		"Pivot": [ 0.5, 0.5 ],
+		"Pos": [ 0.0, -250.0, 0.0 ],
+		"RectHeight": 64,
+		"RectWidth": 320,
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"UITag": "None"
 	}
 ]

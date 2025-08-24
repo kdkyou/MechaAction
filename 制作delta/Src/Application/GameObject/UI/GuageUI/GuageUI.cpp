@@ -19,18 +19,22 @@ void GuageUI::Init()
 
 void GuageUI::Update()
 {
-	if (m_isIncDec)
+	if (m_isAuto)
 	{
-		m_duration += KdFPSController::GetInstance().GetDeltaTime();
-	}
-	else {
-		m_duration -= KdFPSController::GetInstance().GetDeltaTime();
-	}
 
-	m_ratio = 1.0f / m_time * m_duration;
-	if (m_ratio > 1.0f)
-	{
-		m_ratio = 1.0f;
+		if (m_isIncDec)
+		{
+			m_duration += KdFPSController::GetInstance().GetDeltaTime();
+		}
+		else {
+			m_duration -= KdFPSController::GetInstance().GetDeltaTime();
+		}
+
+		m_ratio = 1.0f / m_time * m_duration;
+		if (m_ratio > 1.0f)
+		{
+			m_ratio = 1.0f;
+		}
 	}
 }
 
@@ -58,6 +62,7 @@ void GuageUI::Editor_ImGui()
 	ImGui::SliderFloat("Ammo Ratio", &m_ratio, 0.0f, 1.0f);
 	ImGui::SliderFloat("Time", &m_time, 0.0f, 10.0f);
 	ImGui::Checkbox("IncDec", &m_isIncDec);
+	ImGui::Checkbox("Auto", &m_isAuto);
 }
 
 void GuageUI::Deserialize(const nlohmann::json& jsonObj)
@@ -89,7 +94,10 @@ void GuageUI::DrawGuage()
 
 	if (m_max <= 0) { return; }
 
-	m_rect = { m_rectX,m_rectY,m_rectWi,m_rectHe };
+	if (m_isAuto)
+	{
+		m_rect = { m_rectX,m_rectY,m_rectWi,m_rectHe };
+	}
 
 	Math::Rectangle uvRect = m_rect;
 	Math::Vector2 drawPos = { m_pos.x, m_pos.y };
@@ -128,7 +136,13 @@ void GuageUI::DrawGuage()
 	auto& sm = KdShaderManager::Instance();
 
 	sm.ChangeBlendState(KdBlendState::Add);
-	sm.m_spriteShader.DrawTex(m_spTex, drawPos.x, drawPos.y, drawW, drawH, &m_rect,&m_color,m_pivot);
+	if (m_isAuto)
+	{
+		sm.m_spriteShader.DrawTex(m_spTex, drawPos.x, drawPos.y, drawW, drawH, &m_rect, &m_color, m_pivot);
+	}
+	else{
+		sm.m_spriteShader.DrawTex(m_spTex, drawPos.x, drawPos.y, drawW, drawH, &uvRect, &m_color, m_pivot);
+	}
 	sm.ChangeBlendState(KdBlendState::Alpha);
 
 }

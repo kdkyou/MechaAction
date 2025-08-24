@@ -98,7 +98,7 @@ void Character::Update()
 
 	if (key.T)
 	{
-		ChangeActionState(std::make_shared<ActionHited>());
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 		return;
 	}
 
@@ -215,6 +215,8 @@ void Character::OnHit()
 		m_parameter = 0;
 		return;
 	}
+
+	KdAudioManager::Instance().Play("Asset/Sounds/SE/PlayerHit.wav")->SetVolume(0.12f);
 }
 
 void Character::Editor_ImGui()
@@ -505,7 +507,9 @@ void Character::LockOn()
 			pos.y = 0.0f;
 			float distance = (targetPos - pos).Length();
 
-			if (SearchDetect(targetPos, m_mWorld, 100) == true)
+			auto& camMat = CameraManager::Instance().GetCurrentCamera().lock()->GetMatrix();
+
+			if (SearchDetect(targetPos,camMat, 100) == true)
 			{
 				info->wpLockTarget = obj;
 				info->distance = distance;
@@ -1538,15 +1542,15 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 			m_spEffects.push_back(effect);
 
 			//効果音
-			//KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(0.3f);
+			KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(0.2f);
 
-				auto instance = KdAudioManager::Instance().Play3D("Asset/Sounds/Thruster2.wav", spOwner->GetPos());
+			/*	auto instance = KdAudioManager::Instance().Play3D("Asset/Sounds/Thruster2.wav", spOwner->GetPos());
 				auto vec = CameraManager::Instance().ToCameraVec(mat.Translation());
 				instance->SetVolume(1.0f);
 				instance->SetEmitterMatrix(mat,mat.Forward());
 				instance->SetVelocity(m_direction);
 				instance->SetCurveDistanceScaler(1.0f);
-				instance->SetInnerRadiusAngle(45);
+				instance->SetInnerRadiusAngle(45);*/
 		}
 	}
 
@@ -2597,7 +2601,7 @@ void Character::ActionDestroyed::Enter(std::weak_ptr<Character>& owner)
 	KdAudioManager::Instance().Play("Asset/Sounds/Sound/down_player.wav")->SetVolume(0.3f);
 
 	
-	
+	UIManager::GetInstance().SceneUICreate("Asset/Data/FailedUI.scene");
 }
 
 void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)

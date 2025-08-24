@@ -12,12 +12,11 @@ void NoneCamera::Init()
 
 	m_name = "None";
 
-	ShowCursor(true);
+	ShowCursor(false);
 }
 
 void NoneCamera::PostUpdate()
 {
-	ShowCursor(true);
 
 	m_mWorld = Math::Matrix::CreateFromYawPitchRoll(m_rot * KdToRadians) * Math::Matrix::CreateTranslation(m_pos);
 

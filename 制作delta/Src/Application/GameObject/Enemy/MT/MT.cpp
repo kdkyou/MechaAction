@@ -170,6 +170,18 @@ void MT::UpdateRotate(const Math::Vector3& srcMoveVec)
 
 void MT::UpdateCollision()
 {
+
+	KdCollider::SphereInfo sphereInfo;
+	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 1.8f, 0);
+	sphereInfo.m_sphere.Radius = 1.6f;
+	sphereInfo.m_type = KdCollider::TypeGround;
+
+	Math::Vector3 pos;
+	if (SphereCast(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, KdCollider::TypeGround, pos)) {
+		SetPos(pos);
+	}
+	float dist = 0;
+
 	DirectX::BoundingOrientedBox box;
 
 	box.Center = GetPos();
@@ -845,7 +857,8 @@ void MT::Destroyed::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameO
 
 	if (m_durationState <= 0)
 	{
-
+		spOwner->Burn();
+		spOwner->m_isExpired = true;
 	}
 
 }

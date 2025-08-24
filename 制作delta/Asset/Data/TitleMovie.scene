@@ -13,7 +13,7 @@
 	},
 	{
 		"AnimPath": "Sortie",
-		"AnimSpeed": 20.0,
+		"AnimSpeed": 30.0,
 		"Emmisive": [ 10.0, 3.200000047683716, 3.299999952316284 ],
 		"IsTarget": true,
 		"ModelPath": "Asset\\Models\\Grint\\Grint.gltf",
@@ -24,7 +24,7 @@
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"Speed": 3.0,
 		"Tag": 0,
-		"WaitTime": 1.0
+		"WaitTime": 0.5
 	},
 	{
 		"AnimPath": "",

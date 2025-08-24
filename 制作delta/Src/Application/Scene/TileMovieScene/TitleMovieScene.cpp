@@ -19,6 +19,10 @@ void TitleMovieScene::Init()
 
 	UIManager::GetInstance().ListClear();
 	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.5f, false);
+
+	RenderSetting::GetInstance().RenderLoad("Asset/Data/TitleMovie.render");
+	
+
 }
 
 void TitleMovieScene::Event()

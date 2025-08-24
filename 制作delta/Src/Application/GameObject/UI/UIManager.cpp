@@ -4,6 +4,7 @@
 #include "DrawUI/DrawUI.h"
 #include "NumberUI/NumberUI.h"
 #include "GuageUI/GuageUI.h"
+#include "BlinkUI/BlinkUI.h"
 
 
 #include "../Weapon/Gun/GunBase.h"
@@ -89,6 +90,14 @@ void UIManager::Update()
 	if (m_rightWeaponUI.lock())
 	{
 		m_rightWeaponUI.lock()->SetNumber(m_playerRightWeaponAmmo);
+	}
+	if (m_leftWeaponOneUI.lock())
+	{
+		m_leftWeaponOneUI.lock()->SetNumber(m_playerLeftWeaponAmmoOne);
+	}
+	if (m_rightWeaponOneUI.lock())
+	{
+		m_rightWeaponOneUI.lock()->SetNumber(m_playerRightWeaponAmmoOne);
 	}
 	
 	for (auto& obj : m_uiList)
@@ -207,6 +216,7 @@ void UIManager::CreateUI()
 	std::shared_ptr<DrawUI> draw; 
 	std::shared_ptr<NumberUI> number;
 	std::shared_ptr<GuageUI> guage;
+	std::shared_ptr<BlinkUI> blink;
 	switch (m_nowCreateType)
 	{
 	case UIManager::CreateType::No:
@@ -225,6 +235,11 @@ void UIManager::CreateUI()
 		guage = std::make_shared<GuageUI>();
 		guage->Init();
 		AddUI(guage);
+		break;
+	case UIManager::CreateType::Blink:
+		blink = std::make_shared<BlinkUI>();
+		blink->Init();
+		AddUI(blink);
 		break;
 	default:
 		break;
@@ -287,12 +302,28 @@ void UIManager::Deserialize(const std::string& path)
 					{
 						m_leftWeaponUI = obj;
 					}
+					else if (tag == "PlayerRightShoulderOnce")
+					{
+						m_rightWeaponOneUI = obj;
+					}
+					else if (tag == "PlayerLeftShoulderOnce")
+					{
+						m_leftWeaponOneUI = obj;
+					}
 
 				}
 
 				if (str == "GuageUI")
 				{
 					auto obj = std::make_shared<GuageUI>();
+					obj->Init();
+					obj->Deserialize(json);
+					AddUI(obj);
+				}
+
+				if (str == "BlinkUI")
+				{
+					auto obj = std::make_shared<BlinkUI>();
 					obj->Init();
 					obj->Deserialize(json);
 					AddUI(obj);

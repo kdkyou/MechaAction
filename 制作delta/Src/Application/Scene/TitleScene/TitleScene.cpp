@@ -30,10 +30,15 @@ void TitleScene::Init()
 	UIManager::GetInstance().SceneUICreate("Asset/Data/TitleUI.scene");
 
 	m_once = false;
+
+	KdAudioManager::Instance().Play("Asset/Sounds/BGM/Attack of the cyborg Legion.wav", true)->SetVolume(0.2f);
 }
 
 void TitleScene::Event()
 {
+	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherEnable(RenderSetting::GetInstance().IsAlphaDither());
+
+
 	auto& key = KeyInput::GetInstance().GetKeyboardState();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 	auto& mouse = KeyInput::GetInstance().GetMouseState();
@@ -45,7 +50,8 @@ void TitleScene::Event()
 		if (!m_once)
 		{
 			m_once = true;
-			um.SetFade(Fade::FadeIn, 1.5f, true);
+			um.SetFade(Fade::FadeIn, 0.5f, true);
+			KdAudioManager::Instance().Play("Asset/Sounds/SE/Enter.wav", false)->SetVolume(0.25f);
 		}
 	}
 	

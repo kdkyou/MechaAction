@@ -13,7 +13,7 @@ public:
 		Draw,
 		Number,
 		Guage,
-
+		Blink,
 	};
 
 	void UIInit();
@@ -29,6 +29,8 @@ public:
 	void SetPlayerHP(int hp) { m_playerHP = hp; }
 	void SetRightAmmo(int ammo) { m_playerRightWeaponAmmo = ammo; }
 	void SetLeftAmmo(int ammo) { m_playerLeftWeaponAmmo = ammo; }
+	void SetRightAmmoOne(int ammo) { m_playerRightWeaponAmmoOne = ammo; }
+	void SetLeftAmmoOne(int ammo) { m_playerLeftWeaponAmmoOne = ammo; }
 
 	void Editor_ImGui();
 
@@ -51,12 +53,16 @@ private:
 	int m_playerHP = 0;
 	int m_playerRightWeaponAmmo = 0;
 	int m_playerLeftWeaponAmmo = 0;
+	int m_playerRightWeaponAmmoOne = 0;
+	int m_playerLeftWeaponAmmoOne = 0;
 
 	CreateType m_nowCreateType = CreateType::No;
 	
 	std::weak_ptr<NumberUI> m_hpUI;
 	std::weak_ptr<NumberUI> m_rightWeaponUI;
+	std::weak_ptr<NumberUI> m_rightWeaponOneUI;
 	std::weak_ptr<NumberUI> m_leftWeaponUI;
+	std::weak_ptr<NumberUI> m_leftWeaponOneUI;
 
 	std::shared_ptr<Fade> m_fade;
 

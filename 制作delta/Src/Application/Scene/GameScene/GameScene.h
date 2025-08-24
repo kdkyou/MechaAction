@@ -16,4 +16,7 @@ private:
 
 	// 乱数生成器
 	std::shared_ptr<KdRandomGenerator> m_RandomGen;
+
+	float m_duration = 1.0f;
+	bool m_fade = false;
 };

@@ -33,12 +33,7 @@ public:
 	// 残弾割合を設定（0.0f〜1.0f）
 	void SetRatio(float ratio) { m_ratio = std::clamp(ratio, 0.0f, 1.0f); }
 
-
-
-
-
 private:
-
 
 	void DrawGuage();
 

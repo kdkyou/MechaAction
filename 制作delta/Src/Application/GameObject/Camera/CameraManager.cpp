@@ -19,6 +19,8 @@ void CameraManager::Init()
 {
 	SetNextType(m_nextType);
 	KdEffekseerManager::GetInstance().Create(1280, 720);
+
+	m_spTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/UI/Target.png");
 }
 
 void CameraManager::PreUpdate()
@@ -33,6 +35,8 @@ void CameraManager::Update()
 	Application::Instance().m_log.AddLog(m_currentCamera->GetName().c_str() + '\n');
 
 	m_currentCamera->Update();
+
+	TargetUI();
 }
 
 void CameraManager::PostUpdate()
@@ -62,6 +66,11 @@ void CameraManager::DrawSprite()
 	if (m_currentCamera == nullptr) { return; }
 
 	m_currentCamera->DrawSprite();
+
+	for(auto& ui:m_uis)
+	{
+		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, ui->pos.x, ui->pos.y);
+	}
 
 }
 
@@ -166,6 +175,22 @@ void CameraManager::Setting(const std::string& path)
 				m_currentCamera->Deserialize(json);
 			}
 		}
+	}
+}
+
+void CameraManager::TargetUI()
+{
+	m_uis.clear();
+
+	for(auto& obj : m_wpMultiLocks)
+	{
+		std::shared_ptr<TargetUIf> ui = std::make_shared<TargetUIf>();
+		auto targetPos = m_wpLockTarget.lock()->GetMatrix().Translation();
+		Math::Vector3 screenPos;
+		auto& camera = m_currentCamera->GetCamera();
+		camera->ConvertWorldToScreenDetail(targetPos, screenPos);
+		ui->pos = { screenPos.x,screenPos.y };
+		m_uis.push_back(ui);
 	}
 }
 

@@ -162,7 +162,7 @@ void GameScene::Init()
 		charge->SetParent(_character);
 		charge->SetAttackTrigger(WeaponBase::LeftShoulder);
 		charge->SetAttachPath("LeftShoulderWeapon");
-		charge->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 3.5f, 6.0f,0.0f,1, 12, 48);
+		charge->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 2.5f, 6.0f,0.0f,1, 12, 48);
 		charge->MakeAnimator("Close", 20.0f);
 		charge->Init();
 		charge->SetTag(KdGameObject::tPlayerAttack);
@@ -210,6 +210,7 @@ void GameScene::Init()
 		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 0.7f, 3.0f, 0.0f, 1, 24, 80);
 		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 400, 400, 200, 40.0f, 0.95f);
 		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.7f, 0.4f, 0.8f), 1.7f, 10);
+		rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
 		AddObject(rifle);
 	}
 	{
@@ -222,6 +223,7 @@ void GameScene::Init()
 		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.2f, 2.0f, 0.0f, 1, 36, 250);
 		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 56, 300, 200, 20.0f, 0.9f);
 		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 20);
+		rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
 		AddObject(rifle);
 	}
 
@@ -250,6 +252,7 @@ void GameScene::Init()
 	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.078f, 5.0f, 0.0f, 1, 80, 300);
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 400, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(1.0f, 0.17f, 0.19f), 1.7f, 10);
+	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Balkan.wav");
 	AddObject(rifle);
 
 	// 4脚
@@ -272,6 +275,7 @@ void GameScene::Init()
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
+	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raunchur.wav");
 	AddObject(rifle);
 
 	rifle = std::make_shared<Rifle>();
@@ -283,6 +287,7 @@ void GameScene::Init()
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.1f, 0.1f), 1.7f, 10);
+	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raunchur.wav");
 	AddObject(rifle);
 
 	auto mt = std::make_shared<MT>();
@@ -304,6 +309,7 @@ void GameScene::Init()
 	rifle->SetGunsParam("Asset/Models/Weapon/SMG/MP5.gltf", 0.08f, 5.0f, 0.0f, 1, 40, 250);
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 45, 300, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.3f, 0.2f), 1.7f, 10);
+	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Masingun.wav");
 	AddObject(rifle);	
 
 	UIManager::GetInstance().SceneUICreate();
@@ -318,10 +324,42 @@ void GameScene::Init()
 	CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
 
 
+	m_duration = 1.0f;
+	m_fade = false;
+	m_once = false;
+
+	KdAudioManager::Instance().StopAllSound();
+	KdAudioManager::Instance().Play("Asset/Sounds/BGM/Rusty.wav", true)->SetVolume(0.2f);
 
 }
 
 void GameScene::Event()
 {
-	
+	auto& key = KeyInput::GetInstance().GetKeyboardState();
+	if (m_enemyList.empty() == true || key.D9) {
+		if (!m_once)
+		{
+			m_once = true;
+			UIManager::GetInstance().SceneUICreate("Asset/Data/CompleteUI.scene");
+		}
+
+		m_duration -= KdFPSController::GetInstance().GetDeltaTime();
+
+		if (m_duration < 0.0f)
+		{
+			if (!m_fade)
+			{
+				m_fade = true;
+				UIManager::GetInstance().SetFade(Fade::FadeIn, 1.0f, true);
+			}
+		}
+
+		if (m_fade)
+		{
+			if (UIManager::GetInstance().IsFadeComplete())
+			{
+				SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
+			}
+		}
+	}
 }

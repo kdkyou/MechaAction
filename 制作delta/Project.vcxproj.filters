@@ -184,6 +184,12 @@
     <Filter Include="Src\Application\GameObject\Effect\Fade">
       <UniqueIdentifier>{c50fb562-d8f3-48d8-bc18-7addc35e2dc5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\Scene\GameMovieScene">
+      <UniqueIdentifier>{1e51cdc4-9c7c-4652-b837-5f4c4de1c2ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\BlinkUI">
+      <UniqueIdentifier>{c2d9c854-e10c-4ffa-b644-f64d6c6b0d5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -501,6 +507,12 @@
     <ClInclude Include="Src\Application\GameObject\Effect\Fade\Fade.h">
       <Filter>Src\Application\GameObject\Effect\Fade</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Scene\GameMovieScene\GameMovieScene.h">
+      <Filter>Src\Application\Scene\GameMovieScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.h">
+      <Filter>Src\Application\GameObject\UI\BlinkUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -784,6 +796,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Effect\Fade\Fade.cpp">
       <Filter>Src\Application\GameObject\Effect\Fade</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Scene\GameMovieScene\GameMovieScene.cpp">
+      <Filter>Src\Application\Scene\GameMovieScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.cpp">
+      <Filter>Src\Application\GameObject\UI\BlinkUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

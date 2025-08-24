@@ -103,6 +103,9 @@ void RenderSetting::Editor_ImGui()
 		KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(m_bloom);
 	}
 
+	if (ImGui::Checkbox((const char*)u8"アルファディザ", &m_alphaDither)){}
+	
+
 }
 
 void RenderSetting::RenderLoad(const std::string& path)

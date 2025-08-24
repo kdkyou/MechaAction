@@ -10,7 +10,7 @@
 void Drone::Init()
 {
 	m_limEnable = true;
-	m_limColor = { 0.12f,0.1f,0.08f };
+	m_limColor = { 0.62f,0.1f,0.08f };
 	m_limPow = 0.3f;
 						
 	m_correction = { 0.0f,1.0f,0.0f };
@@ -584,6 +584,8 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 	spOwner->ChangeEnableLeftAttack(false);
 
 	KdAudioManager::Instance().Play("Asset/Sounds/Sound/drone_explode.wav")->SetVolume(0.3f);
+
+	spOwner->Burn();
 }
 
 void Drone::Destroyed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
@@ -599,7 +601,7 @@ void Drone::Destroyed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<K
 
 	if (m_durationState <= 0)
 	{
-
+		spOwner->m_isExpired = true;
 	}
 
 }

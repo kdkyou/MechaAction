@@ -6,6 +6,8 @@
 
 #include "../../Application/GameObject/Character/CharacterBase.h"
 
+#include "../../Application/main.h"
+
 
 
 bool EditorData::OpenFileDialog(std::string& filepath, const std::string& title, const char* filters)
@@ -112,10 +114,18 @@ void EditorData::Initialize()
 
 void EditorData::UpdateImGui()
 {
-	
 
+	auto& key = KeyInput::GetInstance().GetKeyboardState();
+	if (key.F5) { m_editorMode =! m_editorMode; }
+
+	if (!m_editorMode) { return; }
+	
+	ShowCursor(true);
+	
 	// ImGui Demo ウィンドウ表示 ※すごく参考になるウィンドウです。imgui_demo.cpp参照。
 	ImGui::ShowDemoWindow(nullptr);
+
+	Application::Instance().m_log.Draw("Log Window");
 
 
 	//===========================

@@ -2,6 +2,8 @@
 
 #include "../../Scene/SceneManager.h"
 
+#include "../Effect/Polygon/PolygonEffect.h"
+
 void CharacterBase::GenerateDepthMapFromLight()
 {
 	if (m_spModelWork)
@@ -101,7 +103,7 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 		{
 			pos = move;
 		}
-		auto center = pos +Math::Vector3(0.0f, 1.0f, 0.0f);
+		auto center = pos + Math::Vector3(0.0f, 1.0f, 0.0f);
 		SphereCast(center, 1.0f, KdCollider::TypeGround, pos);
 	}
 	else
@@ -152,7 +154,7 @@ bool CharacterBase::RayCast(const Math::Vector3& startPos, const Math::Vector3& 
 		// ②HIT判定対象オブジェクトに総当たり
 		for (auto& obj : SceneManager::Instance().GetTerrainList())
 		{
-			if(obj->GetTag() != tPlayerAttack)
+			if (obj->GetTag() != tPlayerAttack)
 			{
 				obj->Intersects(rayInfo, &retRayList);
 			}
@@ -234,7 +236,7 @@ bool CharacterBase::SeaarchObstacle(const Math::Vector3& pos, const Math::Vector
 	Math::Vector3 vTarget = vec;
 	vTarget.Normalize();
 
-	auto  flg =  RayCast(pos, vTarget, length, KdCollider::TypeGround, rPos);
+	auto  flg = RayCast(pos, vTarget, length, KdCollider::TypeGround, rPos);
 
 	if (flg)
 	{
@@ -303,6 +305,21 @@ bool CharacterBase::SearchPlayer()
 	}
 
 	return false;
+}
+
+const bool CharacterBase::Burn()
+{
+	if (m_burnPath == "") { return false; }
+
+	auto polygon = std::make_shared<PolygonEffect>();
+
+	polygon->Init();
+	auto occurMat = m_mWorld * m_correctionMat;
+	polygon->SetParam(m_burnPath, 0.15f, PolygonEffect::eBright, false, occurMat);
+
+	SceneManager::Instance().AddObject(polygon);
+
+	return true;
 }
 
 

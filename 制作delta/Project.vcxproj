@@ -182,6 +182,7 @@
     <ClInclude Include="Src\Application\GameObject\Terrain\MoveTerrain.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\Terrain.h" />
     <ClInclude Include="Src\Application\GameObject\UI\Alert\Alert.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\DrawUI\DrawUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\GuageUI\GuageUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\NumberUI\NumberUI.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase.h" />
     <ClInclude Include="Src\Application\main.h" />
     <ClInclude Include="Src\Application\Scene\BaseScene\BaseScene.h" />
+    <ClInclude Include="Src\Application\Scene\GameMovieScene\GameMovieScene.h" />
     <ClInclude Include="Src\Application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="Src\Application\Scene\SceneManager.h" />
     <ClInclude Include="Src\Application\Scene\TileMovieScene\TitleMovieScene.h" />
@@ -282,6 +284,7 @@
     <ClCompile Include="Src\Application\GameObject\Terrain\MoveTerrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\Terrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\Alert\Alert.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\DrawUI\DrawUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\GuageUI\GuageUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\NumberUI\NumberUI.cpp" />
@@ -298,6 +301,7 @@
     <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase.cpp" />
     <ClCompile Include="Src\Application\main.cpp" />
     <ClCompile Include="Src\Application\Scene\BaseScene\BaseScene.cpp" />
+    <ClCompile Include="Src\Application\Scene\GameMovieScene\GameMovieScene.cpp" />
     <ClCompile Include="Src\Application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp" />
     <ClCompile Include="Src\Application\Scene\TileMovieScene\TitleMovieScene.cpp" />

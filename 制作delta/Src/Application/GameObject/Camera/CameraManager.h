@@ -75,13 +75,14 @@ public:
 
 	void Setting(const std::string& path);
 
+	void TargetUI();
+
 private:
 
 	//ChangeTypeで決めた型のカメラに変更 
 	bool ChangeCamera(const CameraType& type);
 
 	void Init();
-
 
 	std::shared_ptr<CameraBase>	m_currentCamera = nullptr;
 	std::weak_ptr<KdGameObject>  m_wpLookTarget;
@@ -98,7 +99,14 @@ private:
 
 	bool						m_isEnableChanged = true;
 
+	std::shared_ptr<KdTexture> m_spTex;
+	struct TargetUIf
+	{
+		Math::Vector2 pos;
+	};
 
+	std::vector<std::shared_ptr<TargetUIf>> m_uis;
+	//std::list<std::shared_ptr<TargetUIf>> m_targetUIList;
 
 private:
 

@@ -39,12 +39,12 @@ void Enemy::Init()
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-	SetPos({ 0.0f,0.0f,10.0f });
+	SetPos({ 0.0f,0.0f,400.0f });
 
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
 
-	m_dist = { 50.0f,600.0f };
+	m_dist = { 50.0f,300.0f };
 
 	m_clampSize = 20.0f;
 
@@ -74,12 +74,12 @@ void Enemy::Update()
 	Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, true, false);
 	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
 
+	UpdateCollision();
 }
 
 void Enemy::PostUpdate()
 {
 
-	UpdateCollision();
 
 	if (m_nowAction)
 	{
@@ -177,6 +177,17 @@ void Enemy::UpdateRotate(const Math::Vector3& srcMoveVec)
 
 void Enemy::UpdateCollision()
 {
+	KdCollider::SphereInfo sphereInfo;
+	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 1.8f, 0);
+	sphereInfo.m_sphere.Radius = 1.6f;
+	sphereInfo.m_type = KdCollider::TypeGround;
+
+	Math::Vector3 pos;
+	if (SphereCast(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, KdCollider::TypeGround, pos)) {
+		SetPos(pos);
+	}
+	float dist = 0;
+
 	DirectX::BoundingOrientedBox box;
 
 	box.Center = GetPos() + Math::Vector3(0.0f, 6.0f, 0.0f);
@@ -1610,7 +1621,8 @@ void Enemy::Destoroy::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<K
 	//死亡時
 	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
-
+		spOwner->Burn();
+		spOwner->m_isExpired = true;
 		return;
 	}
 

@@ -88,7 +88,7 @@ void Missile::Trigger()
 	m_durationFire += m_fireRateAccel * KdFPSController::GetInstance().GetDeltaTime();
 
 
-
+	
 	//時間になったか
 	if (m_durationFire >= m_fireRate)
 	{

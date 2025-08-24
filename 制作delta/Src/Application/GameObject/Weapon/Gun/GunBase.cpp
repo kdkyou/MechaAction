@@ -58,10 +58,12 @@ void GunBase::Update()
 		if (m_attachPath == "RightShoulderWeapon")
 		{
 			UIManager::GetInstance().SetRightAmmo(m_num);
+			UIManager::GetInstance().SetRightAmmoOne(m_numOnce);
 		}
 		else if (m_attachPath == "LeftShoulderWeapon")
 		{
 			UIManager::GetInstance().SetLeftAmmo(m_num);
+			UIManager::GetInstance().SetLeftAmmoOne(m_numOnce);
 		}
 	}
 }

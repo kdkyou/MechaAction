@@ -180,6 +180,11 @@ void BaseScene::Draw()
 	// 陰影のないオブジェクト(透明な部分を含む物体やエフェクト)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginUnLit();
 	{
+		for (auto& obj : m_terrainList)
+		{
+			obj->DrawUnLit();
+		}
+
 		for (auto& obj : m_objList)
 		{
 			obj->DrawUnLit();
@@ -206,6 +211,10 @@ void BaseScene::Draw()
 	// 光源オブジェクト(自ら光るオブジェクトやエフェクト)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_postProcessShader.BeginBright();
 	{
+		for (auto& obj : m_terrainList)
+		{
+			obj->DrawBright();
+		}
 		for (auto& obj : m_objList)
 		{
 			obj->DrawBright();

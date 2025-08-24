@@ -8,10 +8,14 @@ public:
 
 	void RenderLoad(const std::string& path);
 
+	const bool IsAlphaDither()const { return m_alphaDither; }
+	void SetAlpha(const bool alpha) { m_alphaDither = alpha; }
+
 private:
 
 	void Deserialize(const nlohmann::json& jsonObj);
 	
+	bool m_alphaDither = true;
 
 	Math::Vector3 m_dirVec;
 	Math::Vector3 m_dirColor;

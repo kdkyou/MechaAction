@@ -14,7 +14,7 @@ public:
 
 	const bool IsEditorMode()const { return m_editorMode; }
 
-	bool		m_editorMode = true;
+	bool		m_editorMode = false;
 
 	// エディターカメラ
 	std::shared_ptr<KdGameObject>			m_cameraObject;
