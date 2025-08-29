@@ -1611,9 +1611,10 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 		spOwner->EnableTrail();
 	}
 
+	if(spOwner->m_spAnimator->GetProgress()<= 0.5f)
 	 {
 
-		auto sin = std::sinf(spOwner->m_spAnimator->GetProgress()* DirectX::XM_PI);
+		auto sin = std::sinf(spOwner->m_spAnimator->GetProgress()* DirectX::XM_2PI);
 
 
 		KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(6, sin, { 0.5f,0.5f }, 0.15f, 0, 0.02f);

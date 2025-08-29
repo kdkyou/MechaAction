@@ -176,7 +176,7 @@ void GameScene::Init()
 		charge->MakeAnimator("Close", 20.0f);
 		charge->Init();
 		charge->SetTag(KdGameObject::tPlayerAttack);
-		charge->SetBulletsParam("Asset/Models/Weapon/Bullet/RaserBullet.gltf", 5.0f, 300, 130.0f, 200, 40.0f, 0.95f);
+		charge->SetBulletsParam("Asset/Models/Weapon/Bullet/RaserBullet.gltf", 5.0f, 300, 530.0f, 200, 40.0f, 0.95f);
 		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke2.png",Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
 		AddObject(charge);;
 		
@@ -193,7 +193,7 @@ void GameScene::Init()
 		missile->Init();
 		missile->SetTag(KdGameObject::tPlayerAttack);
 		
-		missile->SetBulletsParam("Asset/Models/Weapon/Bullet/MissileBullet.gltf",20.0f,200, 100.0f, 200, 40.0f, 0.95f);
+		missile->SetBulletsParam("Asset/Models/Weapon/Bullet/MissileBullet.gltf",20.0f,200, 200.0f, 200, 40.0f, 0.95f);
 		missile->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke.png", Math::Color(0.36f, 0.3f, 0.3f), 3.5f, 30);
 		missile->SetBulletChaisingData(10, 150.0f, 0.8f, 2000.0f);
 		AddObject(missile);
@@ -217,7 +217,7 @@ void GameScene::Init()
 		rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 0.7f, 3.0f, 0.0f, 1, 24, 80);
-		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 400, 400, 200, 40.0f, 0.95f);
+		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 400, 1000, 200, 40.0f, 0.95f);
 		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.7f, 0.4f, 0.8f), 1.7f, 10);
 		rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
 		AddObject(rifle);
@@ -230,7 +230,7 @@ void GameScene::Init()
 		rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.2f, 2.0f, 0.0f, 1, 36, 250);
-		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 56, 300, 200, 20.0f, 0.9f);
+		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 56, 600, 200, 20.0f, 0.9f);
 		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 20);
 		rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
 		AddObject(rifle);
@@ -304,7 +304,7 @@ void GameScene::Init()
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 600, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
 	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Launchur.wav");
 	AddObject(rifle);
@@ -316,7 +316,7 @@ void GameScene::Init()
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 600, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.1f, 0.1f), 1.7f, 10);
 	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Launchur.wav");
 	AddObject(rifle);
@@ -337,7 +337,7 @@ void GameScene::Init()
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/SMG/MP5.gltf", 0.08f, 5.0f, 0.0f, 1, 40, 250);
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 45, 300, 50, 10.0f, 0.9f);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 45, 600, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.3f, 0.2f), 1.7f, 10);
 	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Masingun.wav");
 	AddObject(rifle);	
