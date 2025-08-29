@@ -24,6 +24,7 @@ void BaseScene::PreUpdate()
 	}
 
 	auto itr = m_enemyList.begin();
+
 	while (itr != m_enemyList.end())
 	{
 		if ((*itr)->IsExpired())	// IsExpired() ・・・ 無効ならtrue
@@ -53,7 +54,7 @@ void BaseScene::PreUpdate()
 	{
 		obj->PreUpdate();
 	}
-	
+
 	CameraManager::Instance().PreUpdate();
 
 	UIManager::GetInstance().PreUpdate();
@@ -63,16 +64,15 @@ void BaseScene::Update()
 {
 
 	// KdGameObjectを継承した全てのオブジェクトの更新 (ポリモーフィズム)
-//	if (EditorData::GetInstance().IsEditorMode() == true)
+	if (EditorData::GetInstance().IsEditorMode() == true)
 	{
+		for (auto& obj : m_terrainList)
+		{
+			obj->Update();
+		}
+	}
 
-	for (auto& obj : m_terrainList)
 	{
-		obj->Update();
-	}
-	}
-//	else 
-	 {
 		for (auto& obj : m_playerList)
 		{
 			obj->Update();
@@ -87,6 +87,8 @@ void BaseScene::Update()
 		{
 			obj->Update();
 		}
+
+
 	}
 
 	KdEffekseerManager::GetInstance().Update();
@@ -102,6 +104,16 @@ void BaseScene::Update()
 
 void BaseScene::PostUpdate()
 {
+	for (auto& obj : m_playerList)
+	{
+		obj->PostUpdate();
+	}
+
+	for (auto& obj : m_enemyList)
+	{
+		obj->PostUpdate();
+	}
+
 	for (auto& obj : m_objList)
 	{
 		obj->PostUpdate();
@@ -131,8 +143,7 @@ void BaseScene::Draw()
 		{
 			obj->GenerateDepthMapFromLight();
 		}
-
-		for (auto& obj : m_objList)
+		for (auto& obj : m_playerList)
 		{
 			obj->GenerateDepthMapFromLight();
 		}
@@ -141,11 +152,12 @@ void BaseScene::Draw()
 		{
 			obj->GenerateDepthMapFromLight();
 		}
-
-		for (auto& obj : m_playerList)
+		
+		for (auto& obj : m_objList)
 		{
 			obj->GenerateDepthMapFromLight();
 		}
+
 	}
 	KdShaderManager::Instance().m_StandardShader.EndGenerateDepthMapFromLight();
 
@@ -159,7 +171,7 @@ void BaseScene::Draw()
 			obj->DrawLit();
 		}
 
-		for (auto& obj : m_objList)
+		for (auto& obj : m_playerList)
 		{
 			obj->DrawLit();
 		}
@@ -169,10 +181,11 @@ void BaseScene::Draw()
 			obj->DrawLit();
 		}
 
-		for (auto& obj : m_playerList)
+		for (auto& obj : m_objList)
 		{
 			obj->DrawLit();
 		}
+
 	}
 	KdShaderManager::Instance().m_StandardShader.EndLit();
 
@@ -185,7 +198,7 @@ void BaseScene::Draw()
 			obj->DrawUnLit();
 		}
 
-		for (auto& obj : m_objList)
+		for (auto& obj : m_playerList)
 		{
 			obj->DrawUnLit();
 		}
@@ -195,7 +208,7 @@ void BaseScene::Draw()
 			obj->DrawUnLit();
 		}
 
-		for (auto& obj : m_playerList)
+		for (auto& obj : m_objList)
 		{
 			obj->DrawUnLit();
 		}
@@ -233,6 +246,7 @@ void BaseScene::DrawSprite()
 		{
 			obj->DrawSprite();
 		}
+
 		CameraManager::Instance().DrawSprite();
 
 		UIManager::GetInstance().DrawSprite();
@@ -262,7 +276,7 @@ void BaseScene::DrawDebug()
 				obj->DrawDebug();
 			}
 		}
-		else{
+		else {
 			for (auto& obj : m_objList)
 			{
 				obj->DebugClear();
@@ -327,10 +341,10 @@ void BaseScene::CurrentSceneCreate(const std::string& fileName)
 				switch (tag)
 				{
 				case KdGameObject::tPlayer:
-				//	AddPlayer(obj);
+					//	AddPlayer(obj);
 					break;
 				case KdGameObject::tEnemy:
-				//	AddEnemy(obj);
+					//	AddEnemy(obj);
 					break;
 				case KdGameObject::tTerrain:
 					AddTerrain(obj);
@@ -341,7 +355,7 @@ void BaseScene::CurrentSceneCreate(const std::string& fileName)
 				case KdGameObject::tPlayerAttack:
 				case KdGameObject::tEnemyAttack:
 				default:
-				AddObject(obj);
+					AddObject(obj);
 					break;
 				}
 

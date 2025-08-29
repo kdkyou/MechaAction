@@ -30,7 +30,8 @@ public:
 		KdJsonUtility::GetValue(jsonObj, "Bright", &m_isBright);
 		SetModel(m_modelPath);
 
-
+		auto angle = KdToRadians * m_rot;
+		m_mWorld = Math::Matrix::CreateScale(m_scale) * Math::Matrix::CreateFromYawPitchRoll(angle) * Math::Matrix::CreateTranslation(m_pos);
 	}
 
 	// このクラスの内容をJSONデータ化する

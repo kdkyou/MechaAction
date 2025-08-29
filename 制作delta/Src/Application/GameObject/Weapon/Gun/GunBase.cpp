@@ -51,6 +51,11 @@ void GunBase::Init()
 	m_name = "Gun";
 }
 
+void GunBase::PreUpdate()
+{
+	WeaponBase::PreUpdate();
+}
+
 void GunBase::Update()
 {
 	if (m_tag == tPlayerAttack)

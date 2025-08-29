@@ -2,6 +2,7 @@
 
 #include"../../Character/CharacterBase.h"
 
+#include "../../Camera/CameraManager.h"
 
 void LockCamera::Init()
 {
@@ -68,6 +69,9 @@ void LockCamera::PostUpdate()
 	const std::shared_ptr<const CharacterBase>	_spTarget = m_wpTarget.lock();
 	if (_spTarget)
 	{
+		if (_spTarget->IsDestroy() == true) { 
+			CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
+			return; }
 		_targetMat = Math::Matrix::CreateTranslation(_spTarget->GetMatrix().Translation());
 	}
 

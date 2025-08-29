@@ -96,12 +96,17 @@ void Charge::Trigger()
 	// 発射可能か
 	if (!m_trigger && m_durationFire<=0) { return; }
 
-
 	m_durationFire += m_fireRateAccel * KdFPSController::GetInstance().GetDeltaTime();
 
 	Application::Instance().m_log.AddLog("durarionFire:%.3f\n", m_durationFire);
 	Application::Instance().m_log.AddLog("fireRate:%.1f\n", m_fireRate);
 
+	if (m_durationFire > m_fireRate) {
+		if (!m_isSoundOnce) {
+			m_isSoundOnce = true;
+			KdAudioManager::Instance().Play("Asset/Sounds/SE/Weapon/Charge_Comp.wav", false)->SetVolume(0.3f);
+		}
+	}
 
 	if ((m_nowTrigger ^ m_AttackTrigger)!= 0)
 	{
@@ -170,6 +175,8 @@ void Charge::Shot()
 	m_durationFire = 0;
 	m_num -= 1;
 	m_numOnce -= 1;
+
+	m_isSoundOnce = false;
 }
 
 void Charge::ShotCharge()
@@ -185,7 +192,7 @@ void Charge::ShotCharge()
 		direct = trans.Backward();
 		direct.Normalize();
 
-		KdEffekseerManager::GetInstance().Play("Thruster.efkefc", trans.Translation(), 1.0f, 3.0f, false);
+		//KdEffekseerManager::GetInstance().Play("Thruster.efkefc", trans.Translation(), 1.0f, 3.0f, false);
 	}
 	// 残弾で倍率上昇
 	int chargeNum = m_numOnce;
@@ -198,6 +205,8 @@ void Charge::ShotCharge()
 	bullet->Init();
 	bullet->SetBulletType(Bullet::SightScale, {});
 	bullet->SetTag(m_tag);
+	auto num = std::clamp(m_numOnce/m_maxNumofOnce,1,3);
+	bullet->ScaleUp(3.0f, num);
 
 	bullet->SetBulletTrail(m_bulletTrailPath, m_bulletTrailColor, m_bulletTrailWidth, m_bulletTrailLength);
 	SceneManager::Instance().AddObject(bullet);
@@ -205,6 +214,8 @@ void Charge::ShotCharge()
 	m_durationFire = 0.0f;
 	m_num -= m_numOnce;
 	m_numOnce = 0;
+
+	m_isSoundOnce = false;
 }
 
 void Charge::OnTrigger()
@@ -213,5 +224,6 @@ void Charge::OnTrigger()
 	{
 		m_trigger = true;
 		m_sounds = KdAudioManager::Instance().Play(m_chargeSoundPath, true);
+		m_sounds.lock()->SetVolume(0.2f);
 	}
 }

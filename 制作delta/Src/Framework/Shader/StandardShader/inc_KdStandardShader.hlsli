@@ -25,6 +25,7 @@ cbuffer cbObject : register(b0)
 	float g_waveTime;	//波の時間
 	
 	int g_alphaEnalbe;	//アルファディザ有効化
+	float g_alphaDist;	//アルファディザ距離
 };
 
 // 定数バッファ(メッシュ単位)

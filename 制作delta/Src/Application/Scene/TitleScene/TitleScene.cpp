@@ -8,16 +8,22 @@
 #include "../../GameObject/UI/DrawUI/DrawUI.h"
 #include "../../GameObject/Terrain/AnimTerrain.h"
 #include "../../GameObject/Terrain/MoveTerrain.h"
+#include "../../GameObject/Terrain/EmmisiveTerrain.h"
 
 #include "../../GameObject/UI/UIManager.h"
 
 void TitleScene::Init()
 {
+	CameraManager::Instance().ResetMultiLocks();
+	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.2f, false);
+	KdAudioManager::Instance().StopAllSound();
+
 	KdGameObjectFactory::Instance().RegisterGameObject<PolygonEffect>("PolygonEffect");
 	KdGameObjectFactory::Instance().RegisterGameObject<NumberUI>("NumberUI");
 	KdGameObjectFactory::Instance().RegisterGameObject<DrawUI>("DrawUI");
 	KdGameObjectFactory::Instance().RegisterGameObject<AnimTerrain>("AnimTerrain");
 	KdGameObjectFactory::Instance().RegisterGameObject<MoveTerrain>("MoveTerrain");
+	KdGameObjectFactory::Instance().RegisterGameObject<EmmisiveTerrain>("EmmisiveTerrain");
 
 	CurrentSceneCreate("Asset/Data/Title.scene");
 
@@ -31,7 +37,7 @@ void TitleScene::Init()
 
 	m_once = false;
 
-	KdAudioManager::Instance().Play("Asset/Sounds/BGM/Attack of the cyborg Legion.wav", true)->SetVolume(0.2f);
+	KdAudioManager::Instance().Play("Asset/Sounds/BGM/ApocalypseFull.wav", true)->SetVolume(0.15f);
 }
 
 void TitleScene::Event()

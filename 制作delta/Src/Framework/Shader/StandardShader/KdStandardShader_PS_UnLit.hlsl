@@ -43,7 +43,7 @@ float4 main(VSOutputNoLighting In) : SV_Target0
 		// 時間を加味した波の動き
 		float wave = sin(dist * 20.0f+angle* - g_waveTime * 10.0f); // 波紋の周期と速度
 
-		// 光の強さ (距離ベースで減衰)
+		// 光の強さ (距離ベースで減衰)nu
 		float strength = saturate(1.0f - dist * 1.5f);
 		
 		// 波の境界を際立たせる

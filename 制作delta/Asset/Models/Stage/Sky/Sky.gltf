@@ -69,7 +69,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":1984,
+			"count":2077,
 			"max":[
 				1499.99951171875,
 				1500,
@@ -85,45 +85,45 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":1984,
+			"count":2077,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":1984,
+			"count":2077,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":2880,
+			"count":11520,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":23808,
+			"byteLength":24924,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":23808,
-			"byteOffset":23808,
+			"byteLength":24924,
+			"byteOffset":24924,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":15872,
-			"byteOffset":47616,
+			"byteLength":16616,
+			"byteOffset":49848,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":5760,
-			"byteOffset":63488,
+			"byteLength":23040,
+			"byteOffset":66464,
 			"target":34963
 		}
 	],
@@ -135,7 +135,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":69248,
+			"byteLength":89504,
 			"uri":"Sky.bin"
 		}
 	]

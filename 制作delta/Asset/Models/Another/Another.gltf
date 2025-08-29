@@ -63151,25 +63151,23 @@
 					1
 				],
 				"metallicFactor":0.5321100950241089,
-				"metallicRoughnessTexture":{
-					"index":1
-				}
+				"roughnessFactor":0.5
 			}
 		},
 		{
 			"doubleSided":true,
 			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
 			"normalTexture":{
-				"index":2,
+				"index":1,
 				"scale":10
 			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":3
+					"index":2
 				},
 				"metallicFactor":0,
 				"metallicRoughnessTexture":{
-					"index":4
+					"index":3
 				}
 			}
 		},
@@ -63177,16 +63175,16 @@
 			"doubleSided":true,
 			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.001",
 			"normalTexture":{
-				"index":5,
+				"index":4,
 				"scale":10
 			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":6
+					"index":5
 				},
 				"metallicFactor":0,
 				"metallicRoughnessTexture":{
-					"index":7
+					"index":6
 				}
 			}
 		},
@@ -63205,7 +63203,7 @@
 			"name":"\u767a\u5149",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":8
+					"index":7
 				},
 				"roughnessFactor":0.00906344410032034
 			}
@@ -64170,19 +64168,15 @@
 		},
 		{
 			"sampler":0,
-			"source":1
-		},
-		{
-			"sampler":0,
 			"source":0
 		},
 		{
 			"sampler":0,
-			"source":2
+			"source":1
 		},
 		{
 			"sampler":0,
-			"source":1
+			"source":2
 		},
 		{
 			"sampler":0,
@@ -64190,7 +64184,7 @@
 		},
 		{
 			"sampler":0,
-			"source":2
+			"source":1
 		},
 		{
 			"sampler":0,
@@ -64208,14 +64202,14 @@
 			"uri":"rubber_tiles_nor_gl_4k.png"
 		},
 		{
-			"mimeType":"image/png",
-			"name":"rubber_tiles_rough_4k",
-			"uri":"rubber_tiles_rough_4k.png"
-		},
-		{
 			"mimeType":"image/jpeg",
 			"name":"rubber_tiles_diff_short",
 			"uri":"rubber_tiles_diff_short.jpg"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"rubber_tiles_rough_4k",
+			"uri":"rubber_tiles_rough_4k.png"
 		},
 		{
 			"mimeType":"image/png",

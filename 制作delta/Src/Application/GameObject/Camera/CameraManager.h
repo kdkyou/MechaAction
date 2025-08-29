@@ -77,6 +77,9 @@ public:
 
 	void TargetUI();
 
+	// カメラ対オブジェクトの距離を図って近いほど数字が小さい
+	const float CalcLength(const Math::Vector3& pos,float Boundary=100);
+
 private:
 
 	//ChangeTypeで決めた型のカメラに変更 

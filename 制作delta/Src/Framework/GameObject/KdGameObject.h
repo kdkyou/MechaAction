@@ -90,6 +90,11 @@ public:
 	const std::string& GetName() { return m_name; }
 
 	virtual void Editor_ImGui(){
+
+		if(ImGui::Button((const char*)u8"消去")){
+			m_isExpired = true;
+		}
+
 		ImGui::DragFloat3("Pos", &m_pos.x, 0.1f, -FLT_MAX, FLT_MAX);
 		ImGui::DragFloat3("Scale", &m_scale.x, 0.1f, -FLT_MAX, FLT_MAX);
 		ImGui::DragFloat3("Rotation", &m_rot.x, 0.1f, -FLT_MAX, FLT_MAX);

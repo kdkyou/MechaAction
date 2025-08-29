@@ -10,7 +10,7 @@
 void Drone::Init()
 {
 	m_limEnable = true;
-	m_limColor = { 0.62f,0.1f,0.08f };
+	m_limColor = { 0.12f,0.09f,0.08f };
 	m_limPow = 0.3f;
 						
 	m_correction = { 0.0f,1.0f,0.0f };
@@ -168,7 +168,7 @@ void Drone::UpdateCollision()
 
 	auto translation = m_mWorld.Translation();
 
-	for (auto obj : SceneManager::Instance().GetObjList())
+	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (obj->Intersects(boxInfo, nullptr))
 		{
@@ -196,7 +196,7 @@ bool Drone::Search(bool areaOnly)
 	std::list< KdCollider::CollisionResult> retList;
 	std::list<std::shared_ptr<KdGameObject>> objList;
 
-	for (auto& obj : SceneManager::Instance().GetObjList())
+	for (auto& obj : SceneManager::Instance().GetPlayerList())
 	{
 
 		if (obj->Intersects(sphere, &retList))
@@ -574,7 +574,7 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 {
 	m_speed = 30.0f;
 
-	m_durationState = 5.0f;
+	m_durationState = 2.0f;
 
 	auto spOwner = owner.lock();
 

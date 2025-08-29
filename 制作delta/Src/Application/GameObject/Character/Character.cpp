@@ -35,6 +35,14 @@ void Character::Init()
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 	m_pCollider = std::make_unique<KdCollider>();
+
+
+	DirectX::BoundingOrientedBox box;
+	
+	box.Center = GetPos() + m_correctionMat.Translation();
+	box.Extents = { 3.0f,5.0f,3.0f };
+	UINT type = KdCollider::TypeDamage;
+	KdCollider::BoxInfo boxInfo(type, box);
 	m_pCollider->RegisterCollisionShape("Player", m_spModelWork, KdCollider::TypeDamage);
 
 	InitTrail();
@@ -51,7 +59,7 @@ void Character::Init()
 
 	m_tag = tPlayer;
 
-	m_hp = 10000;
+	m_hp = 10030;
 
 	m_nockBackDamage = 600.0f;
 
@@ -99,8 +107,15 @@ void Character::Update()
 	if (key.T)
 	{
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
+		CameraManager::Instance().ResetMultiLocks();
 		return;
 	}
+
+	if (key.D8) {
+		m_hp = 0;
+	}
+
+
 
 	if (key.O)
 	{
@@ -181,7 +196,7 @@ void Character::DrawLit()
 
 	}
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld, kWhiteColor, Math::Vector3{ 1,1,1 });
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld, kWhiteColor, Math::Vector3{ 10,1,1 });
 
 	KdShaderManager::Instance().m_StandardShader.SetLimLightEnable(false);
 }
@@ -447,10 +462,7 @@ void Character::UpdateCollision()
 			if (spGameObj->Intersects(boxInfo, &retList))
 			{
 				color = { 1,0,1,1 };
-				for (auto& ret : retList)
-				{
-				//	Math::Vector3 nowPos = translation + (ret.m_hitDir * ret.m_overlapDistance);
-				}
+				
 			}
 		}
 	}
@@ -986,7 +998,7 @@ void Character::ActionStandUp::PostUpdate(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	// アニメーションの更新
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 40.0f * spOwner->m_speedMag);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 80.0f * spOwner->m_speedMag);
 
 	Trans(owner, spOwner->m_spAnimator->GetProgress());
 
@@ -1068,7 +1080,7 @@ void Character::ActionStandShield::PostUpdate(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	// アニメーションの更新
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f * spOwner->m_speedMag);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 30.0f * spOwner->m_speedMag);
 
 	Trans(owner, spOwner->m_spAnimator->GetProgress());
 
@@ -1110,7 +1122,8 @@ void Character::ActionJump::Enter(std::weak_ptr<Character>& owner)
 	std::string str = "burstFligit";
 
 	spOwner->m_sounds["burstFlight"] = KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_flight.wav",true);
-	//spOwner->m_sounds["burstFlight"].lock()->SetVolume(0.4f);
+	spOwner->m_sounds["burstFlight"].lock()->SetVolume(0.12f);
+
 
 
 }
@@ -1260,7 +1273,7 @@ void Character::ActionJumpShield::PostUpdate(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	// アニメーションの更新
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f * spOwner->m_speedMag);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 30.0f * spOwner->m_speedMag);
 
 	Trans(owner, spOwner->m_spAnimator->GetProgress());
 
@@ -1314,7 +1327,7 @@ void Character::ActionMove::Enter(std::weak_ptr<Character>& owner)
 
 	m_stateNum = spOwner->CharacterStateName::Walk;
 
-	KdAudioManager::Instance().Play("Asset/Sounds/Sound/walk_2.wav", false);
+	KdAudioManager::Instance().Play("Asset/Sounds/Sound/walk_2.wav", false)->SetVolume(0.1f);
 
 
 }
@@ -1522,9 +1535,7 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 	m_speed = spOwner->m_boostSpeed * spOwner->m_speedMag;
 
 	//ラジアルブラーセット
-	KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(6, 0.7f, { 0.5f,0.5f }, 0.4f, 0, 0.02f);
-	UINT kind = KdShaderManager::Instance().m_postProcessShader.RadialBlur;
-	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+	
 
 
 	//エフェクシア
@@ -1537,7 +1548,7 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
 			auto mat = effect->pNodeMat * spOwner->m_mWorld;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", mat.Translation(), 1.0f, 3.0f);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", mat.Translation(), 1.0f, 1.0f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 
@@ -1600,9 +1611,13 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 		spOwner->EnableTrail();
 	}
 
-	if (spOwner->m_spAnimator->GetProgress() > 0.4f) {
-		KdShaderManager::Instance().m_postProcessShader.UndoRadialBlur();
-		auto kind = KdShaderManager::Instance().m_postProcessShader.Normal;
+	 {
+
+		auto sin = std::sinf(spOwner->m_spAnimator->GetProgress()* DirectX::XM_PI);
+
+
+		KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(6, sin, { 0.5f,0.5f }, 0.15f, 0, 0.02f);
+		UINT kind = KdShaderManager::Instance().m_postProcessShader.RadialBlur;
 		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	}
 
@@ -1652,6 +1667,15 @@ void Character::ActionBoost::Exit(std::weak_ptr<Character>& owner)
 
 	//エフェクト
 	EffectExit();
+
+	//	if (spOwner->m_spAnimator->GetProgress() > 0.4f) 
+	{
+		KdShaderManager::Instance().m_postProcessShader.UndoRadialBlur();
+		auto kind = KdShaderManager::Instance().m_postProcessShader.Normal;
+		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+	}
+	//	else
+
 }
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -1673,7 +1697,7 @@ void Character::ActionBoostNow::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 3.0f);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 1.0f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -1686,7 +1710,7 @@ void Character::ActionBoostNow::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "BarniaL.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(),0.4f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -1700,7 +1724,7 @@ void Character::ActionBoostNow::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "BarniaR.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 0.4f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -1709,6 +1733,8 @@ void Character::ActionBoostNow::Enter(std::weak_ptr<Character>& owner)
 	m_animName = "Hoboor";
 
 	m_stateNum = spOwner->CharacterStateName::BoostNow;
+
+
 
 }
 
@@ -1805,7 +1831,7 @@ void Character::ActionBoostEnd::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "BarniaL.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 0.4f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -1819,7 +1845,7 @@ void Character::ActionBoostEnd::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "BarniaR.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 0.4f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -1925,7 +1951,7 @@ void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "BarniaL.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 0.4f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -1939,7 +1965,7 @@ void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "BarniaR.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 0.4f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -2061,7 +2087,7 @@ void Character::ActionBoostShield::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "BarniaL.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 0.4f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -2075,7 +2101,7 @@ void Character::ActionBoostShield::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "BarniaR.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation());
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaR.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 0.4f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -2204,7 +2230,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(),1.0f,3.0f);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(),1.0f,1.0f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -2314,7 +2340,7 @@ void Character::ActionRightAttackMid::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 3.0f);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 1.0f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -2345,8 +2371,6 @@ void Character::ActionRightAttackMid::Update(std::weak_ptr<Character>& owner)
 		m_direction = targetPos - spOwner->GetPos();
 		m_direction.Normalize();
 	}
-
-
 
 	{
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
@@ -2521,11 +2545,13 @@ void Character::ActionHited::Update(std::weak_ptr<Character>& owner)
 
 	//グリッチ表現
 	auto time = KdFPSController::GetInstance().GetFPS();
-
-	UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
-	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
-	KdShaderManager::Instance().m_postProcessShader.
-		SetGlitch({ 10,10 }, time, 5.0f, 0.8f, 0, 1, { 0.5f,0.5f });
+	if (spOwner->m_spAnimator->GetProgress() <= 0.02f)
+	{
+		UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
+		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+		KdShaderManager::Instance().m_postProcessShader.
+			SetGlitch({ 10,10 }, time, 5.0f, 0.8f, 0, 0, { 0.5f,0.5f });
+	}
 
 	if (spOwner->m_spAnimator->IsAnimationEnd() == false) { return; }
 
@@ -2619,7 +2645,8 @@ void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 
 	}
 	else {
-
+		CameraManager::Instance().ResetMultiLocks();
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 	}
 
 	
@@ -2663,7 +2690,7 @@ void Character::ActionLeftShoulderAttack::Enter(std::weak_ptr<Character>& owner)
 
 	m_speed = 40.0f;
 
-	m_stiffnessTime = 3.0f;
+	m_stiffnessTime = 2.0f;
 
 	m_animName = "Hited";
 

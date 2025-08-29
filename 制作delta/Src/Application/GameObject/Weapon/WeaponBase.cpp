@@ -2,6 +2,13 @@
 
 
 
+void WeaponBase::PreUpdate()
+{
+	if (m_wpParent.expired() == true) {
+		m_isExpired = true;
+	}
+}
+
 void WeaponBase::SetParent(std::shared_ptr<CharacterBase> _parent)
 {
 	m_wpParent = _parent;

@@ -91,13 +91,13 @@ private:
 	//パラメータ
 	float										m_speedMag = 1.0f;	//スピードの掛け算
 	float										m_stopSpeed = 0.0f;
-	float										m_walkSpeed = 10.0f;
-	float										m_jumpSpeed = 15.0f;
-	float										m_boostSpeed = 120.0f;
-	float										m_boostEndSpeed = 20.0f;
-	float										m_boostDushSpeed = 100.0f;
-	float										m_bladeAttackSpeed = 200.0f;
-	float										m_hitedSpeed = 15.0f;
+	float										m_walkSpeed = 20.0f;
+	float										m_jumpSpeed = 30.0f;
+	float										m_boostSpeed = 240.0f;
+	float										m_boostEndSpeed = 40.0f;
+	float										m_boostDushSpeed = 200.0f;
+	float										m_bladeAttackSpeed = 400.0f;
+	float										m_hitedSpeed = 30.0f;
 
 	// デバッグ用
 	Math::Color color = { 0,1,0,1 };

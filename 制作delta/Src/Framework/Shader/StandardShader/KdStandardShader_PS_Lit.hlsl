@@ -73,7 +73,7 @@ float4 main(VSOutput In) : SV_Target0
 	vCam = normalize(vCam);
 
 	//アルファディザ
-	if(g_alphaEnalbe > 0)
+	if(g_alphaEnalbe)
 	{
 		//fmod :　「%」余りを求める演算子
 		// In : ピクセルの情報　Pos : 2D座標
@@ -102,7 +102,7 @@ float4 main(VSOutput In) : SV_Target0
 		
 		
 		//ディザ抜きするカメラからの距離
-		float ditherDist = 6;
+		float ditherDist = g_alphaDist;
 
 		// max(x,y) : 大きい方を返す
 		float range = max(0 , camDist - ditherDist);

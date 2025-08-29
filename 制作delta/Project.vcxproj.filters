@@ -190,6 +190,9 @@
     <Filter Include="Src\Application\GameObject\UI\BlinkUI">
       <UniqueIdentifier>{c2d9c854-e10c-4ffa-b644-f64d6c6b0d5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\Scene\RetryScene">
+      <UniqueIdentifier>{454609f6-29d4-47de-9da5-915b6ce27f45}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -513,6 +516,15 @@
     <ClInclude Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.h">
       <Filter>Src\Application\GameObject\UI\BlinkUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Scene\RetryScene\RetryScene.h">
+      <Filter>Src\Application\Scene\RetryScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrain\ParentTerrain.h">
+      <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrain\EmmisiveTerrain.h">
+      <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -802,6 +814,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.cpp">
       <Filter>Src\Application\GameObject\UI\BlinkUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Scene\RetryScene\RetryScene.cpp">
+      <Filter>Src\Application\Scene\RetryScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrain\ParentTerrain.cpp">
+      <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrain\EmmisiveTerrain.cpp">
+      <Filter>Src\Application\GameObject\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

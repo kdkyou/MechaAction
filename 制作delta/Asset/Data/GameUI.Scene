@@ -1,5 +1,21 @@
 [
 	{
+		"Color": [ 1.0, 1.0, 1.0, 1.0 ],
+		"DrawHeight": 16,
+		"DrawWidth": 128,
+		"IsTarget": false,
+		"Name": "DrawUI",
+		"Path": "Asset/Textures/Text/Mission.png",
+		"Pivot": [ 0.5, 0.5 ],
+		"Pos": [ -540.0, 200.0, 0.0 ],
+		"RectHeight": 16,
+		"RectWidth": 128,
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 0,
+		"UITag": "None"
+	},
+	{
 		"Align": 0,
 		"Color": [ 0.03921568766236305, 1.0, 0.886274516582489, 1.0 ],
 		"DrawHeight": 32,
@@ -21,7 +37,7 @@
 	},
 	{
 		"Align": 0,
-		"Color": [ 1.0, 1.0, 1.0, 1.0 ],
+		"Color": [ 0.03921568766236305, 1.0, 0.886274516582489, 1.0 ],
 		"DrawHeight": 32,
 		"DrawWidth": 32,
 		"IsTarget": false,
@@ -50,22 +66,6 @@
 		"Pos": [ 0.0, 0.0, 0.0 ],
 		"RectHeight": 512,
 		"RectWidth": 900,
-		"Rot": [ 0.0, 0.0, 0.0 ],
-		"Scale": [ 1.0, 1.0, 1.0 ],
-		"Tag": 0,
-		"UITag": "None"
-	},
-	{
-		"Color": [ 1.0, 1.0, 1.0, 1.0 ],
-		"DrawHeight": 32,
-		"DrawWidth": 32,
-		"IsTarget": false,
-		"Name": "DrawUI",
-		"Path": "Asset/Textures/UI/Center.png",
-		"Pivot": [ 0.5, 0.5 ],
-		"Pos": [ 0.0, 0.0, 0.0 ],
-		"RectHeight": 32,
-		"RectWidth": 32,
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"Tag": 0,
@@ -125,7 +125,7 @@
 	},
 	{
 		"Align": 0,
-		"Color": [ 1.0, 1.0, 1.0, 1.0 ],
+		"Color": [ 0.03921568766236305, 1.0, 0.886274516582489, 1.0 ],
 		"DrawHeight": 32,
 		"DrawWidth": 32,
 		"IsTarget": false,
@@ -145,7 +145,7 @@
 	},
 	{
 		"Align": 0,
-		"Color": [ 1.0, 1.0, 1.0, 1.0 ],
+		"Color": [ 0.03921568766236305, 1.0, 0.886274516582489, 1.0 ],
 		"DrawHeight": 32,
 		"DrawWidth": 32,
 		"IsTarget": false,

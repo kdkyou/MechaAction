@@ -20,6 +20,7 @@ public:
 	};
 
 	void Init()override;
+	void PreUpdate()override;
 	void Update()override;
 	void PostUpdate()override;
 
@@ -31,6 +32,7 @@ public:
 	void SetBulletTrail(const std::string& _path, const Math::Color _color, float _width, UINT _length);
 	void SetBulletType(const moveType _type,const std::weak_ptr<CharacterBase>& _chasigTarget);
 	void SetChasingData(int rotateSpeedDeg,float lockAngle,float lostTime,float trackingDistance );
+	void ScaleUp(float scale,int damageNum);
 
 	void OnHit()override;
 
@@ -40,6 +42,7 @@ private:
 
 	
 	void MoveSight();
+	void MoveSlow();
 	void MoveChasing();
 
 	void Intersects();
@@ -58,7 +61,7 @@ private:
 	//追尾用
 	float m_durationChase = 0.0f;
 	float   m_rotateSpeedDeg = 90.0f;
-	float m_maxLockAngle = 150.0f;
+	float m_maxLockAngle = 100.0f;
 	float m_durationLost = 0.0f;
 	float m_lockLostTime = 1.0f;
 	float m_turnSpeed = 20.0f;
@@ -72,5 +75,6 @@ private:
 	std::shared_ptr<KdTrailPolygon> m_trail = nullptr;
 
 	moveType						m_moveType = Sight;
+
 
 };

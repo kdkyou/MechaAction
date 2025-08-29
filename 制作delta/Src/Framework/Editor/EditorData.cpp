@@ -116,7 +116,8 @@ void EditorData::UpdateImGui()
 {
 
 	auto& key = KeyInput::GetInstance().GetKeyboardState();
-	if (key.F5) { m_editorMode =! m_editorMode; }
+	if (key.F5) { m_editorMode = false; }
+	if (key.F4) { m_editorMode = true; }
 
 	if (!m_editorMode) { return; }
 	

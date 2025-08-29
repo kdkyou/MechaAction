@@ -23,7 +23,7 @@ public:
 	ImGuizmo::MODE			GizmoMode = ImGuizmo::LOCAL;
 	ImGuizmo::OPERATION		GizmoOperation = ImGuizmo::TRANSLATE;
 
-	int					m_selectList;
+	int					m_selectList = 0;
 
 
 	//// 画面データ

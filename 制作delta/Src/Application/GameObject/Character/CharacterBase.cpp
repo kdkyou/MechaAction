@@ -150,7 +150,6 @@ bool CharacterBase::RayCast(const Math::Vector3& startPos, const Math::Vector3& 
 
 	if (type & KdCollider::TypeGround)
 	{
-
 		// ②HIT判定対象オブジェクトに総当たり
 		for (auto& obj : SceneManager::Instance().GetTerrainList())
 		{
@@ -163,13 +162,30 @@ bool CharacterBase::RayCast(const Math::Vector3& startPos, const Math::Vector3& 
 
 	if (type & KdCollider::TypeDamage)
 	{
-		// ②HIT判定対象オブジェクトに総当たり
-		for (auto& obj : SceneManager::Instance().GetEnemyList())
-		{
+		if (m_tag == tPlayer) {
+
+			// ②HIT判定対象オブジェクトに総当たり
+			for (auto& obj : SceneManager::Instance().GetEnemyList())
 			{
-				obj->Intersects(rayInfo, &retRayList);
+				{
+					obj->Intersects(rayInfo, &retRayList);
+				}
 			}
+
 		}
+
+		if (m_tag == tEnemy)
+		{
+
+			for (auto& obj : SceneManager::Instance().GetPlayerList())
+			{
+				{
+					obj->Intersects(rayInfo, &retRayList);
+				}
+			}
+
+		}
+		
 	}
 
 	// ③結果を使って座標を補完する
@@ -314,8 +330,10 @@ const bool CharacterBase::Burn()
 	auto polygon = std::make_shared<PolygonEffect>();
 
 	polygon->Init();
-	auto occurMat = m_mWorld * m_correctionMat;
-	polygon->SetParam(m_burnPath, 0.15f, PolygonEffect::eBright, false, occurMat);
+	auto pos = m_mWorld.Translation() + m_correctionMat.Translation();
+	auto occurMat = Math::Matrix::CreateTranslation(pos);
+	polygon->SetParam(m_burnPath, 0.35f, PolygonEffect::eBright, false, occurMat);
+	polygon->EffectScale(10.0f);
 
 	SceneManager::Instance().AddObject(polygon);
 

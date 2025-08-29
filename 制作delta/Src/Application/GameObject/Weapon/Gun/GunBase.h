@@ -7,6 +7,8 @@ class GunBase :public WeaponBase
 public:
 	void Init()override;
 
+	void PreUpdate()override;
+
 	void Update()override;
 	void PostUpdate()override;
 

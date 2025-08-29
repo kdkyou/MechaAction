@@ -116,6 +116,41 @@ void SceneManager::Edit_ImGui()
 			ofs << outJson.dump();
 		}
 	}
+	if (ImGui::Button((const char*)u8"地形保存"))
+	{
+		for (auto obj : m_currentScene->GetTerrainList())
+		{
+			nlohmann::json json;
+			obj->Serialize(json);
+			outJson.push_back(json);
+		}
+
+		std::string str = "";
+		switch (m_currentSceneType)
+		{
+		case SceneManager::SceneType::Title:
+			str = "Asset/Data/Title.Scene";
+			break;
+		case SceneManager::SceneType::Game:
+			str = "Asset/Data/Game.Scene";
+			break;
+		default:
+			break;
+		}
+
+		if (fileName != "")
+		{
+			str = "Asset/Data/" + fileName;
+		}
+
+
+
+		std::ofstream ofs(str);
+		if (ofs.is_open())
+		{
+			ofs << outJson.dump();
+		}
+	}
 
 	m_currentScene->Edit_ImGui();
 }

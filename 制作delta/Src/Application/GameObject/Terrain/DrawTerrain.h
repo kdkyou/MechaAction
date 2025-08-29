@@ -10,11 +10,11 @@ public:
 	void Update()			override;
 	void PostUpdate()		override;
 	void DrawLit()			override;
-	void DrawUnLit()		override;
-
+	
 	void SetPos(const Math::Vector3& vec)override { m_pos = vec; }
 
 	void SetModel(const std::string& path);
+	void CreateAnimator();
 
 	virtual void Editor_ImGui() override;
 
@@ -29,6 +29,10 @@ public:
 		KdJsonUtility::GetValue(jsonObj, "AnimSpeed", &m_animSpeed);
 		
 		SetModel(m_modelPath);
+		if (m_animPath != "") {
+			CreateAnimator();
+			AnimationPlay(m_animPath);
+		}
 	}
 
 	// このクラスの内容をJSONデータ化する
@@ -42,7 +46,7 @@ public:
 		outJson["AnimSpeed"] = m_animSpeed;
 	}
 
-private:
+protected:
 
 	void AnimationPlay(const std::string& path);
 
@@ -59,6 +63,9 @@ private:
 	float						m_animSpeed = 0.0f;
 
 	Math::Vector3				m_emmisive = Math::Vector3::Zero;
+	
+	std::vector<PointLight>		m_points;
+
 
 
 };

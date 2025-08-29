@@ -9,6 +9,8 @@ public:
 	WeaponBase(){}
 	~WeaponBase() override{};
 
+	void PreUpdate()override;
+
 	void SetParent(std::shared_ptr<CharacterBase>_parent);
 	virtual void SetModel(const std::string& path);
 	virtual void SetModelData(const std::string& path);

@@ -179,7 +179,9 @@
     <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\AnimTerrain.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\DrawTerrain.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrain\EmmisiveTerrain.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\MoveTerrain.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrain\ParentTerrain.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\Terrain.h" />
     <ClInclude Include="Src\Application\GameObject\UI\Alert\Alert.h" />
     <ClInclude Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.h" />
@@ -201,6 +203,7 @@
     <ClInclude Include="Src\Application\Scene\BaseScene\BaseScene.h" />
     <ClInclude Include="Src\Application\Scene\GameMovieScene\GameMovieScene.h" />
     <ClInclude Include="Src\Application\Scene\GameScene\GameScene.h" />
+    <ClInclude Include="Src\Application\Scene\RetryScene\RetryScene.h" />
     <ClInclude Include="Src\Application\Scene\SceneManager.h" />
     <ClInclude Include="Src\Application\Scene\TileMovieScene\TitleMovieScene.h" />
     <ClInclude Include="Src\Application\Scene\TitleScene\TitleScene.h" />
@@ -281,7 +284,9 @@
     <ClCompile Include="Src\Application\GameObject\Enemy\MT\MT.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\AnimTerrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\DrawTerrain.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrain\EmmisiveTerrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\MoveTerrain.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrain\ParentTerrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\Terrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\Alert\Alert.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.cpp" />
@@ -303,6 +308,7 @@
     <ClCompile Include="Src\Application\Scene\BaseScene\BaseScene.cpp" />
     <ClCompile Include="Src\Application\Scene\GameMovieScene\GameMovieScene.cpp" />
     <ClCompile Include="Src\Application\Scene\GameScene\GameScene.cpp" />
+    <ClCompile Include="Src\Application\Scene\RetryScene\RetryScene.cpp" />
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp" />
     <ClCompile Include="Src\Application\Scene\TileMovieScene\TitleMovieScene.cpp" />
     <ClCompile Include="Src\Application\Scene\TitleScene\TitleScene.cpp" />

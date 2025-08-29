@@ -39,7 +39,7 @@ void Enemy::Init()
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-	SetPos({ 0.0f,0.0f,400.0f });
+	SetPos({ 0.0f,0.0f,600.0f });
 
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
@@ -48,7 +48,7 @@ void Enemy::Init()
 
 	m_clampSize = 20.0f;
 
-	m_hp = 5320.0f;
+	m_hp = 2320.0f;
 
 	m_nockBackDamage = 800.0f;
 }
@@ -95,7 +95,7 @@ void Enemy::PostUpdate()
 		m_nowAction->PostUpdate(m_wpThis, spTarget);
 	}
 
-	//m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });
+	m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });
 
 
 	auto translation = m_mWorld.Translation();
@@ -197,7 +197,7 @@ void Enemy::UpdateCollision()
 
 	auto translation = m_mWorld.Translation();
 
-	for (auto obj : SceneManager::Instance().GetObjList())
+	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (obj->Intersects(boxInfo, nullptr))
 		{
@@ -1632,9 +1632,9 @@ void Enemy::Destoroy::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_p
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	if (spOwner->m_spAnimator->GetProgress() <= 0.3)
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 2.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
 	else {
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f);
 	}
 }
 

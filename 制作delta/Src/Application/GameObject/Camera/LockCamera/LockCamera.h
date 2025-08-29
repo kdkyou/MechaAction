@@ -24,7 +24,7 @@ private:
 
 	Math::Vector2					 m_speedRatio = { 0.5f,2.0f };
 
-	float							 m_texAlpha;
+	float							 m_texAlpha = 1.0f;
 
 	bool							 m_isReduce = false;
 

@@ -4,6 +4,8 @@
 #include"../../../Character/CharacterBase.h"
 
 #include "../../../../Scene/SceneManager.h"
+#include "../../../Camera/CameraManager.h" 
+
 
 void Bullet::Init()
 {
@@ -25,6 +27,13 @@ void Bullet::Init()
 
 	m_name = "Bullet";
 
+	m_isExpired = false;
+
+	m_attackNum = 1;
+}
+
+void Bullet::PreUpdate()
+{
 
 }
 
@@ -32,10 +41,11 @@ void Bullet::Update()
 {
 	//生存時間減少を先に
 	m_aliveTime -= KdFPSController::GetInstance().GetDeltaTime();
-	if (m_aliveTime <= 0)
+	if (m_aliveTime <= 0.0f)
 	{
 		m_isExpired = true;
 	}
+	float sightTime = 0.0f;
 
 	switch (m_moveType)
 	{
@@ -50,7 +60,7 @@ void Bullet::Update()
 		MoveChasing();
 		break;
 	case Bullet::SightChasing:
-	
+
 	{
 
 		m_durationSight += KdFPSController::GetInstance().GetDeltaTime();
@@ -59,7 +69,7 @@ void Bullet::Update()
 
 		if (m_durationSight < sightTime)
 		{
-			MoveSight();
+			MoveSlow();
 		}
 		else {
 			MoveChasing();
@@ -92,13 +102,12 @@ void Bullet::Update()
 	Math::Matrix trans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mLocalRot * trans;
 	
-	Intersects();
 
+	Intersects();
 }
 
 void Bullet::PostUpdate()
 {
-
 	// トレイル
 	m_trail->AddPoint(m_mWorld);
 }
@@ -114,13 +123,14 @@ void Bullet::Intersects()
 	sphereInfo.m_type = KdCollider::TypeGround;
 
 	std::list<KdCollider::CollisionResult> retBumpList;
-
 	{
-
 		// ②HIT対象オブジェクトに総当たり
-		for (auto obj : SceneManager::Instance().GetTerrainList())
+		for (auto& obj : SceneManager::Instance().GetTerrainList())
 		{
-			obj->Intersects(sphereInfo, &retBumpList);
+			//if (obj->GetTag() != tPlayerAttack)
+			{
+				obj->Intersects(sphereInfo, &retBumpList);
+			}
 		}
 
 	}
@@ -142,6 +152,42 @@ void Bullet::Intersects()
 
 	}
 
+	DirectX::BoundingOrientedBox box;
+
+	box.Center = GetPos();
+	box.Extents = { 0.5f,0.5f,1.0f };
+	UINT type = KdCollider::TypeDamage;
+	KdCollider::BoxInfo boxInfo(type, box);
+
+	/*if (m_tag == ObjectTag::tPlayerAttack)
+	{
+		for (auto& obj : SceneManager::Instance().GetEnemyList())
+		{
+			if (obj->Intersects(boxInfo, nullptr))
+			{
+				{
+					OnHit();
+					m_parameter = obj->GetParameter();
+					obj->HitDamage(GetParameter());
+					obj->OnHit();
+				}
+			}
+		}
+	}
+	else if (m_tag == ObjectTag::tEnemyAttack)
+	{
+		for (auto& obj : SceneManager::Instance().GetPlayerList())
+		{
+			if (obj->Intersects(boxInfo, nullptr))
+			{
+				{
+					
+				}
+			}
+		}
+	}*/
+
+
 	if (hit)
 	{
 		OnHit();
@@ -162,14 +208,40 @@ bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float lengt
 	std::list<KdCollider::CollisionResult> retBumpList;
 
 	{
-
 		// ②HIT対象オブジェクトに総当たり
-		for (auto obj : SceneManager::Instance().GetTerrainList())
+		for (auto& obj : SceneManager::Instance().GetTerrainList())
 		{
 			obj->Intersects(rayInfo, &retBumpList);
 		}
 
+		rayInfo.m_type = KdCollider::TypeDamage;
+		if (m_tag == ObjectTag::tEnemyAttack) {
+			for (auto& obj : SceneManager::Instance().GetPlayerList()) {
+				if (obj->Intersects(rayInfo, nullptr))
+				{
+					OnHit();
+					obj->HitDamage(GetParameter());
+					obj->OnHit();
+					return true;
+				}
+			}
+		}
+
+		if (m_tag == ObjectTag::tPlayerAttack) {
+			for (auto& obj : SceneManager::Instance().GetEnemyList()) {
+				if (obj->Intersects(rayInfo, nullptr))
+				{
+					OnHit();
+					obj->HitDamage(GetParameter());
+					obj->OnHit();
+					return true;
+				}
+			}
+		}
+
 	}
+
+
 
 
 	float maxOverLap = 0;
@@ -227,12 +299,17 @@ void Bullet::DrawBright()
 
 void Bullet::OnHit()
 {
+	if (m_attackNum > 0)
+	{
+		m_attackNum -= 1;
 	float damage = 0.0f;
 	 damage = BulletDamage(m_startPos, m_mWorld.Translation(), m_damage, m_range, m_dampingInterval, m_dampingRate);
 	 m_parameter = damage;
 	 m_isExpired = true;
 	 m_trail->SetEnable(false);
-	 KdEffekseerManager::GetInstance().Play("burn.efkefc", GetMatrix().Translation(),1.0f,1.0f,false);
+	float scale = CameraManager::Instance().CalcLength(m_mWorld.Translation());
+	 KdEffekseerManager::GetInstance().Play("burn.efkefc", GetMatrix().Translation(),scale,1.0f,false);
+	}
 
 }
 
@@ -253,10 +330,34 @@ void Bullet::MoveSight()
 	}
 }
 
+void Bullet::MoveSlow()
+{
+	auto pos = m_mWorld.Translation();
+
+	Math::Vector3 move = Math::Vector3::Zero;
+
+	float progress = 1.0f / SIGHTTIME;
+	progress *= m_durationSight;
+
+	KdEase ease;
+
+	float speed	= m_speed * ease.OutSine(progress);
+	// 移動
+	float len = speed * KdFPSController::GetInstance().GetDeltaTime();
+	move = m_direction * len;
+
+	if (!Ray(pos, m_direction, len)) {
+		pos += move;
+
+		m_pos = pos;
+	}
+}
+
 void Bullet::MoveChasing()
 {
 	auto spTarget = m_wpTarget.lock();
-	if (!spTarget) { m_moveType = Sight; return; }
+	if (!spTarget) { 
+		m_moveType = Sight; return; }
 
 
 	Math::Vector3 move = Math::Vector3::Zero;
@@ -274,7 +375,7 @@ void Bullet::MoveChasing()
 
 	// 距離が範囲外なら
 	if (distance > m_trackingEndDistance) {
-		m_isExpired = true;
+		m_moveType = Sight;
 		return;
 	}
 
@@ -380,4 +481,10 @@ void Bullet::SetChasingData(int rotateSpeedDeg, float lockAngle, float lostTime,
 	m_maxLockAngle = lockAngle;
 	m_lockLostTime = lostTime;
 	m_trackingEndDistance = trackingDistance;
+}
+
+void Bullet::ScaleUp(float scale, int damageNum)
+{
+	SetScale(scale);
+	m_attackNum = damageNum;
 }

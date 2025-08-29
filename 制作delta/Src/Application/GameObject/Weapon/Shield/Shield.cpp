@@ -135,7 +135,7 @@ void Shield::Update()
 
 void Shield::PostUpdate()
 {
-	m_spAnimator->AdvanceTime(m_spModelWork->WorkNodes(), 30.0f);
+	m_spAnimator->AdvanceTime(m_spModelWork->WorkNodes(), 60.0f);
 }
 
 void Shield::DrawUnLit()

@@ -25,7 +25,7 @@ public:
 
 	// 
 	void SetParam(const std::string& texPath, float alive, effectDraw type, bool isalive, const Math::Matrix& occurMat);
-
+	void EffectScale(float scale) { m_spPoly->SetScale(scale); }
 
 private:
 

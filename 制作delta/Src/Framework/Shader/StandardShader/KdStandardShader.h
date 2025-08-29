@@ -50,7 +50,7 @@ public:
 		float			WaveTime = 0.0f;
 		// アルファディザ切り替え
 		int				AlphaDitherEnable = 1;
-		float dimmy =  0.0f;
+		float			AlphaDitherDist =  6.0f;
 
 	};
 
@@ -111,6 +111,11 @@ public:
 	// アルファディザ設定
 	void SetAlphaDitherEnable(bool _enable){
 		m_cb0_Obj.Work().AlphaDitherEnable = _enable;
+		m_dirtyCBObj = true;
+	}
+
+	void SetAlphaDitherDist(float _dist) {
+		m_cb0_Obj.Work().AlphaDitherDist = _dist;
 		m_dirtyCBObj = true;
 	}
 

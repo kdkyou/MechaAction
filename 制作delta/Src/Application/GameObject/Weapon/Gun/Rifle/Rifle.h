@@ -8,6 +8,8 @@ class Rifle :public GunBase
 {
 public :
 	void Init()override;
+
+	void PreUpdate()override;
 	void Update()override;
 
 

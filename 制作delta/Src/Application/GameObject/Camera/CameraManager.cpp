@@ -66,10 +66,16 @@ void CameraManager::DrawSprite()
 	if (m_currentCamera == nullptr) { return; }
 
 	m_currentCamera->DrawSprite();
+	
+	if (m_wpMultiLocks.empty() == false) {
 
-	for(auto& ui:m_uis)
-	{
-		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, ui->pos.x, ui->pos.y);
+		if(m_wpMultiLocks.size())
+
+		for (auto& ui : m_uis)
+		{
+
+			KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, ui->pos.x, ui->pos.y);
+		}
 	}
 
 }
@@ -182,16 +188,32 @@ void CameraManager::TargetUI()
 {
 	m_uis.clear();
 
+	if (m_wpMultiLocks.empty() == true) { return; }
+
 	for(auto& obj : m_wpMultiLocks)
 	{
+		if (obj.expired() == true) { continue; }
+		if (obj.lock()->IsDestroy() == true) { continue; }
+
 		std::shared_ptr<TargetUIf> ui = std::make_shared<TargetUIf>();
-		auto targetPos = m_wpLockTarget.lock()->GetMatrix().Translation();
+		auto targetPos = obj.lock()->GetMatrix().Translation()+ obj.lock()->GetCorrectionMatrix().Translation();
 		Math::Vector3 screenPos;
 		auto& camera = m_currentCamera->GetCamera();
 		camera->ConvertWorldToScreenDetail(targetPos, screenPos);
 		ui->pos = { screenPos.x,screenPos.y };
 		m_uis.push_back(ui);
 	}
+}
+
+const float CameraManager::CalcLength(const Math::Vector3& pos, float Boundary)
+{
+   auto nowPos = m_currentCamera->GetMatrix().Translation();
+
+   auto length = (pos - nowPos).Length();
+
+   float clamp = std::clamp(length / Boundary, 0.3f, 1.0f);
+
+	return  clamp;
 }
 
 

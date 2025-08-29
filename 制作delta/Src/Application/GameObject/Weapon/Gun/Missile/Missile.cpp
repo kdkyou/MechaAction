@@ -144,7 +144,6 @@ void Missile::Shot()
 		direct = trans.Backward();
 		direct.Normalize();
 
-	//	KdEffekseerManager::GetInstance().Play("Thruster.efkefc", trans.Translation(), 1.0f, 3.0f, false);
 	}
 	
 

@@ -3,6 +3,7 @@
 
 #include "../../GameObject/Terrain/Terrain.h"
 #include "../../GameObject/Terrain/AnimTerrain.h"
+#include "../../GameObject/Terrain/ParentTerrain.h"
 
 #include "../../GameObject/Character/Character.h"
 #include "../../GameObject/Enemy/Enemy.h"
@@ -39,6 +40,9 @@ void GameScene::Init()
 	KdGameObjectFactory::Instance().RegisterGameObject<AnimTerrain>("AnimTerrain");
 	KdGameObjectFactory::Instance().RegisterGameObject<NumberUI>("NumberUI");
 
+	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherEnable(true);
+	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherDist(6.0f);
+
 
 	//===================================================================
 	// ステージ初期化
@@ -46,6 +50,11 @@ void GameScene::Init()
 	
 	Math::Vector3 pos = {0.0f,-0.5f,0.0f};
 	
+	/*std::shared_ptr<ParentTerrain> _terrain = std::make_shared<ParentTerrain>();
+	_terrain->Init();
+	_terrain->SetModel("Asset/Models/Stage/Sky/Sky.gltf");
+	AddObject(_terrain);*/
+
 	CurrentSceneCreate("Asset/Data/Game.scene");
 	
 	/*std::shared_ptr<Terrain> _terrain = std::make_shared<Terrain>();
@@ -124,8 +133,9 @@ void GameScene::Init()
 	std::shared_ptr<Character> _character = std::make_shared<Character>();
 	_character->SetThis(_character);
 	_character->Init();
-	AddObject(_character);
 	AddPlayer(_character);
+
+	//_terrain->SetParent(_character);
 
 	// プレイヤー武器
 	{
@@ -162,11 +172,11 @@ void GameScene::Init()
 		charge->SetParent(_character);
 		charge->SetAttackTrigger(WeaponBase::LeftShoulder);
 		charge->SetAttachPath("LeftShoulderWeapon");
-		charge->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 2.5f, 6.0f,0.0f,1, 12, 48);
+		charge->SetGunsParam("Asset/Models/Weapon/RaserCannon/RaserCannon.gltf", 2.5f, 6.0f,0.0f,1, 12, 24);
 		charge->MakeAnimator("Close", 20.0f);
 		charge->Init();
 		charge->SetTag(KdGameObject::tPlayerAttack);
-		charge->SetBulletsParam("Asset/Models/Weapon/Bullet/RaserBullet.gltf", 5.0f, 300, 100.0f, 200, 40.0f, 0.95f);
+		charge->SetBulletsParam("Asset/Models/Weapon/Bullet/RaserBullet.gltf", 5.0f, 300, 130.0f, 200, 40.0f, 0.95f);
 		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke2.png",Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
 		AddObject(charge);;
 		
@@ -175,7 +185,7 @@ void GameScene::Init()
 		missile->SetParent(_character);
 		missile->SetAttackTrigger(WeaponBase::RightShoulder);
 		missile->SetAttachPath("RightShoulderWeapon");
-		missile->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/3LineMissile.gltf", 1.8f, 7.0f,0.1f,3, 12, 36);
+		missile->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/3LineMissile.gltf", 1.8f, 7.0f,0.1f,3, 12, 24);
 		missile->MakeAnimator("Close", 20.0f);
 		missile->SetNodeMats("SP1");
 		missile->SetNodeMats("SP2");
@@ -195,7 +205,6 @@ void GameScene::Init()
 	enemy->SetThis(enemy);
 	enemy->Init();
 	enemy->SetTag(KdGameObject::tEnemy);
-	AddObject(enemy);
 	AddEnemy(enemy);
 
 	//エネミー武器
@@ -237,10 +246,33 @@ void GameScene::Init()
 	drone->SetModelWork("Asset/Models/Drone/Drone.gltf");
 	drone->Init();
 	drone->SetParam(100);
-	drone->SetPos({ 0.0f,15.0f,20.0f });
+	drone->SetPos({ 10.0f,15.0f,150.0f });
 	drone->SetTag(KdGameObject::tEnemy);
-	AddObject(drone);
 	AddEnemy(drone);
+	
+
+	// バルカン想定
+	rifle = std::make_shared<Rifle>();
+	rifle->SetParent(drone);
+	rifle->SetAttachPath("RightWeapon");
+	rifle->SetAttackTrigger(WeaponBase::RightHand);
+	rifle->SetTag(KdGameObject::tEnemyAttack);
+	rifle->Init();
+	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.078f, 5.0f, 0.0f, 1, 80, 300);
+	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 400, 50, 10.0f, 0.9f);
+	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(1.0f, 0.17f, 0.19f), 1.7f, 10);
+	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Balkan.wav");
+	AddObject(rifle);
+
+	drone = std::make_shared<Drone>();
+	drone->SetThis(drone);
+	drone->SetModelWork("Asset/Models/Drone/Drone.gltf");
+	drone->Init();
+	drone->SetParam(100);
+	drone->SetPos({ 10.0f,15.0f,170.0f });
+	drone->SetTag(KdGameObject::tEnemy);
+	AddEnemy(drone);
+
 
 	// バルカン想定
 	rifle = std::make_shared<Rifle>();
@@ -261,9 +293,8 @@ void GameScene::Init()
 	drone->SetModelWork("Asset/Models/4LegMT/5LegMT.gltf");
 	drone->Init();
 	drone->SetParam(500);
-	drone->SetPos({ -100.0f,0.0f,20.0f });
+	drone->SetPos({ -100.0f,0.0f,50.0f });
 	drone->SetTag(KdGameObject::tEnemy);
-	AddObject(drone);
 	AddEnemy(drone);
 
 	rifle = std::make_shared<Rifle>();
@@ -275,7 +306,7 @@ void GameScene::Init()
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
-	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raunchur.wav");
+	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Launchur.wav");
 	AddObject(rifle);
 
 	rifle = std::make_shared<Rifle>();
@@ -287,7 +318,7 @@ void GameScene::Init()
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 300, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.1f, 0.1f), 1.7f, 10);
-	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raunchur.wav");
+	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Launchur.wav");
 	AddObject(rifle);
 
 	auto mt = std::make_shared<MT>();
@@ -295,9 +326,8 @@ void GameScene::Init()
 	mt->SetModelWork("Asset/Models/Leg/Leg.gltf");
 	mt->Init();
 	mt->SetParam(3000);
-	mt->SetPos({ -100.0f,0.0f,20.0f });
+	mt->SetPos({ -100.0f,0.0f,-200.0f });
 	mt->SetTag(KdGameObject::tEnemy);
-	AddObject(mt);
 	AddEnemy(mt);
 
 	rifle = std::make_shared<Rifle>();
@@ -329,7 +359,7 @@ void GameScene::Init()
 	m_once = false;
 
 	KdAudioManager::Instance().StopAllSound();
-	KdAudioManager::Instance().Play("Asset/Sounds/BGM/Rusty.wav", true)->SetVolume(0.2f);
+	KdAudioManager::Instance().Play("Asset/Sounds/BGM/Rusty.wav", true)->SetVolume(0.1f);
 
 }
 
@@ -342,6 +372,10 @@ void GameScene::Event()
 			m_once = true;
 			UIManager::GetInstance().SceneUICreate("Asset/Data/CompleteUI.scene");
 		}
+	}
+
+	if (m_once)
+	{
 
 		m_duration -= KdFPSController::GetInstance().GetDeltaTime();
 
@@ -353,13 +387,14 @@ void GameScene::Event()
 				UIManager::GetInstance().SetFade(Fade::FadeIn, 1.0f, true);
 			}
 		}
+	}
 
-		if (m_fade)
+	if (m_fade)
+	{
+		if (UIManager::GetInstance().IsFadeComplete())
 		{
-			if (UIManager::GetInstance().IsFadeComplete())
-			{
-				SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
-			}
+			SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
+			CameraManager::Instance().ResetMultiLocks();
 		}
 	}
 }
