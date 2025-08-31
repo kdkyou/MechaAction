@@ -30,6 +30,7 @@ void TitleScene::Init()
 	CameraManager::Instance().SetNextType(CameraManager::CameraType:: None);
 	CameraManager::Instance().EnableChangedCamera(false);
 	CameraManager::Instance().Setting("Asset/Data/TitleCamera.scene");
+	CameraManager::Instance().EnableChangedCamera(true);
 
 	RenderSetting::GetInstance().RenderLoad("Asset/Data/Title.render");
 

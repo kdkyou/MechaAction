@@ -20,6 +20,18 @@ void LookAtCamera::PostUpdate()
 	CameraBase::PostUpdate();
 }
 
+void LookAtCamera::Deserialize(const nlohmann::json& jsonObj)
+{
+	CameraBase::Deserialize(jsonObj);
+
+	m_mWorld = Math::Matrix::CreateFromYawPitchRoll(m_rot * KdToRadians) * Math::Matrix::CreateTranslation(m_pos);
+}
+
+void LookAtCamera::Serialize(nlohmann::json& outJson) const
+{
+	CameraBase::Serialize(outJson);
+}
+
 void LookAtCamera::Look()
 {
 	auto spTarget = m_wpLook.lock();

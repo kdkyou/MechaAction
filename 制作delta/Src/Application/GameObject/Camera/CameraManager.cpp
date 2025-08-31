@@ -7,6 +7,7 @@
 #include "TrackingCamera/TrackingCamera.h"
 #include "HitCamera/HitCamera.h"
 #include "LookAtCamera/LookAtCamera.h"
+#include "AnimationCamera/AnimationCamera.h"
 
 #include "../../Scene/SceneManager.h"
 
@@ -172,13 +173,46 @@ void CameraManager::Setting(const std::string& path)
 		{
 			std::string str;
 			CameraType type = CameraType::None;
+			int t = 0;
 			KdJsonUtility::GetValue(json, "Name", &str);
-			KdJsonUtility::GetValue(json, "Type", &type);
+			KdJsonUtility::GetValue(json, "Type", &t);
+
+			switch (t)
+			{
+			case 0:
+				type = CameraType::None;
+				break;
+			case 1:
+				type = CameraType::FPS;
+				break;
+			case 2:
+				type = CameraType::TPS;
+				break;
+			case 3:
+				type = CameraType::Tracking;
+				break;
+			case 4:
+				type = CameraType::Animation;
+				break;
+			case 5:
+				type = CameraType::Lock;
+				break;
+			case 6:
+				type = CameraType::Hit;
+				break;
+			case 7:
+				type = CameraType::LookAt;
+				break;
+			case 8:
+				break;
+			default:
+				break;
+			}
 
 			//if (!str.empty())
 			{
-				ChangeCamera(type);
-				m_currentCamera->Deserialize(json);
+				SetNextType(type);
+				DeserializeChange(type,json);
 			}
 		}
 	}
@@ -283,6 +317,7 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 		Application::Instance().m_log.AddLog("Tracking\n");
 		break;
 	case CameraManager::Animation:
+		m_currentCamera = std::make_shared<AnimationCamera>();
 		Application::Instance().m_log.AddLog("Animation\n");
 		break;
 	case CameraManager::Lock:
@@ -309,4 +344,85 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 	m_currentCamera->Init();
 
 	return true;
+}
+
+void CameraManager::DeserializeChange(const CameraType& type, const nlohmann::json& jsonObj)
+{
+	switch (m_nextType)
+	{
+	case CameraManager::None:
+	
+	{
+		auto current = std::make_shared<NoneCamera>();
+		current->Deserialize(jsonObj);
+		m_currentCamera = current;
+	}
+		Application::Instance().m_log.AddLog("None\n");
+		break;
+	case CameraManager::TPS:
+	
+	{
+		auto current =std::make_shared<TPSCamera>();
+			current->Deserialize(jsonObj);
+		m_currentCamera = current;
+	} 
+		Application::Instance().m_log.AddLog("TPS\n");
+		break;
+	case CameraManager::FPS:
+	{
+	auto current = std::make_shared<FPSCamera>();
+	current->Deserialize(jsonObj);
+	m_currentCamera = current;
+		}
+		Application::Instance().m_log.AddLog("FPS\n");
+		break;
+	case CameraManager::Tracking:
+	{
+		auto current =	std::make_shared<TrackingCamera>();
+		current->Deserialize(jsonObj);
+		m_currentCamera = current;
+	}
+		Application::Instance().m_log.AddLog("Tracking\n");
+		break;
+	case CameraManager::Animation:
+		{
+		auto current = std::make_shared<AnimationCamera>();
+		current->Deserialize(jsonObj);
+		m_currentCamera = current;
+		Application::Instance().m_log.AddLog("Animation\n");
+		}
+		break;
+	case CameraManager::Lock:
+		{
+			auto current =std::make_shared<LockCamera>();
+			current->Deserialize(jsonObj);
+			m_currentCamera = current;
+		}
+		Application::Instance().m_log.AddLog("Lock\n");
+		break;
+	case CameraManager::Hit:
+	{
+		auto current =	std::make_shared<HitCamera>();
+		current->Deserialize(jsonObj);
+		m_currentCamera = current;
+	}
+		Application::Instance().m_log.AddLog("Hit\n");
+		break;
+	case CameraManager::LookAt:
+		{
+		auto current =	std::make_shared<LookAtCamera>();
+		current->Deserialize(jsonObj);
+		m_currentCamera = current;
+		}
+		Application::Instance().m_log.AddLog("LookAt\n");
+		break;
+	default:
+		break;
+	}
+
+	m_nowType = m_nextType;
+	m_currentCamera->SetLook(m_wpLookTarget);
+	m_currentCamera->SetTarget(m_wpCameraTarget);
+	m_currentCamera->SetLockTarget(m_wpLockTarget);
+	m_currentCamera->Init();
 }

@@ -16,4 +16,7 @@ private:
 	void Init()override;
 	void Event()override;
 
+	bool m_isFirstChange = false;
+	bool m_isSecondChange = false;
+
 };

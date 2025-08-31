@@ -84,6 +84,7 @@ private:
 
 	//ChangeTypeで決めた型のカメラに変更 
 	bool ChangeCamera(const CameraType& type);
+	void DeserializeChange(const CameraType& type, const nlohmann::json& jsonObj);
 
 	void Init();
 
