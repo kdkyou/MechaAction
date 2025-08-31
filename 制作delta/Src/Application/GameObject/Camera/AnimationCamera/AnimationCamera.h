@@ -12,11 +12,16 @@ public:
 
 	void AddMatrix(const std::vector<Math::Matrix>& mats);
 
+	virtual void Editor_ImGui() override;
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)override;
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const override;
+
 private:
 
-	
-	std::vector<Math::Matrix> m_mats;
-
+	Math::Vector3
 	
 
 };
