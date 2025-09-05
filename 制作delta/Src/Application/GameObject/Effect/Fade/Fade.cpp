@@ -5,8 +5,8 @@ void Fade::SetFade(FadeType type, float time, const bool OutorIn)
 	if (m_completeFade || type == FadeIn || type == FadeOut)
 	{
 		m_completeFade = false;
-		fadeFrame = 0;
-		fadeTime = time;
+		m_durationFade = 0;
+		m_fadeTime = time;
 		nowFadeType = type;
 		if (OutorIn == true)
 		{
@@ -55,8 +55,8 @@ void Fade::Init()
 {
 	m_spTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/UI/BlackBack.png");
 	m_completeFade = false;
-	fadeFrame = 0;
-	fadeTime = 20;
+	m_durationFade = 0;
+	m_fadeTime = 20.0f;
 	m_fillDisplay = false;
 	m_IncDec = 0;
 	m_alpha = 0.0f;
@@ -75,19 +75,21 @@ void Fade::Update()
 {
 	if (!m_completeFade)
 	{
-		fadeFrame+= KdFPSController::GetInstance().GetDeltaTime();
-		m_alpha += m_IncDec * 1.0f / fadeTime;
+		auto delta = KdFPSController::GetInstance().GetDeltaTime();
+		m_durationFade += delta;
 		
-		if (m_alpha > 1.0f)
-		{
-			m_alpha = 1.0f;
+		float t = m_durationFade / m_fadeTime;
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		// フェード方向に応じてアルファ更新
+		if (m_IncDec > 0) {
+			m_alpha = t;
 		}
-		if (m_alpha < 0.0f)
-		{
-			m_alpha = 0.0f;
+		else {
+			m_alpha = 1.0f - t ;
 		}
 
-		if (fadeFrame >= fadeTime)
+		if (m_durationFade >= m_fadeTime)
 		{
 			m_completeFade = true;
 

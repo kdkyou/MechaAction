@@ -9,6 +9,8 @@
 #include "../../GameObject/Terrain/AnimTerrain.h"
 #include "../../GameObject/Terrain/MoveTerrain.h"
 #include "../../GameObject/Terrain/EmmisiveTerrain.h"
+#include "../../GameObject/Character/TitleMovie.h"
+#include "../../GameObject/Terrain/Terrain.h"
 
 #include "../../GameObject/UI/UIManager.h"
 
@@ -24,6 +26,9 @@ void TitleScene::Init()
 	KdGameObjectFactory::Instance().RegisterGameObject<AnimTerrain>("AnimTerrain");
 	KdGameObjectFactory::Instance().RegisterGameObject<MoveTerrain>("MoveTerrain");
 	KdGameObjectFactory::Instance().RegisterGameObject<EmmisiveTerrain>("EmmisiveTerrain");
+	KdGameObjectFactory::Instance().RegisterGameObject<TitleMovie>("TitleMovie");
+	KdGameObjectFactory::Instance().RegisterGameObject<Terrain>("Terrain");
+
 
 	CurrentSceneCreate("Asset/Data/Title.scene");
 
@@ -57,8 +62,9 @@ void TitleScene::Event()
 		if (!m_once)
 		{
 			m_once = true;
-			um.SetFade(Fade::FadeIn, 0.5f, true);
+			um.SetFade(Fade::FadeIn, 0.2f, true);
 			KdAudioManager::Instance().Play("Asset/Sounds/SE/Enter.wav", false)->SetVolume(0.25f);
+			//KdAudioManager::Instance().Play("Asset/Sounds/SE/LongWalk.wav", false)->SetVolume(0.25f);
 		}
 	}
 	

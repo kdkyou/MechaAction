@@ -6,7 +6,7 @@
 		"FillDirection": 3,
 		"IsTarget": false,
 		"Name": "GuageUI",
-		"Path": "Asset\\Textures\\UI\\Failed.png",
+		"Path": "Asset\\Textures\\Text\\Failed.png",
 		"Pivot": [ 0.5, 0.5 ],
 		"Pos": [ 0.0, 0.0, 0.0 ],
 		"RectHeight": 720,

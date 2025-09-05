@@ -525,6 +525,9 @@
     <ClInclude Include="Src\Application\GameObject\Terrain\EmmisiveTerrain.h">
       <Filter>Src\Application\GameObject\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\TitleMovie.h">
+      <Filter>Src\Application\GameObject\Character</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -823,6 +826,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Terrain\EmmisiveTerrain.cpp">
       <Filter>Src\Application\GameObject\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\TitleMovie.cpp">
+      <Filter>Src\Application\GameObject\Character</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

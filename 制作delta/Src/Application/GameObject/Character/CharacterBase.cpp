@@ -103,6 +103,7 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 		{
 			pos = move;
 		}
+
 		auto center = pos + Math::Vector3(0.0f, 1.0f, 0.0f);
 		SphereCast(center, 1.0f, KdCollider::TypeGround, pos);
 	}
@@ -111,8 +112,6 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 		move = direction * deltaSpeed;
 		pos += move;
 	}
-
-
 
 	if (rotate == true)
 	{

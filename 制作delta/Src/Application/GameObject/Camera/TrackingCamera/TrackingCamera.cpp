@@ -1,7 +1,11 @@
 ﻿
 #include"TrackingCamera.h"
 
+#include "../../../main.h"
+
 #include"../../Character/CharacterBase.h"
+
+#include "../CameraManager.h"
 
 
 void TrackingCamera::Init()
@@ -35,6 +39,7 @@ void TrackingCamera::PostUpdate()
 {
 	ShowCursor(false);
 
+
 	Math::Vector3 vMove=Math::Vector3::Zero;
 
 	const std::shared_ptr<const KdGameObject>	_spTarget = m_wpTarget.lock();
@@ -42,6 +47,16 @@ void TrackingCamera::PostUpdate()
 	if (_spTarget == nullptr) { return; }
 
 	Math::Vector3 targetPos = _spTarget->GetMatrix().Translation();
+
+	auto targetVec = CameraManager::Instance().GetLocalDirectionTo(targetPos);
+	if (targetVec.y < 0) {
+		m_speed = 10.0f;
+	}
+	else {
+		m_speed = 5.0f;
+	}
+	
+	Application::Instance().m_log.AddLog("CamSpeed:%.f\n", m_speed);
 
 	m_pos = Math::Vector3::Lerp(
 		m_pos,

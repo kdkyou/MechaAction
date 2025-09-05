@@ -9,6 +9,7 @@ void DrawUI::Editor_ImGui()
 {
 	UIBase::Editor_ImGui();
 
+	ImGui::Checkbox((const char*)u8"加算", &m_isAdd);
 }
 
 void DrawUI::DrawSprite()
@@ -17,10 +18,13 @@ void DrawUI::DrawSprite()
 	{
 		m_rect = { m_rectX,m_rectY,m_rectWi,m_rectHe };
 
-		KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
-
-		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, m_pos.x, m_pos.y, m_drawWi, m_drawHe, &m_rect,&m_color,m_pivot);
-
-		KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
+		if (m_isAdd) {
+			KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
+			KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, m_pos.x, m_pos.y, m_drawWi, m_drawHe, &m_rect, &m_color, m_pivot);
+			KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
+		}
+		else {
+			KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, m_pos.x, m_pos.y, m_drawWi, m_drawHe, &m_rect, &m_color, m_pivot);
+		}
 	}
 }

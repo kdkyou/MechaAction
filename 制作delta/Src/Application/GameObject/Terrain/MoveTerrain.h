@@ -25,6 +25,9 @@ public:
 		KdJsonUtility::GetArray(jsonObj, "MoveVec", &m_moveVec.x, 3);
 		KdJsonUtility::GetValue(jsonObj, "WaitTime", &m_waitTime);
 		KdJsonUtility::GetValue(jsonObj, "AnimWait", &m_animWaitTime);
+		KdJsonUtility::GetValue(jsonObj, "MoveTime", &m_moveTime);
+		KdJsonUtility::GetArray(jsonObj, "StartPos", &m_startPos.x, 3);
+		KdJsonUtility::GetArray(jsonObj, "EndPos", &m_endPos.x, 3);
 	}
 
 	// このクラスの内容をJSONデータ化する
@@ -36,8 +39,9 @@ public:
 		outJson["MoveVec"] = KdJsonUtility::CreateArray(&m_moveVec.x, 3);
 		outJson["WaitTime"] = m_waitTime;
 		outJson["AnimWait"] = m_animWaitTime;
-
-
+		outJson["MoveTime"] = m_moveTime;
+		outJson["StartPos"] = KdJsonUtility::CreateArray(&m_startPos.x, 3);
+		outJson["EndPos"] = KdJsonUtility::CreateArray(&m_endPos.x, 3);
 	}
 
 private:
@@ -47,8 +51,13 @@ private:
 	float						m_waitTime = 0.0f;
 	float						m_durationWait = 0.0f;
 	float						m_moveSpeed = 0.0f;
+	float						m_moveTime = 1.0f;
+	float						m_durationMove = 0.0f;
+	Math::Vector3				m_startPos = {};
+	Math::Vector3				m_endPos = {};
 	Math::Vector3				m_moveVec = {};
 
+	bool						m_isMove = false;
 	bool						m_isMovable = false;
 
 	float						m_animWaitTime = 0.0f;

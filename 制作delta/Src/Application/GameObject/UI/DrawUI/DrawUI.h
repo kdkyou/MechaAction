@@ -15,16 +15,21 @@ public:
 	virtual void Deserialize(const nlohmann::json& jsonObj)
 	{
 		UIBase::Deserialize(jsonObj);
+		KdJsonUtility::GetValue(jsonObj,"Add",&m_isAdd);
 	}
 
 	// このクラスの内容をJSONデータ化する
 	virtual void Serialize(nlohmann::json& outJson) const
 	{
 		UIBase::Serialize(outJson);
+		
+		outJson["Add"] = m_isAdd;
 	}
 	
 
 	void DrawSprite()override;
 
 private:
+
+	bool m_isAdd = false;
 };

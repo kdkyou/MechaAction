@@ -39,6 +39,8 @@ void MT::Init()
 	m_nockBackDamage = 800;
 
 	m_hp = 1600;
+
+	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 }
 
 void MT::Update()

@@ -66,7 +66,7 @@ public:
 
 	const Math::Vector3& ToCameraVec(const Math::Vector3 nowPos);
 
-	// 自身のm_mWorldを使ってターゲットの相対方向(2D予定)を取得
+	// 自身のm_mWorldを使ってターゲットの相対方向(2D予定)を取得 // y+正面　x+右
 	const Math::Vector2 GetLocalDirectionTo(const Math::Vector3& targetWorldPos)const;
 
 	void Editor_ImGui();

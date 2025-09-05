@@ -60,6 +60,8 @@ private:
 
 	bool IsIgnoreGravityState()const;
 
+	void WalkSounds();
+
 	enum CharacterStateName
 	{
 		Stand,
@@ -74,6 +76,7 @@ private:
 		BoostEnd,
 		BoostDush,
 		BoostDushGuard,
+		DushEnd,
 		RightSorwdBef,
 		RightSorwdMid,
 		RightSorwdAf,
@@ -93,7 +96,7 @@ private:
 	float										m_stopSpeed = 0.0f;
 	float										m_walkSpeed = 20.0f;
 	float										m_jumpSpeed = 30.0f;
-	float										m_boostSpeed = 240.0f;
+	float										m_boostSpeed = 540.0f;
 	float										m_boostEndSpeed = 40.0f;
 	float										m_boostDushSpeed = 200.0f;
 	float										m_bladeAttackSpeed = 400.0f;
@@ -102,6 +105,7 @@ private:
 	// デバッグ用
 	Math::Color color = { 0,1,0,1 };
 
+	bool										m_isWalkSounds =true;
 
 	bool									    m_transAC = false;
 
@@ -332,6 +336,22 @@ protected:
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
+	};
+
+	class ActionBoostDushEnd :public ActionStateBase
+	{
+	public:
+		virtual ~ActionBoostDushEnd() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+
+		float m_easeSpeed = 0.0f;
+
+		KdEase m_ease;
 	};
 
 	class ActionBoostShield :public ActionStateBase

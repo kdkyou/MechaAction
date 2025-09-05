@@ -1,5 +1,6 @@
 [
 	{
+		"Add": false,
 		"Color": [ 1.0, 1.0, 1.0, 1.0 ],
 		"DrawHeight": 16,
 		"DrawWidth": 128,
@@ -56,7 +57,8 @@
 		"UITag": "PlayerLeftShoulderAmmo"
 	},
 	{
-		"Color": [ 1.0, 1.0, 1.0, 1.0 ],
+		"Add": false,
+		"Color": [ 0.03921568766236305, 1.0, 0.886274516582489, 1.0 ],
 		"DrawHeight": 512,
 		"DrawWidth": 900,
 		"IsTarget": false,
@@ -92,6 +94,7 @@
 		"UITag": "PlayerRightShoulderAmmo"
 	},
 	{
+		"Add": false,
 		"Color": [ 0.03921568766236305, 1.0, 0.886274516582489, 1.0 ],
 		"DrawHeight": 225,
 		"DrawWidth": 300,
@@ -108,6 +111,7 @@
 		"UITag": "None"
 	},
 	{
+		"Add": false,
 		"Color": [ 0.03921568766236305, 1.0, 0.886274516582489, 1.0 ],
 		"DrawHeight": 150,
 		"DrawWidth": 300,

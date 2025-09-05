@@ -74,7 +74,6 @@ void CameraManager::DrawSprite()
 
 		for (auto& ui : m_uis)
 		{
-
 			KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, ui->pos.x, ui->pos.y);
 		}
 	}

@@ -34,13 +34,25 @@ void MoveTerrain::Update()
 		{
 			m_durationWait = m_waitTime;
 
-			if (m_moveVec.Length() <= 0.001f)
-			{
-				m_moveVec = m_mWorld.Backward();
-			}
-			auto vec = m_moveVec * m_moveSpeed;
-			m_pos += vec;
+			m_isMove = true;
 		}
+	}
+
+	if (m_isMove) {
+
+		m_durationMove += KdFPSController::GetInstance().GetDeltaTime();
+
+		if (m_durationMove > m_moveTime) {
+			m_durationMove = m_moveTime;
+		}
+
+		auto t = m_durationMove / m_moveTime * m_moveSpeed;
+
+		if (t > 1.0f) {
+			t = 1.0f;
+		}
+
+		m_pos = Math::Vector3::Lerp(m_startPos, m_endPos, t);
 
 	}
 

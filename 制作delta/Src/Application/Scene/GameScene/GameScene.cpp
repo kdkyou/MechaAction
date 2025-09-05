@@ -1,9 +1,6 @@
 ﻿#include "GameScene.h"
 #include"../SceneManager.h"
 
-#include "../../GameObject/Terrain/Terrain.h"
-#include "../../GameObject/Terrain/AnimTerrain.h"
-#include "../../GameObject/Terrain/ParentTerrain.h"
 
 #include "../../GameObject/Character/Character.h"
 #include "../../GameObject/Enemy/Enemy.h"
@@ -19,8 +16,6 @@
 
 #include "../../GameObject/Camera/CameraManager.h"
 
-#include "../../GameObject/UI/DrawUI/DrawUI.h"
-#include "../../GameObject/UI/NumberUI/NumberUI.h"
 #include "../../GameObject/UI/UIManager.h"
 
 // 少数第n位で四捨五入する
@@ -36,10 +31,7 @@ void GameScene::Init()
 	KdGameObjectFactory::Instance().RegisterGameObject<Character>("Player");
 	KdGameObjectFactory::Instance().RegisterGameObject<Enemy>("Another");
 	KdGameObjectFactory::Instance().RegisterGameObject<Drone>("Drone");
-	KdGameObjectFactory::Instance().RegisterGameObject<Terrain>("Terrain");
-	KdGameObjectFactory::Instance().RegisterGameObject<AnimTerrain>("AnimTerrain");
-	KdGameObjectFactory::Instance().RegisterGameObject<NumberUI>("NumberUI");
-
+	
 	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherEnable(true);
 	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherDist(6.0f);
 
@@ -48,83 +40,7 @@ void GameScene::Init()
 	// ステージ初期化
 	//===================================================================
 	
-	Math::Vector3 pos = {0.0f,-0.5f,0.0f};
-	
-	/*std::shared_ptr<ParentTerrain> _terrain = std::make_shared<ParentTerrain>();
-	_terrain->Init();
-	_terrain->SetModel("Asset/Models/Stage/Sky/Sky.gltf");
-	AddObject(_terrain);*/
-
 	CurrentSceneCreate("Asset/Data/Game.scene");
-	
-	/*std::shared_ptr<Terrain> _terrain = std::make_shared<Terrain>();
-	_terrain->SetModel("Asset/Models/Stage/Tail/Tail.gltf");
-	_terrain->Init();
-	AddObject(_terrain);
-	AddTerrain(_terrain);
-
-	_terrain = std::make_shared<Terrain>();
-	pos = {30.0f,0.0f,0.0f};
-	_terrain->SetPos(pos);
-	_terrain->SetModel("Asset/Models/Stage/House/House.gltf");
-	_terrain->Init();
-	AddObject(_terrain);
-	AddTerrain(_terrain);
-
-	_terrain = std::make_shared<Terrain>();
-	pos = { -50.0f,0.0f,0.0f };
-	_terrain->SetPos(pos);
-	_terrain->SetModel("Asset/Models/Stage/Rubble/Rubble.gltf");
-	_terrain->Init();
-	AddObject(_terrain);
-	AddTerrain(_terrain);
-
-	_terrain = std::make_shared<Terrain>();
-	pos = { 50.0f,0.0f,50.0f };
-	_terrain->SetPos(pos);
-	_terrain->SetModel("Asset/Models/Stage/Rubble2/Rubble2.gltf");
-	_terrain->Init();
-	AddObject(_terrain);
-	AddTerrain(_terrain);
-
-	_terrain = std::make_shared<Terrain>();
-	pos = { 50.0f,0.0f,300.0f };
-	_terrain->SetPos(pos);
-	_terrain->SetModel("Asset/Models/Stage/LowApartment/LowApartment.gltf");
-	_terrain->Init();
-	AddObject(_terrain);
-	AddTerrain(_terrain);
-	
-	_terrain = std::make_shared<Terrain>();
-	pos = { -100.0f,0.0f,100.0f };
-	_terrain->SetPos(pos);
-	_terrain->SetModel("Asset/Models/Stage/dai.gltf");
-	_terrain->Init();
-	AddObject(_terrain);
-	AddTerrain(_terrain);
-
-	_terrain = std::make_shared<Terrain>();
-	pos = { -100.0f,0.0f,200.0f };
-	_terrain->SetPos(pos);
-	_terrain->SetModel("Asset/Models/Stage/BalconyApartment/BalconyApartment.gltf");
-	_terrain->Init();
-	AddObject(_terrain);
-	AddTerrain(_terrain);
-
-	_terrain = std::make_shared<Terrain>();
-	_terrain->SetModel("Asset/Models/Stage/Sky/Sky.gltf");
-	_terrain->Init();
-	AddObject(_terrain);*/
-
-	
-
-	/*std::shared_ptr<Terrain> _serrain = std::make_shared<Terrain>();
-	_serrain->Init();
-	_serrain->SetPos({ 0.0f,0.0f,0.0f });
-	_serrain->SetModel("Asset/Models/Building/Building.gltf");
-
-	AddObject(_serrain);*/
-
 
 
 	//===================================================================
@@ -135,7 +51,6 @@ void GameScene::Init()
 	_character->Init();
 	AddPlayer(_character);
 
-	//_terrain->SetParent(_character);
 
 	// プレイヤー武器
 	{
@@ -361,6 +276,7 @@ void GameScene::Init()
 	KdAudioManager::Instance().StopAllSound();
 	KdAudioManager::Instance().Play("Asset/Sounds/BGM/Rusty.wav", true)->SetVolume(0.1f);
 
+	RenderSetting::GetInstance().RenderLoad("Asset/Data/Game.render");
 }
 
 void GameScene::Event()

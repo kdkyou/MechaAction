@@ -34,6 +34,9 @@ void Drone::Init()
 	m_hp = 200;
 
 	m_viewAngle = 60.0f;
+
+	m_burnPath = "Asset/Textures/GameObject/Burn.png";
+
 }
 
 void Drone::Update()

@@ -87,6 +87,8 @@ public:
 	{
 		if (m_spAnimation == nullptr) { return true; }
 		if (m_time >= m_spAnimation->m_maxLength) { return true; }
+		/*float progress = m_time / m_spAnimation->m_maxLength;
+		if (1.0f <=progress) { return true; }*/
 
 		return false;
 	}

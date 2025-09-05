@@ -168,6 +168,7 @@
     <ClInclude Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Character.h" />
     <ClInclude Include="Src\Application\GameObject\Character\CharacterBase.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\TitleMovie.h" />
     <ClInclude Include="Src\Application\GameObject\Character\TransAC.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\ConcentrationLine\ConcentrationLine.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Effect.h" />
@@ -274,6 +275,7 @@
     <ClCompile Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Character.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\CharacterBase.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\TitleMovie.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\TransAC.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\ConcentrationLine\ConcentrationLine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Effect.cpp" />

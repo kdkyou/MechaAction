@@ -48,9 +48,12 @@ void Enemy::Init()
 
 	m_clampSize = 20.0f;
 
-	m_hp = 2320.0f;
+	m_hp = 10320.0f;
 
 	m_nockBackDamage = 800.0f;
+
+	m_burnPath = "Asset/Textures/GameObject/Burn.png";
+
 }
 
 void Enemy::Update()

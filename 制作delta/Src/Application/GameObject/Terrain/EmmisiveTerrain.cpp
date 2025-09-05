@@ -14,6 +14,7 @@ void EmmisiveTerrain::Update()
 		m_durationWait = m_waitTime;
 			m_isEnableChange = true;
 	}
+
 	if (!m_isEnableChange) 
 	{
 		float t = (m_durationWait / m_waitTime) * m_waitChangeSpeed;

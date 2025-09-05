@@ -29,8 +29,6 @@ public:
 	bool IsFillDisplay()const;
 	bool IsCompleteFade()const;
 
-
-
 private:
 
 	void Release();
@@ -42,8 +40,8 @@ private:
 	int m_IncDec = 0;
 
 	bool m_completeFade = false;
-	float fadeFrame = 0.0f;
-	float fadeTime = 0.0f;
+	float m_durationFade = 0.0f;
+	float m_fadeTime = 0.0f;
 
 	//画面を真っ暗にするか Fadein終了時にtrue,fadeout開始時にfalseになる
 	bool m_fillDisplay = false;
