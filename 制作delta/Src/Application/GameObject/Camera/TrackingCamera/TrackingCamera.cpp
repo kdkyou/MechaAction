@@ -50,10 +50,12 @@ void TrackingCamera::PostUpdate()
 
 	auto targetVec = CameraManager::Instance().GetLocalDirectionTo(targetPos);
 	if (targetVec.y < 0) {
-		m_speed = 10.0f;
+		m_speed = 15.0f;
+		m_mLocalPos = Math::Matrix::CreateTranslation(m_basePos);
 	}
 	else {
-		m_speed = 5.0f;
+		m_speed = 10.0f;
+		m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
 	}
 	
 	Application::Instance().m_log.AddLog("CamSpeed:%.f\n", m_speed);

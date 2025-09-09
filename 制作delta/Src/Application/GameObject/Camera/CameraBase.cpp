@@ -117,13 +117,7 @@ void CameraBase::UpdateRotateByMouse()
 		moveCamera = true;
 	}
 
-	if (moveCamera == true)
-	{
-		if (CameraManager::Instance().IsEnableChanged())
-		{
-			CameraManager::Instance().SetNextType(CameraManager::Tracking);
-		}
-	}
+	
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 

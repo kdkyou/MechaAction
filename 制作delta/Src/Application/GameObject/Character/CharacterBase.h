@@ -115,7 +115,8 @@ protected:
 	Math::Vector3                               m_correction = {};
 
 	float										m_gravity = 0;
-	const float									m_gravityPow = 9.16f;
+//	const float									m_gravityPow = 9.81f;
+	const float									m_gravityPow = 19.62f;
 
 	float										m_clampSize = 10.0f;
 

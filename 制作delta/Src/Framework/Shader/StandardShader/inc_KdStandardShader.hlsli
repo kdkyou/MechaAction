@@ -26,6 +26,14 @@ cbuffer cbObject : register(b0)
 	
 	int g_alphaEnalbe;	//アルファディザ有効化
 	float g_alphaDist;	//アルファディザ距離
+
+	int g_lightningEnable;
+	float3 g_lightningMinPos;
+	float g_lightningProgress;  // 進行度
+	float3 g_lightningMaxPos;
+	float3 g_lightningColorA;	// 開始色
+	float3 g_lightningColorB;   // 終了色
+	
 };
 
 // 定数バッファ(メッシュ単位)
@@ -55,6 +63,8 @@ struct VSOutput
 	float4 Pos	 : SV_Position;	// 射影座標
 	float3 wPos  : TEXCOORD0;	// ワールド3D座標
 	float3 wvPos : TEXCOORD6;	//ビュー座標 追加
+
+	float3 lPos : TEXCOORD9;	//ローカル座標
 	
 
 	float2 UV	 : TEXCOORD1;	// UV座標

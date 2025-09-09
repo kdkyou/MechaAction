@@ -19,7 +19,7 @@ public:
 private:
 
 
-	Math::Vector3 m_basePos = {};	//トラッキング時の始点
+	Math::Vector3 m_basePos = {3.0f, 14.5f, -27.0f};	//トラッキング時の始点
 	Math::Vector3 m_pos = {};		//カメラの座標
 	Math::Vector3 m_target;		//注視点
 	float m_speed = 5.0f;

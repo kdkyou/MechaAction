@@ -283,16 +283,28 @@ float4 main(VSOutput In) : SV_Target0
 	}
 
 	outColor += g_AmbientLight.rgb * baseColor.rgb * baseColor.a;
-	
-	// 自己発光色の適応
-	if (g_OnlyEmissie)
+
+
+	if(g_lightningEnable)
 	{
-		outColor = g_emissiveTex.Sample(g_ss, In.UV).rgb * g_Emissive * In.Color.rgb;
+		float3 emissiveTexCol = g_emissiveTex.Sample(g_ss, In.UV).rgb * In.Color.rgb;
+
+		float gradRate = saturate((In))
 	}
 	else
 	{
-		outColor += g_emissiveTex.Sample(g_ss, In.UV).rgb * g_Emissive * In.Color.rgb;
+		// 自己発光色の適応
+		if (g_OnlyEmissie)
+		{
+			outColor = g_emissiveTex.Sample(g_ss, In.UV).rgb * g_Emissive * In.Color.rgb;
+		}
+		else
+		{
+			outColor += g_emissiveTex.Sample(g_ss, In.UV).rgb * g_Emissive * In.Color.rgb;
+		}	
 	}
+	
+	
 	
 	//------------------------------------------
 	// 高さフォグ

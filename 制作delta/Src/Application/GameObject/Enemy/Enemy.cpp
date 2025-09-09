@@ -58,7 +58,7 @@ void Enemy::Init()
 
 void Enemy::Update()
 {
-	Application::Instance().m_log.AddLog("Enemy\n");
+	Application::Instance().m_log.AddLog("Another\n");
 	//各種「状態に応じた」更新処理を実行する
 	if (m_nowAction)
 	{
@@ -78,6 +78,12 @@ void Enemy::Update()
 	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
 
 	UpdateCollision();
+
+	auto translation = m_mWorld.Translation();
+	Application::Instance().m_log.AddLog("HP%0.f\n", m_hp);
+	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
+
+
 }
 
 void Enemy::PostUpdate()
@@ -99,11 +105,6 @@ void Enemy::PostUpdate()
 	}
 
 	m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });
-
-
-	auto translation = m_mWorld.Translation();
-	Application::Instance().m_log.AddLog("HP%0.f\n", m_hp);
-	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 
 }
 

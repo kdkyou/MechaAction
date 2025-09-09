@@ -70,7 +70,7 @@ void CameraManager::DrawSprite()
 	
 	if (m_wpMultiLocks.empty() == false) {
 
-		if(m_wpMultiLocks.size())
+		if (m_wpMultiLocks.size() <= 0) { return; }
 
 		for (auto& ui : m_uis)
 		{

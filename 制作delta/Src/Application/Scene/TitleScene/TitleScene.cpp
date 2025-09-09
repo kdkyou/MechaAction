@@ -16,6 +16,8 @@
 
 void TitleScene::Init()
 {
+	KdEffekseerManager::GetInstance().StopAllEffect();
+
 	CameraManager::Instance().ResetMultiLocks();
 	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.2f, false);
 	KdAudioManager::Instance().StopAllSound();

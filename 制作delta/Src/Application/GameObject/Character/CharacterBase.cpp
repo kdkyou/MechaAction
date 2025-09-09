@@ -104,8 +104,8 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 			pos = move;
 		}
 
-		auto center = pos + Math::Vector3(0.0f, 1.0f, 0.0f);
-		SphereCast(center, 1.0f, KdCollider::TypeGround, pos);
+		/*auto center = pos + Math::Vector3(0.0f, 1.0f, 0.0f);
+		SphereCast(center, 1.0f, KdCollider::TypeGround, pos);*/
 	}
 	else
 	{
@@ -122,7 +122,7 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 	m_pos = pos;
 
 	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_rot.y));
-	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(pos);
+	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(m_pos);
 
 
 	return isHit;
@@ -356,7 +356,7 @@ bool CharacterBase::SphereCast(const Math::Vector3& center, const float radius, 
 	{
 
 		// ②HIT対象オブジェクトに総当たり
-		for (auto obj : SceneManager::Instance().GetTerrainList())
+		for (auto& obj : SceneManager::Instance().GetTerrainList())
 		{
 
 			obj->Intersects(sphereInfo, &retBumpList);
@@ -368,7 +368,7 @@ bool CharacterBase::SphereCast(const Math::Vector3& center, const float radius, 
 	if (type & KdCollider::TypeDamage)
 	{
 		// ②HIT対象オブジェクトに総当たり
-		for (auto obj : SceneManager::Instance().GetEnemyList())
+		for (auto& obj : SceneManager::Instance().GetEnemyList())
 		{
 			obj->Intersects(sphereInfo, &retBumpList);
 		}

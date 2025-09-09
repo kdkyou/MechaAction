@@ -20,7 +20,7 @@ void Character::Init()
 
 		// 初期のアニメーションをセットする
 		m_spAnimator = std::make_shared<KdAnimator>();
-		m_spAnimator->SetAnimation(m_spModelWork->GetData()->GetAnimation("Stand"), 1.0f, true, true);
+		m_spAnimator->SetAnimation(m_spModelWork->GetData()->GetAnimation("Start"), 1.0f, true, true);
 	}
 
 	m_gravity = 0;
@@ -38,7 +38,7 @@ void Character::Init()
 
 
 	DirectX::BoundingOrientedBox box;
-	
+
 	box.Center = GetPos() + m_correctionMat.Translation();
 	box.Extents = { 3.0f,5.0f,3.0f };
 	UINT type = KdCollider::TypeDamage;
@@ -144,7 +144,7 @@ void Character::Update()
 		m_speedMag = 1.5f;
 	}
 
-	
+
 
 
 	if (spThis)
@@ -159,13 +159,16 @@ void Character::Update()
 
 	if (IsIgnoreGravityState() == false)
 	{
-		Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, true, true, false);
+		auto flg =Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround);
 		m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
+
+		if (flg) {
+			Application::Instance().m_log.AddLog("GravitySuccess\n");
+		}
 	}
 
-	//1m_pCollider->RegisterCollisionShape(KdCollider::TypeBump)
+	//m_pCollider->RegisterCollisionShape(KdCollider::TypeBump)
 
-	Application::Instance().m_log.AddLog("HP%.f\n", m_hp);
 	UIManager::GetInstance().SetPlayerHP(m_hp);
 
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
@@ -382,7 +385,7 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 	if (srcMoveVec.y < 0.0f) { return; }
 
 	auto& cm = CameraManager::Instance();
-	if (cm.GetNowType() != CameraManager::Lock) 
+	if (cm.GetNowType() != CameraManager::Lock)
 	{
 
 		// キャラの正面方向のベクトル
@@ -450,7 +453,7 @@ void Character::UpdateCollision()
 	// ①当たり判定(球判定)用の情報を作成
 	KdCollider::SphereInfo sphereInfo;
 	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 1.8f, 0);
-	sphereInfo.m_sphere.Radius = 1.7f;
+	sphereInfo.m_sphere.Radius = 1.79f;
 	sphereInfo.m_type = KdCollider::TypeGround;
 
 	Math::Vector3 pos;
@@ -477,7 +480,7 @@ void Character::UpdateCollision()
 			if (spGameObj->Intersects(boxInfo, &retList))
 			{
 				color = { 1,0,1,1 };
-				
+
 			}
 		}
 	}
@@ -497,7 +500,6 @@ void Character::UpdateCollision()
 		}
 	}
 
-	Application::Instance().m_log.AddLog("length %.2f\n", dist);
 	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 
 	m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, color);
@@ -536,7 +538,7 @@ void Character::LockOn()
 
 			auto& camMat = CameraManager::Instance().GetCurrentCamera().lock()->GetMatrix();
 
-			if (SearchDetect(targetPos,camMat, 100) == true)
+			if (SearchDetect(targetPos, camMat, 80) == true)
 			{
 				info->wpLockTarget = obj;
 				info->distance = distance;
@@ -570,7 +572,9 @@ bool Character::IsIgnoreGravityState() const
 {
 	// 判定
 	if (m_nowAction->GetState() == CharacterStateName::Fly ||
-		m_nowAction->GetState() == CharacterStateName::FlyGuard
+		m_nowAction->GetState() == CharacterStateName::FlyGuard ||
+		m_nowAction->GetState() == CharacterStateName::BoostFloat||
+		m_nowAction->GetState() == CharacterStateName::BoostFloatGuard
 		) {
 		return true;
 	}
@@ -586,7 +590,7 @@ void Character::WalkSounds()
 	if (m_spAnimator->GetProgress() == 0.0f || m_spAnimator->GetProgress() >= 0.5f && m_spAnimator->GetProgress() <= 0.51f) {
 		m_isWalkSounds = true;
 	}
-	
+
 	if (!m_isWalkSounds) { return; }
 
 	bool flg = false;
@@ -597,8 +601,8 @@ void Character::WalkSounds()
 		auto mat = pNode->m_worldTransform * m_mWorld;
 		auto pos = mat.Translation();
 		Math::Vector3 result = {};
-		flg = SphereCast(pos,0.2f,KdCollider::TypeGround,result);
-		m_pDebugWire->AddDebugSphere(pos,0.2f, color);
+		flg = SphereCast(pos, 0.2f, KdCollider::TypeGround, result);
+		m_pDebugWire->AddDebugSphere(pos, 0.2f, color);
 
 	}
 
@@ -614,8 +618,8 @@ void Character::WalkSounds()
 		auto mat = pNode->m_worldTransform * m_mWorld;
 		auto pos = mat.Translation();
 		Math::Vector3 result = {};
-		flg = SphereCast(pos,0.2f,KdCollider::TypeGround,result);
-		m_pDebugWire->AddDebugSphere(pos,0.2f, color);
+		flg = SphereCast(pos, 0.2f, KdCollider::TypeGround, result);
+		m_pDebugWire->AddDebugSphere(pos, 0.2f, color);
 	}
 
 	if (flg) {
@@ -625,6 +629,26 @@ void Character::WalkSounds()
 	}
 
 }
+
+const bool Character::SwordRangeCheck()
+{
+	DirectX::BoundingOrientedBox box;
+	box.Center = { 0.0f,5.0f,9.0f };
+	box.Extents = { 8.0f, 9.0f, 8.0f };
+	auto type = KdCollider::TypeDamage;
+	KdCollider::BoxInfo boxInfo(type,box);
+
+	for (auto& obj : SceneManager::Instance().GetEnemyList())
+	{
+		if (obj->Intersects(boxInfo, nullptr))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 void Character::OverTrans(const std::string& nowAnimName, float animProgress)
 {
@@ -1170,22 +1194,13 @@ void Character::ActionJump::Enter(std::weak_ptr<Character>& owner)
 
 	Checkkey(owner);
 
-	if (m_isMove)
-	{
-		m_direction += Direct(owner, true);
-	}
-	m_direction += Math::Vector3::Up;
-
-	m_direction.Normalize();
-
-
 	m_animName = "Stand";
 
 	m_stateNum = spOwner->CharacterStateName::Fly;
 
 	std::string str = "burstFligit";
 
-	spOwner->m_sounds["burstFlight"] = KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_flight.wav",true);
+	spOwner->m_sounds["burstFlight"] = KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_flight.wav", true);
 	spOwner->m_sounds["burstFlight"].lock()->SetVolume(0.12f);
 
 
@@ -1214,6 +1229,15 @@ void Character::ActionJump::Update(std::weak_ptr<Character>& owner)
 
 	if (m_isFlow)
 	{
+		if (m_isMove)
+		{
+			m_direction += Direct(owner, true);
+		}
+		m_direction += Math::Vector3::Up;
+
+		m_direction.Normalize();
+
+
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
 		return;
 	}
@@ -1224,7 +1248,7 @@ void Character::ActionJump::Update(std::weak_ptr<Character>& owner)
 		return;
 	}
 
-	spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+	spOwner->ChangeActionState(std::make_shared<ActionFall>());
 	return;
 
 }
@@ -1320,7 +1344,7 @@ void Character::ActionJumpShield::Update(std::weak_ptr<Character>& owner)
 
 	if (!m_isGuard)
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionIdle>());
+		spOwner->ChangeActionState(std::make_shared<ActionFall>());
 		return;
 	}
 
@@ -1349,6 +1373,76 @@ void Character::ActionJumpShield::Exit(std::weak_ptr<Character>& owner)
 
 }
 
+// 落下
+void Character::ActionFall::Enter(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Hoboor"), 10.0f);
+
+	m_speed = spOwner->m_jumpSpeed * spOwner->m_speedMag;
+
+	Checkkey(owner);
+
+	m_animName = "Hoboor";
+
+	m_stateNum = spOwner->CharacterStateName::Fall;
+
+}
+
+void Character::ActionFall::Update(std::weak_ptr<Character>& owner)
+{
+	Application::Instance().m_log.AddLog("Fall\n");
+
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	Checkkey(owner);
+
+	if (m_isBoost)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoost>());
+		return;
+	}
+
+	if (m_isRightAttack)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+		return;
+	}
+
+	if (m_isFlow)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionJump>());
+		return;
+	}
+
+	if (spOwner->m_isGround)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionStandUp>());
+		return;
+	}
+
+	if (m_isMove)
+	{
+		m_direction = Direct(owner, true);
+		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
+	}
+
+}
+
+void Character::ActionFall::PostUpdate(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	// アニメーションの更新
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 30.0f * spOwner->m_speedMag);
+
+	Trans(owner, spOwner->m_spAnimator->GetProgress());
+}
+
+void Character::ActionFall::Exit(std::weak_ptr<Character>& owner)
+{
+}
+
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //歩行状態
@@ -1358,45 +1452,45 @@ void Character::ActionMove::Enter(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	if (CameraManager::Instance().GetNowType() != CameraManager::Lock)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
 	}
 	else {
 		Checkkey(owner);
 		auto& move = spOwner->m_vMove;
-		if (move.x>0){
+		if (move.x > 0) {
 			if (move.z < 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, false);
-			}
-			else if(move.z > 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, false);
-			}
-			else {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightWalk"), 6.0f, false);
-			}
-		}
-		else if(move.x < 0){
-
-			if (move.z < 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, false);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
 			}
 			else if (move.z > 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, false);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+			}
+			else {
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightWalk"), 6.0f, true);
+			}
+		}
+		else if (move.x < 0) {
+
+			if (move.z < 0) {
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
+			}
+			else if (move.z > 0) {
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
 			}
 			else
 			{
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("LeftWalk"), 6.0f, false);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("LeftWalk"), 6.0f, true);
 			}
 		}
 		else
 		{
 			if (move.z < 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, false);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
 			}
 			else if (move.z > 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, false);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
 			}
 		}
-		
+
 	}
 
 	m_speed = spOwner->m_walkSpeed * spOwner->m_speedMag;
@@ -1457,17 +1551,9 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 	}
 	else
 	{
-		if (spOwner->m_spAnimator->IsAnimationEnd())
-		{
-			spOwner->ChangeActionState(std::make_shared<ActionMove>());
-			return;
-		}
-
 		m_direction = Direct(owner, true);
 
-
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
-
 	}
 
 
@@ -1480,7 +1566,7 @@ void Character::ActionMove::PostUpdate(std::weak_ptr<Character>& owner)
 
 	spOwner->WalkSounds();
 	// アニメーションの更新
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 40.0f * spOwner->m_speedMag);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 85.0f * spOwner->m_speedMag);
 
 
 	Trans(owner, spOwner->m_spAnimator->GetProgress());
@@ -1584,8 +1670,8 @@ void Character::ActionMoveShield::PostUpdate(std::weak_ptr<Character>& owner)
 
 	spOwner->WalkSounds();
 	// アニメーションの更新
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 40.0f * spOwner->m_speedMag);
-	
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 60.0f * spOwner->m_speedMag);
+
 	Trans(owner, spOwner->m_spAnimator->GetProgress());
 }
 
@@ -1610,21 +1696,27 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 
 	auto& move = spOwner->m_vMove;
 
-	if (move.x > 0) {
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostRight"), 10.0f, false);
-	}
-	else if (move.x < 0) {
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostLeft"), 10.0f, false);
+	if (CameraManager::Instance().GetNowType() == CameraManager::Lock) {
 
+		if (move.x > 0) {
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostRight"), 10.0f, false);
+		}
+		else if (move.x < 0) {
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostLeft"), 10.0f, false);
+
+		}
+		if (move.z > 0) {
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Boost"), 10.0f, false);
+		}
+		else if (move.z < 0) {
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostBack"), 10.0f, false);
+		}
 	}
-	if (move.z > 0) {
+	else {
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Boost"), 10.0f, false);
 	}
-	else if (move.z < 0) {
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostBack"), 10.0f, false);
-	}
 
-	
+
 	m_direction = ActionStateBase::Direct(owner, true);
 
 	m_speed = spOwner->m_boostSpeed * spOwner->m_speedMag;
@@ -1702,10 +1794,10 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 		spOwner->EnableTrail();
 	}
 
-	if(spOwner->m_spAnimator->GetProgress()<= 0.5f)
-	 {
+	if (spOwner->m_spAnimator->GetProgress() <= 0.5f)
+	{
 
-		auto sin = std::sinf(spOwner->m_spAnimator->GetProgress()* DirectX::XM_2PI);
+		auto sin = std::sinf(spOwner->m_spAnimator->GetProgress() * DirectX::XM_2PI);
 
 
 		KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(6, sin, { 0.5f,0.5f }, 0.15f, 0, 0.0f);
@@ -1713,28 +1805,27 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	}
 
-
-		if (m_isRightAttack) {
-			spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
-			return;
-		}
+	if (m_isRightAttack) {
+		spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+		return;
+	}
 
 	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
-		if (spOwner->m_isGround)
+		//if (spOwner->m_isGround)
 		{
 			spOwner->ChangeActionState(std::make_shared<ActionBoostEnd>());
 			return;
 		}
-		else
+		/*else
 		{
 			spOwner->ChangeActionState(std::make_shared<ActionBoostNow>());
 			return;
-		}
+		}*/
 
 	}
-	
-	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
+
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
 
 	//エフェクト
 	EffectUpdate(owner);
@@ -1801,7 +1892,7 @@ void Character::ActionBoostNow::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "BarniaL.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(),0.4f);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("BarniaL.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 0.4f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -1821,7 +1912,7 @@ void Character::ActionBoostNow::Enter(std::weak_ptr<Character>& owner)
 		}
 	}
 
-	m_animName = "Hoboor";
+	m_animName = "BoostNow";
 
 	m_stateNum = spOwner->CharacterStateName::BoostNow;
 
@@ -1857,17 +1948,17 @@ void Character::ActionBoostNow::Update(std::weak_ptr<Character>& owner)
 
 	if (m_isFlow)
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionJump>());
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFloat>());
 		return;
 	}
 
 
-	
+
 	{
 
-		m_direction = ActionStateBase::Direct(owner, true);
+		m_direction = ActionStateBase::Direct(owner, false);
 
-		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
+		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
 	}
 
 
@@ -1906,7 +1997,7 @@ void Character::ActionBoostEnd::Enter(std::weak_ptr<Character>& owner)
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostEnd"), 50.0f, false);
 
 	m_speed = spOwner->m_bladeAttackSpeed * spOwner->m_speedMag;
-	
+
 	//エフェクト
 
 	{
@@ -1951,6 +2042,12 @@ void Character::ActionBoostEnd::Update(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	Checkkey(owner);
 
+	if (!spOwner->m_isGround)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFall>());
+		return;
+	}
+
 	if (m_isMove && !m_isBoost)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionBoostDush>());
@@ -1971,7 +2068,7 @@ void Character::ActionBoostEnd::Update(std::weak_ptr<Character>& owner)
 
 	if (m_isFlow)
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionJump>());
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFloat>());
 		return;
 	}
 
@@ -1982,12 +2079,15 @@ void Character::ActionBoostEnd::Update(std::weak_ptr<Character>& owner)
 	}
 
 
-	m_direction = ActionStateBase::Direct(owner, true);
+	m_direction = ActionStateBase::Direct(owner, false);
 
 	// イージング
-	m_easeSpeed =m_speed - (m_speed * m_ease.OutSine(spOwner->m_spAnimator->GetProgress()));
+	auto progress = spOwner->m_spAnimator->GetProgress() * DirectX::XM_PI;
 
-	spOwner->Move(m_easeSpeed, m_direction, KdCollider::TypeGround, false);
+	m_easeSpeed = m_speed - (m_speed * progress);
+
+	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
+
 
 	//エフェクト
 	EffectUpdate(owner);
@@ -2001,7 +2101,7 @@ void Character::ActionBoostEnd::PostUpdate(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	// アニメーションの更新
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 30.0f * spOwner->m_speedMag);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f * spOwner->m_speedMag);
 
 	Trans(owner, spOwner->m_spAnimator->GetProgress());
 
@@ -2024,7 +2124,29 @@ void Character::ActionBoostEnd::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 2.0f);
+
+	auto& move = spOwner->m_vMove;
+
+	if (CameraManager::Instance().GetNowType() == CameraManager::Lock) {
+
+		if (move.x > 0) {
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushRight"), 10.0f, false);
+		}
+		else if (move.x < 0) {
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushLeft"), 10.0f, false);
+
+		}
+		if (move.z > 0) {
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 10.0f, false);
+		}
+		else if (move.z < 0) {
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushBack"), 10.0f, false);
+		}
+	}
+	else {
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 2.0f);
+	}
+
 	m_speed = spOwner->m_boostDushSpeed * spOwner->m_speedMag;
 
 	spOwner->EnableTrail();
@@ -2081,13 +2203,13 @@ void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
 
 	if (m_isFlow && !m_isGuard)
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionJump>());
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFloat>());
 		return;
 	}
 
 	if (m_isFlow && m_isGuard)
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionJumpShield>());
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFloatShield>());
 		return;
 	}
 
@@ -2220,13 +2342,13 @@ void Character::ActionBoostShield::Update(std::weak_ptr<Character>& owner)
 
 	if (m_isFlow && !m_isGuard)
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionJump>());
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFloat>());
 		return;
 	}
 
 	if (m_isFlow && m_isGuard)
 	{
-		spOwner->ChangeActionState(std::make_shared<ActionJump>());
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFloatShield>());
 		return;
 	}
 
@@ -2249,7 +2371,7 @@ void Character::ActionBoostShield::Update(std::weak_ptr<Character>& owner)
 	}
 	else
 	{
-		if (!m_isGuard) {
+		if (spOwner->m_isGround) {
 			spOwner->ChangeActionState(std::make_shared<ActionBoostDush>());
 			return;
 		}
@@ -2290,15 +2412,280 @@ void Character::ActionBoostShield::Exit(std::weak_ptr<Character>& owner)
 
 }
 
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//ブースト上昇状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+void Character::ActionBoostFloat::Enter(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 10.0f);
+
+	m_speed = spOwner->m_boostDushSpeed * spOwner->m_boostFloatMeg * spOwner->m_speedMag;
+
+	Checkkey(owner);
+
+	m_animName = "BoostDush";
+
+	m_stateNum = spOwner->CharacterStateName::BoostFloat;
+
+	std::string str = "burstFligit";
+
+	spOwner->m_sounds["burstFlight"] = KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_flight.wav", true);
+	spOwner->m_sounds["burstFlight"].lock()->SetVolume(0.12f);
+
+}
+
+void Character::ActionBoostFloat::Update(std::weak_ptr<Character>& owner)
+{
+	Application::Instance().m_log.AddLog("BoostFly\n");
+
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	Checkkey(owner);
+
+	if (m_isBoost)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoost>());
+		return;
+	}
+
+	if (m_isRightAttack)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+		return;
+	}
+
+	if (m_isFlow)
+	{
+		if (m_isMove)
+		{
+			m_direction += Direct(owner, true);
+		}
+		m_direction += Math::Vector3::Up;
+
+		m_direction.Normalize();
+
+
+		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
+		return;
+	}
+
+	if (spOwner->m_isGround)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionStandUp>());
+		return;
+	}
+
+	spOwner->ChangeActionState(std::make_shared<ActionBoostFall>());
+	return;
+}
+
+void Character::ActionBoostFloat::PostUpdate(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	// アニメーションの更新
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f * spOwner->m_speedMag);
+
+	Trans(owner, spOwner->m_spAnimator->GetProgress());
+
+}
+
+void Character::ActionBoostFloat::Exit(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	auto flight = spOwner->m_sounds["burstFlight"].lock();
+
+	if (flight) {
+		flight->Stop();
+	}
+
+	spOwner->UnEnableTrail();
+}
+
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//ブースト上昇ガード付き状態
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+void Character::ActionBoostFloatShield::Enter(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDushShield"), 10.0f);
+
+	m_speed = spOwner->m_boostDushSpeed * spOwner->m_boostFloatMeg * spOwner->m_speedMag;
+
+	Checkkey(owner);
+
+	m_animName = "BoostDushShield";
+
+	m_stateNum = spOwner->CharacterStateName::BoostFloatGuard;
+
+	std::string str = "burstFligit";
+
+	spOwner->m_sounds["burstFlight"] = KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_flight.wav", true);
+	spOwner->m_sounds["burstFlight"].lock()->SetVolume(0.12f);
+
+}
+
+void Character::ActionBoostFloatShield::Update(std::weak_ptr<Character>& owner)
+{
+	Application::Instance().m_log.AddLog("BoostFlyShield\n");
+
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	Checkkey(owner);
+
+
+
+	// ガードしていない状況
+	if (m_isMove && !m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFloat>());
+		return;
+	}
+
+	// ガードしている状況
+	if (m_isMove && m_isGuard)
+	{
+		if (!m_isFlow)
+		{
+			spOwner->ChangeActionState(std::make_shared<ActionStandShield>());
+			return;
+		}
+		
+	}
+
+	if (m_isBoost)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoost>());
+		return;
+	}
+
+	if (m_isRightAttack)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+		return;
+	}
+
+	if (!m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFall>());
+		return;
+	}
+
+	if (spOwner->m_spAnimator->IsAnimationEnd() && spOwner->m_isGround)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionStandUp>());
+		return;
+	}
+}
+
+void Character::ActionBoostFloatShield::PostUpdate(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	// アニメーションの更新
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f * spOwner->m_speedMag);
+
+	Trans(owner, spOwner->m_spAnimator->GetProgress());
+
+}
+
+void Character::ActionBoostFloatShield::Exit(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	auto flight = spOwner->m_sounds["burstFlight"].lock();
+
+	if (flight) {
+		flight->Stop();
+	}
+
+	
+}
+
+void Character::ActionBoostFall::Enter(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 10.0f);
+
+	m_speed = spOwner->m_boostDushSpeed * spOwner->m_boostFloatMeg * spOwner->m_speedMag;
+
+	Checkkey(owner);
+
+	m_animName = "BoostDush";
+
+	m_stateNum = spOwner->CharacterStateName::BoostFall;
+}
+
+void Character::ActionBoostFall::Update(std::weak_ptr<Character>& owner)
+{
+	Application::Instance().m_log.AddLog("BoostFall\n");
+
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	Checkkey(owner);
+
+	if (m_isBoost)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoost>());
+		return;
+	}
+
+	if (m_isRightAttack)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+		return;
+	}
+
+	if (m_isFlow)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFloat>());
+		return;
+	}
+
+	if (spOwner->m_isGround)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionStandUp>());
+		return;
+	}
+
+	if (m_isMove)
+	{
+		m_direction = Direct(owner, true);
+		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
+	}
+}
+
+void Character::ActionBoostFall::PostUpdate(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	// アニメーションの更新
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 30.0f * spOwner->m_speedMag);
+
+	Trans(owner, spOwner->m_spAnimator->GetProgress());
+
+}
+
+void Character::ActionBoostFall::Exit(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	spOwner->UnEnableTrail();
+}
+
+
+
 //ブースト移動終了
 void Character::ActionBoostDushEnd::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushEnd"), 15.0f,false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushEnd"), 15.0f, false);
 	m_speed = spOwner->m_boostDushSpeed * spOwner->m_speedMag;
 
 	//エフェクト
-	
+
 	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 	effect->name = "Spark.efkefc";
 	effect->pNodeMat = Math::Matrix::Identity;
@@ -2344,26 +2731,45 @@ void Character::ActionBoostDushEnd::Update(std::weak_ptr<Character>& owner)
 	}
 
 	//移動中に何も入力がなければ待機に移行
-	if (!m_isMove && spOwner->m_spAnimator->IsAnimationEnd()) {
-		spOwner->ChangeActionState(std::make_shared<ActionStandUp>());
-		return;
+	if (!m_isMove) {
+		if (spOwner->m_spAnimator->IsAnimationEnd()) {
+			spOwner->ChangeActionState(std::make_shared<ActionStandUp>());
+			return;
+		}
 	}
 	else
 	{
-		if (m_isGuard) {
-			spOwner->ChangeActionState(std::make_shared<ActionBoostDush>());
-			return;
+		if (spOwner->m_spAnimator->GetProgress() < 0.3f) {
+			if (spOwner->m_isGround) {
+				spOwner->ChangeActionState(std::make_shared<ActionBoostDush>());
+				return;
+			}
 		}
+		else {
+				spOwner->ChangeActionState(std::make_shared<ActionMove>());
+				return;
+		}
+	}
+	m_direction = ActionStateBase::Direct(owner, false);
 
-		m_direction = ActionStateBase::Direct(owner, true);
+	auto progress = spOwner->m_spAnimator->GetProgress() * DirectX::XM_2PI;
+	if (progress > 1.0f) {
+		progress = 1.0f;
 	}
 
-	m_easeSpeed = m_speed - (m_speed * m_ease.OutSine(spOwner->m_spAnimator->GetProgress()));
+	m_easeSpeed = m_speed - (m_speed * progress);
 
 	spOwner->Move(m_easeSpeed, m_direction, KdCollider::TypeGround);
 
 	//エフェクト
-	EffectUpdate(owner);
+	if (progress < 0.6f) {
+
+		EffectUpdate(owner);
+	}
+	else {
+		EffectExit();
+	}
+
 
 }
 
@@ -2372,7 +2778,7 @@ void Character::ActionBoostDushEnd::PostUpdate(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	// アニメーションの更新
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 40.0f * spOwner->m_speedMag);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f * spOwner->m_speedMag);
 
 	Trans(owner, spOwner->m_spAnimator->GetProgress());
 
@@ -2402,10 +2808,11 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightBladeAttackBef"), 20.0f, false);
 
-	m_direction = ActionStateBase::Direct(owner,true);
+	m_direction = ActionStateBase::Direct(owner, true);
 
 	m_speed = spOwner->m_bladeAttackSpeed * spOwner->m_speedMag;
 
+	spOwner->UnEnableTrail();
 
 	KdAudioManager::Instance().Play("Asset/Sounds/Thruster2.wav");
 
@@ -2417,7 +2824,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 3.0f,1.0f);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 3.0f, 1.0f);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -2426,7 +2833,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 	m_animName = "RightBladeAttackBef";
 
 	m_stateNum = spOwner->CharacterStateName::RightSorwdBef;
-	
+
 	m_isDuration = true;
 }
 
@@ -2607,20 +3014,6 @@ void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 
 	m_stiffnessTime = 1.0f;
 
-	////エフェクト
-	//{
-	//	KdModelWork::Node* pNode = spOwner->m_spModelWork->FindWorkNode("CBP");
-	//	if (pNode)
-	//	{
-	//		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
-	//		effect->name = "Thruster.efkefc";
-	//		effect->pNodeMat = pNode->m_worldTransform;
-	//		effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 3.0f);
-	//		effect->handle = effect->wpEffect.lock()->GetHandle();
-	//		m_spEffects.push_back(effect);
-	//	}
-	//}
-
 	m_animName = "RightSowrd";
 
 	m_stateNum = spOwner->CharacterStateName::RightSorwdAf;
@@ -2639,7 +3032,7 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 	if (m_durationStiffness <= m_stiffnessTime / 4)
 	{
 		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
-	}	
+	}
 
 	//エフェクト
 	EffectUpdate(owner);
@@ -2726,6 +3119,8 @@ void Character::ActionHited::Enter(std::weak_ptr<Character>& owner)
 
 void Character::ActionHited::Update(std::weak_ptr<Character>& owner)
 {
+	Application::Instance().m_log.AddLog("Hited\n");
+
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false);
@@ -2813,22 +3208,24 @@ void Character::ActionDestroyed::Enter(std::weak_ptr<Character>& owner)
 
 	KdAudioManager::Instance().Play("Asset/Sounds/Sound/down_player.wav")->SetVolume(0.3f);
 
-	
+
 	UIManager::GetInstance().SceneUICreate("Asset/Data/FailedUI.scene");
 }
 
 void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 {
+	Application::Instance().m_log.AddLog("Destroy\n");
+
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	//グリッチ表現
 	if (spOwner->m_spAnimator->IsAnimationEnd() == false) {
-	auto time = KdFPSController::GetInstance().GetFPS();
+		auto time = KdFPSController::GetInstance().GetFPS();
 
-	UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
-	KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
-	KdShaderManager::Instance().m_postProcessShader.
-		SetGlitch({ 1,1 }, time, 5.0f, 0.8f, 0, 0, { 0.5f,0.5f });
+		UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
+		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+		KdShaderManager::Instance().m_postProcessShader.
+			SetGlitch({ 1,1 }, time, 5.0f, 0.8f, 0, 0, { 0.5f,0.5f });
 
 	}
 	else {
@@ -2838,7 +3235,7 @@ void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	}
 
-	
+
 }
 
 void Character::ActionDestroyed::PostUpdate(std::weak_ptr<Character>& owner)
@@ -2942,5 +3339,4 @@ void Character::ActionLeftShoulderAttack::Exit(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 }
-
 

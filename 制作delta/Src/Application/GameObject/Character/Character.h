@@ -70,12 +70,16 @@ private:
 		Walk,
 		WalkGuard,
 		Fly,
+		Fall,
 		FlyGuard,
 		Boost,
 		BoostNow,
 		BoostEnd,
 		BoostDush,
 		BoostDushGuard,
+		BoostFloat,
+		BoostFloatGuard,
+		BoostFall,
 		DushEnd,
 		RightSorwdBef,
 		RightSorwdMid,
@@ -85,7 +89,7 @@ private:
 		Destoryed,
 	};
 
-
+	const bool SwordRangeCheck();
 	
 	void OverTrans(const std::string& nowAnimName,float animProgress);
 
@@ -94,13 +98,15 @@ private:
 	//パラメータ
 	float										m_speedMag = 1.0f;	//スピードの掛け算
 	float										m_stopSpeed = 0.0f;
-	float										m_walkSpeed = 20.0f;
-	float										m_jumpSpeed = 30.0f;
-	float										m_boostSpeed = 540.0f;
-	float										m_boostEndSpeed = 40.0f;
-	float										m_boostDushSpeed = 200.0f;
-	float										m_bladeAttackSpeed = 400.0f;
+	float										m_walkSpeed = 65.0f;
+	float										m_jumpSpeed = 40.0f;
+	float										m_boostSpeed = 340.0f;
+	float										m_boostEndSpeed = 180.0f;
+	float										m_boostDushSpeed = 180.0f;
+	float										m_bladeAttackSpeed = 240.0f;
 	float										m_hitedSpeed = 30.0f;
+
+	float                                       m_boostFloatMeg = 0.6f;
 
 	// デバッグ用
 	Math::Color color = { 0,1,0,1 };
@@ -238,6 +244,18 @@ protected:
 	private:
 	};
 
+	class ActionFall :public ActionStateBase
+	{
+	public:
+		virtual ~ActionFall() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+
 	class ActionStandShield : public ActionStateBase
 	{
 	public:
@@ -365,6 +383,43 @@ protected:
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
 	};
+
+	class ActionBoostFloat :public ActionStateBase
+	{
+	public:
+		virtual ~ActionBoostFloat() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+
+	class ActionBoostFloatShield :public ActionStateBase
+	{
+	public:
+		virtual ~ActionBoostFloatShield() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+
+	class ActionBoostFall :public ActionStateBase
+	{
+	public:
+		virtual ~ActionBoostFall() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+
 
 	class ActionRightAttack :public ActionStateBase
 	{

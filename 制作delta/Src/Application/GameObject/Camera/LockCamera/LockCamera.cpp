@@ -38,6 +38,7 @@ void LockCamera::Init()
 	/*m_spTex = std::make_shared<KdTexture>();
 	m_spTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/UI/LockOn.png");*/
 
+	CameraManager::Instance().EnableChangedCamera(false);
 }
 
 void LockCamera::Update()
@@ -58,6 +59,15 @@ void LockCamera::Update()
 		if (m_texAlpha > 1.0f)
 		{
 			m_texAlpha = 1.0f;
+			CameraManager::Instance().EnableChangedCamera(true);
+		}
+	}
+	else {
+
+		auto& mouse = KeyInput::GetInstance().GetMouseState();
+		auto& key = KeyInput::GetInstance().GetKeyboardState();
+		if (mouse.middleButton) {
+			CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
 		}
 	}
 }

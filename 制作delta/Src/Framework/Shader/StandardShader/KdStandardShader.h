@@ -52,6 +52,18 @@ public:
 		int				AlphaDitherEnable = 1;
 		float			AlphaDitherDist =  6.0f;
 
+		int             LightningEnable = 0;	
+		Math::Vector3   LightningMinPos = {};	  // モデルのローカル最小座標
+
+		float           LightningProgress = 0.0f; // 0-1で進む 
+		Math::Vector3   LightningMaxPos = {};	  // モデルのローカル最大座標
+
+		Math::Vector3   LightningColorA = { 0.0f,0.0f,0.0f };
+		float			dummy1 = 0.0f;
+	
+		Math::Vector3   LightningColorB = { 0.0f,0.0f,0.0f };
+		float			dummy2 = 0.0f;
+
 	};
 
 	// 定数バッファ(メッシュ単位更新)

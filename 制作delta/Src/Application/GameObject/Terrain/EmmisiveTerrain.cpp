@@ -27,7 +27,6 @@ void EmmisiveTerrain::Update()
 		Math::Vector3 zero = {};
 		m_emmisive = Math::Vector3::Lerp(zero, m_firstEmmisive, t);
 		
-
 	}
 	else
 	{
@@ -60,7 +59,17 @@ void EmmisiveTerrain::PostUpdate()
 
 void EmmisiveTerrain::DrawLit()
 {
+	float t = (m_durationChange / m_changeTime) * m_changeSpeed;
+
+	Math::Vector2 offset = { 1.0f,0.0f };
+
+	offset *= t;
+
+	KdShaderManager::Instance().m_StandardShader.SetUVOffset(offset);
+
 	DrawTerrain::DrawLit();
+
+	KdShaderManager::Instance().m_StandardShader.SetUVOffset({ 0.0f, 0.0f });
 }
 
 void EmmisiveTerrain::Editor_ImGui()
