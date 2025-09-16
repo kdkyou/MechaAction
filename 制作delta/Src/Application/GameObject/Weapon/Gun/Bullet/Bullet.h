@@ -31,7 +31,7 @@ public:
 	void SetBulletParam(float _aliveTime,int _damage, float _range, const Math::Vector3& _startPos, const Math::Vector3 direction,float _speed,float _dampingInterval,float _dampingRate);
 	void SetBulletTrail(const std::string& _path, const Math::Color _color, float _width, UINT _length);
 	void SetBulletType(const moveType _type,const std::weak_ptr<CharacterBase>& _chasigTarget);
-	void SetChasingData(int rotateSpeedDeg,float lockAngle,float lostTime,float trackingDistance );
+	void SetChasingData(float rotateSpeedDeg,float lockAngle,float lostTime,float trackingDistance );
 	void ScaleUp(float scale,int damageNum);
 
 	void OnHit()override;

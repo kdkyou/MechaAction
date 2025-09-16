@@ -423,6 +423,10 @@ void KdStandardShader::DrawVertices(const std::vector<KdPolygon::Vertex>& vertic
 	KdDirect3D::Instance().WorkDevContext()->VSGetShader(&pNowVS, nullptr, nullptr);
 	bool isUnLit = m_VS_UnLit == pNowVS;
 
+	if (isUnLit) {
+
+	}
+
 	KdSafeRelease(pNowVS);
 
 	// 頂点配列を描画

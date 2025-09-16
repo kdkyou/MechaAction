@@ -94,6 +94,38 @@ public:
 	// 設定・取得
 	//================================================
 
+	// エミッシブ追加設定
+	void SetLightningEnable(bool _enable)
+	{
+		m_cb0_Obj.Work().LightningEnable = _enable;
+
+		m_dirtyCBObj = true;
+	}
+
+	void SetLightningColor(const Math::Vector3& colorA, const Math::Vector3& colorB)
+	{
+		m_cb0_Obj.Work().LightningColorA = colorA;
+		m_cb0_Obj.Work().LightningColorB = colorB;
+
+		m_dirtyCBObj = true;
+	}
+	
+	void SetLightningLocalPos(const Math::Vector3& minPos, const Math::Vector3& maxPos)
+	{
+		m_cb0_Obj.Work().LightningMinPos = minPos;
+		m_cb0_Obj.Work().LightningMaxPos = maxPos;
+
+		m_dirtyCBObj = true;
+	}
+
+	void SetLightningProgress(float t)
+	{
+		m_cb0_Obj.Work().LightningProgress = t;
+
+		m_dirtyCBObj = true;
+	}
+
+
 	//リムライト設定
 	void SetLimLightEnable(bool _enable)
 	{

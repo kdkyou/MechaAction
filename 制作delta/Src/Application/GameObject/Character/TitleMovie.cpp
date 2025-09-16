@@ -77,7 +77,7 @@ void TitleMovie::Update()
 			if (pNode) {
 				auto nodeMat = pNode->m_worldTransform;
 				auto mat = nodeMat * m_mWorld;
-				m_efk = KdEffekseerManager::GetInstance().Play("Thurster.efkefc",mat.Translation(), 10.0f);
+				m_efk = KdEffekseerManager::GetInstance().Play("Thruster.efkefc",mat.Translation(), 3.0f,0.5f);
 				Application::Instance().m_log.AddLog("Create\n");
 			}
 			}
@@ -97,6 +97,9 @@ void TitleMovie::Update()
 		}
 		break;
 	case TitleMovie::FourtoFive:
+		
+		KdEffekseerManager::GetInstance().StopAllEffect();
+
 		break;
 	default:
 		break;

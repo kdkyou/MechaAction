@@ -66,8 +66,8 @@ private:
 
 	std::list<DirectX::Keyboard::State>	m_keyDatas;
 	std::list<DirectX::Mouse::State>	m_mouseDatas;
-	std::list<DirectX::GamePad::State> m_padDatas;
-	int										m_MaxDataLength = 40;
+	std::list<DirectX::GamePad::State>	m_padDatas;
+	UINT								m_MaxDataLength = 40;
 
 	//-------------------------------
 	// シングルトン

@@ -415,7 +415,7 @@ void KdSoundInstance3D::SetVelocity(const Math::Vector3& velocity)
 	m_instance->Apply3D(m_ownerListener, m_emitter, false);
 }
 
-void KdSoundInstance3D::SetInnerRadiusAngle(int degAngle)
+void KdSoundInstance3D::SetInnerRadiusAngle(float degAngle)
 {
 	if (!m_instance) { return; }
 	m_emitter.InnerRadiusAngle = DirectX::XMConvertToRadians(degAngle);

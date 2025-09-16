@@ -472,6 +472,8 @@ static bool HitCheckAndPosUpdate(DirectX::XMVECTOR& finalPos, DirectX::XMVECTOR&
 	float dy = absVec.m128_f32[1];
 	float dz = absVec.m128_f32[2];
 	
+	DirectX::XMFLOAT3 extsq = extentSqr;
+
 	// =======AABB判定=======
 	if (isOriented == false)
 	{

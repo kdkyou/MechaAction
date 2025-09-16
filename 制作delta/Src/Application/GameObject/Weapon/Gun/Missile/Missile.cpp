@@ -25,7 +25,6 @@ void Missile::Update()
 	if (parent)
 	{
 		const KdModelWork::Node* _pNode = parent->GetModelWork().lock()->FindWorkNode(m_attachPath);
-		int i = 0;
 		if (_pNode)
 		{
 			m_mParentAttach = _pNode->m_worldTransform;
@@ -46,8 +45,9 @@ void Missile::PostUpdate()
 
 void Missile::Trigger()
 {
-
 	CheckTrigger();
+	
+	if (m_num <= 0) { return; }
 
 	if (m_nowTrigger & m_AttackTrigger) { OnTrigger(); }
 
@@ -160,7 +160,7 @@ void Missile::Shot()
 
 	m_numShot++;
 
-	if (m_numShot >= m_nodeMats.size())
+	if ((UINT)m_numShot >= m_nodeMats.size())
 	{
 		m_numShot = 0;
 	}

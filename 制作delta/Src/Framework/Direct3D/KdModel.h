@@ -72,6 +72,8 @@ public:
 
 	bool IsSkinMesh();
 
+	void FindMinMaxPos(Math::Vector3& resultMinPos, Math::Vector3& resultMaxPos);
+
 private:
 	// 解放
 	void Release();

@@ -16,6 +16,9 @@ void TrackingCamera::Init()
 	// 注視点
 	m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
 
+	m_localPos = { 3, 14.5f, -22.0f };
+	m_basePos = { 3.0f, 14.5f, -28.0f };
+
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
 
@@ -30,6 +33,7 @@ void TrackingCamera::Init()
 
 
 	m_name = "Tracking";
+		CameraManager::Instance().EnableChangedCamera(false);
 
 	ShowCursor(false);
 
@@ -48,17 +52,70 @@ void TrackingCamera::PostUpdate()
 
 	Math::Vector3 targetPos = _spTarget->GetMatrix().Translation();
 
-	auto targetVec = CameraManager::Instance().GetLocalDirectionTo(targetPos);
-	if (targetVec.y < 0) {
+	m_unEnableChangeTime -= KdFPSController::GetInstance().GetDeltaTime();
+
+	if (m_unEnableChangeTime < 0.0f)
+	{
+		m_unEnableChangeTime = 0;
+		CameraManager::Instance().EnableChangedCamera(true);
+	}
+	auto viewProjMat = m_spCamera->GetCameraViewMatrix() * m_spCamera->GetProjMatrix();
+	//Math::Vector4 clipPos = DirectX::XMVector4Transform(targetPos,viewProjMat);
+	//clipPos /= clipPos.w; // NDC (-1~1)
+	Math::Vector3 clipPos = {};
+	m_spCamera->ConvertWorldToScreenDetail(targetPos,clipPos);
+
+	float margin = 0.9f;
+
+	bool outOfScreen =
+		(clipPos.x < EditorData::GetInstance().m_ScreenWh *-margin || clipPos.x >EditorData::GetInstance().m_ScreenWh * margin ||
+			clipPos.y < EditorData::GetInstance().m_ScreenSih * -margin);
+
+	Application::Instance().m_log.AddLog("ClipPos X:%.2f,Y:%.2f\n", clipPos.x, clipPos.y);
+
+	// 画面範囲外判定
+	if (outOfScreen)
+	{
+
 		m_speed = 15.0f;
+		float t = 0.3f;
+		auto pos = Math::Vector3::Lerp(m_localPos, m_basePos, t);
+		m_mLocalPos = Math::Matrix::CreateTranslation(pos);
+		/*if (clipPos.x < -margin)
+		{
+
+		}
+		else if (clipPos.x > margin) {
+
+		}
+		if (clipPos.y < -margin)
+		{
+
+		}*/
+	}
+	else {
+		m_speed = 5.0f;
+		m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
+
+	}
+		// 補正処理
+	//	m_speed = 10.0f;
+	//	m_mLocalPos = Math::Matrix::CreateTranslation(m_basePos);
+	//}
+	//else {
+	//	m_speed = 5.0f;
+	//	m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
+	//}
+
+	/*auto targetVec = CameraManager::Instance().GetLocalDirectionTo(targetPos);
+	if (targetVec.y < 0 || targetVec.x< -0.9f || targetVec.x > 1.0f) {
+		m_speed = 10.0f;
 		m_mLocalPos = Math::Matrix::CreateTranslation(m_basePos);
 	}
 	else {
-		m_speed = 10.0f;
+		m_speed = 5.0f;
 		m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
-	}
-	
-	Application::Instance().m_log.AddLog("CamSpeed:%.f\n", m_speed);
+	}*/
 
 	m_pos = Math::Vector3::Lerp(
 		m_pos,
@@ -77,4 +134,7 @@ void TrackingCamera::PostUpdate()
 void TrackingCamera::Editor_ImGui()
 {
 	ImGui::SliderFloat("LerpSpeed", &m_speed, 0.0f, 100.0f);
+
+	ImGui::Text("pos x:%.2f,y:%.2f,z:%.2f",m_mLocalPos.Translation().x, m_mLocalPos.Translation().y, m_mLocalPos.Translation().z);
+
 }

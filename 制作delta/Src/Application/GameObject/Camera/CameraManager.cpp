@@ -85,7 +85,7 @@ const Math::Vector2 CameraManager::GetLocalDirectionTo(const Math::Vector3& targ
 	if (m_currentCamera == nullptr) { return Math::Vector2(); }
 
 	// カメラのビュー行列の逆
-	auto camMat = m_currentCamera->GetMatrix();
+	auto& camMat = m_currentCamera->GetMatrix();
 	auto invCam = camMat.Invert();
 
 	Math::Vector3 pos = camMat.Translation();

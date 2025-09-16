@@ -445,10 +445,6 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingSphere& target, const Mat
 		isHit = myBox.Intersects(target);
 
 		if (!isHit || !pRes)return isHit;
-
-
-		int a = 0;
-
 	}
 	else
 	{
@@ -666,15 +662,7 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingOrientedBox& target, cons
 		
 		if (!isHit || !pRes)return isHit;
 
-		int i = 0;
 	}
-
-
-
-	
-
-
-
 
 	return true;
 }
@@ -1130,6 +1118,8 @@ bool KdPolygonCollision::Intersects(const DirectX::BoundingOrientedBox& target, 
 
 		pRes->m_overlapDistance = result.m_overlapDistance;
 	}
+
+	return true;
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////

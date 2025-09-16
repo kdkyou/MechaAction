@@ -9,24 +9,19 @@ void EmmisiveTerrain::Update()
 {
 	auto delta = KdFPSController::GetInstance().GetDeltaTime();
 	m_durationWait += delta;
-	if (m_durationWait > m_waitTime) 
+	if (m_durationWait > m_waitTime)
 	{
 		m_durationWait = m_waitTime;
-			m_isEnableChange = true;
+		m_isEnableChange = true;
 	}
 
-	if (!m_isEnableChange) 
+	if (!m_isEnableChange)
 	{
 		float t = (m_durationWait / m_waitTime) * m_waitChangeSpeed;
-		/*auto x = std::clamp(t, m_emmisive.x, m_firstEmmisive.x);
-		auto y = std::clamp(t, m_emmisive.y, m_firstEmmisive.y);
-		auto z = std::clamp(t, m_emmisive.z, m_firstEmmisive.z);
-		m_emmisive = { x,y,z };
-		*/
-		
+
 		Math::Vector3 zero = {};
 		m_emmisive = Math::Vector3::Lerp(zero, m_firstEmmisive, t);
-		
+
 	}
 	else
 	{
@@ -34,15 +29,11 @@ void EmmisiveTerrain::Update()
 
 		float t = (m_durationChange / m_changeTime) * m_changeSpeed;
 
-		/*auto x = std::clamp(t, m_firstEmmisive.x, m_secondEmmisive.x);
-		auto y = std::clamp(t, m_firstEmmisive.y, m_secondEmmisive.y);
-		auto z = std::clamp(t, m_firstEmmisive.z, m_secondEmmisive.z);
-		m_emmisive = { x,y,z };*/
-
-		m_emmisive = Math::Vector3::Lerp(m_firstEmmisive, m_secondEmmisive, t);
-		
+		//m_emmisive = Math::Vector3::Lerp(m_firstEmmisive, m_secondEmmisive, t);
+		m_emmisive = { 10.0f,10.0f,10.0f };
 	}
 
+	
 }
 
 
@@ -59,17 +50,28 @@ void EmmisiveTerrain::PostUpdate()
 
 void EmmisiveTerrain::DrawLit()
 {
-	float t = (m_durationChange / m_changeTime) * m_changeSpeed;
+	float t = (m_durationChange / m_changeTime) * m_changeSpeed / 3.0f;
 
-	Math::Vector2 offset = { 1.0f,0.0f };
+	if (m_isEnableChange)
+	{
+		KdShaderManager::Instance().m_StandardShader.SetLightningEnable(true);
 
-	offset *= t;
+		KdShaderManager::Instance().m_StandardShader.SetLightningLocalPos(m_maxPos, m_minPos);
+		KdShaderManager::Instance().m_StandardShader.SetLightningColor(m_firstEmmisive, m_secondEmmisive);
+		KdShaderManager::Instance().m_StandardShader.SetLightningProgress(t);
 
-	KdShaderManager::Instance().m_StandardShader.SetUVOffset(offset);
+		DrawTerrain::DrawLit();
 
-	DrawTerrain::DrawLit();
+		KdShaderManager::Instance().m_StandardShader.SetLightningEnable(false);
 
-	KdShaderManager::Instance().m_StandardShader.SetUVOffset({ 0.0f, 0.0f });
+	}
+	else {
+
+		DrawTerrain::DrawLit();
+
+	}
+
+
 }
 
 void EmmisiveTerrain::Editor_ImGui()
@@ -91,6 +93,6 @@ void EmmisiveTerrain::Editor_ImGui()
 	ImGui::DragFloat3((const char*)u8"一つ目の色", &m_firstEmmisive.x, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat3((const char*)u8"二つ目の色", &m_secondEmmisive.x, 0.1f, 0.0f, 100.0f);
 
-
+	ImGui::Checkbox((const char*)u8"ライトニング", &m_isLightning);
 
 }

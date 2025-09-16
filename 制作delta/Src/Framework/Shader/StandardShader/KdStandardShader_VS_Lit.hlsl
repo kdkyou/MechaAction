@@ -36,10 +36,13 @@ VSOutput main(
     // 座標変換
 	Out.Pos = mul(pos, g_mWorld);	 // ローカル座標系	-> ワールド座標系へ変換
 	Out.wPos = Out.Pos.xyz;			 // ワールド座標を別途保存
+	Out.wvPos = mul(Out.Pos, g_mWorld).xyz; // ワールド -> ビュー座標を保存
 	Out.Pos = mul(Out.Pos, g_mView); // ワールド座標系	-> ビュー座標系へ変換
 	Out.Pos = mul(Out.Pos, g_mProj); // ビュー座標系	-> 射影座標系へ変換
 
-    // 頂点色
+	Out.lPos = pos.xyz;
+	
+    // 頂点色y
 	Out.Color = color;
 
     // 法線

@@ -73,10 +73,18 @@ void Enemy::Update()
 		m_nowAction->Update(m_wpThis, spTarget);
 
 	}
+	auto pos = m_mWorld.Translation();
+	//auto flg = Gravity(pos, Math::Vector3::Down, m_gravity);
+	auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false);
 
-	Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, true, false);
 	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
 
+	if (flg) {
+		Application::Instance().m_log.AddLog("AnotherGround\n");
+	}
+	else {
+		Application::Instance().m_log.AddLog("AnotherFallNow\n");
+	}
 	UpdateCollision();
 
 	auto translation = m_mWorld.Translation();

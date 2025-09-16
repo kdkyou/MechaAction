@@ -166,7 +166,6 @@ void SceneManager::ChangeScene(SceneType sceneType)
 	std::shared_ptr<TitleScene> title;
 	std::shared_ptr<TitleMovieScene> titleMovie;
 
-	auto type = GetSceneType();
 
 	switch (sceneType)
 	{

@@ -77,21 +77,28 @@ protected:
 
 	//				移動量　　方向		当たり判定するタイプ（基本地面） 判定のみか キャラが回転するか 座標補正なし　レイに補正をかけるか
 	bool Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool rotate = true, bool direct = false, bool step = false);
+	// 
+	bool MoveSwept(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray = false, bool rotate = true, bool direct = false, bool step = false);
 
 	bool  RayCast(const Math::Vector3& startPos, const Math::Vector3& vec, const float length, const KdCollider::Type& type, Math::Vector3& resultPos);
+	bool  Gravity(const Math::Vector3& startPos, const Math::Vector3& vec, const float length);
 
 	bool  SphereCast(const Math::Vector3& pos, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos);
+
+	bool CheckSweptSphere(const Math::Vector3& oldPos, const Math::Vector3& newPos, float radius, KdCollider::CollisionResult& out);
 
 	bool SearchDetect(const Math::Vector3& hitPos, const Math::Matrix& myMat, float viewRange);
 
 	bool SeaarchObstacle(const Math::Vector3& pos, const Math::Vector3& vec,const float length);
 
-	virtual void UpdateRotate(const Math::Vector3& srcMoveVec){}
+	virtual void UpdateRotate(const Math::Vector3& srcMoveVec) { srcMoveVec; }
 
 	void BoostRotate(const Math::Vector3& vec);
 
 
-	virtual bool Search(bool areaOnly) { return false; }
+	virtual bool Search(bool areaOnly) {
+		areaOnly;
+		return false; }
 	bool SearchPlayer();
 
 	const bool Burn();

@@ -9,8 +9,11 @@ public:
 	// 選択GameObject
 	std::weak_ptr<KdGameObject>		SelectObj;
 
-	uint32_t	m_ScreenW = 1920;
-	uint32_t	m_screenH = 1080;
+	uint32_t	m_ScreenW = 1280;
+	uint32_t	m_ScreenWh = 640;
+	uint32_t	m_ScreenH = 720;
+	uint32_t	m_ScreenHh = 360;
+	uint32_t	m_ScreenSih = 600;
 
 	const bool IsEditorMode()const { return m_editorMode; }
 

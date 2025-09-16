@@ -59,10 +59,11 @@ void LockCamera::Update()
 		if (m_texAlpha > 1.0f)
 		{
 			m_texAlpha = 1.0f;
-			CameraManager::Instance().EnableChangedCamera(true);
 		}
 	}
 	else {
+		
+		CameraManager::Instance().EnableChangedCamera(true);
 
 		auto& mouse = KeyInput::GetInstance().GetMouseState();
 		auto& key = KeyInput::GetInstance().GetKeyboardState();
@@ -80,10 +81,13 @@ void LockCamera::PostUpdate()
 	if (_spTarget)
 	{
 		if (_spTarget->IsDestroy() == true) { 
+			CameraManager::Instance().EnableChangedCamera(true);
 			CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
-			return; }
+			return; 
+		}
 		_targetMat = Math::Matrix::CreateTranslation(_spTarget->GetMatrix().Translation());
 	}
+	
 
 	UpdateRotateByMouse();
 
@@ -126,7 +130,10 @@ void LockCamera::DrawSprite()
 void LockCamera::Lock()
 {
 	auto spTarget = m_wpLockTarget.lock();
-	if (spTarget == nullptr) { return; }
+	if (!spTarget) {
+		CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
+		return;
+	}
 
 	auto targetMat = spTarget->GetCorrectionMatrix() * spTarget->GetMatrix();
 	Math::Vector3 targetPos = targetMat.Translation();

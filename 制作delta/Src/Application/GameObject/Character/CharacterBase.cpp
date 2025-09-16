@@ -104,8 +104,8 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 			pos = move;
 		}
 
-		/*auto center = pos + Math::Vector3(0.0f, 1.0f, 0.0f);
-		SphereCast(center, 1.0f, KdCollider::TypeGround, pos);*/
+		auto center = pos + Math::Vector3(0.0f, 0.5f, 0.0f);
+		SphereCast(center, 0.5f, KdCollider::TypeGround, pos);
 	}
 	else
 	{
@@ -118,6 +118,67 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 		UpdateRotate(direction);
 	}
 
+
+	m_pos = pos;
+
+	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_rot.y));
+	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(m_pos);
+
+
+	return isHit;
+}
+
+bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool rotate, bool direct, bool step)
+{
+	auto direction = dir;
+	direction.Normalize();
+
+	auto pos = m_mWorld.Translation();
+
+	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
+
+	Math::Vector3 move = Math::Vector3::Zero;
+
+	auto deltaSpeed = speed * deltaTime;
+
+	if (step == true)
+	{
+		pos += {0.0f, 0.05f, 0.0f};
+	}
+
+	Math::Vector3 oldPos = m_pos;
+	Math::Vector3 moveVec = dir * deltaSpeed;
+	Math::Vector3 newPos = oldPos + moveVec;
+
+	float len = dir.Length();
+
+	float m_radius = len + 0.5f;
+
+	KdCollider::CollisionResult hit;
+
+	bool isHit = false;
+
+	if (CheckSweptSphere(oldPos, newPos, m_radius, hit))
+	{
+		// 衝突直前の位置にセット
+		pos = hit.m_hitPos + hit.m_hitDir * m_radius;
+
+		// スライド移動（壁に沿わせる場合）
+		Math::Vector3 slide = moveVec - (moveVec.Dot(hit.m_hitDir)) * hit.m_hitDir;
+		pos += slide;
+
+		isHit = true;
+	}
+	else
+	{
+		// 当たらなければ普通に移動
+		pos = newPos;
+	}
+
+	if (rotate == true)
+	{
+		UpdateRotate(direction);
+	}
 
 	m_pos = pos;
 
@@ -219,6 +280,122 @@ bool CharacterBase::RayCast(const Math::Vector3& startPos, const Math::Vector3& 
 	}
 
 	return hit;
+}
+
+bool CharacterBase::Gravity(const Math::Vector3& startPos, const Math::Vector3& vec, const float length)
+{
+	KdCollider::RayInfo rayInfo;
+
+	rayInfo.m_pos = startPos;		// レイの発射位置を設定
+
+	rayInfo.m_pos += {0.0f, 0.05f, 0.0f};
+
+	rayInfo.m_dir = vec;				// レイの発射方向を設定
+
+	rayInfo.m_range = length;		// レイの長さ
+
+	// 当たり判定をしたいタイプを設定
+	rayInfo.m_type = KdCollider::TypeGround;
+
+	if (rayInfo.m_dir.Length() == 0) { return false; }
+
+	bool hit = false;
+
+	std::list<KdCollider::CollisionResult> retRayList;
+
+	{
+		// ②HIT判定対象オブジェクトに総当たり
+		for (auto& obj : SceneManager::Instance().GetTerrainList())
+		{
+			if (obj->GetTag() != tPlayerAttack)
+			{
+				obj->Intersects(rayInfo, &retRayList);
+			}
+		}
+	}
+	// ③結果を使って座標を補完する
+			// レイに当たったリストから一番近いオブジェクトを検出
+	float maxOverLap = 0;
+	Math::Vector3 hitPos = Math::Vector3::Zero;
+	for (auto& ret : retRayList)
+	{
+		// レイを遮断しオーバーした長さが
+		// 一番長いものを探す
+		if (maxOverLap < ret.m_overlapDistance)
+		{
+			maxOverLap = ret.m_overlapDistance;
+			hitPos = ret.m_hitPos;
+			hit = true;
+
+		}
+	}
+
+	{
+		if (hit)
+		{
+			m_isGround = true;
+			m_gravity = 0.0f;
+			hitPos += {0.0f, 0.05f, 0.0f};
+		}
+		else
+		{
+			m_isGround = false;
+			auto dir = rayInfo.m_dir;
+			dir.Normalize();
+			hitPos += (dir * rayInfo.m_range);
+		}
+	}
+
+	m_pos = hitPos;
+
+	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_rot.y));
+	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(m_pos);
+
+
+	return hit;
+}
+
+bool CharacterBase::CheckSweptSphere(const Math::Vector3& oldPos, const Math::Vector3& newPos, float radius, KdCollider::CollisionResult& out)
+{
+	Math::Vector3 dir = newPos - oldPos;
+	float len = dir.Length();
+	if (len < FLT_EPSILON) return false;
+	dir.Normalize();
+
+	// Ray情報を作る（球の分だけ余裕を持たせる）
+	KdCollider::RayInfo ray;
+	ray.m_pos = oldPos;
+	ray.m_dir = dir;
+	ray.m_range = len + radius;   // 移動距離 + 球の半径
+	ray.m_type = KdCollider::TypeGround;
+
+	std::list<KdCollider::CollisionResult> results;
+	for (auto& obj : SceneManager::Instance().GetTerrainList())
+	{
+		obj->Intersects(ray, &results);
+	}
+
+	// 最も近い衝突を選ぶ
+	float minDist = FLT_MAX;
+	KdCollider::CollisionResult nearest;
+	for (auto& r : results)
+	{
+		if (r.m_overlapDistance < minDist)
+		{
+			minDist = r.m_overlapDistance;
+			nearest = r;
+		}
+	}
+
+	if (minDist < FLT_MAX)
+	{
+		out.m_hitPos = nearest.m_hitPos;
+		out.m_hitDir = nearest.m_hitDir;
+		out.m_overlapDistance = minDist;
+		return true;
+	}
+
+	return false;
 }
 
 bool CharacterBase::SearchDetect(const Math::Vector3& hitPos, const Math::Matrix& myMat, float viewRange)
@@ -401,3 +578,5 @@ bool CharacterBase::SphereCast(const Math::Vector3& center, const float radius, 
 
 	return false;
 }
+
+

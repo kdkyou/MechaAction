@@ -66,8 +66,18 @@ void MT::Update()
 
 	}
 
-	Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, true, false);
+	auto pos = m_mWorld.Translation();
+	//auto flg = Gravity(pos, Math::Vector3::Down, m_gravity);
+	auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround,false,false);
+
 	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
+
+	if (flg) {
+		Application::Instance().m_log.AddLog("MTGround\n");
+	}
+	else {
+		Application::Instance().m_log.AddLog("MTFallNow\n");
+	}
 
 	UpdateCollision();
 
@@ -93,6 +103,11 @@ void MT::PostUpdate()
 		}
 		m_nowAction->PostUpdate(m_wpThis, spTarget);
 	}
+
+	DirectX::BoundingOrientedBox box;
+	box.Center = GetPos() + m_correctionMat.Translation();
+	box.Extents = { 2.0f,5.0f,2.0f };
+	m_pDebugWire->AddDebugBox(m_correctionMat * m_mWorld, box.Extents, {}, true);
 
 }
 
@@ -184,7 +199,6 @@ void MT::UpdateCollision()
 	if (SphereCast(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, KdCollider::TypeGround, pos)) {
 		SetPos(pos);
 	}
-	float dist = 0;
 
 	DirectX::BoundingOrientedBox box;
 
@@ -458,6 +472,7 @@ bool MT::ActionStateBase::ChangeStateObstacle(std::weak_ptr<MT>& owner)
 void MT::StandUp::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 	m_durationState = 5.0f;
 
 	m_speed = 0.0f;
@@ -489,7 +504,6 @@ void MT::StandUp::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObj
 			if (target == nullptr) { return; }
 
 			auto dist = target->GetPos() - spOwner->GetPos();
-			float len = dist.Length();
 
 			spOwner->ChangeActionState(std::make_shared<Idle>());
 			return;
@@ -499,8 +513,8 @@ void MT::StandUp::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObj
 
 void MT::StandUp::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
-
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 	auto& animator = spOwner->m_spAnimator;
 	// おそらくエフェクト関連
 
@@ -516,11 +530,14 @@ void MT::StandUp::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGam
 
 void MT::StandUp::Exit(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 
 }
 void MT::Idle::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 
 	m_durationState = 1.0f;
 
@@ -557,6 +574,8 @@ void MT::Idle::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject
 void MT::Idle::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
+
 	auto& animator = spOwner->m_spAnimator;
 	// おそらくエフェクト関連
 	if (animator)
@@ -568,12 +587,14 @@ void MT::Idle::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameOb
 
 void MT::Idle::Exit(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
-
+	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 }
 
 void MT::MoveMent::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 
 	m_speed = 30.0f;
 
@@ -645,6 +666,8 @@ void MT::MoveMent::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameOb
 void MT::MoveMent::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
+
 	auto& animator = spOwner->m_spAnimator;
 	// おそらくエフェクト関連
 	if (animator)
@@ -656,11 +679,14 @@ void MT::MoveMent::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGa
 
 void MT::MoveMent::Exit(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 }
 
 void MT::Attack::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 
 	if (spOwner == nullptr) { return; }
 
@@ -743,6 +769,8 @@ void MT::Attack::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObje
 void MT::Attack::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
+
 	auto& animator = spOwner->m_spAnimator;
 	// おそらくエフェクト関連
 	if (animator)
@@ -755,6 +783,7 @@ void MT::Attack::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGame
 void MT::Attack::Exit(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 
 	if (spOwner == nullptr) { return; }
 
@@ -765,6 +794,7 @@ void MT::Attack::Exit(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject
 void MT::Hited::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 
 	if (spOwner == nullptr) { return; }
 
@@ -772,7 +802,7 @@ void MT::Hited::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject
 
 	m_durationState = 0.36f;
 
-	bool flg = ChangeStateObstacle(owner);
+	ChangeStateObstacle(owner);
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("Hited"), 10.0f, false);
 
@@ -812,6 +842,8 @@ void MT::Hited::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObjec
 void MT::Hited::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
+
 	auto& animator = spOwner->m_spAnimator;
 	// おそらくエフェクト関連
 	if (animator)
@@ -824,6 +856,7 @@ void MT::Hited::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameO
 void MT::Hited::Exit(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 
 	if (spOwner == nullptr) { return; }
 
@@ -839,6 +872,7 @@ void MT::Destroyed::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameOb
 	m_durationState = 2.0f;
 
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 
 	spOwner->m_isDestroy = true;
 	
@@ -851,6 +885,7 @@ void MT::Destroyed::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameOb
 void MT::Destroyed::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 
 	if (spOwner == nullptr) { return; }
 
@@ -871,8 +906,9 @@ void MT::Destroyed::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameO
 
 void MT::Destroyed::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
-
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
+
 	auto& animator = spOwner->m_spAnimator;
 	// おそらくエフェクト関連
 	if (animator)
@@ -884,11 +920,14 @@ void MT::Destroyed::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdG
 
 void MT::Destroyed::Exit(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 }
 
 void MT::Backed::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 
 	m_speed = 20.0f;
 
@@ -931,9 +970,13 @@ void MT::Backed::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObje
 
 void MT::Backed::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 }
 
 void MT::Backed::Exit(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spObj = obj.lock();
 }
 

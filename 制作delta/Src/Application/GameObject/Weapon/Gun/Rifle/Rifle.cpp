@@ -33,7 +33,6 @@ void Rifle::Update()
 	if (parent)
 	{
 		const KdModelWork::Node* _pNode = parent->GetModelWork().lock()->FindWorkNode(m_attachPath);
-		int i = 0;
 		if (_pNode)
 		{
 			m_mParentAttach = _pNode->m_worldTransform;
@@ -51,6 +50,8 @@ void Rifle::Trigger()
 {
 
 	CheckTrigger();
+
+	if (m_num <= 0) { return; }
 
 	if (m_nowTrigger & m_AttackTrigger) { OnTrigger(); }
 	else { m_trigger = false; }

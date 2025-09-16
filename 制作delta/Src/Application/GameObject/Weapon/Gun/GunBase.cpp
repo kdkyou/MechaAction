@@ -131,7 +131,7 @@ void GunBase::SetBulletsTrailParam(const std::string& bulletTrailPath, const Mat
 	m_bulletTrailLength = length;
 }
 
-void GunBase::SetBulletChaisingData(int bulletRotateDeg, float bulletLockAngle, float bulletLostTime, float bulletTrackingDistance)
+void GunBase::SetBulletChaisingData(float bulletRotateDeg, float bulletLockAngle, float bulletLostTime, float bulletTrackingDistance)
 {
 	m_bulletRotateDeg = bulletRotateDeg;
 	m_bulletLockAngle = bulletLockAngle;

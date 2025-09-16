@@ -28,6 +28,11 @@ public:
 		KdJsonUtility::GetArray(jsonObj, "FirstEmmisive", &m_firstEmmisive.x, 3);
 		KdJsonUtility::GetValue(jsonObj, "WaitChangeSpeed", &m_waitChangeSpeed);
 		KdJsonUtility::GetValue(jsonObj, "ChangeSpeed", &m_changeSpeed);
+
+		if (m_spModel)
+		{
+			m_spModel->GetData()->FindMinMaxPos(m_minPos, m_maxPos);
+		}
 	}
 
 	// このクラスの内容をJSONデータ化する
@@ -57,9 +62,14 @@ private:
 	Math::Vector3 m_firstEmmisive = {};
 	Math::Vector3 m_secondEmmisive = {};
 
+	Math::Vector3 m_minPos = {};
+	Math::Vector3 m_maxPos = {};
+
 	bool m_isEnableChange = false;
 
 	bool m_isChain = true;
+
+	bool m_isLightning = false;
 
 	int m_subScript = 0;
 

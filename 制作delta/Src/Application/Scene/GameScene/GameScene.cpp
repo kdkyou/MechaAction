@@ -35,6 +35,7 @@ void GameScene::Init()
 	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherEnable(true);
 	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherDist(6.0f);
 
+	KdEffekseerManager::GetInstance().StopAllEffect();
 
 	//===================================================================
 	// ステージ初期化

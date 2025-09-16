@@ -50,7 +50,7 @@ float BulletDamage(const Math::Vector3& _startPos, const Math::Vector3& _endPos,
 
 	// 係数を離れた距離と減衰間隔から取得
 	// 何乗するか
-	int calcDumping = (overLength / _dampingInterval);
+	float calcDumping = (overLength / _dampingInterval);
 
 	// ダメージ計算
 	float nowDamage = _damage * std::pow(_dampingRate, calcDumping);

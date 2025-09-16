@@ -475,7 +475,7 @@ void Bullet::SetBulletType(const moveType _type, const std::weak_ptr<CharacterBa
 	m_wpTarget = _chasigTarget;
 }
 
-void Bullet::SetChasingData(int rotateSpeedDeg, float lockAngle, float lostTime,float trackingDistance)
+void Bullet::SetChasingData(float rotateSpeedDeg, float lockAngle, float lostTime,float trackingDistance)
 {
 	m_rotateSpeedDeg = rotateSpeedDeg;
 	m_maxLockAngle = lockAngle;

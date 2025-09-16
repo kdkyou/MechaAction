@@ -34,7 +34,7 @@ void Shield::CreateShield()
 
 			if (i < 4)
 			{
-				uvs.push_back(Math::Vector2(i % 2 , i / 2));
+				uvs.push_back(Math::Vector2((float)(i % 2) , i / 2.0f));
 			}
 			else {
 				uvs.push_back(Math::Vector2(0.5f, 0.5f));

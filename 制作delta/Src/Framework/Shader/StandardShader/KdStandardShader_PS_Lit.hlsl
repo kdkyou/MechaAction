@@ -2,22 +2,22 @@
 #include "../inc_KdCommon.hlsli"
 
 // モデル描画用テクスチャ
-Texture2D g_baseTex : register(t0);			// ベースカラーテクスチャ
-Texture2D g_metalRoughTex : register(t1);	// メタリック/ラフネステクスチャ
-Texture2D g_emissiveTex : register(t2);		// 発光テクスチャ
-Texture2D g_normalTex : register(t3);		// 法線マップ
+Texture2D g_baseTex : register(t0); // ベースカラーテクスチャ
+Texture2D g_metalRoughTex : register(t1); // メタリック/ラフネステクスチャ
+Texture2D g_emissiveTex : register(t2); // 発光テクスチャ
+Texture2D g_normalTex : register(t3); // 法線マップ
 
 //追加
 Texture2D g_ditherTex : register(t9); //アルファディザ用
 
 // 特殊処理用テクスチャ
-Texture2D g_dirShadowMap : register(t10);	// 平行光シャドウマップ
-Texture2D g_dissolveTex : register(t11);	// ディゾルブマップ
+Texture2D g_dirShadowMap : register(t10); // 平行光シャドウマップ
+Texture2D g_dissolveTex : register(t11); // ディゾルブマップ
 Texture2D g_environmentTex : register(t12); // 反射景マップ
 
 // サンプラ
-SamplerState g_ss : register(s0);				// 通常のテクスチャ描画用
-SamplerComparisonState g_ssCmp : register(s1);	// 補間用比較機能付き
+SamplerState g_ss : register(s0); // 通常のテクスチャ描画用
+SamplerComparisonState g_ssCmp : register(s1); // 補間用比較機能付き
 
 
 float BlinnPhong(float3 lightDir, float3 vCam, float3 normal, float specPower)
@@ -62,7 +62,7 @@ float4 main(VSOutput In) : SV_Target0
 	float4 baseColor = g_baseTex.Sample(g_ss, In.UV) * g_BaseColor * In.Color;
 	
 	// Alphaテスト
-	if( baseColor.a < 0.05f )
+	if (baseColor.a < 0.05f)
 	{
 		discard;
 	}
@@ -73,7 +73,7 @@ float4 main(VSOutput In) : SV_Target0
 	vCam = normalize(vCam);
 
 	//アルファディザ
-	if(g_alphaEnalbe)
+	if (g_alphaEnalbe)
 	{
 		//fmod :　「%」余りを求める演算子
 		// In : ピクセルの情報　Pos : 2D座標
@@ -105,7 +105,7 @@ float4 main(VSOutput In) : SV_Target0
 		float ditherDist = g_alphaDist;
 
 		// max(x,y) : 大きい方を返す
-		float range = max(0 , camDist - ditherDist);
+		float range = max(0, camDist - ditherDist);
 		//float range = max(0, In.wvPos.z - ditherDist);
 
 		//割合算出
@@ -148,7 +148,7 @@ float4 main(VSOutput In) : SV_Target0
 	// 粗さ
 	float roughness = mr.g * g_Roughness;
 	// ラフネスを逆転させ「滑らか」さにする
-	float smoothness = 1.0 - roughness; 
+	float smoothness = 1.0 - roughness;
 	float specPower = pow(2, 11 * smoothness); // 1～2048
 	
 	//------------------------------------------
@@ -158,9 +158,9 @@ float4 main(VSOutput In) : SV_Target0
 	float3 outColor = 0;
 	
 		// 材質の拡散色　非金属ほど材質の色になり、金属ほど拡散色は無くなる
-	const float3 baseDiffuse = lerp( baseColor.rgb, float3( 0, 0, 0 ), metallic );
+	const float3 baseDiffuse = lerp(baseColor.rgb, float3(0, 0, 0), metallic);
 		// 材質の反射色　非金属ほど光の色をそのまま反射し、金属ほど材質の色が乗る
-	const float3 baseSpecular = lerp( 0.04, baseColor.rgb, metallic );
+	const float3 baseSpecular = lerp(0.04, baseColor.rgb, metallic);
 
 	//-------------------------------
 	// シャドウマッピング(影判定)
@@ -203,8 +203,8 @@ float4 main(VSOutput In) : SV_Target0
 	// Diffuse(拡散光)
 	{
 		// 光の方向と法線の方向との角度さが光の強さになる
-		float lightDiffuse = dot( -g_DL_Dir, wN );
-		lightDiffuse = saturate( lightDiffuse ); // マイナス値は0にする　0(暗)～1(明)になる
+		float lightDiffuse = dot(-g_DL_Dir, wN);
+		lightDiffuse = saturate(lightDiffuse); // マイナス値は0にする　0(暗)～1(明)になる
 
 		// 正規化Lambert
 		lightDiffuse /= 3.1415926535;
@@ -217,7 +217,7 @@ float4 main(VSOutput In) : SV_Target0
 	{
 		// 反射した光の強さを求める
 		// Blinn-Phong NDF
-		float spec = BlinnPhong( g_DL_Dir, vCam, wN, specPower );
+		float spec = BlinnPhong(g_DL_Dir, vCam, wN, specPower);
 
 		// 光の色 * 反射光の強さ * 材質の反射色 * 透明率 * 適当な調整値
 		outColor += (g_DL_Color * spec) * baseSpecular * baseColor.a * 0.5 * shadow;
@@ -230,25 +230,25 @@ float4 main(VSOutput In) : SV_Target0
 	//-------------------------
 	// 点光
 	//-------------------------
-	for( int i = 0; i < g_PointLightNum.x; i++ )
+	for (int i = 0; i < g_PointLightNum.x; i++)
 	{
 		// ピクセルから点光への方向
-		float3 dir = g_PointLights[ i ].Pos - In.wPos;
+		float3 dir = g_PointLights[i].Pos - In.wPos;
 		
 		// 距離を算出
-		float dist = length( dir );
+		float dist = length(dir);
 		
 		// 正規化
 		dir /= dist;
 		
 		// 点光の判定以内
-		if( dist < g_PointLights[ i ].Radius )
+		if (dist < g_PointLights[i].Radius)
 		{
 			// 半径をもとに、距離の比率を求める
-			float atte = 1.0 - saturate( dist / g_PointLights[ i ].Radius );
+			float atte = 1.0 - saturate(dist / g_PointLights[i].Radius);
 			
 			// 明度の追加
-			totalBrightness += (1 - pow( 1 - atte, 2 )) * g_PointLights[ i ].IsBright;
+			totalBrightness += (1 - pow(1 - atte, 2)) * g_PointLights[i].IsBright;
 			
 			// 逆２乗の法則
 			atte *= atte;
@@ -256,8 +256,8 @@ float4 main(VSOutput In) : SV_Target0
 			// Diffuse(拡散光)
 			{
 				// 光の方向と法線の方向との角度さが光の強さになる
-				float lightDiffuse = dot( dir, wN );
-				lightDiffuse = saturate( lightDiffuse ); // マイナス値は0にする　0(暗)～1(明)になる
+				float lightDiffuse = dot(dir, wN);
+				lightDiffuse = saturate(lightDiffuse); // マイナス値は0にする　0(暗)～1(明)になる
 
 				lightDiffuse *= atte; // 減衰
 
@@ -272,7 +272,7 @@ float4 main(VSOutput In) : SV_Target0
 			{
 				// 反射した光の強さを求める
 				// Blinn-Phong NDF
-				float spec = BlinnPhong( -dir, vCam, wN, specPower );
+				float spec = BlinnPhong(-dir, vCam, wN, specPower);
 
 				spec *= atte; // 減衰
 				
@@ -285,11 +285,38 @@ float4 main(VSOutput In) : SV_Target0
 	outColor += g_AmbientLight.rgb * baseColor.rgb * baseColor.a;
 
 
-	if(g_lightningEnable)
+	if (g_lightningEnable)
 	{
 		float3 emissiveTexCol = g_emissiveTex.Sample(g_ss, In.UV).rgb * In.Color.rgb;
 
-		float gradRate = saturate((In))
+		// Y方向での進行度を計算
+		float gradRate = saturate((In.lPos.y - g_lightningMinPos.y) / (g_lightningMaxPos.y - g_lightningMinPos.y));
+
+		float rate = saturate(gradRate);
+
+		
+		// 光がどこまで進んだか
+		float mask = step(gradRate, g_lightningProgress);
+
+		//// 色の補間
+		float3 emissiveColor = lerp(g_lightningColorA, g_lightningColorB, mask);
+
+		// 色の補間
+		//float3 emissiveColor = lerp(g_lightningColorA, g_lightningColorB, rate);
+
+		//emissiveColor *= mask;
+		
+		// 自己発光色の適応
+		if (g_OnlyEmissie)
+		{
+			outColor = emissiveTexCol * emissiveColor * g_Emissive;
+		}
+		else
+		{
+			outColor += emissiveTexCol * emissiveColor * g_Emissive;
+		}
+		
+
 	}
 	else
 	{
@@ -301,7 +328,7 @@ float4 main(VSOutput In) : SV_Target0
 		else
 		{
 			outColor += g_emissiveTex.Sample(g_ss, In.UV).rgb * g_Emissive * In.Color.rgb;
-		}	
+		}
 	}
 	
 	
@@ -349,7 +376,7 @@ float4 main(VSOutput In) : SV_Target0
 	}
 
 	// リムライト処理
-	if(g_limLightEnable > 0)
+	if (g_limLightEnable > 0)
 	{
 		float3 viewDir = normalize(g_CamPos - In.wPos);
 		float rim = 1.0 - saturate(dot(wN, viewDir));
@@ -371,7 +398,7 @@ float4 main(VSOutput In) : SV_Target0
 		outColor.rgb *= 0.7f + 0.3 * ao;
 	}
 	
-	totalBrightness = saturate( totalBrightness );
+	totalBrightness = saturate(totalBrightness);
 	outColor *= totalBrightness;
 	
 	//------------------------------------------

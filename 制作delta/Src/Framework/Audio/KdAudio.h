@@ -154,7 +154,7 @@ public:
 
 	// Doppler効果
 	void SetVelocity(const Math::Vector3& velocity);
-	void SetInnerRadiusAngle(int degAngle);
+	void SetInnerRadiusAngle(float degAngle);
 	//void SetPitch(float pitch);
 
 	void Update3D();

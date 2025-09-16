@@ -212,6 +212,29 @@ bool KdModelData::IsSkinMesh()
 	return false;
 }
 
+// モデルの最小地点の頂点と最大地点の頂点を探す
+void KdModelData::FindMinMaxPos(Math::Vector3& resultMinPos, Math::Vector3& resultMaxPos)
+{
+	Math::Vector3 minPos(FLT_MAX, FLT_MAX, FLT_MAX);
+	Math::Vector3 maxPos(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+	for (auto& node : GetOriginalNodes())
+	{
+		auto& box = node.m_spMesh->GetBoundingBox();
+		Math::Vector3 center = box.Center;
+		Math::Vector3 extents = box.Extents;
+		Math::Vector3 nodeMinLocal = center - extents;
+		Math::Vector3 nodeMaxLocal = center + extents;
+
+		minPos = Math::Vector3::Min(minPos, nodeMinLocal);
+		maxPos = Math::Vector3::Max(maxPos, nodeMaxLocal);
+
+	}
+
+	resultMinPos = minPos;
+	resultMaxPos = maxPos;
+}
+
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // 

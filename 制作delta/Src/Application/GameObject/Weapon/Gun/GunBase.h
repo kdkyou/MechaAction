@@ -19,7 +19,7 @@ public:
 	void MakeAnimator(const std::string& animation, float compSpeed, bool loop = false);
 	void SetBulletsParam(const std::string& bulletModelPath, float aliveTime, int damage, float speed, float range, float dampingInterval, float dampingRate);
 	void SetBulletsTrailParam(const std::string& bulletTrailPath,const Math::Color& color,float width,UINT length);
-	void SetBulletChaisingData(int bulletRotateAngle, float bulletLockAngle, float bulletLostTime, float bulletTrackingDistance);
+	void SetBulletChaisingData(float bulletRotateAngle, float bulletLockAngle, float bulletLostTime, float bulletTrackingDistance);
 	void SetShotSoundPath(const std::string& path) { m_shotSoundPath = path; }
 
 	bool SetNodeMats(const std::string& nodeName);

@@ -64,6 +64,7 @@ private:
 
 	enum CharacterStateName
 	{
+		Start,
 		Stand,
 		StandUp,
 		StandGuard,
@@ -84,6 +85,8 @@ private:
 		RightSorwdBef,
 		RightSorwdMid,
 		RightSorwdAf,
+		RightSorwdSeco,
+		RightSorwdCharge,
 		LeftShoulderAttack,
 		Hited,
 		Destoryed,
@@ -91,7 +94,7 @@ private:
 
 	const bool SwordRangeCheck();
 	
-	void OverTrans(const std::string& nowAnimName,float animProgress);
+	void OverTrans(const std::string& nowAnimName,const float animProgress);
 
 	Math::Vector3								m_stepHigh = { 0.0f,0.2f,0.0f };
 
@@ -160,13 +163,13 @@ private:
 		void Checkkey(std::weak_ptr<Character>& owner);
 
 		const std::string& GetName() { return m_animName; }
-		const UINT GetState() { return m_stateNum; }
+		const UINT GetState() const { return m_stateNum; }
 
 protected:
 
 		const Math::Vector3 Direct(std::weak_ptr<Character>& owner, bool isCamera);
 
-		void Trans(std::weak_ptr<Character>& owner,float animProgress);
+		void Trans(std::weak_ptr<Character>& owner,const float animProgress);
 
 
 		void EffectUpdate(std::weak_ptr<Character>& owner);
@@ -205,6 +208,19 @@ protected:
 		std::list<std::shared_ptr<Effect>> m_spEffects;
 
 		std::weak_ptr<KdSoundInstance> m_wpRunSound;
+
+	};
+
+	class ActionStart :public ActionStateBase
+	{
+	public:
+		virtual ~ActionStart() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 
 	};
 
@@ -433,18 +449,6 @@ protected:
 	private:
 	};
 
-	class ActionRightChargeAttack :public ActionStateBase
-	{
-	public:
-		virtual ~ActionRightChargeAttack() override {}
-
-		void Enter(std::weak_ptr<Character>& owner) override;
-		void Update(std::weak_ptr<Character>& owner)override;
-		void PostUpdate(std::weak_ptr<Character>& owner)override;
-		void Exit(std::weak_ptr<Character>& owner)override;
-	private:
-	};
-
 	class ActionRightAttackMid :public ActionStateBase
 	{
 	public:
@@ -460,6 +464,30 @@ protected:
 	{
 	public:
 		virtual ~ActionRightAttackAf()  override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+
+	class ActionRightAttackSecond :public ActionStateBase
+	{
+	public:
+		virtual ~ActionRightAttackSecond()  override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+
+	class ActionRightAttackCharge :public ActionStateBase
+	{
+	public:
+		virtual ~ActionRightAttackCharge()  override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;

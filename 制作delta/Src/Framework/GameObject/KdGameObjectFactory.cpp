@@ -21,7 +21,14 @@ std::shared_ptr<KdGameObject> KdGameObjectFactory::CreateGameObject(const std::s
 
 std::shared_ptr<CharacterBase> KdGameObjectFactory::CreateCharacterBase(const std::string_view objName) const
 {
+	auto creater = m_createCharaFunction.find(objName);
 
+	if (creater == m_createCharaFunction.end())
+	{
+		assert(0 && "GameObjectFactoryに未登録のキャラクタークラスです");
 
-	return std::shared_ptr<CharacterBase>();
+		return nullptr;
+	}
+
+	return  creater->second();
 }

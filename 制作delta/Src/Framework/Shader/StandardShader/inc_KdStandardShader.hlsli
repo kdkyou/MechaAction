@@ -64,7 +64,7 @@ struct VSOutput
 	float3 wPos  : TEXCOORD0;	// ワールド3D座標
 	float3 wvPos : TEXCOORD6;	//ビュー座標 追加
 
-	float3 lPos : TEXCOORD9;	//ローカル座標
+	float3 lPos : TEXCOORD7;	//ローカル座標
 	
 
 	float2 UV	 : TEXCOORD1;	// UV座標
