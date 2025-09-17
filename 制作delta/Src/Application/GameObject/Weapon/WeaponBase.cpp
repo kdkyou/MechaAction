@@ -45,12 +45,12 @@ void WeaponBase::DrawLit()
 {
 	if (m_spModelWork)
 	{
-		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld);
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld,kWhiteColor,m_emissive);
 	}
 
 	if (m_spModelData)
 	{
-		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld);
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld, kWhiteColor, m_emissive);
 	}
 
 }
@@ -59,12 +59,12 @@ void WeaponBase::GenerateDepthMapFromLight()
 {
 	if (m_spModelWork)
 	{
-		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld);
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld, kWhiteColor, m_emissive);
 	}
 
 	if (m_spModelData)
 	{
-		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld);
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld, kWhiteColor, m_emissive);
 	}
 }
 

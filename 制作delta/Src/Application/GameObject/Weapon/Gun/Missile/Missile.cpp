@@ -14,10 +14,10 @@ void Missile::Init()
 
 void Missile::Update()
 {
-	
-	if (m_nowTrigger & m_AttackTrigger) { m_trigger = true; }
 	//
 	Trigger();
+	
+	if (m_nowTrigger & m_AttackTrigger) { m_trigger = true; }
 
 	auto parent = m_wpParent.lock();
 

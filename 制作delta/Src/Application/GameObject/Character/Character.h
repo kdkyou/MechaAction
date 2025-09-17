@@ -209,6 +209,18 @@ protected:
 
 		std::weak_ptr<KdSoundInstance> m_wpRunSound;
 
+		enum moveType
+		{
+			NoMove,
+			Right,
+			Left,
+			Back,
+			Front,
+		};
+
+		moveType m_type =NoMove;
+		moveType m_prevType = NoMove;
+
 	};
 
 	class ActionStart :public ActionStateBase
@@ -305,6 +317,9 @@ protected:
 		void Update(std::weak_ptr<Character>& owner)override;
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+
+
+	private:
 	};
 
 	class ActionMoveShield : public ActionStateBase
@@ -316,6 +331,7 @@ protected:
 		void Update(std::weak_ptr<Character>& owner)override;
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
 	};
 
 	class ActionBoost :public ActionStateBase
@@ -370,7 +386,8 @@ protected:
 		void PostUpdate(std::weak_ptr<Character>& owner)override;
 		void Exit(std::weak_ptr<Character>& owner)override;
 	private:
-	};
+
+};
 
 	class ActionBoostDushEnd :public ActionStateBase
 	{

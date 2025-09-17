@@ -27,8 +27,8 @@ void Character::Init()
 	m_mWorld = Math::Matrix::Identity;
 	SetPos({ 0, 1.0f, 0 });
 
-	m_correction = { 0.0,6.0f,0.0f };
-	Math::Vector3 pos = { 0.0f,6.0f,0.0f };
+	m_correction = { 0.0,8.0f,0.0f };
+	Math::Vector3 pos = { 0.0f,8.0f,0.0f };
 	m_correctionMat = Math::Matrix::CreateTranslation(pos);
 
 
@@ -421,16 +421,32 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 
 			//外積を求める（どっっちに回転するのか調べる）
 			Math::Vector3 c = targetDir.Cross(nowDir);
-
 			if (c.y >= 0)
 			{
-				//右回転
-				m_rot.y -= ang;
+				if (m_nowAction->GetState() == CharacterStateName::BoostDush)
+				{
+					ang = 5.0f;
+					//右回転
+					m_rot.y -= ang;
+				}
+				else {
+
+					//右回転
+					m_rot.y -= ang;
+				}
 			}
 			else
 			{
-				//左回転
-				m_rot.y += ang;
+				if (m_nowAction->GetState() == CharacterStateName::BoostDush)
+				{
+					ang = 5.0f;
+				
+					m_rot.y += ang;
+				}
+				else {
+					//左回転
+					m_rot.y += ang;
+				}
 			}
 		}
 
@@ -890,10 +906,10 @@ void Character::ActionStateBase::Checkkey(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	/*spOwner->ChangeEnableLeftAttack(false);
-	spOwner->ChangeEnableRightAttack(false);
-	spOwner->ChangeEnableLeftShoulderAttack(false);
-	spOwner->ChangeEnableRightShoulderAttack(false);*/
+	//spOwner->ChangeEnableLeftAttack(false);
+	//spOwner->ChangeEnableRightAttack(false);
+	//spOwner->ChangeEnableLeftShoulderAttack(false);
+	spOwner->ChangeEnableRightShoulderAttack(false);
 
 
 	m_isMove = spOwner->IsMove();
@@ -914,11 +930,11 @@ void Character::ActionStateBase::Checkkey(std::weak_ptr<Character>& owner)
 	if (m_isLeftShoulder)
 	{
 		spOwner->ChangeEnableLeftShoulderAttack(true);
-	}
+	}*/
 	if (m_isRightShoulder)
 	{
 		spOwner->ChangeEnableRightShoulderAttack(true);
-	}*/
+	}
 
 }
 
@@ -1582,6 +1598,80 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 
 	Checkkey(owner);
 
+	if (CameraManager::Instance().GetNowType() == CameraManager::Lock)
+	{	
+		auto& move = spOwner->m_vMove;
+
+		m_prevType = m_type;
+
+		if (move.x > 0) {
+			if (move.z < 0) {
+				m_type = Back;
+				if (m_type != m_prevType)
+				{
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
+				}
+			}
+			else if (move.z > 0) {
+				m_type = Front;
+				if (m_type != m_prevType)
+				{
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+				}
+			}
+			else {
+				m_type = Right;
+				if (m_type != m_prevType)
+				{
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightWalk"), 6.0f, true);
+				}
+			}
+		}
+		else if (move.x < 0) {
+
+			if (move.z < 0) {
+				m_type = Back;
+				if (m_type != m_prevType)
+				{
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
+				}
+			}
+			else if (move.z > 0) {
+				m_type = Front;
+				if (m_type != m_prevType)
+				{
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+				}
+			}
+			else
+			{
+				m_type = Left;
+				if (m_type != m_prevType)
+				{
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("LeftWalk"), 6.0f, true);
+				}
+			}
+		}
+		else
+		{
+			if (move.z < 0) {
+				m_type = Back;
+				if (m_type != m_prevType)
+				{
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
+				}
+			}
+			else if (move.z > 0) {
+				m_type = Front;
+				if (m_type != m_prevType)
+				{
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+				}
+			}
+		}
+
+	}
+
 
 	if (m_isFlow) {
 		spOwner->ChangeActionState(std::make_shared<ActionJump>());
@@ -2232,16 +2322,20 @@ void Character::ActionBoostDush::Enter(std::weak_ptr<Character>& owner)
 	if (CameraManager::Instance().GetNowType() == CameraManager::Lock) {
 
 		if (move.x > 0) {
+			m_type = Right;
 			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushRight"), 10.0f, false);
 		}
 		else if (move.x < 0) {
+			m_type = Left;
 			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushLeft"), 10.0f, false);
 
 		}
 		if (move.z > 0) {
+			m_type = Front;
 			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 10.0f, false);
 		}
 		else if (move.z < 0) {
+			m_type = Back;
 			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushBack"), 10.0f, false);
 		}
 	}
@@ -2302,6 +2396,81 @@ void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
 
 	std::shared_ptr<Character> spOwner = owner.lock();
 	Checkkey(owner);
+
+
+	if (CameraManager::Instance().GetNowType() == CameraManager::Lock)
+	{
+		auto& move = spOwner->m_vMove;
+
+		m_prevType = m_type;
+
+		if (move.x > 0) {
+			if (move.z < 0) {
+				m_type = Back;
+				if (m_type != m_prevType)
+				{
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushBack"), 6.0f, true);
+				}
+			}
+			else if (move.z > 0) {
+				m_type = Front;
+				if (m_type != m_prevType)
+				{
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 6.0f, true);
+				}
+			}
+			else {
+				m_type = Right;
+				if (m_type != m_prevType)
+				{
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushRight"), 6.0f, true);
+				}
+			}
+		}
+		else if (move.x < 0) {
+
+			if (move.z < 0) {
+				m_type = Back;
+				if (m_type != m_prevType)
+				{
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushBack"), 6.0f, true);
+				}
+			}
+			else if (move.z > 0) {
+				m_type = Front;
+				if (m_type != m_prevType)
+				{
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 6.0f, true);
+				}
+			}
+			else
+			{
+				m_type = Left;
+				if (m_type != m_prevType)
+				{
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushLeft"), 6.0f, true);
+				}
+			}
+		}
+		else
+		{
+			if (move.z < 0) {
+				m_type = Back;
+				if (m_type != m_prevType)
+				{
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("DushBack"), 6.0f, true);
+				}
+			}
+			else if (move.z > 0) {
+				m_type = Front;
+				if (m_type != m_prevType)
+				{
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 6.0f, true);
+				}
+			}
+		}
+
+	}
 
 	if (m_isFlow && !m_isGuard)
 	{
@@ -2897,7 +3066,7 @@ void Character::ActionBoostDushEnd::Update(std::weak_ptr<Character>& owner)
 	}
 	m_direction = ActionStateBase::Direct(owner, false);
 
-	auto progress = spOwner->m_spAnimator->GetProgress() * DirectX::XM_2PI;
+	auto progress = spOwner->m_spAnimator->GetProgress() * DirectX::XM_PI;
 	if (progress > 1.0f) {
 		progress = 1.0f;
 	}
@@ -2913,7 +3082,7 @@ void Character::ActionBoostDushEnd::Update(std::weak_ptr<Character>& owner)
 			Application::Instance().m_log.AddLog("Move\n");
 		}
 	//エフェクト
-	if (progress < 0.6f) {
+	if (spOwner->m_spAnimator->GetProgress() < 0.6f) {
 
 		EffectUpdate(owner);
 	}
@@ -2929,7 +3098,7 @@ void Character::ActionBoostDushEnd::PostUpdate(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	// アニメーションの更新
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f * spOwner->m_speedMag);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 60.0f * spOwner->m_speedMag);
 
 	Trans(owner, spOwner->m_spAnimator->GetProgress());
 
@@ -3480,7 +3649,7 @@ void Character::ActionRightAttackCharge::Exit(std::weak_ptr<Character>& owner)
 
 	//エフェクト
 	EffectExit();
-
+	spOwner->UnEnableTrail();
 	spOwner->ChangeEnableRightAttack(false);
 }
 

@@ -162,7 +162,7 @@ void LockCamera::Lock()
 	//float deg = Math::Quaternion::Angle(currentQuat, targetQuat);
 	// 補間スピード設定
 	float baseSpeedDeg = 90.0f;
-	float boostSpeedDeg = 720.0f;
+	float boostSpeedDeg = 1080.0f;
 
 	
 	//float boostRate = std::clamp((distance - 5.0f) / 10.0f, 0.0f, 1.0f);

@@ -535,9 +535,10 @@ bool CharacterBase::SphereCast(const Math::Vector3& center, const float radius, 
 		// ②HIT対象オブジェクトに総当たり
 		for (auto& obj : SceneManager::Instance().GetTerrainList())
 		{
-
-			obj->Intersects(sphereInfo, &retBumpList);
-
+			if (obj->GetTag() != tPlayerAttack)
+			{
+				obj->Intersects(sphereInfo, &retBumpList);
+			}
 		}
 
 	}

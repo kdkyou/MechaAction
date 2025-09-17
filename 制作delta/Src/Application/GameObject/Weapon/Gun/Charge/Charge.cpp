@@ -12,6 +12,8 @@ void Charge::Init()
 
 	m_chargeSoundPath = "Asset/Sounds/Sound/lazer_charge.wav";
 	m_shotSoundPath = "Asset/Sounds/Sound/lazer_shot.wav";
+
+	m_emissive = { 10.0f,0.0f,0.0f };
 }
 
 void Charge::Update()

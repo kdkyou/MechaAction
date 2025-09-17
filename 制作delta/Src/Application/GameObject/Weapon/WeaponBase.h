@@ -81,6 +81,8 @@ protected:
 	UINT							m_nowTrigger = 0;
 	TriggerType						m_AttackTrigger = NoneTrigger;
 
+	Math::Vector3					m_emissive = { 0.0f,0.0f,0.0f };
+
 	// 当たり判定対象
 	UINT							m_collisionType = 0;
 

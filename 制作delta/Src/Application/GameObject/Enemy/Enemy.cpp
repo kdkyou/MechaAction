@@ -866,6 +866,7 @@ void Enemy::Boost::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGam
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Boost"), 60.0f, false);
 
+	m_speed = 170.0f;
 
 	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 
@@ -887,7 +888,7 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 	}
 
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround);
 
 	//エフェクト
 	EffectUpdate(owner);
@@ -928,7 +929,7 @@ void Enemy::BoostStop::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<
 
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround);
 
 
 	if (spOwner->m_spAnimator->IsAnimationEnd() == true)
@@ -999,7 +1000,7 @@ void Enemy::MoveForward::Update(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 
 	m_direct = mat.Backward();
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround, false, false);
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
@@ -1062,7 +1063,7 @@ void Enemy::MoveBack::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<K
 	
 	m_direct = mat.Forward();
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround, false, false);
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
@@ -1120,7 +1121,7 @@ void Enemy::MoveRightRotate::Update(std::weak_ptr<Enemy>& owner, const  std::wea
 
 	m_direct = mat.Right();
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround, false, false);
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
@@ -1181,7 +1182,7 @@ void Enemy::MoveLeftRotate::Update(std::weak_ptr<Enemy>& owner, const  std::weak
 
 	m_direct = mat.Left();
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround, false, false);
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
@@ -1316,7 +1317,7 @@ void Enemy::AttackForWard::Update(std::weak_ptr<Enemy>& owner, const  std::weak_
 
 	m_direct = mat.Backward();
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround, false, false);
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
@@ -1392,7 +1393,7 @@ void Enemy::AttackBack::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr
 
 	m_direct = mat.Forward();
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround, false, false);
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
@@ -1463,7 +1464,7 @@ void Enemy::AttackLeft::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr
 
 	m_direct = mat.Left();
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround, false, false);
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
@@ -1534,7 +1535,7 @@ void Enemy::AttackRight::Update(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 
 	m_direct = mat.Right();
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround, false, false);
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
@@ -1587,7 +1588,7 @@ void Enemy::Hited::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 
-	spOwner->Move(m_speed, m_direct, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround, false, false);
 
 	//攻撃をくらったとき
 	if (spOwner->m_spAnimator->IsAnimationEnd())

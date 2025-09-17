@@ -10,7 +10,7 @@
 void Bullet::Init()
 {
 	m_pCollider = std::make_unique<KdCollider>();
-	
+
 	if (m_spModelData == nullptr)
 	{
 		DirectX::BoundingSphere sphere;
@@ -52,7 +52,7 @@ void Bullet::Update()
 	case Bullet::None:
 		break;
 	case Bullet::Sight:
-		
+
 		MoveSight();
 		break;
 	case Bullet::Chasing:
@@ -65,7 +65,7 @@ void Bullet::Update()
 
 		m_durationSight += KdFPSController::GetInstance().GetDeltaTime();
 
-		float sightTime = SIGHTTIME;
+		sightTime = SIGHTTIME;
 
 		if (m_durationSight < sightTime)
 		{
@@ -76,9 +76,9 @@ void Bullet::Update()
 		}
 	}
 
-		break;
+	break;
 	case Bullet::SightScale:
-		
+
 		MoveSight();
 
 		break;
@@ -101,7 +101,7 @@ void Bullet::Update()
 
 	Math::Matrix trans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mLocalRot * trans;
-	
+
 
 	Intersects();
 }
@@ -181,7 +181,7 @@ void Bullet::Intersects()
 			if (obj->Intersects(boxInfo, nullptr))
 			{
 				{
-					
+
 				}
 			}
 		}
@@ -198,48 +198,71 @@ void Bullet::Intersects()
 bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float length)
 {
 
-	// レイ情報作成
-	KdCollider::RayInfo rayInfo;
-	rayInfo.m_pos = pos;
-	rayInfo.m_dir = vec;
-	rayInfo.m_range = length;
-	rayInfo.m_type = KdCollider::TypeGround;
+	Math::Vector3 dir = vec;
+	float len = length;
+	if (len < FLT_EPSILON) return false;
+	dir.Normalize();
 
-	std::list<KdCollider::CollisionResult> retBumpList;
+	float radius = 1.0f;
+	// Ray情報を作る（球の分だけ余裕を持たせる）
+	KdCollider::RayInfo ray;
+	ray.m_pos = pos;
+	ray.m_dir = dir;
+	ray.m_range = len + radius;   // 移動距離 + 球の半径
+	ray.m_type = KdCollider::TypeGround;
 
+
+	std::list<KdCollider::CollisionResult> results;
+	for (auto& obj : SceneManager::Instance().GetTerrainList())
 	{
-		// ②HIT対象オブジェクトに総当たり
-		for (auto& obj : SceneManager::Instance().GetTerrainList())
-		{
-			obj->Intersects(rayInfo, &retBumpList);
-		}
-
-		rayInfo.m_type = KdCollider::TypeDamage;
-		if (m_tag == ObjectTag::tEnemyAttack) {
-			for (auto& obj : SceneManager::Instance().GetPlayerList()) {
-				if (obj->Intersects(rayInfo, nullptr))
-				{
-					OnHit();
-					obj->HitDamage(GetParameter());
-					obj->OnHit();
-					return true;
-				}
-			}
-		}
-
-		if (m_tag == ObjectTag::tPlayerAttack) {
-			for (auto& obj : SceneManager::Instance().GetEnemyList()) {
-				if (obj->Intersects(rayInfo, nullptr))
-				{
-					OnHit();
-					obj->HitDamage(GetParameter());
-					obj->OnHit();
-					return true;
-				}
-			}
-		}
-
+		obj->Intersects(ray, &results);
 	}
+
+	if (m_tag == tEnemyAttack) {
+		for (auto& obj : SceneManager::Instance().GetPlayerList())
+		{
+			if (obj->Intersects(ray, nullptr))
+			{
+				OnHit();
+				obj->HitDamage(GetParameter());
+				obj->OnHit();
+				return true;
+			}
+		}
+	}
+	if (m_tag == tPlayerAttack) {
+		for (auto& obj : SceneManager::Instance().GetEnemyList())
+		{
+			if (obj->Intersects(ray, nullptr))
+			{
+				OnHit();
+				obj->HitDamage(GetParameter());
+				obj->OnHit();
+				return true;
+			}
+		}
+	}
+
+	// 最も近い衝突を選ぶ
+	float minDist = FLT_MAX;
+	KdCollider::CollisionResult nearest;
+	for (auto& r : results)
+	{
+		if (r.m_overlapDistance < minDist)
+		{
+			minDist = r.m_overlapDistance;
+			nearest = r;
+		}
+	}
+
+	/*if (minDist < FLT_MAX)
+	{
+		out.m_hitPos = nearest.m_hitPos;
+		out.m_hitDir = nearest.m_hitDir;
+		out.m_overlapDistance = minDist;
+		return true;
+	}*/
+	return false;
 
 
 
@@ -248,7 +271,7 @@ bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float lengt
 	Math::Vector3 hitPos = Math::Vector3::Zero;
 	bool hit = false;
 	// ③結果を使って座標を補完する
-	for (auto& ret : retBumpList)
+	for (auto& ret : results)
 	{
 		if (maxOverLap < ret.m_overlapDistance)
 		{
@@ -293,7 +316,7 @@ void Bullet::DrawBright()
 {
 	if (m_moveType == SightScale)
 	{
-		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData,m_mWorld);
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld);
 	}
 }
 
@@ -302,13 +325,13 @@ void Bullet::OnHit()
 	if (m_attackNum > 0)
 	{
 		m_attackNum -= 1;
-	float damage = 0.0f;
-	 damage = BulletDamage(m_startPos, m_mWorld.Translation(), m_damage, m_range, m_dampingInterval, m_dampingRate);
-	 m_parameter = damage;
-	 m_isExpired = true;
-	 m_trail->SetEnable(false);
-	float scale = CameraManager::Instance().CalcLength(m_mWorld.Translation());
-	 KdEffekseerManager::GetInstance().Play("burn.efkefc", GetMatrix().Translation(),scale,1.0f,false);
+		float damage = 0.0f;
+		damage = BulletDamage(m_startPos, m_mWorld.Translation(), m_damage, m_range, m_dampingInterval, m_dampingRate);
+		m_parameter = damage;
+		m_isExpired = true;
+		m_trail->SetEnable(false);
+		float scale = CameraManager::Instance().CalcLength(m_mWorld.Translation());
+		KdEffekseerManager::GetInstance().Play("burn.efkefc", GetMatrix().Translation(), scale, 1.0f, false);
 	}
 
 }
@@ -321,7 +344,7 @@ void Bullet::MoveSight()
 
 	// 移動
 	float len = m_speed * KdFPSController::GetInstance().GetDeltaTime();
-	move = m_direction *len;
+	move = m_direction * len;
 
 	if (!Ray(pos, m_direction, len)) {
 		pos += move;
@@ -341,7 +364,7 @@ void Bullet::MoveSlow()
 
 	KdEase ease;
 
-	float speed	= m_speed * ease.OutSine(progress);
+	float speed = m_speed * ease.OutSine(progress);
 	// 移動
 	float len = speed * KdFPSController::GetInstance().GetDeltaTime();
 	move = m_direction * len;
@@ -356,15 +379,16 @@ void Bullet::MoveSlow()
 void Bullet::MoveChasing()
 {
 	auto spTarget = m_wpTarget.lock();
-	if (!spTarget) { 
-		m_moveType = Sight; return; }
+	if (!spTarget) {
+		m_moveType = Sight; return;
+	}
 
 
 	Math::Vector3 move = Math::Vector3::Zero;
 
 	// 自身の座標取得
 	auto pos = m_pos;
-	
+
 	// 対象の座標取得
 	Math::Vector3 targetPos = spTarget->GetCorrectionMatrix().Translation() + spTarget->GetMatrix().Translation();
 
@@ -408,7 +432,7 @@ void Bullet::MoveChasing()
 	}
 
 	// 向きを滑らかに補間
-	Math::Vector3 newForward = SlerpDirection(forward, toTarget, (m_rotateSpeedDeg) * KdFPSController::GetInstance().GetDeltaTime());
+	Math::Vector3 newForward = SlerpDirection(forward, toTarget, (m_rotateSpeedDeg)*KdFPSController::GetInstance().GetDeltaTime());
 
 	// 進行方向を再設定
 	m_direction = newForward;
@@ -475,7 +499,7 @@ void Bullet::SetBulletType(const moveType _type, const std::weak_ptr<CharacterBa
 	m_wpTarget = _chasigTarget;
 }
 
-void Bullet::SetChasingData(float rotateSpeedDeg, float lockAngle, float lostTime,float trackingDistance)
+void Bullet::SetChasingData(float rotateSpeedDeg, float lockAngle, float lostTime, float trackingDistance)
 {
 	m_rotateSpeedDeg = rotateSpeedDeg;
 	m_maxLockAngle = lockAngle;
