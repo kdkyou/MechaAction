@@ -9,6 +9,8 @@ public:
 
 	void GenerateDepthMapFromLight()override;
 
+	void DrawMarker()override;
+	
 	void SetCamera(const std::shared_ptr<CameraBase>& camera)
 	{
 		m_wpCamera = camera;
@@ -105,6 +107,7 @@ protected:
 
 	std::shared_ptr<KdModelWork>				m_spModelWork;
 	std::shared_ptr<KdModelData>				m_spModelData;
+	std::shared_ptr<KdModelData>				m_spMrkModel;
 	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
 
 	std::weak_ptr<CameraBase>					m_wpCamera;
@@ -124,9 +127,9 @@ protected:
 	float										m_gravity = 0;
 //	const float									m_gravityPow = 9.81f;
 	const float									m_gravityPow = 19.62f;
+//	const float									m_gravityPow = 29.43f;
 
 	float										m_clampSize = 10.0f;
-
 
 	bool										m_isGround = false;
 
@@ -155,10 +158,14 @@ protected:
 	float										m_viewRange = 0.0f;
 
 
+	// モデルカラー
+	Math::Color								m_modelColor = {1,1,1,1};
+	// エミッシブ
+	Math::Vector3								m_emissiveColor = {10,10,10};
 
 	// リムライト
 	Math::Vector3 m_limColor = { 0.19f,0.09f,0.09f };
-	float m_limPow = 8.0f;
+	float m_limPow =3.5f;
 	bool m_limEnable = false;
 
 	// サウンドインスタンス管理

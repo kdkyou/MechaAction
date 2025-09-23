@@ -5,6 +5,7 @@
 #include "NumberUI/NumberUI.h"
 #include "GuageUI/GuageUI.h"
 #include "BlinkUI/BlinkUI.h"
+#include "MapUI/MapUI.h"
 
 
 #include "../Weapon/Gun/GunBase.h"
@@ -186,7 +187,7 @@ void UIManager::Editor_ImGui()
 	
 	if (ImGui::BeginMenu((const char*)u8"UI作成"))
 	{
-		const char* alignStr[] = { "None","Draw", "Number","Guage"};
+		const char* alignStr[] = { "None","Draw", "Number","Guage","Blink","Map"};
 		int alignIndex = static_cast<int>(m_nowCreateType);
 		if (ImGui::Combo("Create", &alignIndex, alignStr, IM_ARRAYSIZE(alignStr)))
 		{
@@ -217,6 +218,7 @@ void UIManager::CreateUI()
 	std::shared_ptr<NumberUI> number;
 	std::shared_ptr<GuageUI> guage;
 	std::shared_ptr<BlinkUI> blink;
+	std::shared_ptr<MapUI> map;
 	switch (m_nowCreateType)
 	{
 	case UIManager::CreateType::No:
@@ -240,6 +242,11 @@ void UIManager::CreateUI()
 		blink = std::make_shared<BlinkUI>();
 		blink->Init();
 		AddUI(blink);
+		break;
+	case UIManager::CreateType::Map:
+		map = std::make_shared<MapUI>();
+		map->Init();
+		AddUI(map);
 		break;
 	default:
 		break;
@@ -329,9 +336,12 @@ void UIManager::Deserialize(const std::string& path)
 					AddUI(obj);
 				}
 
-				if (str == "")
+				if (str == "MapUI")
 				{
-
+					auto obj = std::make_shared<MapUI>();
+					obj->Init();
+					obj->Deserialize(json);
+					AddUI(obj);
 				}
 				
 			}

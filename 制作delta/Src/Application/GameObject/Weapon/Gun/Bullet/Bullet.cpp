@@ -326,7 +326,7 @@ void Bullet::OnHit()
 	{
 		m_attackNum -= 1;
 		float damage = 0.0f;
-		damage = BulletDamage(m_startPos, m_mWorld.Translation(), m_damage, m_range, m_dampingInterval, m_dampingRate);
+		damage = BulletDamage(m_startPos, m_mWorld.Translation(), (float)m_damage, m_range, m_dampingInterval, m_dampingRate);
 		m_parameter = damage;
 		m_isExpired = true;
 		m_trail->SetEnable(false);

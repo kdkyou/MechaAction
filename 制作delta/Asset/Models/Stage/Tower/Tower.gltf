@@ -18,6 +18,25 @@
 			"name":"building_003"
 		}
 	],
+	"materials":[
+		{
+			"doubleSided":true,
+			"name":"Material.001",
+			"normalTexture":{
+				"index":0,
+				"scale":1.1999999284744263
+			},
+			"pbrMetallicRoughness":{
+				"baseColorTexture":{
+					"index":1
+				},
+				"metallicFactor":0,
+				"metallicRoughnessTexture":{
+					"index":2
+				}
+			}
+		}
+	],
 	"meshes":[
 		{
 			"name":"building_003_mesh",
@@ -28,9 +47,41 @@
 						"NORMAL":1,
 						"TEXCOORD_0":2
 					},
-					"indices":3
+					"indices":3,
+					"material":0
 				}
 			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
+		},
+		{
+			"sampler":0,
+			"source":2
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/png",
+			"name":"PavingStones084_1K-PNG_NormalDX",
+			"uri":"PavingStones084_1K-PNG_NormalDX.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Plaster007_1K-PNG_Color",
+			"uri":"Plaster007_1K-PNG_Color.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Tiles086_1K-PNG_Roughness",
+			"uri":"Tiles086_1K-PNG_Roughness.png"
 		}
 	],
 	"accessors":[
@@ -93,6 +144,12 @@
 			"byteLength":15444,
 			"byteOffset":131072,
 			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
 		}
 	],
 	"buffers":[

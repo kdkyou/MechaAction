@@ -36,5 +36,5 @@ private:
 
 	bool m_flg = false;
 
-	CameraMoveType m_type;
+	CameraMoveType m_type = CameraMoveType::Concurrent;
 };

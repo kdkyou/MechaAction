@@ -30,11 +30,15 @@ void SceneManager::PostUpdate()
 
 void SceneManager::PreDraw()
 {
+	DrawMap();
+
 	m_currentScene->PreDraw();
+
 }
 
 void SceneManager::Draw()
 {
+
 	m_currentScene->Draw();
 }
 
@@ -46,6 +50,16 @@ void SceneManager::DrawSprite()
 void SceneManager::DrawDebug()
 {
 	m_currentScene->DrawDebug();
+}
+
+void SceneManager::DrawMap()
+{
+	// マップカメラのdrawを持ってきてレンダーターゲットの切り替えを行った際に何が映るか実験
+	m_currentScene->PreDrawMap();
+
+	ChangeRenderTarget();
+	m_currentScene->DrawMap();
+	UndoRenderTarget();
 }
 
 const std::list<std::shared_ptr<KdGameObject>>& SceneManager::GetObjList()
@@ -72,6 +86,28 @@ void SceneManager::AddObject(const std::shared_ptr<KdGameObject>& obj)
 {
 	m_currentScene->AddObject(obj);
 }
+
+void SceneManager::AddEnemy(const std::shared_ptr<CharacterBase>& obj)
+{
+	m_currentScene->AddEnemy(obj);
+}
+
+void SceneManager::AddTerrain(const std::shared_ptr<KdGameObject>& obj)
+{
+	m_currentScene->AddTerrain(obj);
+}
+
+void SceneManager::ChangeRenderTarget()
+{
+	m_rtPack.ClearTexture();
+	m_rtChanger.ChangeRenderTarget(m_rtPack);
+}
+
+void SceneManager::UndoRenderTarget()
+{
+	m_rtChanger.UndoRenderTarget();
+}
+
 
 void SceneManager::Edit_ImGui()
 {

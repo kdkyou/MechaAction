@@ -14,6 +14,7 @@ public:
 		Number,
 		Guage,
 		Blink,
+		Map,
 	};
 
 	void UIInit();

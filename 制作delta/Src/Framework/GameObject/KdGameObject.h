@@ -44,6 +44,7 @@ public:
 	virtual void DrawLit() {}
 	virtual void DrawUnLit() {}
 	virtual void DrawBright() {}
+	virtual void DrawMarker(){}
 	virtual void DrawSprite() {}
 
 	virtual void DrawDebug();

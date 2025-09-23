@@ -163,6 +163,7 @@
     <ClInclude Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\LookAtCamera\LookAtCamera.h" />
+    <ClInclude Include="Src\Application\GameObject\Camera\MapCamera\MapCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Src\Application\GameObject\Effect\Effect.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Fade\Fade.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.h" />
+    <ClInclude Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Drone\Drone.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\MT\MT.h" />
@@ -188,6 +190,7 @@
     <ClInclude Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\DrawUI\DrawUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\GuageUI\GuageUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\MapUI\MapUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\NumberUI\NumberUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\UIBase.h" />
     <ClInclude Include="Src\Application\GameObject\UI\UIManager.h" />
@@ -270,6 +273,7 @@
     <ClCompile Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\LookAtCamera\LookAtCamera.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Camera\MapCamera\MapCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\NoneCamera\NoneCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.cpp" />
@@ -281,6 +285,7 @@
     <ClCompile Include="Src\Application\GameObject\Effect\Effect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Fade\Fade.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Drone\Drone.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\MT\MT.cpp" />
@@ -294,6 +299,7 @@
     <ClCompile Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\DrawUI\DrawUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\GuageUI\GuageUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\MapUI\MapUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\NumberUI\NumberUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\UIManager.cpp" />

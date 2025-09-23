@@ -203,7 +203,7 @@ void Charge::ShotCharge()
 
 	std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
 	bullet->SetModelData(m_bulletModelPath);
-	bullet->SetBulletParam(m_aliveTime, damage, m_range, startPos, direct, m_speed, m_dampingInterval, m_dampingRate);
+	bullet->SetBulletParam(m_aliveTime, (float)damage, m_range, startPos, direct, m_speed, m_dampingInterval, m_dampingRate);
 	bullet->Init();
 	bullet->SetBulletType(Bullet::SightScale, {});
 	bullet->SetTag(m_tag);

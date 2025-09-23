@@ -8,6 +8,7 @@
 #include "HitCamera/HitCamera.h"
 #include "LookAtCamera/LookAtCamera.h"
 #include "AnimationCamera/AnimationCamera.h"
+#include "MapCamera/MapCamera.h"
 
 #include "../../Scene/SceneManager.h"
 
@@ -22,6 +23,9 @@ void CameraManager::Init()
 	KdEffekseerManager::GetInstance().Create(1280, 720);
 
 	m_spTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/UI/Target.png");
+
+	m_mapCamera = std::make_shared<MapCamera>();
+	m_mapCamera->Init();
 }
 
 void CameraManager::PreUpdate()
@@ -35,7 +39,10 @@ void CameraManager::Update()
 
 	Application::Instance().m_log.AddLog(m_currentCamera->GetName().c_str() + '\n');
 
+	m_mapCamera->Update();
+	
 	m_currentCamera->Update();
+
 
 	TargetUI();
 }
@@ -43,8 +50,11 @@ void CameraManager::Update()
 void CameraManager::PostUpdate()
 {
 	if (m_currentCamera == nullptr) { return; }
+	
+	m_mapCamera->PostUpdate();
 
 	m_currentCamera->PostUpdate();
+
 }
 
 void CameraManager::PreDraw()
@@ -52,6 +62,13 @@ void CameraManager::PreDraw()
 	if (m_currentCamera == nullptr) { return; }
 
 	m_currentCamera->PreDraw();
+
+}
+
+void CameraManager::MapPreDraw()
+{
+	if (m_mapCamera == nullptr) { return; }
+	m_mapCamera->PreDraw();
 }
 
 void CameraManager::DrawUnLit()
@@ -60,6 +77,12 @@ void CameraManager::DrawUnLit()
 
 	m_currentCamera->DrawUnLit();
 
+}
+
+void CameraManager::MapDrawUnLit()
+{
+	if (m_mapCamera == nullptr) { return; }
+	m_mapCamera->DrawUnLit();
 }
 
 void CameraManager::DrawSprite()
@@ -74,7 +97,7 @@ void CameraManager::DrawSprite()
 
 		for (auto& ui : m_uis)
 		{
-			KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, ui->pos.x, ui->pos.y);
+			KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, (int)ui->pos.x, (int)ui->pos.y);
 		}
 	}
 
@@ -291,11 +314,15 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 {
 	if (m_nextType == m_nowType) { return false; }
 
+	auto empty = type;
+
 	Math::Vector3 deg = Math::Vector3::Zero;
 	if (m_currentCamera != nullptr)
 	{
 		deg = m_currentCamera->GetDeg();
 	}
+
+	m_prevType = m_nowType;
 
 	switch (m_nextType)
 	{
@@ -342,11 +369,18 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 	m_currentCamera->SetDeg(deg);
 	m_currentCamera->Init();
 
+	m_mapCamera->SetLook(m_wpLookTarget);
+	m_mapCamera->SetTarget(m_wpCameraTarget);
+	m_mapCamera->SetLockTarget(m_wpLockTarget);
+
+
 	return true;
 }
 
 void CameraManager::DeserializeChange(const CameraType& type, const nlohmann::json& jsonObj)
 {
+	auto changetype = type;
+
 	switch (m_nextType)
 	{
 	case CameraManager::None:

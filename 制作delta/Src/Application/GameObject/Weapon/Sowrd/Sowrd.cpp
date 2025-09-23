@@ -33,7 +33,7 @@ void Sowrd::OnHit()
 		auto pos = m_mWorld.Translation() + m_endMat.Translation();
 	//	KdEffekseerManager::GetInstance().Play("Slash.efkefc", pos,1.0f,3.0f,false);
 		KdAudioManager::Instance().Play("Asset/Sounds/Sound/sword_hit.wav", false);
-		m_parameter = m_damage;
+		m_parameter = (float)m_damage;
 		m_attackNum--;
 		m_pCollider->SetEnableAll(false);
 
@@ -172,7 +172,7 @@ void Sowrd::Update()
 	}
 
 	auto mat =  Math::Matrix::CreateTranslation({ 0.0f,5.0f,9.0f })*m_mWorld;
-	//m_pDebugWire->AddDebugBox(mat, Math::Vector3(10.0f, 9.0f, 10.0f));
+	m_pDebugWire->AddDebugBox(mat, Math::Vector3(10.0f, 9.0f, 10.0f));
 
 	WeaponBase::Update();
 }

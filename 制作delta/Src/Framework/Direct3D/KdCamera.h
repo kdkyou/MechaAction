@@ -16,6 +16,7 @@ public:
 
 	// ※重要機能：カメラ情報(ビュー・射影行列など)をシェーダへ転送
 	void SetToShader() const;
+	void SetToShaderMap()const;
 
 	// カメラ行列の設定・カメラ行列からビュー行列を生成
 	virtual void SetCameraMatrix(const DirectX::SimpleMath::Matrix& mCam) { m_mCam = mCam; m_mView = m_mCam.Invert(); }

@@ -133,6 +133,11 @@ void BaseScene::PreDraw()
 	CameraManager::Instance().PreDraw();
 }
 
+void BaseScene::PreDrawMap()
+{
+	CameraManager::Instance().MapPreDraw();
+}
+
 void BaseScene::Draw()
 {
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
@@ -292,6 +297,36 @@ void BaseScene::DrawDebug()
 
 		}
 
+	}
+	KdShaderManager::Instance().m_StandardShader.EndUnLit();
+}
+
+void BaseScene::DrawMap()
+{
+
+	KdShaderManager::Instance().m_StandardShader.BeginUnLit();
+	{
+		CameraManager::Instance().MapDrawUnLit();
+		
+		for (auto& obj : m_terrainList)
+		{
+			if (obj->GetTag() != KdGameObject::tPlayerAttack)
+			{
+				obj->DrawLit();
+			}
+		}
+
+		for (auto& obj : m_playerList)
+		{
+			obj->DrawMarker();
+		}
+
+		for (auto& obj : m_enemyList)
+		{
+			obj->DrawMarker();
+		}
+
+		
 	}
 	KdShaderManager::Instance().m_StandardShader.EndUnLit();
 }

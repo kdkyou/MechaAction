@@ -193,6 +193,15 @@
     <Filter Include="Src\Application\Scene\RetryScene">
       <UniqueIdentifier>{454609f6-29d4-47de-9da5-915b6ce27f45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Effect\ScaleEffect">
+      <UniqueIdentifier>{c84e1fd0-008c-4578-bf53-b775190aa09f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Camera\MapCamera">
+      <UniqueIdentifier>{dec63e46-8483-4c60-8400-a1b153ebc7cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\MapUI">
+      <UniqueIdentifier>{e369bdc0-f907-4d84-9f23-47b6130eccb4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -528,6 +537,15 @@
     <ClInclude Include="Src\Application\GameObject\Character\TitleMovie.h">
       <Filter>Src\Application\GameObject\Character</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.h">
+      <Filter>Src\Application\GameObject\Effect\ScaleEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\MapCamera\MapCamera.h">
+      <Filter>Src\Application\GameObject\Camera\MapCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\MapUI\MapUI.h">
+      <Filter>Src\Application\GameObject\UI\MapUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -829,6 +847,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\TitleMovie.cpp">
       <Filter>Src\Application\GameObject\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.cpp">
+      <Filter>Src\Application\GameObject\Effect\ScaleEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\MapCamera\MapCamera.cpp">
+      <Filter>Src\Application\GameObject\Camera\MapCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\MapUI\MapUI.cpp">
+      <Filter>Src\Application\GameObject\UI\MapUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

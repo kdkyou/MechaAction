@@ -14,9 +14,12 @@ public :
 	void PostUpdate();
 
 	void PreDraw();
+	void PreDrawMap();
 	void Draw();
 	void DrawSprite();
 	void DrawDebug();
+
+	void DrawMap();
 
 
 	// オブジェクトリストを取得

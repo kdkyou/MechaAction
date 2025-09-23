@@ -54,17 +54,17 @@ protected:
 
 	std::string				   m_uiTag = "None";
 
-	std::shared_ptr<KdTexture> m_spTex;
+	std::shared_ptr<KdTexture> m_spTex = nullptr;
 
 
 	Math::Rectangle			   m_rect;
 
-	int						   m_rectX;
-	int						   m_rectY;
-	int						   m_drawWi;
-	int						   m_drawHe;
-	int						   m_rectWi;
-	int						   m_rectHe;
+	int						   m_rectX =0;
+	int						   m_rectY =0;
+	int						   m_drawWi=0;
+	int						   m_drawHe=0;
+	int						   m_rectWi=0;
+	int						   m_rectHe=0;
 
 	std::string				   m_fileName;
 

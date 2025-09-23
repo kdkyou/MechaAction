@@ -74,7 +74,13 @@ void HitCamera::PostUpdate()
 	if (m_duration >= m_limitDuration)
 	{
 		CameraManager::Instance().EnableChangedCamera(true);
-		CameraManager::Instance().SetNextType(CameraManager::Tracking);
+		if (CameraManager::Instance().GetPrevType() != CameraManager::Lock)
+		{
+			CameraManager::Instance().SetNextType(CameraManager::Tracking);
+		}
+		else {
+			CameraManager::Instance().SetNextType(CameraManager::Lock);
+		}
 	}
 
 	//UpdateRotateByMouse();

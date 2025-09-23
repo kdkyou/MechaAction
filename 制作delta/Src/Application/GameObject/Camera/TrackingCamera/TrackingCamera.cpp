@@ -59,44 +59,36 @@ void TrackingCamera::PostUpdate()
 		m_unEnableChangeTime = 0;
 		CameraManager::Instance().EnableChangedCamera(true);
 	}
-	auto viewProjMat = m_spCamera->GetCameraViewMatrix() * m_spCamera->GetProjMatrix();
-	//Math::Vector4 clipPos = DirectX::XMVector4Transform(targetPos,viewProjMat);
-	//clipPos /= clipPos.w; // NDC (-1~1)
-	Math::Vector3 clipPos = {};
-	m_spCamera->ConvertWorldToScreenDetail(targetPos,clipPos);
-
-	float margin = 0.9f;
-
-	bool outOfScreen =
-		(clipPos.x < EditorData::GetInstance().m_ScreenWh *-margin || clipPos.x >EditorData::GetInstance().m_ScreenWh * margin ||
-			clipPos.y < EditorData::GetInstance().m_ScreenSih * -margin);
-
-	Application::Instance().m_log.AddLog("ClipPos X:%.2f,Y:%.2f\n", clipPos.x, clipPos.y);
+	
+	float margin = 0.25f;
 
 	// 画面範囲外判定
-	if (outOfScreen)
+	CheckScreenPull();
+	
+	Math::Vector3 pos = {};
+	if (m_isPull)
 	{
-
-		m_speed = 15.0f;
-		float t = 0.3f;
-		auto pos = Math::Vector3::Lerp(m_localPos, m_basePos, t);
+		
+		pos = m_localPos;
 		m_mLocalPos = Math::Matrix::CreateTranslation(pos);
-		/*if (clipPos.x < -margin)
-		{
 
-		}
-		else if (clipPos.x > margin) {
+	m_pos = Math::Vector3::Lerp(
+		m_pos,
+		targetPos,
+		margin
+		);
 
-		}
-		if (clipPos.y < -margin)
-		{
-
-		}*/
 	}
 	else {
-		m_speed = 5.0f;
-		m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
+		//m_speed = 5.0f;
+		pos = m_localPos;
+	m_mLocalPos = Math::Matrix::CreateTranslation(pos);
 
+	m_pos = Math::Vector3::Lerp(
+		m_pos,
+		targetPos,
+		m_speed*KdFPSController::GetInstance().GetDeltaTime()			//進行速度*デルタタイム
+		);
 	}
 		// 補正処理
 	//	m_speed = 10.0f;
@@ -117,12 +109,6 @@ void TrackingCamera::PostUpdate()
 		m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
 	}*/
 
-	m_pos = Math::Vector3::Lerp(
-		m_pos,
-		targetPos,
-		m_speed*KdFPSController::GetInstance().GetDeltaTime()			//進行速度*デルタタイム
-		);
-
 	UpdateRotateByMouse();
 	m_mRotation = GetRotationMatrix();
 
@@ -136,5 +122,31 @@ void TrackingCamera::Editor_ImGui()
 	ImGui::SliderFloat("LerpSpeed", &m_speed, 0.0f, 100.0f);
 
 	ImGui::Text("pos x:%.2f,y:%.2f,z:%.2f",m_mLocalPos.Translation().x, m_mLocalPos.Translation().y, m_mLocalPos.Translation().z);
+
+}
+
+void TrackingCamera::CheckScreenPull()
+{
+	auto _spTarget = m_wpTarget.lock();
+	auto targetPos = _spTarget->GetPos();
+
+	auto viewProjMat = m_spCamera->GetCameraViewMatrix() * m_spCamera->GetProjMatrix();
+	//Math::Vector4 clipPos = DirectX::XMVector4Transform(targetPos,viewProjMat);
+	//clipPos /= clipPos.w; // NDC (-1~1)
+	Math::Vector3 clipPos = {};
+	m_spCamera->ConvertWorldToScreenDetail(targetPos, clipPos);
+
+	if (clipPos.x > 450.0f || clipPos.x < -450.0f || clipPos.y < -350.0f)
+	{
+		m_isPull = true;
+	}
+
+	if (clipPos.x <300.0f && clipPos.x > -300.0f && clipPos.y > -300.0f)
+	{
+		m_isPull = false;
+	}
+	
+	
+	Application::Instance().m_log.AddLog("ClipPos X:%.2f,Y:%.2f\n", clipPos.x, clipPos.y);
 
 }

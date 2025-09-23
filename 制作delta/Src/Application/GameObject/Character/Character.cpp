@@ -10,6 +10,7 @@
 //#include"../Effect/ConcentrationLine/ConcentrationLine.h"
 
 #include"TransAC.h"
+#include "../Effect/ScaleEffect/ScaleEffect.h"
 
 void Character::Init()
 {
@@ -23,14 +24,17 @@ void Character::Init()
 		m_spAnimator->SetAnimation(m_spModelWork->GetData()->GetAnimation("Start"), 1.0f, true, true);
 	}
 
+	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Player.gltf");
+
 	m_gravity = 0;
 	m_mWorld = Math::Matrix::Identity;
-	SetPos({ 0, 1.0f, 0 });
+	SetPos({ 0, 8.0f, 0 });
 
 	m_correction = { 0.0,8.0f,0.0f };
 	Math::Vector3 pos = { 0.0f,8.0f,0.0f };
 	m_correctionMat = Math::Matrix::CreateTranslation(pos);
 
+	m_emissiveColor = { 10.0f,1.0f,1.0f };
 
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
@@ -129,19 +133,32 @@ void Character::Update()
 		m_transAC = false;
 
 		m_speedMag = 1.0f;
-
 	}
 
-	if (key.P || pad.IsLeftStickPressed())
+	if (IsLStick())
 	{
-		//ブルーム
-		KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.15f);
-		// リムライト
-		m_limEnable = true;
+		m_transAC = !m_transAC;
+		if (m_transAC) {
+			//ブルーム
+			KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.15f);
+			// リムライト
+			m_limEnable = true;
 
-		m_transAC = true;
+			m_transAC = true;
 
-		m_speedMag = 1.5f;
+			m_speedMag = 1.5f;
+		}
+		else {
+			//ブルーム
+			KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.55f);
+			// リムライト
+			m_limEnable = false;
+
+			m_transAC = false;
+
+			m_speedMag = 1.0f;
+		}
+		
 	}
 
 
@@ -159,9 +176,8 @@ void Character::Update()
 
 	if (IsIgnoreGravityState() == false)
 	{
-		auto pos = m_mWorld.Translation();
 		//auto flg =Gravity(pos,Math::Vector3::Down,m_gravity);
-		auto flg =Move(m_gravity,Math::Vector3::Down,KdCollider::TypeGround);
+		auto flg =Move(m_gravity,Math::Vector3::Down,KdCollider::TypeGround,false,true,false,true);
 
 		m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
 
@@ -172,19 +188,26 @@ void Character::Update()
 			Application::Instance().m_log.AddLog("FallNow\n");
 		}
 	}
+	else {
+		m_isGround = false;
+	}
 
-	//m_pCollider->RegisterCollisionShape(KdCollider::TypeBump)
-
-	UIManager::GetInstance().SetPlayerHP(m_hp);
+	Application::Instance().m_log.AddLog("PlayerGravity:%.2f\n",m_gravity);
 
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
 	LockOn();
 
+	CreatePolygon();
+
 	UpdateCollision();
+
+	UIManager::GetInstance().SetPlayerHP((int)m_hp);
+
 }
 
 void Character::PostUpdate()
 {
+
 	if (m_nowAction)
 	{
 		m_nowAction->PostUpdate(m_wpThis);
@@ -211,7 +234,7 @@ void Character::DrawLit()
 
 	}
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld, kWhiteColor, Math::Vector3{ 10,1,1 });
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld, m_modelColor,m_emissiveColor);
 
 	KdShaderManager::Instance().m_StandardShader.SetLimLightEnable(false);
 }
@@ -325,7 +348,7 @@ const bool Character::IsAttack()
 	auto& mouse = KeyInput::GetInstance().GetMouseState();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
-	if (mouse.rightButton || pad.IsRightTriggerPressed())
+	if (mouse.leftButton || pad.IsRightTriggerPressed())
 	{
 		ChangeEnableRightAttack(true);
 
@@ -352,7 +375,7 @@ const bool Character::IsGuard()
 	auto& mouse = KeyInput::GetInstance().GetMouseState();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
-	if (mouse.leftButton || pad.IsLeftTriggerPressed())
+	if (mouse.rightButton || pad.IsLeftTriggerPressed())
 	{
 		return true;
 	}
@@ -377,6 +400,31 @@ const bool Character::IsRightShoulder()
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
 	if (key.E || pad.IsRightShoulderPressed())
+	{
+		return true;
+	}
+	return false;
+}
+
+const bool Character::IsRStick()
+{
+	auto& mouse = KeyInput::GetInstance().GetMouseState();
+	auto& pad = KeyInput::GetInstance().GetGamePadState();
+
+	if (mouse.scrollWheelValue || pad.IsRightStickPressed())
+	{
+		return true;
+	}
+	return false;
+}
+
+const bool Character::IsLStick()
+{
+	auto& key = KeyInput::GetInstance().GetKeyboard();
+	auto& keyTrack = KeyInput::GetInstance().GetKeyboardTracker();
+	auto& pad = KeyInput::GetInstance().GetGamePadState();
+
+	if (keyTrack.IsKeyPressed(key.LeftControl) || pad.IsLeftStickPressed())
 	{
 		return true;
 	}
@@ -423,13 +471,14 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 			Math::Vector3 c = targetDir.Cross(nowDir);
 			if (c.y >= 0)
 			{
-				if (m_nowAction->GetState() == CharacterStateName::BoostDush)
+				//if (m_nowAction->GetState() == CharacterStateName::BoostDush)
+				//{
+				//	ang = 5.0f;
+				//	//右回転
+				//	m_rot.y -= ang;
+				//}
+				//else
 				{
-					ang = 5.0f;
-					//右回転
-					m_rot.y -= ang;
-				}
-				else {
 
 					//右回転
 					m_rot.y -= ang;
@@ -437,13 +486,14 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 			}
 			else
 			{
-				if (m_nowAction->GetState() == CharacterStateName::BoostDush)
+			/*	if (m_nowAction->GetState() == CharacterStateName::BoostDush)
 				{
 					ang = 5.0f;
 				
 					m_rot.y += ang;
 				}
-				else {
+				else*/ 
+				{
 					//左回転
 					m_rot.y += ang;
 				}
@@ -468,26 +518,24 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 
 void Character::UpdateCollision()
 {
-
-
 	// その他球による衝突判定
 	// ---- ---- ---- ---- ---- ----
 	// ①当たり判定(球判定)用の情報を作成
 	KdCollider::SphereInfo sphereInfo;
-	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 1.8f, 0);
+	sphereInfo.m_sphere.Center = m_pos + Math::Vector3(0, 1.79f, 0);
 	sphereInfo.m_sphere.Radius = 1.79f;
 	sphereInfo.m_type = KdCollider::TypeGround;
 
 	Math::Vector3 pos;
 	if (SphereCast(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, KdCollider::TypeGround, pos)) {
-		SetPos(pos);
+		m_pos = pos;
 	}
 	float dist = 0;
 
 	DirectX::BoundingOrientedBox box;
 
-	box.Center = GetPos() + m_correctionMat.Translation();
-	box.Extents = { 2.0f,5.0f,2.0f };
+	box.Center = m_pos + m_correctionMat.Translation();
+	box.Extents = { 2.0f,6.0f,2.0f };
 	UINT type = KdCollider::TypeDamage;
 	KdCollider::BoxInfo boxInfo(type, box);
 
@@ -650,6 +698,23 @@ void Character::WalkSounds()
 		return;
 	}
 
+}
+
+void Character::CreatePolygon()
+{
+	auto poly = std::make_shared<ScaleEffect>();
+	KdModelWork::Node* pNode =m_spModelWork->FindWorkNode("CBP");
+	if (pNode)
+	{
+		auto pNodeMat = pNode->m_worldTransform;
+		auto mat = Math::Matrix::CreateRotationX(87 * KdToRadians) * pNodeMat * m_mWorld;
+	//	auto mat =  pNodeMat * m_mWorld;
+		poly->SetRotation({90.0f,0.0f,0.0f });
+		poly->SetMatrix(mat);
+	}
+	poly->SetPolygonParam("Asset/Textures/GameObject/Thurster.png", 3.0f, 0.2f);
+
+	SceneManager::Instance().AddObject(poly);
 }
 
 const bool Character::SwordRangeCheck()
@@ -1064,7 +1129,7 @@ void Character::ActionIdle::PostUpdate(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	// アニメーションの更新
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 10.0f * spOwner->m_speedMag);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 5.0f * spOwner->m_speedMag);
 
 	Trans(owner, spOwner->m_spAnimator->GetProgress());
 
@@ -1106,7 +1171,7 @@ void Character::ActionStandUp::Update(std::weak_ptr<Character>& owner)
 
 	if (m_isMove && !m_isBoost)
 	{
-		if (spOwner->m_prvAction->GetName() == "BoostEnd" || spOwner->m_prvAction->GetName() == "BoostDush")
+		if (spOwner->m_prvAction->GetState() == CharacterStateName::BoostEnd || spOwner->m_prvAction->GetState() == CharacterStateName::BoostDush)
 		{
 			spOwner->ChangeActionState(std::make_shared<ActionBoostDush>());
 			return;
@@ -1280,8 +1345,9 @@ void Character::ActionJump::Update(std::weak_ptr<Character>& owner)
 	Application::Instance().m_log.AddLog("Fly\n");
 
 	std::shared_ptr<Character> spOwner = owner.lock();
-
 	Checkkey(owner);
+
+	m_direction = {};
 
 	if (m_isBoost)
 	{
@@ -1299,7 +1365,7 @@ void Character::ActionJump::Update(std::weak_ptr<Character>& owner)
 	{
 		if (m_isMove)
 		{
-			m_direction += Direct(owner, true);
+			m_direction = Direct(owner, true);
 		}
 		m_direction += Math::Vector3::Up;
 
@@ -1377,7 +1443,7 @@ void Character::ActionJumpShield::Update(std::weak_ptr<Character>& owner)
 
 	Checkkey(owner);
 
-
+	m_direction = {};
 
 	// ガードしていない状況
 	if (m_isMove && !m_isGuard)
@@ -1396,9 +1462,13 @@ void Character::ActionJumpShield::Update(std::weak_ptr<Character>& owner)
 		}
 		else
 		{
-			m_direction = Direct(owner,true);
+			if (m_isMove)
+			{
+				m_direction = Direct(owner, true);
+			}
+
 			m_direction += Math::Vector3::Up;
-			auto flg = spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
+			auto flg = spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
 			if (flg) {
 				Application::Instance().m_log.AddLog("FetchSuccess\n");
 			}
@@ -1475,6 +1545,8 @@ void Character::ActionFall::Update(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	Checkkey(owner);
+	
+	m_direction = {};
 
 	if (m_isBoost)
 	{
@@ -1502,16 +1574,16 @@ void Character::ActionFall::Update(std::weak_ptr<Character>& owner)
 
 	if (m_isMove)
 	{
+
 		m_direction = Direct(owner, true); 
 		auto flg =
-			spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
+			spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround);
 		if (flg) {
 			Application::Instance().m_log.AddLog("FetchSuccess\n");
 		}
 		else {
 			Application::Instance().m_log.AddLog("Move\n");
 		}
-		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
 	}
 
 }
@@ -1528,6 +1600,8 @@ void Character::ActionFall::PostUpdate(std::weak_ptr<Character>& owner)
 
 void Character::ActionFall::Exit(std::weak_ptr<Character>& owner)
 {
+	std::shared_ptr<Character> spOwner = owner.lock();
+
 }
 
 
@@ -1715,7 +1789,7 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 		m_direction = Direct(owner, true);
 
 		auto flg =
-			spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
+			spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround);
 		if (flg) {
 			Application::Instance().m_log.AddLog("FetchSuccess\n");
 		}
@@ -1827,7 +1901,7 @@ void Character::ActionMoveShield::Update(std::weak_ptr<Character>& owner)
 
 
 		auto flg =
-			spOwner->Move(m_speed, m_direction, KdCollider::TypeGround);
+			spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround);
 		if (flg) {
 			Application::Instance().m_log.AddLog("FetchSuccess\n");
 		}
@@ -2011,7 +2085,6 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 
 	//エフェクト
 	EffectUpdate(owner);
-
 }
 
 void Character::ActionBoost::PostUpdate(std::weak_ptr<Character>& owner)
@@ -2267,9 +2340,27 @@ void Character::ActionBoostEnd::Update(std::weak_ptr<Character>& owner)
 		return;
 	}
 
+	if (spOwner->m_prvAction->GetMove() == MoveType::Front)
+	{
+		m_direction = ActionStateBase::Direct(owner, false);
+	}
+	else  if (spOwner->m_prvAction->GetMove() == MoveType::Back) {
+		auto vec = spOwner->m_mWorld.Forward();
+		vec.Normalize();
+		m_direction = vec;
+	}
+	else  if (spOwner->m_prvAction->GetMove() == MoveType::Right) {
+		auto vec = spOwner->m_mWorld.Right();
+		vec.Normalize();
+		m_direction = vec;
+	}
+	else  if (spOwner->m_prvAction->GetMove() == MoveType::Left) {
+		auto vec = spOwner->m_mWorld.Left();
+		vec.Normalize();
+		m_direction = vec;
+	}
 
-	m_direction = ActionStateBase::Direct(owner, false);
-
+	
 	// イージング
 	auto progress = spOwner->m_spAnimator->GetProgress() * DirectX::XM_PI;
 
@@ -2483,6 +2574,12 @@ void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
 		spOwner->ChangeActionState(std::make_shared<ActionBoostFloatShield>());
 		return;
 	}
+	
+	if (!spOwner->m_isGround)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFall>());
+		return;
+	}
 
 	if (m_isRightAttack)
 	{
@@ -2627,6 +2724,12 @@ void Character::ActionBoostShield::Update(std::weak_ptr<Character>& owner)
 	if (m_isFlow && m_isGuard)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionBoostFloatShield>());
+		return;
+	}
+
+	if (!spOwner->m_isGround)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFall>());
 		return;
 	}
 
@@ -2961,7 +3064,7 @@ void Character::ActionBoostFall::Update(std::weak_ptr<Character>& owner)
 	{
 		m_direction = Direct(owner, true);
 		auto flg =
-		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false);
+		spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false);
 			if (flg) {
 				Application::Instance().m_log.AddLog("FetchSuccess\n");
 			}
@@ -3064,7 +3167,25 @@ void Character::ActionBoostDushEnd::Update(std::weak_ptr<Character>& owner)
 				return;
 		}
 	}
-	m_direction = ActionStateBase::Direct(owner, false);
+	if (spOwner->m_prvAction->GetMove() == MoveType::Front)
+	{
+		m_direction = ActionStateBase::Direct(owner, false);
+	}
+	else  if(spOwner->m_prvAction->GetMove() == MoveType::Back){
+		auto vec = spOwner->m_mWorld.Forward();
+		vec.Normalize();
+		m_direction = vec;
+	}
+	else  if(spOwner->m_prvAction->GetMove() == MoveType::Right){
+		auto vec = spOwner->m_mWorld.Right();
+		vec.Normalize();
+		m_direction = vec;
+	}
+	else  if(spOwner->m_prvAction->GetMove() == MoveType::Left){
+		auto vec = spOwner->m_mWorld.Left();
+		vec.Normalize();
+		m_direction = vec;
+	}
 
 	auto progress = spOwner->m_spAnimator->GetProgress() * DirectX::XM_PI;
 	if (progress > 1.0f) {
@@ -3072,9 +3193,10 @@ void Character::ActionBoostDushEnd::Update(std::weak_ptr<Character>& owner)
 	}
 
 	m_easeSpeed = m_speed - (m_speed * progress);
+	Application::Instance().m_log.AddLog("EaseSpeed:%.2f\n",m_easeSpeed);
 
 	auto flg =
-	spOwner->Move(m_easeSpeed, m_direction, KdCollider::TypeGround);
+	spOwner->MoveSwept(m_easeSpeed, m_direction, KdCollider::TypeGround);
 		if (flg) {
 			Application::Instance().m_log.AddLog("FetchSuccess\n");
 		}
@@ -3573,7 +3695,7 @@ void Character::ActionRightAttackCharge::Enter(std::weak_ptr<Character>& owner)
 
 	m_animName = "BladeAccumulationAttack";
 
-	m_stateNum = spOwner->CharacterStateName::RightSorwdAf;
+	m_stateNum = spOwner->CharacterStateName::RightSorwdCharge;
 
 	spOwner->ChangeEnableRightAttack(true);
 }
@@ -3679,16 +3801,16 @@ void Character::ActionHited::Update(std::weak_ptr<Character>& owner)
 
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, false);
 
 	//グリッチ表現
-	auto time = KdFPSController::GetInstance().GetFPS();
+	auto time = KdFPSController::GetInstance().GetFPS() + spOwner->m_rand.GetFloat(0.0,4.0f);
 	if (spOwner->m_spAnimator->GetProgress() <= 0.02f)
 	{
 		UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
 		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 		KdShaderManager::Instance().m_postProcessShader.
-			SetGlitch({ 10,10 }, time, 5.0f, 0.8f, 0, 0, { 0.5f,0.5f });
+			SetGlitch({ 10,10 }, time, 4.5f, 0.8f, 0, 0, { 0.5f,0.5f });
 	}
 
 	if (spOwner->m_spAnimator->IsAnimationEnd() == false) { return; }
@@ -3855,7 +3977,7 @@ void Character::ActionLeftShoulderAttack::Update(std::weak_ptr<Character>& owner
 
 	if (m_durationStiffness <= 0.3f)
 	{
-		spOwner->Move(m_speed, m_direction, KdCollider::TypeGround, false, false);
+		spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, false);
 	}
 
 	if (m_isOneShot == false)

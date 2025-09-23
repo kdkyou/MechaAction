@@ -90,7 +90,7 @@ protected:
 	// カメラ回転用マウス座標の差分
 	POINT										m_FixMousePos{};
 
-	Math::Vector2								m_mouseSpeed = { 10.0f,10.0f };
+	Math::Vector2								m_mouseSpeed = { 20.0f,20.0f };
 
 
 };

@@ -268,7 +268,7 @@ void GameScene::Init()
 	CameraManager::Instance().SetCameraTarget(_character);
 	//CameraManager::Instance().SetLockTarget(enemy);
 	CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
-
+	//CameraManager::Instance().Setting("Asset/Data/GameCamera.scene");
 
 	m_duration = 1.0f;
 	m_fade = false;

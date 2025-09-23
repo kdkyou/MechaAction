@@ -14,7 +14,8 @@ void MT::Init()
 	m_limPow = 1.0f;
 
 	m_spAnimator = std::make_shared<KdAnimator>();
-
+	
+	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Enemy.gltf");
 
 	m_correction = { 0.0f,5.0f,0.0f };
 
@@ -68,7 +69,9 @@ void MT::Update()
 
 	auto pos = m_mWorld.Translation();
 	//auto flg = Gravity(pos, Math::Vector3::Down, m_gravity);
-	auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround,false,false);
+	//auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround,false,false);
+	auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, false, true);
+
 
 	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
 
@@ -652,7 +655,7 @@ void MT::MoveMent::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameOb
 	}
 
 
-	spOwner->Move(m_speed, vec, KdCollider::TypeGround);
+	spOwner->MoveSwept(m_speed, vec, KdCollider::TypeGround);
 
 	if (m_durationState < 0)
 	{
@@ -756,7 +759,7 @@ void MT::Attack::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObje
 		vec = diff.Right;
 	}
 
-	spOwner->Move(m_speed, diff, KdCollider::TypeGround);
+	spOwner->MoveSwept(m_speed, diff, KdCollider::TypeGround);
 
 	if (m_durationState < 0)
 	{
@@ -829,7 +832,7 @@ void MT::Hited::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObjec
 	diff.y = 0.0f;
 	diff.Normalize();
 
-	spOwner->Move(m_speed, diff, KdCollider::TypeGround);
+	spOwner->MoveSwept(m_speed, diff, KdCollider::TypeGround);
 
 	if (m_durationState < 0)
 	{
@@ -958,7 +961,7 @@ void MT::Backed::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObje
 	diff.y = 0.0f;
 	diff.Normalize();
 
-	spOwner->Move(m_speed, diff, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, diff, KdCollider::TypeGround, false, false);
 
 	if (m_durationState < 0)
 	{

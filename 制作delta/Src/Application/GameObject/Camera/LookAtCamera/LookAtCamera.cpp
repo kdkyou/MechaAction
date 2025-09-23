@@ -32,6 +32,8 @@ void LookAtCamera::Serialize(nlohmann::json& outJson) const
 	CameraBase::Serialize(outJson);
 }
 
+
+
 void LookAtCamera::Look()
 {
 	auto spTarget = m_wpLook.lock();

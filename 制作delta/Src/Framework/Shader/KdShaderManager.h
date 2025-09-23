@@ -184,12 +184,15 @@ public:
 	//
 	//==========================
 	const cbCamera& GetCameraCB() const { return m_cb7_Camera.Get(); }
+	const cbCamera& GetCameraMapCB() const { return m_cb10_CameraForMap.Get(); }
 
 	const cbFog& GetFogCB() const { return m_cb8_Fog.Get(); }
 
 	const cbLight& GetLightCB() const { return m_cb9_Light.Get(); }
 
 	void WriteCBCamera(const Math::Matrix& cam, const Math::Matrix& proj);
+	
+	void WriteCBCameraMap(const Math::Matrix& cam, const Math::Matrix& proj);
 
 	void WriteCBFogEnable(bool distance, bool height);
 	void WriteCBDistanceFog(const Math::Vector3& col, float density = 0.001f);
@@ -222,6 +225,7 @@ private:
 
 	// カメラ定数バッファ
 	KdConstantBuffer<cbCamera>	m_cb7_Camera;
+	KdConstantBuffer<cbCamera>	m_cb10_CameraForMap;
 
 	// フォグ定数バッファ
 	KdConstantBuffer<cbFog>	m_cb8_Fog;

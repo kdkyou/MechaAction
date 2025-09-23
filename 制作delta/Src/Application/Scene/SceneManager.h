@@ -25,6 +25,8 @@ public :
 	void DrawSprite();
 	void DrawDebug();
 
+	void DrawMap();
+
 	// 次のシーンをセット (次のフレームから切り替わる)
 	void SetNextScene(SceneType nextScene)
 	{
@@ -45,8 +47,21 @@ public :
 	// 現在のシーンにオブジェクトを追加
 	void AddObject(const std::shared_ptr<KdGameObject>& obj);
 
+	void AddEnemy(const std::shared_ptr<CharacterBase>& obj);
+	
+	void AddTerrain(const std::shared_ptr<KdGameObject>& obj);
+
 	void Edit_ImGui();
 
+	// レンダーターゲット切り替え用
+	void ChangeRenderTarget();
+	// 元に戻す関数
+	void UndoRenderTarget();
+	// 出来上がったテクスチャを取得
+	const std::shared_ptr<KdTexture>& GetRenderTargetTexture()const
+	{
+		return m_rtPack.m_RTTexture;
+	}
 	
 
 private :
@@ -57,6 +72,9 @@ private :
 	{
 		// 開始シーンに切り替え
 		ChangeScene(m_currentSceneType);
+
+		// レンダーターゲット初期化
+		m_rtPack.CreateRenderTarget(1280, 720, true);
 	}
 
 	// シーン切り替え関数
@@ -70,6 +88,11 @@ private :
 	
 	// 次のシーンの種類を保持している変数
 	SceneType m_nextSceneType = m_currentSceneType;
+
+	// レンダーターゲット切り替え用
+	KdRenderTargetPack m_rtPack;
+
+	KdRenderTargetChanger m_rtChanger;
 
 private:
 

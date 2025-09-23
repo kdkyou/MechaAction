@@ -27,6 +27,8 @@ void TitleMovieScene::Event()
 
 	auto flg = UIManager::GetInstance().IsFadeComplete();
 	auto& key = KeyInput::GetInstance().GetKeyboardState();
+	auto& pad = KeyInput::GetInstance().GetGamePadState();
+
 
 	if (flg ) {
 		if (!m_once) {
@@ -65,7 +67,7 @@ void TitleMovieScene::Event()
 		//	}
 		//}
 
-		if (duration < 0.0f || key.Enter)
+		if (key.Enter || pad.IsAPressed())
 		{
 			SceneManager::Instance().SetNextScene
 			(

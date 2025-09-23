@@ -28,7 +28,7 @@ private:
 
 	bool							 m_isReduce = false;
 
-	float							 m_texScale;
+	float							 m_texScale = 1.0f;
 	float							 m_durationScale = 0.0f;
 
 };

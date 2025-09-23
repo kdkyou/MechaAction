@@ -31,8 +31,10 @@ public:
 
 
 	void PreDraw();
+	void MapPreDraw();
 
 	void DrawUnLit();
+	void MapDrawUnLit();
 	void DrawSprite();
 
 	void PreUpdate();
@@ -62,6 +64,7 @@ public:
 
 	const std::weak_ptr<CameraBase> GetCurrentCamera() { return m_currentCamera; }
 
+	const CameraType GetPrevType()const { return m_prevType; }
 	const CameraType GetNowType()const { return m_nowType; }
 
 	const Math::Vector3& ToCameraVec(const Math::Vector3 nowPos);
@@ -89,6 +92,7 @@ private:
 	void Init();
 
 	std::shared_ptr<CameraBase>	m_currentCamera = nullptr;
+	std::shared_ptr<CameraBase> m_mapCamera = nullptr;
 	std::weak_ptr<KdGameObject>  m_wpLookTarget;
 	std::weak_ptr<CharacterBase> m_wpCameraTarget;
 	std::weak_ptr<CharacterBase> m_wpLockTarget;
@@ -98,6 +102,7 @@ private:
 
 	
 
+	CameraType					m_prevType  = None;
 	CameraType					m_nowType  = TPS;
 	CameraType					m_nextType = None;
 

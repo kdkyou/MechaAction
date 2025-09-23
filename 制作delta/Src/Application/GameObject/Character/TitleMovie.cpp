@@ -4,6 +4,8 @@
 
 #include "../../main.h"
 
+#include "../../Scene/SceneManager.h"
+
 void TitleMovie::Init()
 {
 	m_name = "TitleMovie";
@@ -33,14 +35,16 @@ void TitleMovie::Update()
 				m_durationWait = 0.0f;
 				m_durationMove = 0.0f;
 				m_type = TwotoThree;
-				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
 			}
 		}
 		break;
 	case TitleMovie::TwotoThree:
 		// 待機時間
 		m_durationWait += delta;
-
+		if (m_durationWait > m_secondWaitTime / 5.0f)
+		{
+			CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
+		}
 		
 		if (m_durationWait > m_secondWaitTime) {
 
@@ -55,7 +59,7 @@ void TitleMovie::Update()
 				m_durationWait = 0.0f;
 				m_durationMove = 0.0f;
 				m_type = ThreetoFour;
-				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera3.scene");
+				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera4.scene");
 				if (m_spAnimator) {
 				m_spAnimator->SetAnimation(m_spModel->GetAnimation(m_animPath), 10.0f, false);
 				}
@@ -66,12 +70,15 @@ void TitleMovie::Update()
 		// 待機時間
 		m_durationWait += delta;
 
+		if (m_spAnimator->IsAnimationEnd())
+		{
+			CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
+		}
 
 		if (m_durationWait > m_thirdWaitTime) {
 			if (!m_isThurster) {
 			m_isThurster = true;
 
-			CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera4.scene");
 
 			KdModelWork::Node* pNode = m_spModel->FindWorkNode("CBP");
 			if (pNode) {
@@ -99,6 +106,11 @@ void TitleMovie::Update()
 	case TitleMovie::FourtoFive:
 		
 		KdEffekseerManager::GetInstance().StopAllEffect();
+		SceneManager::Instance().SetNextScene
+		(
+			SceneManager::SceneType::Game
+		);
+
 
 		break;
 	default:

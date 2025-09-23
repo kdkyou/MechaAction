@@ -1,8 +1,8 @@
 [
 	{
-		"AmbientColor": [ 0.55, 0.55, 0.55, 1.0 ],
+		"AmbientColor": [ 0.65, 0.65, 0.65, 1.0 ],
 		"Bloom": 0.800000011920929,
-		"DirColor": [ 0.3, 0.3, 0.3 ],
+		"DirColor": [ 2.0, 2.0, 2.0 ],
 		"DirVec": [ 0.0, -0.05, 1.0 ],
 		"FogHeight": false,
 		"FogWidth": false

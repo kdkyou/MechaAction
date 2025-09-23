@@ -47,6 +47,10 @@ private:
 	const bool IsLeftShoulder();
 	const bool IsRightShoulder();
 
+	// スティックの押し込み
+	const bool IsRStick();
+	const bool IsLStick();
+
 	//bool Move(float speed,const Math::Vector3& dir,const Math::Vector3& step={}, const KdCollider::Type type=KdCollider::TypeGround, bool ray = true, bool sphere = true, bool camera = true);
 
 	// キャラクターの回転行列を作成する
@@ -61,6 +65,8 @@ private:
 	bool IsIgnoreGravityState()const;
 
 	void WalkSounds();
+
+	void CreatePolygon();
 
 	enum CharacterStateName
 	{
@@ -165,6 +171,9 @@ private:
 		const std::string& GetName() { return m_animName; }
 		const UINT GetState() const { return m_stateNum; }
 
+		const UINT GetPrevMove()const { return m_prevType; }
+		const UINT GetMove()const { return m_type; }
+
 protected:
 
 		const Math::Vector3 Direct(std::weak_ptr<Character>& owner, bool isCamera);
@@ -209,7 +218,7 @@ protected:
 
 		std::weak_ptr<KdSoundInstance> m_wpRunSound;
 
-		enum moveType
+		enum MoveType
 		{
 			NoMove,
 			Right,
@@ -218,8 +227,8 @@ protected:
 			Front,
 		};
 
-		moveType m_type =NoMove;
-		moveType m_prevType = NoMove;
+		MoveType m_type =NoMove;
+		MoveType m_prevType = NoMove;
 
 	};
 

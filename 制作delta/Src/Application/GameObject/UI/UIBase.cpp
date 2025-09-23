@@ -18,7 +18,7 @@ void UIBase::Editor_ImGui()
 {
 	KdGameObject::Editor_ImGui();
 	char buf[64];
-	strncpy(buf, m_uiTag.c_str(), sizeof(buf));
+	std::strncpy(buf, m_uiTag.c_str(), sizeof(buf));
 	if (ImGui::InputText("Tag", buf, IM_ARRAYSIZE(buf)))
 	{
 		m_uiTag = buf;

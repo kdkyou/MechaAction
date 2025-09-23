@@ -37,6 +37,9 @@ void Drone::Init()
 
 	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 
+	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Enemy.gltf");
+
+
 }
 
 void Drone::Update()
@@ -264,7 +267,7 @@ bool Drone::Search(bool areaOnly)
 				float dot = playerView.Dot(toEnemy);
 				float angle = DirectX::XMConvertToDegrees(acos(dot));
 
-				if (angle < 100.0f) // プレイヤーが敵をある程度向いている
+				if (angle < 10.0f) // プレイヤーが敵をある程度向いている
 				{
 					m_wpTarget = obj;
 					return true;
@@ -484,7 +487,7 @@ void Drone::MoveMent::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 	}
 
 
-	spOwner->Move(m_speed,vec , KdCollider::TypeGround);
+	spOwner->MoveSwept(m_speed,vec , KdCollider::TypeGround);
 
 	if (m_durationState < 0)
 	{
@@ -548,7 +551,7 @@ void Drone::Attack::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGa
 	diff.y = 0.0f;
 	diff.Normalize();
 
-	spOwner->Move(m_speed, diff, KdCollider::TypeGround);
+	spOwner->MoveSwept(m_speed, diff, KdCollider::TypeGround);
 
 	if (m_durationState < 0)
 	{
@@ -646,7 +649,7 @@ void Drone::Backed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGa
 	diff.y = 0.0f;
 	diff.Normalize();
 
-	spOwner->Move(m_speed, diff, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, diff, KdCollider::TypeGround, false, false);
 
 	if (m_durationState < 0)
 	{

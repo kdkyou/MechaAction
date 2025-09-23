@@ -25,6 +25,10 @@ void KdShaderManager::Init()
 	m_cb7_Camera.Create();
 	KdDirect3D::Instance().WorkDevContext()->VSSetConstantBuffers(7, 1, m_cb7_Camera.GetAddress());
 	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(7, 1, m_cb7_Camera.GetAddress());
+	
+	m_cb10_CameraForMap.Create();
+	KdDirect3D::Instance().WorkDevContext()->VSSetConstantBuffers(10, 1, m_cb10_CameraForMap.GetAddress());
+	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(10, 1, m_cb10_CameraForMap.GetAddress());
 
 	// ライト：平行光源・点光源・環境光
 	m_cb8_Fog.Create();
@@ -383,6 +387,20 @@ void KdShaderManager::WriteCBCamera(const Math::Matrix& cam, const Math::Matrix&
 	camera.CamPos = cam.Translation();
 
 	m_cb7_Camera.Write();
+}
+
+void KdShaderManager::WriteCBCameraMap(const Math::Matrix& cam, const Math::Matrix& proj)
+{
+	cbCamera& camera = m_cb10_CameraForMap.Work();
+
+	camera.mView = cam.Invert();
+
+	camera.mProj = proj;
+	camera.mProjInv = proj.Invert();
+
+	camera.CamPos = cam.Translation();
+
+	m_cb10_CameraForMap.Write();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////

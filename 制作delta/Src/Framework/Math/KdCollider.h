@@ -48,6 +48,32 @@ public:
 		UINT m_type = 0;
 	};
 
+	// 球形の当たり判定情報：当たる側専用
+	struct CapsuleInfo
+	{
+		CapsuleInfo() {}
+
+		// BoundingSphereを直接指定
+		CapsuleInfo(UINT type, const DirectX::BoundingSphere sphere1, const DirectX::BoundingSphere sphere2)
+			: m_type(type), m_sphere1(sphere1), m_sphere2(sphere2) {
+		}
+
+		// 座標と半径からBoundingSphereを指定
+		CapsuleInfo(UINT type, const Math::Vector3& pos1,const Math::Vector3& pos2, float radius)
+			: m_type(type)
+		{
+			m_sphere1.Center = pos1;
+			m_sphere1.Radius = radius;
+			m_sphere2.Center = pos2;
+			m_sphere2.Radius = radius;
+		}
+
+		DirectX::BoundingSphere m_sphere1;
+		DirectX::BoundingSphere m_sphere2;
+
+		UINT m_type = 0;
+	};
+
 	// BOX形の当たり判定情報：当たる側専用
 	struct BoxInfo
 	{

@@ -117,6 +117,8 @@ void Application::PreDraw()
 void Application::Draw()
 {
 	SceneManager::Instance().Draw();
+
+///	SceneManager::Instance().DrawMap();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -219,6 +221,10 @@ bool Application::Init(int w, int h)
 	{
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Another/Another.gltf");
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Grint/Grint.gltf");
+		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/BalconyApartment/BalconyApartment.gltf");
+		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/Apartment/Apartment.gltf");
+		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/LowApartment/LowApartment.gltf");
+		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/Lab/Catapult.gltf");
 		/*KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine1.png");
 		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine2.png");
 		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine3.png");
