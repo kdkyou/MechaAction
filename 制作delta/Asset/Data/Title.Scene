@@ -4,11 +4,13 @@
 		"AnimSpeed": 0.0,
 		"Emmisive": [ 0.0, 0.0, 0.0 ],
 		"IsTarget": false,
+		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Lab.gltf",
 		"Name": "AnimTerrain",
-		"Pos": [ 0.0, 0.699999988079071, 30.399999618530273 ],
+		"Pos": [ 0.0, 0.7, 30.4 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
+		"SoundPath": "",
 		"Tag": 0
 	},
 	{
@@ -16,23 +18,27 @@
 		"AnimSpeed": 0.0,
 		"Emmisive": [ 10.0, 10.0, 10.0 ],
 		"IsTarget": false,
-		"ModelPath": "Asset\\Models\\Grint\\Movie.gltf",
+		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
+		"ModelPath": "Asset\\Models\\Grint\\Grint.gltf",
 		"Name": "AnimTerrain",
-		"Pos": [ 5.900000095367432, -7.300000190734863, 12.899999618530273 ],
-		"Rot": [ 0.0, 257.20001220703125, 0.0 ],
+		"Pos": [ 5.9, -7.3, 12.9 ],
+		"Rot": [ 0.0, 257.2, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
+		"SoundPath": "",
 		"Tag": 0
 	},
 	{
 		"AnimPath": "",
 		"AnimSpeed": 0.0,
-		"Emmisive": [ 1.0, 5.599999904632568, 10.0 ],
+		"Emmisive": [ 1.0, 5.6, 10.0 ],
 		"IsTarget": false,
+		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Weapon\\Sowrd\\Sowrd.gltf",
 		"Name": "AnimTerrain",
-		"Pos": [ -10.800000190734863, 19.100000381469727, 29.200000762939453 ],
-		"Rot": [ 93.69999694824219, 129.60000610351563, 53.599998474121094 ],
+		"Pos": [ -10.8, 19.1, 29.2 ],
+		"Rot": [ 93.7, 129.6, 53.6 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
+		"SoundPath": "",
 		"Tag": 0
 	}
 ]

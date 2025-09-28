@@ -274,8 +274,9 @@ void GameScene::Init()
 	m_fade = false;
 	m_once = false;
 
-	KdAudioManager::Instance().StopAllSound();
-	KdAudioManager::Instance().Play("Asset/Sounds/BGM/Rusty.wav", true)->SetVolume(0.1f);
+	auto& am = KdAudioManager::Instance();
+	am.StopAllSound();
+	am.Play("Asset/Sounds/BGM/Rusty.wav", true)->SetVolume(am.GetBGMVolume());
 
 	RenderSetting::GetInstance().RenderLoad("Asset/Data/Game.render");
 }

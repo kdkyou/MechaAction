@@ -25,7 +25,7 @@ void Charge::Update()
 	if (parent)
 	{
 		const KdModelWork::Node* _pNode = parent->GetModelWork().lock()->FindWorkNode(m_attachPath);
-		int i = 0;
+		
 		if (_pNode)
 		{
 			m_mParentAttach = _pNode->m_worldTransform;
@@ -106,7 +106,9 @@ void Charge::Trigger()
 	if (m_durationFire > m_fireRate) {
 		if (!m_isSoundOnce) {
 			m_isSoundOnce = true;
-			KdAudioManager::Instance().Play("Asset/Sounds/SE/Weapon/Charge_Comp.wav", false)->SetVolume(0.3f);
+
+			auto& am = KdAudioManager::Instance();
+			am.Play("Asset/Sounds/SE/Weapon/Charge_Comp.wav", false)->SetVolume(am.GetSEVolume());
 		}
 	}
 
@@ -115,25 +117,19 @@ void Charge::Trigger()
 		if (m_durationFire < m_fireRate)
 		{
 			Shot();
-			auto soundInstance = m_sounds.lock();
-			if (soundInstance)
-			{
-				soundInstance->Stop();
-			}
-			m_sounds = KdAudioManager::Instance().Play(m_shotSoundPath, false);
-			
 		}
 		else
 		{
 			ShotCharge();
+		}
 			auto soundInstance = m_sounds.lock();
 			if (soundInstance)
 			{
 				soundInstance->Stop();
 			}
-			m_sounds = KdAudioManager::Instance().Play(m_shotSoundPath, false);
-			
-		}
+			auto& am = KdAudioManager::Instance();
+			m_sounds = am.Play(m_shotSoundPath, false);
+			m_sounds.lock()->SetVolume(am.GetSEVolume());
 	}
 	
 	if (m_numOnce <= 0)
@@ -203,7 +199,7 @@ void Charge::ShotCharge()
 
 	std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
 	bullet->SetModelData(m_bulletModelPath);
-	bullet->SetBulletParam(m_aliveTime, (float)damage, m_range, startPos, direct, m_speed, m_dampingInterval, m_dampingRate);
+	bullet->SetBulletParam(m_aliveTime, (int)damage, m_range, startPos, direct, m_speed, m_dampingInterval, m_dampingRate);
 	bullet->Init();
 	bullet->SetBulletType(Bullet::SightScale, {});
 	bullet->SetTag(m_tag);
@@ -225,7 +221,8 @@ void Charge::OnTrigger()
 	if (!m_trigger)
 	{
 		m_trigger = true;
-		m_sounds = KdAudioManager::Instance().Play(m_chargeSoundPath, true);
-		m_sounds.lock()->SetVolume(0.2f);
+		auto& am = KdAudioManager::Instance();
+		m_sounds = am.Play(m_chargeSoundPath, true);
+		m_sounds.lock()->SetVolume(am.GetSEVolume());
 	}
 }

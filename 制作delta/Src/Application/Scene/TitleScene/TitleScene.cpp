@@ -45,7 +45,9 @@ void TitleScene::Init()
 
 	m_once = false;
 
-	KdAudioManager::Instance().Play("Asset/Sounds/BGM/ApocalypseFull.wav", true)->SetVolume(0.15f);
+
+	auto& am = KdAudioManager::Instance();
+	am.Play("Asset/Sounds/BGM/ApocalypseFull.wav", true)->SetVolume(am.GetBGMVolume());
 }
 
 void TitleScene::Event()
@@ -55,8 +57,7 @@ void TitleScene::Event()
 
 	auto& key = KeyInput::GetInstance().GetKeyboardState();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
-	auto& mouse = KeyInput::GetInstance().GetMouseState();
-
+	
 	auto& um = UIManager::GetInstance();
 
 	if (key.Enter || pad.IsAPressed())
@@ -65,8 +66,9 @@ void TitleScene::Event()
 		{
 			m_once = true;
 			um.SetFade(Fade::FadeIn, 0.2f, true);
-			KdAudioManager::Instance().Play("Asset/Sounds/SE/Enter.wav", false)->SetVolume(0.25f);
-			//KdAudioManager::Instance().Play("Asset/Sounds/SE/LongWalk.wav", false)->SetVolume(0.25f);
+			auto& am = KdAudioManager::Instance();
+			am.Play("Asset/Sounds/SE/Enter.wav", false)->SetVolume(am.GetSEVolume());
+			
 		}
 	}
 	

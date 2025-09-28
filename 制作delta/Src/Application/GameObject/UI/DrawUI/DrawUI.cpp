@@ -20,11 +20,11 @@ void DrawUI::DrawSprite()
 
 		if (m_isAdd) {
 			KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
-			KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, m_pos.x, m_pos.y, m_drawWi, m_drawHe, &m_rect, &m_color, m_pivot);
+			KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, (int)m_pos.x, (int)m_pos.y, m_drawWi, m_drawHe, &m_rect, &m_color, m_pivot);
 			KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
 		}
 		else {
-			KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, m_pos.x, m_pos.y, m_drawWi, m_drawHe, &m_rect, &m_color, m_pivot);
+			KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, (int)m_pos.x, (int)m_pos.y, m_drawWi, m_drawHe, &m_rect, &m_color, m_pivot);
 		}
 	}
 }

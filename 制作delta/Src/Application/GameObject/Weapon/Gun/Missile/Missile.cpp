@@ -146,6 +146,9 @@ void Missile::Shot()
 
 	}
 	
+	auto& am = KdAudioManager::Instance();
+	am.Play("Asset/Sounds/SE/Weapon/MissileShot.wav")->SetVolume(am.GetSEVolume());
+
 
 	std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
 	bullet->SetModelData(m_bulletModelPath);

@@ -12,7 +12,18 @@ void EmmisiveTerrain::Update()
 	if (m_durationWait > m_waitTime)
 	{
 		m_durationWait = m_waitTime;
-		m_isEnableChange = true;
+		if (!m_isEnableChange)
+		{
+			m_isEnableChange = true;
+
+			if (m_soundPath != "")
+			{
+				auto& am = KdAudioManager::Instance();
+				auto sound = am.Play(m_soundPath);
+				sound->SetVolume(am.GetSEVolume());
+				sound->SetPitch(0.7f);
+			}
+		}
 	}
 
 	if (!m_isEnableChange)
@@ -27,7 +38,7 @@ void EmmisiveTerrain::Update()
 	{
 		m_durationChange += delta;
 
-		float t = (m_durationChange / m_changeTime) * m_changeSpeed;
+		//float t = (m_durationChange / m_changeTime) * m_changeSpeed;
 
 		//m_emmisive = Math::Vector3::Lerp(m_firstEmmisive, m_secondEmmisive, t);
 		m_emmisive = { 10.0f,10.0f,10.0f };

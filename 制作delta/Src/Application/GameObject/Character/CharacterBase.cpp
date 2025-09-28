@@ -35,6 +35,7 @@ void CharacterBase::HitDamage(float damage)
 	{
 		m_hp -= damage;
 	}
+
 }
 
 void CharacterBase::SetModelWork(const std::string& path)
@@ -157,6 +158,10 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 	auto deltaSpeed = speed * deltaTime;
 
 	auto empty = type;
+
+	bool isDir = direct;
+
+	bool isRay = ray;
 
 	if (step == true)
 	{

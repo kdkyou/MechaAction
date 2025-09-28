@@ -40,20 +40,20 @@ void ScaleEffect::PostUpdate()
 
 	auto camMat = cam->GetMatrix();
 
-	 camMat._42 = camMat._43 = 0;
+	camMat._41 = camMat._42 = camMat._43 = 0;
 
 	// GameObjectの位置情報
 	auto posMat = Math::Matrix::CreateTranslation(mat.Translation());
 	
 	////追加のZ回転角度
 	auto zRotMat = Math::Matrix::CreateRotationZ(m_rot.x * KdToRadians);
-	//auto yRotMat = Math::Matrix::CreateRotationY(m_rot.x * KdToRadians);
+	auto yRotMat = Math::Matrix::CreateRotationY(m_rot.y * KdToRadians);
 	auto xRotMat = Math::Matrix::CreateRotationX(m_rot.x * KdToRadians);
 	//
 	//行列合成
-	auto totalMat = xRotMat * zRotMat * camMat * posMat;
+	auto totalMat = yRotMat * zRotMat * camMat * posMat;
 
-	//m_mWorld = totalMat;
+	m_mWorld = totalMat;
 
 }
 

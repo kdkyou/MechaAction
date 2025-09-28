@@ -32,6 +32,9 @@ private:
 
 	float m_bloom = 1.0f;
 
+	float m_bgmVal = 0.2f;
+	float m_seVal = 0.3f;
+
 	RenderSetting()
 	{
 

@@ -117,40 +117,6 @@ void Bullet::Intersects()
 	// その他球による衝突判定
 	// ---- ---- ---- ---- ---- ----
 	// ①当たり判定(球判定)用の情報を作成
-	KdCollider::SphereInfo sphereInfo;
-	sphereInfo.m_sphere.Center = m_mWorld.Translation();
-	sphereInfo.m_sphere.Radius = 0.5f;
-	sphereInfo.m_type = KdCollider::TypeGround;
-
-	std::list<KdCollider::CollisionResult> retBumpList;
-	{
-		// ②HIT対象オブジェクトに総当たり
-		for (auto& obj : SceneManager::Instance().GetTerrainList())
-		{
-			//if (obj->GetTag() != tPlayerAttack)
-			{
-				obj->Intersects(sphereInfo, &retBumpList);
-			}
-		}
-
-	}
-
-
-	float maxOverLap = 0;
-	Math::Vector3 hitDir = Math::Vector3::Zero;
-	bool hit = false;
-	// ③結果を使って座標を補完する
-	for (auto& ret : retBumpList)
-	{
-		if (maxOverLap < ret.m_overlapDistance)
-		{
-			maxOverLap = ret.m_overlapDistance;
-			hitDir = ret.m_hitDir;
-			hit = true;
-
-		}
-
-	}
 
 	DirectX::BoundingOrientedBox box;
 
@@ -159,18 +125,16 @@ void Bullet::Intersects()
 	UINT type = KdCollider::TypeDamage;
 	KdCollider::BoxInfo boxInfo(type, box);
 
-	/*if (m_tag == ObjectTag::tPlayerAttack)
+	if (m_tag == ObjectTag::tPlayerAttack)
 	{
 		for (auto& obj : SceneManager::Instance().GetEnemyList())
 		{
 			if (obj->Intersects(boxInfo, nullptr))
 			{
-				{
-					OnHit();
-					m_parameter = obj->GetParameter();
-					obj->HitDamage(GetParameter());
-					obj->OnHit();
-				}
+				OnHit();
+				m_parameter = obj->GetParameter();
+				obj->HitDamage(GetParameter());
+				obj->OnHit();
 			}
 		}
 	}
@@ -180,18 +144,14 @@ void Bullet::Intersects()
 		{
 			if (obj->Intersects(boxInfo, nullptr))
 			{
-				{
-
-				}
+				OnHit();
+				m_parameter = obj->GetParameter();
+				obj->HitDamage(GetParameter());
+				obj->OnHit();		
 			}
 		}
-	}*/
-
-
-	if (hit)
-	{
-		OnHit();
 	}
+
 
 }
 
@@ -203,7 +163,7 @@ bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float lengt
 	if (len < FLT_EPSILON) return false;
 	dir.Normalize();
 
-	float radius = 1.0f;
+	float radius = 2.0f;
 	// Ray情報を作る（球の分だけ余裕を持たせる）
 	KdCollider::RayInfo ray;
 	ray.m_pos = pos;

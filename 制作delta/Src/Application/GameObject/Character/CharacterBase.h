@@ -167,6 +167,12 @@ protected:
 	Math::Vector3 m_limColor = { 0.19f,0.09f,0.09f };
 	float m_limPow =3.5f;
 	bool m_limEnable = false;
+	
+	// トランスAC
+	bool									    m_transAC = false;
+	Math::Vector3 m_TACColor = { 0.19f,0.09f,0.09f };
+	float m_TACProg =0.3f;
+	float m_TACspeed =1.0f;
 
 	// サウンドインスタンス管理
 	std::unordered_map<std::string,std::weak_ptr<KdSoundInstance>> m_sounds;

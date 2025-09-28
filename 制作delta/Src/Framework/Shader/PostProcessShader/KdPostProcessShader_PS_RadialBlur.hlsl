@@ -54,7 +54,7 @@ float4 main(VSOutput input) : SV_Target0
 	factor *= smoothstep(g_mask - 0.1, g_mask, dist);
 
 	//サンプリング数の逆数
-	float srcSampleCount = 1 / g_samples;
+	float srcSampleCount = 1.0f / g_samples;
 	
 	//サンプリング回数分
 	for (int i = 0; i < g_samples;i++)

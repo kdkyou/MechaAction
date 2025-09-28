@@ -27,6 +27,8 @@ public:
 		KdJsonUtility::GetValue(jsonObj, "AnimPath", &m_animPath);
 		KdJsonUtility::GetArray(jsonObj, "Emmisive", &m_emmisive.x, 3);
 		KdJsonUtility::GetValue(jsonObj, "AnimSpeed", &m_animSpeed);
+		KdJsonUtility::GetArray(jsonObj, "ModelColor", &m_modelColor.x, 4);
+		KdJsonUtility::GetValue(jsonObj, "SoundPath", &m_soundPath);
 		
 		SetModel(m_modelPath);
 		if (m_animPath != "") {
@@ -44,6 +46,9 @@ public:
 		outJson["AnimPath"] = m_animPath;
 		outJson["Emmisive"] = KdJsonUtility::CreateArray(&m_emmisive.x, 3);
 		outJson["AnimSpeed"] = m_animSpeed;
+		outJson["SoundPath"] = m_soundPath;
+		outJson["ModelColor"] = KdJsonUtility::CreateArray(&m_modelColor.x, 4);
+
 	}
 
 protected:
@@ -57,6 +62,8 @@ protected:
 	std::shared_ptr<KdAnimator> m_spAnimator = nullptr;
 
 	std::string					m_animPath = "";
+
+	std::string					m_soundPath = "";
 
 	Math::Color					m_modelColor = kWhiteColor;
 

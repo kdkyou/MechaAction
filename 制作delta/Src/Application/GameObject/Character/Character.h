@@ -122,7 +122,6 @@ private:
 
 	bool										m_isWalkSounds =true;
 
-	bool									    m_transAC = false;
 
 
 	//トレイル

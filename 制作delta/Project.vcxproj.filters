@@ -246,9 +246,6 @@
     <ClInclude Include="src\Framework\KdFramework.h">
       <Filter>Src\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="..\Library\strconv.h">
-      <Filter>Library</Filter>
-    </ClInclude>
     <ClInclude Include="src\Framework\Window\KdWindow.h">
       <Filter>Src\Framework\Window</Filter>
     </ClInclude>
@@ -545,6 +542,9 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\MapUI\MapUI.h">
       <Filter>Src\Application\GameObject\UI\MapUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\strconv.h">
+      <Filter>Library</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

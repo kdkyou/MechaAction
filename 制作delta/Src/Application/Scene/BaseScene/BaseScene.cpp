@@ -308,13 +308,13 @@ void BaseScene::DrawMap()
 	{
 		CameraManager::Instance().MapDrawUnLit();
 		
-		for (auto& obj : m_terrainList)
+		/*for (auto& obj : m_terrainList)
 		{
 			if (obj->GetTag() != KdGameObject::tPlayerAttack)
 			{
 				obj->DrawLit();
 			}
-		}
+		}*/
 
 		for (auto& obj : m_playerList)
 		{

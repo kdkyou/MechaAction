@@ -138,10 +138,10 @@ void GuageUI::DrawGuage()
 	sm.ChangeBlendState(KdBlendState::Add);
 	if (m_isAuto)
 	{
-		sm.m_spriteShader.DrawTex(m_spTex, drawPos.x, drawPos.y, drawW, drawH, &m_rect, &m_color, m_pivot);
+		sm.m_spriteShader.DrawTex(m_spTex, (int)drawPos.x, (int)drawPos.y, drawW, drawH, &m_rect, &m_color, m_pivot);
 	}
 	else{
-		sm.m_spriteShader.DrawTex(m_spTex, drawPos.x, drawPos.y, drawW, drawH, &uvRect, &m_color, m_pivot);
+		sm.m_spriteShader.DrawTex(m_spTex, (int)drawPos.x, (int)drawPos.y, drawW, drawH, &uvRect, &m_color, m_pivot);
 	}
 	sm.ChangeBlendState(KdBlendState::Alpha);
 

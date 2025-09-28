@@ -35,6 +35,9 @@ void TitleMovie::Update()
 				m_durationWait = 0.0f;
 				m_durationMove = 0.0f;
 				m_type = TwotoThree;
+
+				auto& am = KdAudioManager::Instance();
+				am.Play("Asset/Sounds/SE/CatapultTail.wav")->SetVolume(am.GetSEVolume());
 			}
 		}
 		break;

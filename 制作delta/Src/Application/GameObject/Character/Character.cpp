@@ -71,6 +71,12 @@ void Character::Init()
 
 	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 
+	m_limColor = { 0.12f,0.0f,0.23f };
+
+	m_TACColor = { 0.63f,0.1f,0.75f };
+	m_TACProg = 0.3f;
+	m_TACspeed = 3.5f;
+
 }
 
 void Character::Update()
@@ -121,26 +127,12 @@ void Character::Update()
 		m_hp = 0;
 	}
 
-
-
-	if (key.O)
-	{
-		//ブルーム
-		KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.55f);
-		// リムライト
-		m_limEnable = false;
-
-		m_transAC = false;
-
-		m_speedMag = 1.0f;
-	}
-
 	if (IsLStick())
 	{
 		m_transAC = !m_transAC;
 		if (m_transAC) {
 			//ブルーム
-			KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.15f);
+			//KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.15f);
 			// リムライト
 			m_limEnable = true;
 
@@ -269,7 +261,8 @@ void Character::OnHit()
 		return;
 	}
 
-	KdAudioManager::Instance().Play("Asset/Sounds/SE/PlayerHit.wav")->SetVolume(0.12f);
+	auto& am = KdAudioManager::Instance();
+	am.Play("Asset/Sounds/SE/PlayerHit.wav")->SetVolume(am.GetSEVolume());
 }
 
 void Character::Editor_ImGui()
@@ -287,6 +280,10 @@ void Character::Editor_ImGui()
 
 	ImGui::DragFloat3("LimColor", &m_limColor.x, 0.01f);
 	ImGui::DragFloat("LimPow", &m_limPow, 0.01f);
+
+	ImGui::DragFloat3("TransColor", &m_TACColor.x, 0.01f);
+	ImGui::DragFloat("TransProgress", &m_TACProg, 0.01f,0.0f,1.0f);
+	ImGui::DragFloat("TransSpeed", &m_TACspeed, 0.01f,0.01f);
 
 }
 
@@ -530,8 +527,7 @@ void Character::UpdateCollision()
 	if (SphereCast(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, KdCollider::TypeGround, pos)) {
 		m_pos = pos;
 	}
-	float dist = 0;
-
+	
 	DirectX::BoundingOrientedBox box;
 
 	box.Center = m_pos + m_correctionMat.Translation();
@@ -678,7 +674,9 @@ void Character::WalkSounds()
 
 	if (flg) {
 		m_isWalkSounds = false;
-		KdAudioManager::Instance().Play("Asset/Sounds/Sound/walk_2.wav", false)->SetVolume(0.3f);
+
+		auto& am = KdAudioManager::Instance(); 
+		am.Play("Asset/Sounds/Sound/walk_2.wav", false)->SetVolume(am.GetSEVolume());
 		return;
 	}
 
@@ -694,7 +692,9 @@ void Character::WalkSounds()
 
 	if (flg) {
 		m_isWalkSounds = false;
-		KdAudioManager::Instance().Play("Asset/Sounds/Sound/walk_2.wav", false)->SetVolume(0.3f);
+
+		auto& am = KdAudioManager::Instance();
+		am.Play("Asset/Sounds/Sound/walk_2.wav", false)->SetVolume(am.GetSEVolume());
 		return;
 	}
 
@@ -712,7 +712,7 @@ void Character::CreatePolygon()
 		poly->SetRotation({90.0f,0.0f,0.0f });
 		poly->SetMatrix(mat);
 	}
-	poly->SetPolygonParam("Asset/Textures/GameObject/Thurster.png", 3.0f, 0.2f);
+	poly->SetPolygonParam("Asset/Textures/GameObject/Thurster.png", 2.0f, 0.2f);
 
 	SceneManager::Instance().AddObject(poly);
 }
@@ -742,7 +742,7 @@ void Character::OverTrans(const std::string& nowAnimName,const float animProgres
 	std::shared_ptr<TransAC> trans = std::make_shared<TransAC>();
 	std::string modelpath = "Asset/Models/Grint/Grint.gltf";
 	std::string animpath = nowAnimName;
-	trans->SetTransACData(modelpath, animpath, animProgress, m_mWorld, 0.3f, 1.0f, { 0.8f,0.0f,0.2f });
+	trans->SetTransACData(modelpath, animpath, animProgress, m_mWorld, m_TACProg, m_TACspeed, m_TACColor);
 	SceneManager::Instance().AddObject(trans);
 }
 
@@ -972,7 +972,7 @@ void Character::ActionStateBase::Checkkey(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	//spOwner->ChangeEnableLeftAttack(false);
-	//spOwner->ChangeEnableRightAttack(false);
+	spOwner->ChangeEnableRightAttack(false);
 	//spOwner->ChangeEnableLeftShoulderAttack(false);
 	spOwner->ChangeEnableRightShoulderAttack(false);
 
@@ -1333,8 +1333,9 @@ void Character::ActionJump::Enter(std::weak_ptr<Character>& owner)
 
 	std::string str = "burstFligit";
 
-	spOwner->m_sounds["burstFlight"] = KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_flight.wav", true);
-	spOwner->m_sounds["burstFlight"].lock()->SetVolume(0.12f);
+	auto& am = KdAudioManager::Instance();
+	spOwner->m_sounds["burstFlight"] = am.Play("Asset/Sounds/Sound/burst_flight.wav", true);
+	spOwner->m_sounds["burstFlight"].lock()->SetVolume(am.GetSEVolume());
 
 
 
@@ -1363,6 +1364,12 @@ void Character::ActionJump::Update(std::weak_ptr<Character>& owner)
 
 	if (m_isFlow)
 	{
+
+		if (m_isGuard) {
+			spOwner->ChangeActionState(std::make_shared<ActionJumpShield>());
+			return;
+		}
+
 		if (m_isMove)
 		{
 			m_direction = Direct(owner, true);
@@ -1432,6 +1439,7 @@ void Character::ActionJumpShield::Enter(std::weak_ptr<Character>& owner)
 	m_animName = "StandShield";
 
 	m_stateNum = spOwner->CharacterStateName::FlyGuard;
+	spOwner->ChangeEnableLeftAttack(true);
 
 }
 
@@ -1446,14 +1454,14 @@ void Character::ActionJumpShield::Update(std::weak_ptr<Character>& owner)
 	m_direction = {};
 
 	// ガードしていない状況
-	if (m_isMove && !m_isGuard)
+	if (m_isFlow && !m_isGuard)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionJump>());
 		return;
 	}
 
 	// ガードしている状況
-	if (m_isMove && m_isGuard)
+	if ( m_isGuard)
 	{
 		if (!m_isFlow)
 		{
@@ -1519,6 +1527,8 @@ void Character::ActionJumpShield::PostUpdate(std::weak_ptr<Character>& owner)
 void Character::ActionJumpShield::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
+	
+	spOwner->ChangeEnableLeftAttack(false);
 
 }
 
@@ -1985,7 +1995,8 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 			m_spEffects.push_back(effect);
 
 			//効果音
-			KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(0.3f);
+			auto& am = KdAudioManager::Instance();
+			am.Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(am.GetSEVolume());
 
 			/*	auto instance = KdAudioManager::Instance().Play3D("Asset/Sounds/Thruster2.wav", spOwner->GetPos());
 				auto vec = CameraManager::Instance().ToCameraVec(mat.Translation());
@@ -2563,18 +2574,31 @@ void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
 
 	}
 
-	if (m_isFlow && !m_isGuard)
+
+	if (m_isGuard)
+	 {
+		if (m_isFlow)
+		{
+			spOwner->ChangeActionState(std::make_shared<ActionBoostFloatShield>());
+			return;
+		}
+
+		if (!m_isMove)
+		{
+			spOwner->ChangeActionState(std::make_shared<ActionStandShield>());
+			return;
+		}
+
+		spOwner->ChangeActionState(std::make_shared<ActionBoostShield>());
+		return;
+	}
+	
+	if (m_isFlow)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionBoostFloat>());
 		return;
 	}
 
-	if (m_isFlow && m_isGuard)
-	{
-		spOwner->ChangeActionState(std::make_shared<ActionBoostFloatShield>());
-		return;
-	}
-	
 	if (!spOwner->m_isGround)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionBoostFall>());
@@ -2593,11 +2617,6 @@ void Character::ActionBoostDush::Update(std::weak_ptr<Character>& owner)
 		return;
 	}
 
-	if (m_isGuard)
-	{
-		spOwner->ChangeActionState(std::make_shared<ActionBoostShield>());
-		return;
-	}
 
 	if (m_isLeftShoulder)
 	{
@@ -2752,7 +2771,7 @@ void Character::ActionBoostShield::Update(std::weak_ptr<Character>& owner)
 	}
 	else
 	{
-		if (spOwner->m_isGround) {
+		if (!m_isGuard) {
 			spOwner->ChangeActionState(std::make_shared<ActionBoostDush>());
 			return;
 		}
@@ -2818,8 +2837,9 @@ void Character::ActionBoostFloat::Enter(std::weak_ptr<Character>& owner)
 
 	std::string str = "burstFligit";
 
-	spOwner->m_sounds["burstFlight"] = KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_flight.wav", true);
-	spOwner->m_sounds["burstFlight"].lock()->SetVolume(0.12f);
+	auto& am = KdAudioManager::Instance();
+	spOwner->m_sounds["burstFlight"] = am.Play("Asset/Sounds/Sound/burst_flight.wav", true);
+	spOwner->m_sounds["burstFlight"].lock()->SetVolume(am.GetSEVolume());
 
 }
 
@@ -2919,8 +2939,9 @@ void Character::ActionBoostFloatShield::Enter(std::weak_ptr<Character>& owner)
 
 	std::string str = "burstFligit";
 
-	spOwner->m_sounds["burstFlight"] = KdAudioManager::Instance().Play("Asset/Sounds/Sound/burst_flight.wav", true);
-	spOwner->m_sounds["burstFlight"].lock()->SetVolume(0.12f);
+	auto& am = KdAudioManager::Instance();
+	spOwner->m_sounds["burstFlight"] = am.Play("Asset/Sounds/Sound/burst_flight.wav", true);
+	spOwner->m_sounds["burstFlight"].lock()->SetVolume(am.GetSEVolume());
 
 }
 
@@ -2931,8 +2952,6 @@ void Character::ActionBoostFloatShield::Update(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	Checkkey(owner);
-
-
 
 	// ガードしていない状況
 	if (!m_isGuard)
@@ -3110,6 +3129,7 @@ void Character::ActionBoostDushEnd::Enter(std::weak_ptr<Character>& owner)
 	effect->handle = effect->wpEffect.lock()->GetHandle();
 	m_spEffects.push_back(effect);
 
+	m_direction = Direct(owner, false);
 
 	m_animName = "DushEnd";
 
@@ -3167,25 +3187,30 @@ void Character::ActionBoostDushEnd::Update(std::weak_ptr<Character>& owner)
 				return;
 		}
 	}
-	if (spOwner->m_prvAction->GetMove() == MoveType::Front)
+
+	if (CameraManager::Instance().GetNowType() == CameraManager::Lock)
 	{
-		m_direction = ActionStateBase::Direct(owner, false);
+		if (spOwner->m_prvAction->GetMove() == MoveType::Front)
+		{
+			m_direction = ActionStateBase::Direct(owner, false);
+		}
+		else  if (spOwner->m_prvAction->GetMove() == MoveType::Back) {
+			auto vec = spOwner->m_mWorld.Forward();
+			vec.Normalize();
+			m_direction = vec;
+		}
+		else  if (spOwner->m_prvAction->GetMove() == MoveType::Right) {
+			auto vec = spOwner->m_mWorld.Right();
+			vec.Normalize();
+			m_direction = vec;
+		}
+		else  if (spOwner->m_prvAction->GetMove() == MoveType::Left) {
+			auto vec = spOwner->m_mWorld.Left();
+			vec.Normalize();
+			m_direction = vec;
+		}
 	}
-	else  if(spOwner->m_prvAction->GetMove() == MoveType::Back){
-		auto vec = spOwner->m_mWorld.Forward();
-		vec.Normalize();
-		m_direction = vec;
-	}
-	else  if(spOwner->m_prvAction->GetMove() == MoveType::Right){
-		auto vec = spOwner->m_mWorld.Right();
-		vec.Normalize();
-		m_direction = vec;
-	}
-	else  if(spOwner->m_prvAction->GetMove() == MoveType::Left){
-		auto vec = spOwner->m_mWorld.Left();
-		vec.Normalize();
-		m_direction = vec;
-	}
+	
 
 	auto progress = spOwner->m_spAnimator->GetProgress() * DirectX::XM_PI;
 	if (progress > 1.0f) {
@@ -3256,7 +3281,8 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->UnEnableTrail();
 
-	KdAudioManager::Instance().Play("Asset/Sounds/Thruster2.wav");
+	auto& am = KdAudioManager::Instance();
+	am.Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(am.GetSEVolume());
 
 	//エフェクト
 	{
@@ -3292,6 +3318,8 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 			m_isDuration = false;
 		}
 	}
+
+	spOwner->ChangeEnableRightAttack(true);
 
 	if (spOwner->m_spAnimator->GetProgress() > 0.6f)
 	{
@@ -3415,6 +3443,8 @@ void Character::ActionRightAttackMid::Update(std::weak_ptr<Character>& owner)
 	Application::Instance().m_log.AddLog("AttackNow\n");
 
 	std::shared_ptr<Character> spOwner = owner.lock();
+	
+	spOwner->ChangeEnableRightAttack(true);
 
 	//敵が一定範囲内なら敵のほうに向いて敵に
 	auto target = spOwner->m_wpCharacterTarget.lock();
@@ -3536,6 +3566,11 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 			return;
 		}
 
+		if (m_durationStiffness >= m_stiffnessTime / 2)
+		{
+			spOwner->ChangeEnableRightAttack(false);
+		}
+
 		return;
 	}
 
@@ -3599,6 +3634,10 @@ void Character::ActionRightAttackSecond::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->ChangeEnableRightAttack(true);
 
+	auto& am = KdAudioManager::Instance();
+	am.Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(am.GetSEVolume());
+
+
 }
 
 void Character::ActionRightAttackSecond::Update(std::weak_ptr<Character>& owner)
@@ -3606,6 +3645,7 @@ void Character::ActionRightAttackSecond::Update(std::weak_ptr<Character>& owner)
 	Application::Instance().m_log.AddLog("AttackSeco\n");
 
 	std::shared_ptr<Character> spOwner = owner.lock();
+	
 
 	//移動
 	if (!spOwner->m_spAnimator->IsAnimationEnd())
@@ -3621,6 +3661,8 @@ void Character::ActionRightAttackSecond::Update(std::weak_ptr<Character>& owner)
 				Application::Instance().m_log.AddLog("Move\n");
 			}
 		}
+		
+		spOwner->ChangeEnableRightAttack(true);
 	}
 	else
 	{
@@ -3706,7 +3748,9 @@ void Character::ActionRightAttackCharge::Update(std::weak_ptr<Character>& owner)
 
 	std::shared_ptr<Character> spOwner = owner.lock();
 
-	if (spOwner->m_spAnimator->GetProgress() <= 0.4f)
+	spOwner->ChangeEnableRightAttack(true);
+
+	if (spOwner->m_spAnimator->GetProgress() <= 0.6f)
 	{
 		if (!spOwner->SwordRangeCheck())
 		{
@@ -3722,7 +3766,7 @@ void Character::ActionRightAttackCharge::Update(std::weak_ptr<Character>& owner)
 	}
 
 
-	if (spOwner->m_spAnimator->IsComp() == false)
+	if (spOwner->m_spAnimator->IsAnimationEnd() == true)
 	{
 		spOwner->ChangeEnableAttack(false);
 
@@ -3884,7 +3928,8 @@ void Character::ActionDestroyed::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->m_isDestroy = true;
 
-	KdAudioManager::Instance().Play("Asset/Sounds/Sound/down_player.wav")->SetVolume(0.3f);
+	auto& am = KdAudioManager::Instance();
+	am.Play("Asset/Sounds/Sound/down_player.wav")->SetVolume(am.GetSEVolume());
 
 
 	UIManager::GetInstance().SceneUICreate("Asset/Data/FailedUI.scene");
@@ -3959,6 +4004,7 @@ void Character::ActionLeftShoulderAttack::Enter(std::weak_ptr<Character>& owner)
 	m_animName = "Hited";
 
 	m_stateNum = spOwner->CharacterStateName::LeftShoulderAttack;
+
 }
 
 void Character::ActionLeftShoulderAttack::Update(std::weak_ptr<Character>& owner)

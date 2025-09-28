@@ -254,8 +254,7 @@ void EditorData::UpdateImGui()
 				for (auto& obj : SceneManager::Instance().GetPlayerList())
 				{
 					std::string str = obj->GetName();
-					bool isSelected = (selectedObj.lock() == obj);  // 今の選択と同じか？
-
+					
 
 					ImGui::PushID(obj.get());
 					if (ImGui::Selectable((const char*)str.c_str()))
@@ -277,8 +276,7 @@ void EditorData::UpdateImGui()
 				for (auto& obj : SceneManager::Instance().GetEnemyList())
 				{
 					std::string str = obj->GetName();
-					bool isSelected = (selectedObj.lock() == obj);  // 今の選択と同じか？
-
+					
 					ImGui::PushID(obj.get());
 					if (ImGui::Selectable((const char*)str.c_str()))
 					{
@@ -298,7 +296,7 @@ void EditorData::UpdateImGui()
 				for (auto& obj : SceneManager::Instance().GetTerrainList())
 				{
 					std::string str = obj->GetName();
-					bool isSelected = (selectedObj.lock() == obj);  // 今の選択と同じか？
+					//bool isSelected = (selectedObj.lock() == obj);  // 今の選択と同じか？
 
 					ImGui::PushID(obj.get());
 					if (ImGui::Selectable((const char*)str.c_str()))

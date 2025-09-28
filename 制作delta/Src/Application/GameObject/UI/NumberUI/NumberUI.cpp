@@ -100,7 +100,7 @@ void NumberUI::DrawNumber()
 		Math::Vector2 pos = drawPos + Math::Vector2(i * m_spacing, 0);
 
 		//KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
-		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, pos.x, pos.y, m_drawWi, m_drawHe, &m_rect,&m_color);
+		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, (int)pos.x, (int)pos.y, m_drawWi, m_drawHe, &m_rect,&m_color);
 		//KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
 	}
 }

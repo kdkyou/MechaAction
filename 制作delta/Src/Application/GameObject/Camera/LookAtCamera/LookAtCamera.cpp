@@ -62,7 +62,7 @@ void LookAtCamera::Look()
 	// 回転差（角度）を取得
 	float angleDiffRad = currentQuat.Dot(targetQuat);
 	angleDiffRad = std::clamp(angleDiffRad, -1.0f, 1.0f);
-	float deg = DirectX::XMConvertToDegrees(acosf(angleDiffRad) * 2.0f); // クオータニオンの角度差
+//	float deg = DirectX::XMConvertToDegrees(acosf(angleDiffRad) * 2.0f); // クオータニオンの角度差
 
 	//// 補間スピード設定
 	//float baseSpeedDeg = 90.0f;

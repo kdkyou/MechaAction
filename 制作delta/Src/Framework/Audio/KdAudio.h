@@ -50,6 +50,14 @@ public:
 
 	const DirectX::AudioListener& GetListener() { return m_listener; }
 
+	// 音量取得
+	const float GetMusterVolume()const { return m_musterVolume; }
+	const float GetBGMVolume()const { return m_musterVolume * m_bgmVolume; }
+	void SetBGMVolume(const float val) { m_bgmVolume = val; }
+	const float GetSEVolume()const { return m_musterVolume * m_seVolume; }
+	void SetSEVolume(const float val) { m_seVolume = val; }
+
+
 	// サウンドアセットの一括読込
 	void LoadSoundAssets(std::initializer_list<std::string_view>& fileName);
 
@@ -72,6 +80,14 @@ private:
 
 	// サウント管理マップ
 	std::unordered_map< std::string, std::shared_ptr<KdSoundEffect>> m_soundMap;
+
+	// マスターの音量
+	float m_musterVolume = 1.0f;
+	// BGMの音量
+	float m_bgmVolume = 0.2f;
+	// SEの音量
+	float m_seVolume = 0.3f;
+
 
 	// シングルトンパターン
 public:

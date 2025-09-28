@@ -105,6 +105,16 @@ void RenderSetting::Editor_ImGui()
 
 	if (ImGui::Checkbox((const char*)u8"アルファディザ", &m_alphaDither)){}
 	
+	if (ImGui::DragFloat((const char*)u8"BGM", &m_bgmVal,0.01f,0.0f,1.0f))
+	{
+		KdAudioManager::Instance().SetBGMVolume(m_bgmVal);
+	}
+
+	if (ImGui::DragFloat((const char*)u8"SE", &m_seVal, 0.01f, 0.0f, 1.0f))
+	{
+		KdAudioManager::Instance().SetSEVolume(m_seVal);
+	}
+
 
 }
 

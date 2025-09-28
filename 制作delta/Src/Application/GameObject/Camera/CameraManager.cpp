@@ -285,7 +285,7 @@ bool CameraManager::SetNextType(const CameraType& type)
 	return true;
 }
 
-const std::weak_ptr<CharacterBase> CameraManager::GetLockTarget(UINT num)
+const std::weak_ptr<CharacterBase> CameraManager::GetLockTarget(int num)
 {
 	// TODO: return ステートメントをここに挿入します
 	if (num >= m_multiLockNum || m_wpMultiLocks.empty() == true) {
@@ -297,6 +297,7 @@ const std::weak_ptr<CharacterBase> CameraManager::GetLockTarget(UINT num)
 
 void CameraManager::AnimationChange(std::shared_ptr<CameraBase> next)
 {
+	auto& camera = next;
 
 }
 
@@ -313,8 +314,6 @@ const Math::Vector3& CameraManager::ToCameraVec(const Math::Vector3 nowPos)
 bool CameraManager::ChangeCamera(const CameraType& type)
 {
 	if (m_nextType == m_nowType) { return false; }
-
-	auto empty = type;
 
 	Math::Vector3 deg = Math::Vector3::Zero;
 	if (m_currentCamera != nullptr)
@@ -379,7 +378,7 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 
 void CameraManager::DeserializeChange(const CameraType& type, const nlohmann::json& jsonObj)
 {
-	auto changetype = type;
+	if(m_nowType == type){}
 
 	switch (m_nextType)
 	{

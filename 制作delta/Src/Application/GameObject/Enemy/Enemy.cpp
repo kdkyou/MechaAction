@@ -95,7 +95,6 @@ void Enemy::Update()
 	Application::Instance().m_log.AddLog("HP%0.f\n", m_hp);
 	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 
-
 }
 
 void Enemy::PostUpdate()
@@ -1710,7 +1709,8 @@ void Enemy::Destoroy::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdG
 
 	spOwner->m_isDestroy = true;
 
-	KdAudioManager::Instance().Play("Asset/Sounds/Sound/down_enemy.wav")->SetVolume(0.3f);
+	auto& am = KdAudioManager::Instance();
+	am.Play("Asset/Sounds/Sound/down_enemy.wav")->SetVolume(am.GetSEVolume());
 
 }
 

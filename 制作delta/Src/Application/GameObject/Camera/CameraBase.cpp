@@ -86,7 +86,6 @@ void CameraBase::UpdateRotateByMouse()
 	POINT _nowPos;
 
 	GetCursorPos(&_nowPos);
-	auto& mouse = KeyInput::GetInstance().GetMouseState();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
 	bool moveCamera = false;

@@ -32,7 +32,8 @@ void Sowrd::OnHit()
 	{
 		auto pos = m_mWorld.Translation() + m_endMat.Translation();
 	//	KdEffekseerManager::GetInstance().Play("Slash.efkefc", pos,1.0f,3.0f,false);
-		KdAudioManager::Instance().Play("Asset/Sounds/Sound/sword_hit.wav", false);
+		auto& am = KdAudioManager::Instance();
+		am.Play("Asset/Sounds/Sound/sword_hit.wav", false)->SetVolume(am.GetSEVolume());
 		m_parameter = (float)m_damage;
 		m_attackNum--;
 		m_pCollider->SetEnableAll(false);
@@ -124,7 +125,8 @@ void Sowrd::Update()
 			m_spTrail->SetEnable(true);
 			m_spTrail2->SetEnable(true);
 			m_isOnece = false;
-			KdAudioManager::Instance().Play("Asset/Sounds/Sound/sword_swing.wav", false);
+			auto& am = KdAudioManager::Instance();
+			am.Play("Asset/Sounds/Sound/sword_swing.wav", false)->SetVolume(am.GetSEVolume());
 
 		}
 
@@ -155,7 +157,6 @@ void Sowrd::Update()
 
 		m_spTrail2->AddPoint(m_endMat * m_mWorld);
 	}
-
 	else {
 		m_spTrail->ClearPoints();
 		m_spTrail->SetEnable(false);
@@ -175,6 +176,7 @@ void Sowrd::Update()
 	m_pDebugWire->AddDebugBox(mat, Math::Vector3(10.0f, 9.0f, 10.0f));
 
 	WeaponBase::Update();
+
 }
 
 void Sowrd::DrawUnLit()

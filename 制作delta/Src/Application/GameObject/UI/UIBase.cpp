@@ -10,15 +10,17 @@ void UIBase::DrawSprite()
 	{
 		m_rect = { m_rectX,m_rectY,m_rectWi,m_rectHe };
 
-		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex,m_pos.x,m_pos.y, m_drawWi, m_drawHe,&m_rect);
+		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, (int)m_pos.x, (int)m_pos.y, m_drawWi, m_drawHe,&m_rect);
 	}
 }
 
 void UIBase::Editor_ImGui()
 {
 	KdGameObject::Editor_ImGui();
+
 	char buf[64];
-	std::strncpy(buf, m_uiTag.c_str(), sizeof(buf));
+	const char* tag = m_uiTag.c_str();
+	strncpy_s(buf, sizeof(buf), tag,_TRUNCATE);
 	if (ImGui::InputText("Tag", buf, IM_ARRAYSIZE(buf)))
 	{
 		m_uiTag = buf;

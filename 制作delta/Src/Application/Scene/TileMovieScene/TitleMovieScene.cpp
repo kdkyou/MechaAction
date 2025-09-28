@@ -19,6 +19,7 @@ void TitleMovieScene::Init()
 
 	RenderSetting::GetInstance().RenderLoad("Asset/Data/TitleMovie.render");
 	
+	
 }
 
 void TitleMovieScene::Event()

@@ -9,12 +9,15 @@ void MapCamera::Init()
 	CameraBase::Init();
 
 	m_pos = { 0.0f,0.0f,0.0f };
-	m_mLocalPos = Math::Matrix::CreateTranslation({ 0.0f,80.0f,0.0f });
+	m_mLocalPos = Math::Matrix::CreateTranslation({ 0.0f,90.0f,0.0f });
 	m_rot = { 90.0f,0.0f,0.0f };
 
 	m_name = "Map";
 
 	m_mWorld = m_mLocalPos * Math::Matrix::CreateFromYawPitchRoll(m_rot * KdToRadians) * Math::Matrix::CreateTranslation(m_pos);
+
+
+	m_spCamera->SetProjectionMatrix(100.0f);
 }
 
 void MapCamera::PostUpdate()

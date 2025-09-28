@@ -13,8 +13,8 @@ void Alert::Init()
 	m_spTex = KdAssets::Instance().m_textures.GetData(str);
 
 	m_durationAlive = 0.25f;
-
-	KdAudioManager::Instance().Play("Asset/Sounds/Alert1.wav")->SetVolume(0.15f);
+	auto& am = KdAudioManager::Instance();
+	am.Play("Asset/Sounds/Alert1.wav")->SetVolume(am.GetSEVolume());
 }
 
 void Alert::Update()

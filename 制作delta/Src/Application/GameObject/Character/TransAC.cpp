@@ -51,24 +51,24 @@ void TransAC::DrawUnLit()
 
 void TransAC::DrawLit()
 {
-	/*if (m_isExpired == true) { return; }
-
-	KdShaderManager::Instance().m_StandardShader.SetDissolve(m_dissolveProgress, nullptr, &m_dissolveColor);
-
-	Math::Vector3 emis = { 2,2,2 };
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld, kWhiteColor, emis);*/
-
-}
-
-
-void TransAC::DrawBright()
-{
 	if (m_isExpired == true) { return; }
 
 	KdShaderManager::Instance().m_StandardShader.SetDissolve(m_dissolveProgress, nullptr, &m_dissolveColor);
 
 	Math::Vector3 emis = { 2,2,2 };
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld, kWhiteColor, emis);
+
+}
+
+
+void TransAC::DrawBright()
+{
+	/*if (m_isExpired == true) { return; }
+
+	KdShaderManager::Instance().m_StandardShader.SetDissolve(m_dissolveProgress, nullptr, &m_dissolveColor);
+
+	Math::Vector3 emis = { 2,2,2 };
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld, kWhiteColor, emis);*/
 
 }
 

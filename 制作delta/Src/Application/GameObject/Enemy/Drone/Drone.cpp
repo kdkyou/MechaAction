@@ -118,6 +118,8 @@ void Drone::OnHit()
 		m_parameter = 0;
 		return;
 	}
+
+
 }
 
 void Drone::UpdateRotate(const Math::Vector3& srcMoveVec)
@@ -403,6 +405,9 @@ bool Drone::ActionStateBase::ChangeStateObstacle(std::weak_ptr<Drone>& owner)
 
 void Drone::Idle::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
+
 	m_durationState = 1.0f;
 
 	m_speed = 0.0f;
@@ -438,16 +443,22 @@ void Drone::Idle::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGame
 void Drone::Idle::PostUpdate(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	// おそらくエフェクト関連
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 
 }
 
 void Drone::Idle::Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
-
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 }
 
 void Drone::MoveMent::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
+
 	m_speed = 30.0f;
 
 	m_durationState = 0.95f;
@@ -456,7 +467,7 @@ void Drone::MoveMent::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdG
 void Drone::MoveMent::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
-
+	
 	if (spOwner == nullptr) { return; }
 
 	auto spTarget = obj.lock();
@@ -500,15 +511,20 @@ void Drone::MoveMent::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 
 void Drone::MoveMent::PostUpdate(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 }
 
 void Drone::MoveMent::Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 }
 
 void Drone::Attack::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 
 	if (spOwner == nullptr) { return; }
 
@@ -563,11 +579,14 @@ void Drone::Attack::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGa
 
 void Drone::Attack::PostUpdate(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 }
 
 void Drone::Attack::Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 
 	if (spOwner == nullptr) { return; }
 
@@ -583,13 +602,15 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 	m_durationState = 2.0f;
 
 	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 
 	spOwner->m_isDestroy = true;
 
 	spOwner->ChangeEnableRightAttack(false);
 	spOwner->ChangeEnableLeftAttack(false);
 
-	KdAudioManager::Instance().Play("Asset/Sounds/Sound/drone_explode.wav")->SetVolume(0.3f);
+	auto& am = KdAudioManager::Instance();
+	am.Play("Asset/Sounds/Sound/drone_explode.wav")->SetVolume(am.GetSEVolume());
 
 	spOwner->Burn();
 }
@@ -597,6 +618,7 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 void Drone::Destroyed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 
 	if (spOwner == nullptr) { return; }
 
@@ -614,14 +636,20 @@ void Drone::Destroyed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<K
 
 void Drone::Destroyed::PostUpdate(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 }
 
 void Drone::Destroyed::Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 }
 
 void Drone::Backed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 
 	m_speed = 20.0f;
 
@@ -661,8 +689,12 @@ void Drone::Backed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGa
 
 void Drone::Backed::PostUpdate(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 }
 
 void Drone::Backed::Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
+	auto spOwner = owner.lock();
+	auto spTarget = obj.lock();
 }
