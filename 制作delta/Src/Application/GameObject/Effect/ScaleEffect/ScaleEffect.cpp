@@ -46,12 +46,12 @@ void ScaleEffect::PostUpdate()
 	auto posMat = Math::Matrix::CreateTranslation(mat.Translation());
 	
 	////追加のZ回転角度
-	auto zRotMat = Math::Matrix::CreateRotationZ(m_rot.x * KdToRadians);
+	auto zRotMat = Math::Matrix::CreateRotationZ(m_rot.y * KdToRadians);
 	auto yRotMat = Math::Matrix::CreateRotationY(m_rot.y * KdToRadians);
 	auto xRotMat = Math::Matrix::CreateRotationX(m_rot.x * KdToRadians);
 	//
 	//行列合成
-	auto totalMat = yRotMat * zRotMat * camMat * posMat;
+	auto totalMat = xRotMat * yRotMat * camMat * posMat;
 
 	m_mWorld = totalMat;
 

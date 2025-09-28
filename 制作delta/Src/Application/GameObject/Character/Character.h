@@ -79,6 +79,7 @@ private:
 		Fly,
 		Fall,
 		FlyGuard,
+		FallGuard,
 		Boost,
 		BoostNow,
 		BoostEnd,
@@ -453,6 +454,18 @@ protected:
 	{
 	public:
 		virtual ~ActionBoostFall() override {}
+
+		void Enter(std::weak_ptr<Character>& owner) override;
+		void Update(std::weak_ptr<Character>& owner)override;
+		void PostUpdate(std::weak_ptr<Character>& owner)override;
+		void Exit(std::weak_ptr<Character>& owner)override;
+	private:
+	};
+	
+	class ActionBoostFallShield :public ActionStateBase
+	{
+	public:
+		virtual ~ActionBoostFallShield() override {}
 
 		void Enter(std::weak_ptr<Character>& owner) override;
 		void Update(std::weak_ptr<Character>& owner)override;

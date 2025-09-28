@@ -578,12 +578,14 @@ void Character::LockOn()
 	KdCollider::SphereInfo sphereInfo;
 
 	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 3.5f, 0);
-	sphereInfo.m_sphere.Radius = 100.0f;
+	sphereInfo.m_sphere.Radius = 200.0f;
 	sphereInfo.m_type = KdCollider::TypeDamage;
 
 
 	//
 	m_wpCharacterTarget.reset();
+	CameraManager::Instance().ResetMultiLocks();
+
 
 	std::vector<std::shared_ptr<CameraManager::LockTargetInfo>> vec;
 
@@ -1465,7 +1467,7 @@ void Character::ActionJumpShield::Update(std::weak_ptr<Character>& owner)
 	{
 		if (!m_isFlow)
 		{
-			spOwner->ChangeActionState(std::make_shared<ActionStandShield>());
+			spOwner->ChangeActionState(std::make_shared<ActionBoostFallShield>());
 			return;
 		}
 		else
@@ -1575,6 +1577,13 @@ void Character::ActionFall::Update(std::weak_ptr<Character>& owner)
 		spOwner->ChangeActionState(std::make_shared<ActionJump>());
 		return;
 	}
+	
+	if (m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoostFallShield>());
+		return;
+	}
+
 
 	if (spOwner->m_isGround)
 	{
@@ -1612,6 +1621,91 @@ void Character::ActionFall::Exit(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
 
+}
+
+void Character::ActionBoostFallShield::Enter(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandShield"), 5.0f, false);
+
+
+	m_speed = spOwner->m_jumpSpeed * spOwner->m_speedMag;
+
+	m_animName = "StandShield";
+
+	m_stateNum = spOwner->CharacterStateName::FallGuard;
+	spOwner->ChangeEnableLeftAttack(true);
+}
+
+void Character::ActionBoostFallShield::Update(std::weak_ptr<Character>& owner)
+{
+	Application::Instance().m_log.AddLog("FallGuard\n");
+
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	Checkkey(owner);
+
+	m_direction = {};
+
+	if (m_isBoost)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionBoost>());
+		return;
+	}
+
+	if (m_isRightAttack)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionRightAttack>());
+		return;
+	}
+
+	if (m_isFlow && !m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionJump>());
+		return;
+	}
+	if (m_isFlow && m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionJumpShield>());
+		return;
+	}
+
+	if (spOwner->m_isGround)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionStandUp>());
+		return;
+	}
+
+	if (m_isMove)
+	{
+
+		m_direction = Direct(owner, true);
+		auto flg =
+			spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround);
+		if (flg) {
+			Application::Instance().m_log.AddLog("FetchSuccess\n");
+		}
+		else {
+			Application::Instance().m_log.AddLog("Move\n");
+		}
+	}
+}
+
+void Character::ActionBoostFallShield::PostUpdate(std::weak_ptr<Character>& owner)
+{
+	std::shared_ptr<Character> spOwner = owner.lock();
+
+	// アニメーションの更新
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 30.0f * spOwner->m_speedMag);
+
+	Trans(owner, spOwner->m_spAnimator->GetProgress());
+}
+
+void Character::ActionBoostFallShield::Exit(std::weak_ptr<Character>& owner)
+{
+	auto spOwner = owner.lock();
+	spOwner->ChangeEnableLeftAttack(false);
 }
 
 
@@ -3070,6 +3164,11 @@ void Character::ActionBoostFall::Update(std::weak_ptr<Character>& owner)
 	if (m_isFlow)
 	{
 		spOwner->ChangeActionState(std::make_shared<ActionBoostFloat>());
+		return;
+	}
+	if (m_isGuard)
+	{
+		spOwner->ChangeActionState(std::make_shared<ActionStandShield>());
 		return;
 	}
 

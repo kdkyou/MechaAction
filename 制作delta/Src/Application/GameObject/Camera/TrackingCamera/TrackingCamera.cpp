@@ -60,7 +60,7 @@ void TrackingCamera::PostUpdate()
 		CameraManager::Instance().EnableChangedCamera(true);
 	}
 	
-	float margin = 0.25f;
+	float margin = 0.21f;
 
 	// 画面範囲外判定
 	CheckScreenPull();
@@ -136,7 +136,7 @@ void TrackingCamera::CheckScreenPull()
 	Math::Vector3 clipPos = {};
 	m_spCamera->ConvertWorldToScreenDetail(targetPos, clipPos);
 
-	if (clipPos.x > 450.0f || clipPos.x < -350.0f || clipPos.y < -350.0f)
+	if (clipPos.x > 450.0f || clipPos.x < -350.0f || clipPos.y < -320.0f)
 	{
 		m_isPull = true;
 	}
