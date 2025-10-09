@@ -3,6 +3,7 @@
 #include "../../Scene/SceneManager.h"
 
 #include "../Effect/Polygon/PolygonEffect.h"
+#include "../Weapon/WeaponBase.h"
 
 void CharacterBase::GenerateDepthMapFromLight()
 {
@@ -42,6 +43,7 @@ void CharacterBase::SetModelWork(const std::string& path)
 {
 	if (path == "") { return; }
 
+	m_modelPath = path;
 	//if(){}
 	if (!m_spModelWork)
 	{
@@ -55,6 +57,9 @@ void CharacterBase::SetModelWork(const std::string& path)
 void CharacterBase::Editor_ImGui()
 {
 	KdGameObject::Editor_ImGui();
+	
+	m_mWorld = Math::Matrix::CreateTranslation(m_pos);
+
 
 	if (ImGui::Button((const char*)u8"モデルのロード"))
 	{
@@ -66,16 +71,102 @@ void CharacterBase::Editor_ImGui()
 	}
 
 	ImGui::DragFloat((const char*)u8"HP", &m_hp);
+	ImGui::DragFloat((const char*)u8"NockBackDamage", &m_nockBackDamage);
+	ImGui::DragFloat3((const char*)u8"Correction", &m_correction.x, 0.1f, -20.0f, 20.0f);
+
+	ImGui::ColorEdit3("EmissiveColor", &m_emissiveColor.x, ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_Float);
+
+	static std::string str = "";
+	if (ImGui::BeginCombo("SelectObject", str.empty() ? (const char*)u8"選択してください" : str.c_str()))
+	{
+		for (auto obj : KdGameObjectFactory::Instance().GetRegisterWeaponList())
+		{
+			if (ImGui::Selectable(obj.c_str(), obj == str))
+			{
+				str = obj;
+			}
+		}
+
+		ImGui::EndCombo();
+	}
+
+	if (ImGui::Button((const char*)u8"ウェポン追加"))
+	{
+		if (!str.empty())
+		{
+			auto obj = KdGameObjectFactory::Instance().CreateWeaponBase(str);
+			if (obj)
+			{
+				auto parent = m_wpBase.lock();
+				if(!parent){return;}
+
+				obj->Init();
+				obj->SetParent(parent);
+				SceneManager::Instance().AddObject(obj);
+			}
+		}
+	}
 }
 
 void CharacterBase::Deserialize(const nlohmann::json& jsonObj)
 {
 	KdGameObject::Deserialize(jsonObj);
+
+	m_mWorld = Math::Matrix::CreateTranslation(m_pos);
+
+	KdJsonUtility::GetValue(jsonObj, "ModelPath", &m_modelPath);
+	SetModelWork(m_modelPath);
+	KdJsonUtility::GetValue(jsonObj, "HP", &m_hp);
+	KdJsonUtility::GetValue(jsonObj, "NockBackDamage", &m_nockBackDamage);
+	KdJsonUtility::GetArray(jsonObj, "Correction", &m_correction.x, 3);
+
+	if (jsonObj.contains("Weapons"))
+	{
+		for (auto& weaponsData : jsonObj["Weapons"])
+		{
+			std::string str;
+			KdJsonUtility::GetValue(weaponsData, "Name", &str);
+			if (!str.empty())
+			{
+				auto obj = KdGameObjectFactory::Instance().CreateWeaponBase(str);
+				if (obj)
+				{
+					auto parent = m_wpBase.lock();
+
+					obj->Init();
+					obj->Deserialize(weaponsData);
+					obj->SetParent(parent);
+					SceneManager::Instance().AddObject(obj);
+				}
+			}
+		}
+	}
+
 }
+
 
 void CharacterBase::Serialize(nlohmann::json& outJson) const
 {
 	KdGameObject::Serialize(outJson);
+	outJson["HP"] = m_hp;
+	outJson["NockBackDamage"] = m_nockBackDamage;
+	outJson["Correction"] = KdJsonUtility::CreateArray(&m_correction.x, 3);
+	outJson["ModelPath"] = m_modelPath;
+
+	nlohmann::json weaponsArray = nlohmann::json::array();
+
+	for (auto& obj : m_wpWeapons)
+	{
+		auto weapon = obj.lock();
+		if (weapon)
+		{
+			nlohmann::json weaponJson;
+			weapon->Serialize(weaponJson);
+			weaponsArray.push_back(weaponJson);
+		}
+	}
+
+	outJson["Weapons"] = weaponsArray;
 }
 
 bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool rotate, bool direct, bool step)

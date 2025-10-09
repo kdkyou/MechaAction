@@ -61,6 +61,9 @@ public:
 	void SetCharacterTarget(const std::shared_ptr<CharacterBase>& target) { m_wpCharacterTarget = target; }
 	const std::weak_ptr<CharacterBase>& GetCharacterTarget()const { return m_wpCharacterTarget; }
 
+	void SetThisBase(const std::shared_ptr<CharacterBase>& target) { m_wpBase = target; }
+	const std::weak_ptr<CharacterBase>& GetThisBase()const { return m_wpBase; }
+
 
 	const Math::Vector2& GetDist()const { return m_dist; }
 
@@ -97,7 +100,6 @@ protected:
 
 	void BoostRotate(const Math::Vector3& vec);
 
-
 	virtual bool Search(bool areaOnly) {
 		areaOnly;
 		return false; }
@@ -105,6 +107,9 @@ protected:
 
 	const bool Burn();
 
+	void WeaponCreate(std::weak_ptr<CharacterBase>& parent);
+
+	std::string									m_modelPath;
 	std::shared_ptr<KdModelWork>				m_spModelWork;
 	std::shared_ptr<KdModelData>				m_spModelData;
 	std::shared_ptr<KdModelData>				m_spMrkModel;
@@ -114,7 +119,9 @@ protected:
 	std::vector<std::weak_ptr<KdGameObject>>	m_wpHitObjectList{};
 
 	std::weak_ptr<CharacterBase>				m_wpCharacterTarget;
+	std::weak_ptr<CharacterBase>				m_wpBase;
 	std::weak_ptr<KdGameObject>					m_wpTarget;
+	std::vector<std::weak_ptr<KdGameObject>>	m_wpWeapons;
 
 	
 	Math::Matrix 								m_scale;

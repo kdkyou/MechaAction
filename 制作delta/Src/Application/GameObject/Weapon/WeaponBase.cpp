@@ -110,16 +110,37 @@ void WeaponBase::Editor_ImGui()
 			SetModel(filepath);
 		}
 	}
+
+	ImGui::DragInt((const char*)u8"判定回数", &m_attackNum);
+	static std::string attach;
+	ImGui::InputText((const char*)u8"取付位置", &attach);
+	if (attach !="")
+	{
+		if(ImGui::Button((const char*)u8"位置適応")) {
+			m_attachPath = attach;
+		}
+	}
 }
 
 void WeaponBase::Deserialize(const nlohmann::json& jsonObj)
 {
 	KdGameObject::Deserialize(jsonObj);
+
+	KdJsonUtility::GetValue(jsonObj,"ModelPath",&m_modelPath);
+	KdJsonUtility::GetValue(jsonObj,"AttackNum",&m_attackNum);
+	KdJsonUtility::GetValue(jsonObj,"AttachPath",&m_attachPath);
+
+	SetModel(m_modelPath);
 }
 
 void WeaponBase::Serialize(nlohmann::json& outJson) const
 {
 	KdGameObject::Serialize(outJson);
+
+	outJson["ModelPath"] = m_modelPath;
+	outJson["AttackNum"] = m_attackNum;
+	outJson["AttachPath"] = m_attachPath;
+
 }
 
 

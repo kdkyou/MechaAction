@@ -33,8 +33,16 @@ void MoveTerrain::Update()
 		if (m_durationWait > m_waitTime)
 		{
 			m_durationWait = m_waitTime;
+			if (!m_isMove)
+			{
+				m_isMove = true;
 
-			m_isMove = true;
+				if (m_soundPath != "")
+				{
+					auto& am = KdAudioManager::Instance();
+					am.Play(m_soundPath)->SetVolume(am.GetSEVolume());
+				}
+			}
 		}
 	}
 

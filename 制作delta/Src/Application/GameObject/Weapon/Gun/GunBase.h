@@ -80,7 +80,13 @@ protected:
 	int						 m_maxNumofOnce = 0;	// 一度の弾倉
 
 	int						 m_numShot = 0;			// 発射口カウント
-	std::vector<Math::Matrix> m_nodeMats;			// 発射口行列
+
+	struct ShotNode
+	{
+		std::string name;
+		Math::Matrix matrix;
+	};
+	std::vector<std::shared_ptr<ShotNode>> m_nodeMats;			// 発射口行列
 
 	std::string				 m_muzzleFlashPath = "";	// マズルフラッシュ用テクスチャパス
 

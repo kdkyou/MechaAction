@@ -24,11 +24,15 @@ void Charge::Update()
 	auto parent = m_wpParent.lock();
 	if (parent)
 	{
-		const KdModelWork::Node* _pNode = parent->GetModelWork().lock()->FindWorkNode(m_attachPath);
-		
-		if (_pNode)
+		if (m_attachPath != "")
 		{
-			m_mParentAttach = _pNode->m_worldTransform;
+
+			const KdModelWork::Node* _pNode = parent->GetModelWork().lock()->FindWorkNode(m_attachPath);
+
+			if (_pNode)
+			{
+				m_mParentAttach = _pNode->m_worldTransform;
+			}
 		}
 
 		m_mParent = parent->GetMatrix();
@@ -66,7 +70,19 @@ void Charge::PostUpdate()
 
 void Charge::Editor_ImGui()
 {
+	ImGui::Text((const char*)u8"発射間隔はチャージ時間");
+
 	GunBase::Editor_ImGui();
+}
+
+void Charge::Deserialize(const nlohmann::json& jsonObj)
+{
+	GunBase::Deserialize(jsonObj);
+}
+
+void Charge::Serialize(nlohmann::json& outJson) const
+{
+	GunBase::Serialize(outJson);
 }
 
 void Charge::Trigger()

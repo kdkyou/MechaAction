@@ -33,14 +33,14 @@ float BlinnPhong(float3 lightDir, float3 vCam, float3 normal, float specPower)
 //追加
 static const int spraMatrix[8][8] =
 {
-	{ 0, 0, 0, 0, 0, 0, 0, 0 },
-	{ 1, 1, 1, 1, 1, 1, 1, 1 },
-	{ 0, 0, 0, 0, 0, 0, 0, 0 },
-	{ 2, 2, 2, 2, 2, 2, 2, 2 },
-	{ 2, 2, 2, 2, 2, 2, 2, 2 },
-	{ 0, 0, 0, 0, 0, 0, 0, 0 },
-	{ 1, 1, 1, 1, 1, 1, 1, 1 },
-	{ 0, 0, 0, 0, 0, 0, 0, 0 }
+	{ 0, 48, 12, 60, 3, 51, 15, 63 },
+	{ 32, 16, 44, 28, 35, 19, 47, 31 },
+	{ 8, 56, 4, 52, 11, 59, 7, 55 },
+	{ 40, 24, 36, 20, 43, 27, 39, 23 },
+	{ 2, 50, 14, 62, 1, 49, 13, 61 },
+	{ 34, 18, 46, 30, 33, 17, 45, 29 },
+	{ 10, 58, 6, 54, 9, 57, 5, 53 },
+	{ 42, 26, 38, 22, 41, 25, 37, 21 }
 };
 
 
@@ -82,8 +82,8 @@ float4 main(VSOutput In) : SV_Target0
 
 		int x = (int) fmod(In.Pos.x, 8);
 		int y = (int) fmod(In.Pos.y, 8);
-		float dither = spraMatrix[y][x] / 64.0f;
-		//bayerMatrixには0～15の数字が入っている
+		float threshold = spraMatrix[y][x] / 64.0f;
+		//bayerMatrixには0～63の数字が入っている
 		//これを0～1にする
 
 		////テクスチャを使う場合
@@ -112,12 +112,12 @@ float4 main(VSOutput In) : SV_Target0
 		float rate = 1 - min(1, range);
 		
 		//ディザ抜き
-		clip(dither - 1 * rate);
-		/*if(dither - 1 * rate < 0)
+		//clip(threshold - 1 * rate);
+		if (threshold - 1 * rate < 0)
 		{
 			//ピクセル破棄
-			discard;	
-		}*/
+			discard;
+		}
 	}
 
 	// 法線マップから法線ベクトル取得

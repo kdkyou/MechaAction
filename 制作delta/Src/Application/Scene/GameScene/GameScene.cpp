@@ -49,6 +49,7 @@ void GameScene::Init()
 	//===================================================================
 	std::shared_ptr<Character> _character = std::make_shared<Character>();
 	_character->SetThis(_character);
+	_character->SetThisBase(_character);
 	_character->Init();
 	AddPlayer(_character);
 
@@ -119,6 +120,7 @@ void GameScene::Init()
 	//エネミー
 	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
 	enemy->SetThis(enemy);
+	enemy->SetThisBase(enemy);
 	enemy->Init();
 	enemy->SetTag(KdGameObject::tEnemy);
 	AddEnemy(enemy);
@@ -161,6 +163,7 @@ void GameScene::Init()
 	drone->SetThis(drone);
 	drone->SetModelWork("Asset/Models/Drone/Drone.gltf");
 	drone->Init();
+	drone->SetThisBase(drone);
 	drone->SetParam(100);
 	drone->SetPos({ 10.0f,15.0f,150.0f });
 	drone->SetTag(KdGameObject::tEnemy);
@@ -184,6 +187,7 @@ void GameScene::Init()
 	drone->SetThis(drone);
 	drone->SetModelWork("Asset/Models/Drone/Drone.gltf");
 	drone->Init();
+	drone->SetThisBase(drone);
 	drone->SetParam(100);
 	drone->SetPos({ 10.0f,15.0f,170.0f });
 	drone->SetTag(KdGameObject::tEnemy);
@@ -208,6 +212,7 @@ void GameScene::Init()
 	drone->SetThis(drone);
 	drone->SetModelWork("Asset/Models/4LegMT/5LegMT.gltf");
 	drone->Init();
+	drone->SetThisBase(drone);
 	drone->SetParam(500);
 	drone->SetPos({ -100.0f,0.0f,50.0f });
 	drone->SetTag(KdGameObject::tEnemy);
@@ -241,6 +246,7 @@ void GameScene::Init()
 	mt->SetThis(mt);
 	mt->SetModelWork("Asset/Models/Leg/Leg.gltf");
 	mt->Init();
+	mt->SetThisBase(mt);
 	mt->SetParam(3000);
 	mt->SetPos({ -100.0f,0.0f,-200.0f });
 	mt->SetTag(KdGameObject::tEnemy);

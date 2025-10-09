@@ -9,6 +9,8 @@ class KdGameObject;
 
 class CharacterBase;
 
+class WeaponBase;
+
 class KdGameObjectFactory
 {
 public:
@@ -16,6 +18,10 @@ public:
 	~KdGameObjectFactory() { Release(); }
 
 	void RegisterCreateFunction(const std::string_view, const std::function <std::shared_ptr<KdGameObject>(void)> func);
+	
+	void RegisterCreateCharaFunction(const std::string_view, const std::function <std::shared_ptr<CharacterBase>(void)> func);
+
+	void RegisterCreateWeaponFunction(const std::string_view, const std::function <std::shared_ptr<WeaponBase>(void)> func);
 
 	template<class T>
 	std::shared_ptr<T> CreateGameObject()
@@ -30,7 +36,31 @@ public:
 	std::shared_ptr<KdGameObject> CreateGameObject(const std::string_view objName) const;
 	
 	// キャラ
+	template<class E>
+	std::shared_ptr<E> CreateCharacterBase()
+	{
+		std::shared_ptr<E> spObj = std::make_shared<E>();
+
+		spObj->Init();
+
+		return spObj;
+	}
 	std::shared_ptr<CharacterBase> CreateCharacterBase(const std::string_view objName) const;
+	
+	// 武器
+	template<class W>
+	std::shared_ptr<W> CreateWeaponBase()
+	{
+		std::shared_ptr<W> spObj = std::make_shared<W>();
+
+		spObj->Init();
+
+		return spObj;
+	}
+	std::shared_ptr<WeaponBase> CreateWeaponBase(const std::string_view objName) const;
+
+
+
 
 	template<typename T>
 	void RegisterGameObject(const std::string_view _name)
@@ -54,6 +84,55 @@ public:
 		return list;
 	}
 
+	//// キャラ
+	//template<typename E>
+	//void RegisterCharacterBase(const std::string_view _name)
+	//{
+	//	auto createFunc = []() -> std::shared_ptr<CharacterBase>
+	//		{
+	//			return std::make_shared<E>();
+	//		};
+
+	//	RegisterCreateCharaFunction(_name, createFunc);
+	//}
+
+	//const std::vector<std::string> GetRegisterCharaList()
+	//{
+	//	std::vector<std::string> list;
+	//	for (auto pair : m_createCharaFunction)
+	//	{
+	//		list.push_back(pair.first.data());
+	//	}
+
+	//	return list;
+	//}
+
+	// 武器
+	template<typename W>
+	void RegisterWeaponBase(const std::string_view _name)
+	{
+		auto createFunc = []() -> std::shared_ptr<WeaponBase>
+			{
+				return std::make_shared<W>();
+			};
+
+		RegisterCreateWeaponFunction(_name, createFunc);
+	}
+
+	const std::vector<std::string> GetRegisterWeaponList()
+	{
+		std::vector<std::string> list;
+		for (auto pair : m_createWeaponFunction)
+		{
+			list.push_back(pair.first.data());
+		}
+
+		return list;
+	}
+
+
+
+
 	static KdGameObjectFactory& Instance()
 	{
 		static KdGameObjectFactory instance;
@@ -69,6 +148,9 @@ private:
 
 	// CharacterBaseの生成関数：文字列検索可能
 	std::unordered_map<std::string_view, std::function<std::shared_ptr<CharacterBase>(void)>> m_createCharaFunction;
+	
+	// CharacterBaseの生成関数：文字列検索可能
+	std::unordered_map<std::string_view, std::function<std::shared_ptr<WeaponBase>(void)>> m_createWeaponFunction;
 
 	KdGameObjectFactory() {}
 };

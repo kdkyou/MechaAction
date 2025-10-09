@@ -263,10 +263,10 @@ void KdPostProcessShader::PostEffectProcess()
 	//グリッチ用
 	GlicthProcess();
 
+	DepthOfFieldProcess();
+
 	//合成用
 	CombineProcess();
-
-	DepthOfFieldProcess();
 
 //	KdShaderManager::Instance().m_spriteShader.DrawTex(m_depthOfFieldRTPack.m_RTTexture.get(), 0, 0);
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_combineRTPack.m_RTTexture.get(), 0, 0);

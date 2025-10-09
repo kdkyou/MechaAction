@@ -45,7 +45,7 @@ private:
 
 	bool									m_isForWard = false;
 
-		float							m_overRap = 0.0f;
+	float									m_overRap = 0.0f;
 
 
 	// 視野角

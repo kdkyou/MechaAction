@@ -37,6 +37,7 @@ float4 main(VSOutput In) : SV_Target0
 	//加算合成
 	else if(g_switch == 3)
 	{
+		color += g_inputTex.Sample(g_ss, In.UV).rgb;
 		float3 color1 = g_radialTex.Sample(g_ss, In.UV).rgb;
 		float3 color2 = g_glitchTex.Sample(g_ss, In.UV).rgb;
 		

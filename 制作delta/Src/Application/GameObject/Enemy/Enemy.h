@@ -37,6 +37,14 @@ public:
 	void SetThis(const std::shared_ptr<Enemy>& spthis) { m_wpThis = spthis; }
 
 	void OnHit()override;
+	
+	virtual void Editor_ImGui()override;
+
+	// JSONデータから、クラスの内容を設定
+	virtual void Deserialize(const nlohmann::json& jsonObj)override;
+
+	// このクラスの内容をJSONデータ化する
+	virtual void Serialize(nlohmann::json& outJson) const override;
 
 private:
 
@@ -49,7 +57,6 @@ private:
 
 	bool Search(bool areaOnly)override;
 
-	void Editor_ImGui()override;
 	
 	const AnotherStateType GetPrevState()const { return m_prevAction->GetType(); }
 

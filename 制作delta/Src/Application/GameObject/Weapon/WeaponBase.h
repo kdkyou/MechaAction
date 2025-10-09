@@ -55,8 +55,11 @@ public:
 	// このクラスの内容をJSONデータ化する
 	virtual void Serialize(nlohmann::json& outJson) const override;
 
+	const std::string& GetWeaponName() const { return m_weaponName;}
+
 protected:
 
+	std::string						m_weaponName;
 	
 	std::weak_ptr<CharacterBase>    m_wpParent;
 

@@ -202,6 +202,9 @@
     <Filter Include="Src\Application\GameObject\UI\MapUI">
       <UniqueIdentifier>{e369bdc0-f907-4d84-9f23-47b6130eccb4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Enemy\FLAC">
+      <UniqueIdentifier>{7164bc43-6851-4566-9d37-cda3d46ea58d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -546,6 +549,12 @@
     <ClInclude Include="..\Library\strconv.h">
       <Filter>Library</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Enemy\EnemyCreater.h">
+      <Filter>Src\Application\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Enemy\FLAC\FLAC.h">
+      <Filter>Src\Application\GameObject\Enemy\FLAC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -856,6 +865,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\MapUI\MapUI.cpp">
       <Filter>Src\Application\GameObject\UI\MapUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Enemy\EnemyCreater.cpp">
+      <Filter>Src\Application\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Enemy\FLAC\FLAC.cpp">
+      <Filter>Src\Application\GameObject\Enemy\FLAC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

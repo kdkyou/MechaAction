@@ -178,6 +178,8 @@
     <ClInclude Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Drone\Drone.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Enemy.h" />
+    <ClInclude Include="Src\Application\GameObject\Enemy\EnemyCreater.h" />
+    <ClInclude Include="Src\Application\GameObject\Enemy\FLAC\FLAC.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\MT\MT.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\AnimTerrain.h" />
@@ -288,6 +290,8 @@
     <ClCompile Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Drone\Drone.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Enemy\EnemyCreater.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Enemy\FLAC\FLAC.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\MT\MT.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\AnimTerrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\DrawTerrain.cpp" />

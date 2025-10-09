@@ -18,13 +18,42 @@ void GunBase::Editor_ImGui()
 {
 	WeaponBase::Editor_ImGui();
 
-	ImGui::DragInt((const char*)"ダメージ", &m_damage, 1, 0,10000);
-	ImGui::DragFloat((const char*)"発射時間", &m_fireRate, 0.01f, 0.01f, 10.0f);
-	ImGui::DragFloat((const char*)"リロード時間", &m_reloadTime, 0.01f, 0.01f, 15.0f);
-	ImGui::DragFloat((const char*)"バースト時間", &m_burst, 0.01f, 0.01f, 15.0f);
-	ImGui::DragInt((const char*)"バースト回数", &m_numBurst,1, 1, 15);
-	ImGui::DragInt((const char*)"総弾数", &m_maxNum, 1,0);
-	ImGui::DragInt((const char*)"装填数", &m_maxNumofOnce, 1,0);
+	ImGui::Separator();
+	ImGui::DragFloat((const char*)u8"発射間隔時間", &m_fireRate, 0.01f, 0.01f, 10.0f);
+	ImGui::DragFloat((const char*)u8"リロード時間", &m_reloadTime, 0.01f, 0.01f, 15.0f);
+	ImGui::DragFloat((const char*)u8"バースト時間", &m_burst, 0.01f, 0.01f, 15.0f);
+	ImGui::DragInt((const char*)u8"バースト回数", &m_numBurst,1, 1, 15);
+	ImGui::DragInt((const char*)u8"総弾数", &m_maxNum, 1,0);
+	ImGui::DragInt((const char*)u8"装填数", &m_maxNumofOnce, 1,0);
+
+	static std::string str;
+	ImGui::InputText((const char*)u8"発射口", &str);
+	if (str != "")
+	{
+		if(ImGui::Button((const char*)u8"セット")){
+			SetNodeMats(str);
+		}
+	}
+
+	ImGui::Separator();
+	ImGui::Text((const char*)u8"弾パラメータ");
+	if (ImGui::Button((const char*)u8"弾モデルのロード"))
+	{
+		std::string filepath;
+		if (EditorData::GetInstance().OpenFileDialog(filepath))
+		{
+			m_bulletModelPath = filepath;
+		}
+	}
+	ImGui::DragInt((const char*)u8"ダメージ", &m_damage, 1, 0,10000);
+	ImGui::DragFloat((const char*)u8"時間", &m_aliveTime,0.01f,0.0f);
+	ImGui::DragFloat((const char*)u8"速さ", &m_speed, 0.1f, 0.0f);
+	ImGui::DragFloat((const char*)u8"追尾可能角度", &m_bulletLockAngle,0.01f,0.0f);
+	ImGui::DragFloat((const char*)u8"延長索敵時間", &m_bulletLostTime,0.01f,0.0f);
+	ImGui::DragFloat((const char*)u8"旋回角度", &m_bulletRotateDeg,0.01f,0.0f);
+	ImGui::DragFloat((const char*)u8"最大追尾距離",&m_bulletTrackingDistance,0.1f,0.0f);
+	//ImGui::DragFloat((const char*)u8"移動方式");
+
 
 	if (ImGui::Button((const char*)u8"テクスチャのロード"))
 	{
@@ -39,11 +68,36 @@ void GunBase::Editor_ImGui()
 void GunBase::Deserialize(const nlohmann::json& jsonObj)
 {
 	WeaponBase::Deserialize(jsonObj);
+	KdJsonUtility::GetValue(jsonObj, "AliveTime", &m_aliveTime);
+	KdJsonUtility::GetValue(jsonObj, "Damage", &m_damage);
+	KdJsonUtility::GetValue(jsonObj, "FireRate", &m_fireRate);
+	KdJsonUtility::GetValue(jsonObj, "MaxNum", &m_maxNum);
+	KdJsonUtility::GetValue(jsonObj, "MaxNumOfOnce", &m_maxNumofOnce);
+	KdJsonUtility::GetValue(jsonObj, "ReloadTime", &m_reloadTime);
+	KdJsonUtility::GetValue(jsonObj, "BurstTime", &m_burst);
+	KdJsonUtility::GetValue(jsonObj, "BurstNum", &m_numBurst);
+
 }
 
 void GunBase::Serialize(nlohmann::json& outJson) const
 {
 	WeaponBase::Serialize(outJson);
+
+	outJson["AliveTime"] = m_aliveTime;
+	outJson["Damage"] = m_damage;
+	outJson["FireRate"] = m_fireRate;
+	outJson["MaxNum"] = m_maxNum;
+	outJson["MaxNumOfOnces"] = m_maxNumofOnce;
+	outJson["ReloadTime"] = m_reloadTime;
+	outJson["BurstTime"] = m_burst;
+	outJson["BurstNum"] = m_numBurst;
+	outJson["BulletModelPath"] = m_bulletModelPath;
+	outJson["BulletRotateDeg"] = m_bulletRotateDeg;
+	outJson["BulletLockAngle"] = m_bulletLockAngle;
+	outJson["BulletLostTime"] = m_bulletLostTime;
+	outJson["BulletLostTime"] = m_bulletTrackingDistance;
+	outJson["BulletTrailPath"] = m_bulletTrailPath;
+
 }
 
 void GunBase::Init()
@@ -145,8 +199,11 @@ bool GunBase::SetNodeMats(const std::string& nodeName)
 
 	if (pNode)
 	{
+		auto node = std::make_shared<ShotNode>();
 		Math::Matrix mat = pNode->m_worldTransform;
-		m_nodeMats.push_back(mat);
+		node->matrix = mat;
+		node->name = nodeName;
+		m_nodeMats.push_back(node);
 		return true;
 	}
 

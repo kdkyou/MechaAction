@@ -12,7 +12,15 @@
 #include "../../GameObject/Character/TitleMovie.h"
 #include "../../GameObject/Terrain/Terrain.h"
 
+#include "../../GameObject/Weapon/Gun/Rifle/Rifle.h"
+#include "../../GameObject/Weapon/Gun/Charge/Charge.h"
+#include "../../GameObject/Weapon/Gun/Missile/Missile.h"
+
+#include "../../GameObject/Enemy/Drone/Drone.h"
+
 #include "../../GameObject/UI/UIManager.h"
+
+#include "../../GameObject/Enemy/EnemyCreater.h"
 
 void TitleScene::Init()
 {
@@ -30,7 +38,9 @@ void TitleScene::Init()
 	KdGameObjectFactory::Instance().RegisterGameObject<EmmisiveTerrain>("EmmisiveTerrain");
 	KdGameObjectFactory::Instance().RegisterGameObject<TitleMovie>("TitleMovie");
 	KdGameObjectFactory::Instance().RegisterGameObject<Terrain>("Terrain");
-
+	KdGameObjectFactory::Instance().RegisterWeaponBase<Rifle> ("Rifle");
+	KdGameObjectFactory::Instance().RegisterWeaponBase<Charge> ("Charge");
+	KdGameObjectFactory::Instance().RegisterWeaponBase<Missile> ("Missile");
 
 	CurrentSceneCreate("Asset/Data/Title.scene");
 
@@ -43,6 +53,7 @@ void TitleScene::Init()
 
 	UIManager::GetInstance().SceneUICreate("Asset/Data/TitleUI.scene");
 
+
 	m_once = false;
 
 
@@ -54,6 +65,12 @@ void TitleScene::Event()
 {
 	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherEnable(RenderSetting::GetInstance().IsAlphaDither());
 
+	static bool a = false;
+
+	if(!a){
+		a = true;
+		EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Title.enemy");
+	}
 
 	auto& key = KeyInput::GetInstance().GetKeyboardState();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();

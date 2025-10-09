@@ -225,12 +225,6 @@ bool Application::Init(int w, int h)
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/Apartment/Apartment.gltf");
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/LowApartment/LowApartment.gltf");
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/Lab/Catapult.gltf");
-		/*KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine1.png");
-		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine2.png");
-		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine3.png");
-		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine4.png");
-		KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/ConcentrationLine/ConcentrationLine5.png");*/
-
 	}
 
 	return true;

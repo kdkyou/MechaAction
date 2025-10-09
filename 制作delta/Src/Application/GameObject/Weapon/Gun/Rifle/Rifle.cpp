@@ -32,10 +32,14 @@ void Rifle::Update()
 	auto parent = m_wpParent.lock();
 	if (parent)
 	{
-		const KdModelWork::Node* _pNode = parent->GetModelWork().lock()->FindWorkNode(m_attachPath);
-		if (_pNode)
+		if (m_attachPath != "")
 		{
-			m_mParentAttach = _pNode->m_worldTransform;
+
+			const KdModelWork::Node* _pNode = parent->GetModelWork().lock()->FindWorkNode(m_attachPath);
+			if (_pNode)
+			{
+				m_mParentAttach = _pNode->m_worldTransform;
+			}
 		}
 
 		m_mParent = parent->GetMatrix();
@@ -113,12 +117,11 @@ void Rifle::Trigger()
 
 void Rifle::Shot()
 {
-	const KdModelWork::Node* pNode = m_spModelWork->FindWorkNode("SP");
 	Math::Vector3 startPos = Math::Vector3::Zero;
 	Math::Vector3 direct = Math::Vector3::Zero;
-	if (pNode)
+	//if (pNode)
 	{
-		auto trans = pNode->m_worldTransform * m_mWorld;
+		auto trans = m_nodeMats[m_numShot]->matrix * m_mWorld;
 		startPos = trans.Translation();
 
 		direct = trans.Backward();
@@ -138,8 +141,14 @@ void Rifle::Shot()
 	bullet->Init();
 	bullet->SetTag(m_tag);
 
-
 	SceneManager::Instance().AddObject(bullet);
+
+	m_numShot++;
+
+	if ((UINT)m_numShot >= m_nodeMats.size())
+	{
+		m_numShot = 0;
+	}
 
 }
 
@@ -156,7 +165,18 @@ void Rifle::OnTrigger()
 
 void Rifle::Editor_ImGui()
 {
+	GunBase::Editor_ImGui();
 
+}
+
+void Rifle::Deserialize(const nlohmann::json& jsonObj)
+{
+	GunBase::Deserialize(jsonObj);
+}
+
+void Rifle::Serialize(nlohmann::json& outJson) const
+{
+	GunBase::Serialize(outJson);
 }
 
 

@@ -48,7 +48,7 @@ dcl_resource_texture2d (float,float,float,float) t1
 dcl_resource_texture2d (float,float,float,float) t2
 dcl_input_ps linear v1.xy
 dcl_output o0.xyzw
-dcl_temps 3
+dcl_temps 4
 if_z cb0[0].x
   sample_indexable(texture2d)(float,float,float,float) r0.xyz, v1.xyxx, t0.xyzw, s0
 else 
@@ -62,9 +62,11 @@ else
     else 
       ieq r0.w, cb0[0].x, l(3)
       if_nz r0.w
-        sample_indexable(texture2d)(float,float,float,float) r1.xyz, v1.xyxx, t1.xyzw, s0
-        sample_indexable(texture2d)(float,float,float,float) r2.xyz, v1.xyxx, t2.xyzw, s0
-        add_sat r0.xyz, r1.xyzx, r2.xyzx
+        sample_indexable(texture2d)(float,float,float,float) r1.xyz, v1.xyxx, t0.xyzw, s0
+        sample_indexable(texture2d)(float,float,float,float) r2.xyz, v1.xyxx, t1.xyzw, s0
+        sample_indexable(texture2d)(float,float,float,float) r3.xyz, v1.xyxx, t2.xyzw, s0
+        add_sat r2.xyz, r2.xyzx, r3.xyzx
+        add r0.xyz, r1.xyzx, r2.xyzx
       else 
         mov r0.xyz, l(0,0,0,0)
       endif 
@@ -74,20 +76,20 @@ endif
 mov o0.xyz, r0.xyzx
 mov o0.w, l(1.000000)
 ret 
-// Approximately 25 instruction slots used
+// Approximately 27 instruction slots used
 #endif
 
 const BYTE compiledBuffer[] =
 {
-     68,  88,  66,  67,  43, 136, 
-    159,  21, 117,  71,  22,  44, 
-    163, 151, 140, 155, 153, 167, 
-     79,  42,   1,   0,   0,   0, 
-    128,   5,   0,   0,   5,   0, 
+     68,  88,  66,  67,  65, 192, 
+    160, 106, 248,  43, 119, 163, 
+    109,  69,  92,  93, 148, 189, 
+    183, 226,   1,   0,   0,   0, 
+    200,   5,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
     224,   1,   0,   0,  56,   2, 
       0,   0, 108,   2,   0,   0, 
-    228,   4,   0,   0,  82,  68, 
+     44,   5,   0,   0,  82,  68, 
      69,  70, 164,   1,   0,   0, 
       1,   0,   0,   0,   8,   1, 
       0,   0,   5,   0,   0,   0, 
@@ -183,8 +185,8 @@ const BYTE compiledBuffer[] =
       0,   0,  83,  86,  95,  84, 
      97, 114, 103, 101, 116,   0, 
     171, 171,  83,  72,  69,  88, 
-    112,   2,   0,   0,  80,   0, 
-      0,   0, 156,   0,   0,   0, 
+    184,   2,   0,   0,  80,   0, 
+      0,   0, 174,   0,   0,   0, 
     106,   8,   0,   1,  89,   0, 
       0,   4,  70, 142,  32,   0, 
       0,   0,   0,   0,   1,   0, 
@@ -203,7 +205,7 @@ const BYTE compiledBuffer[] =
       0,   0, 101,   0,   0,   3, 
     242,  32,  16,   0,   0,   0, 
       0,   0, 104,   0,   0,   2, 
-      3,   0,   0,   0,  31,   0, 
+      4,   0,   0,   0,  31,   0, 
       0,   4,  10, 128,  32,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,  69,   0,   0, 139, 
@@ -257,7 +259,7 @@ const BYTE compiledBuffer[] =
      21,   0, 114,   0,  16,   0, 
       1,   0,   0,   0,  70,  16, 
      16,   0,   1,   0,   0,   0, 
-     70, 126,  16,   0,   1,   0, 
+     70, 126,  16,   0,   0,   0, 
       0,   0,   0,  96,  16,   0, 
       0,   0,   0,   0,  69,   0, 
       0, 139, 194,   0,   0, 128, 
@@ -265,9 +267,21 @@ const BYTE compiledBuffer[] =
      16,   0,   2,   0,   0,   0, 
      70,  16,  16,   0,   1,   0, 
       0,   0,  70, 126,  16,   0, 
-      2,   0,   0,   0,   0,  96, 
+      1,   0,   0,   0,   0,  96, 
      16,   0,   0,   0,   0,   0, 
-      0,  32,   0,   7, 114,   0, 
+     69,   0,   0, 139, 194,   0, 
+      0, 128,  67,  85,  21,   0, 
+    114,   0,  16,   0,   3,   0, 
+      0,   0,  70,  16,  16,   0, 
+      1,   0,   0,   0,  70, 126, 
+     16,   0,   2,   0,   0,   0, 
+      0,  96,  16,   0,   0,   0, 
+      0,   0,   0,  32,   0,   7, 
+    114,   0,  16,   0,   2,   0, 
+      0,   0,  70,   2,  16,   0, 
+      2,   0,   0,   0,  70,   2, 
+     16,   0,   3,   0,   0,   0, 
+      0,   0,   0,   7, 114,   0, 
      16,   0,   0,   0,   0,   0, 
      70,   2,  16,   0,   1,   0, 
       0,   0,  70,   2,  16,   0, 
@@ -289,16 +303,16 @@ const BYTE compiledBuffer[] =
       0,   0,   0,   0, 128,  63, 
      62,   0,   0,   1,  83,  84, 
      65,  84, 148,   0,   0,   0, 
-     25,   0,   0,   0,   3,   0, 
+     27,   0,   0,   0,   4,   0, 
       0,   0,   0,   0,   0,   0, 
-      2,   0,   0,   0,   1,   0, 
+      2,   0,   0,   0,   2,   0, 
       0,   0,   3,   0,   0,   0, 
       0,   0,   0,   0,   6,   0, 
       0,   0,   3,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   5,   0,   0,   0, 
+      0,   0,   6,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   3,   0, 

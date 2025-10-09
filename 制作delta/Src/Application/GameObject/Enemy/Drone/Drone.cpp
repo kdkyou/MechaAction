@@ -29,7 +29,7 @@ void Drone::Init()
 
 	ChangeActionState(std::make_shared<Idle>());
 
-	m_name = "FloatEnemy";
+	m_name = "Drone";
 
 	m_hp = 200;
 
@@ -307,12 +307,12 @@ void Drone::Editor_ImGui()
 
 void Drone::Deserialize(const nlohmann::json& jsonObj)
 {
-	KdGameObject::Deserialize(jsonObj);
+	CharacterBase::Deserialize(jsonObj);
 }
 
 void Drone::Serialize(nlohmann::json& outJson) const
 {
-	KdGameObject::Serialize(outJson);
+	CharacterBase::Serialize(outJson);
 }
 
 

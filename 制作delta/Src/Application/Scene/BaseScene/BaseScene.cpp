@@ -4,6 +4,8 @@
 #include "../../GameObject/Character/CharacterBase.h"
 #include "../../GameObject/UI/UIManager.h"
 
+#include "../../GameObject/Enemy/EnemyCreater.h"
+
 void BaseScene::PreUpdate()
 {
 	// Updateの前の更新処理
@@ -71,7 +73,7 @@ void BaseScene::Update()
 			obj->Update();
 		}
 	}
-
+	
 	{
 		for (auto& obj : m_playerList)
 		{
@@ -308,13 +310,13 @@ void BaseScene::DrawMap()
 	{
 		CameraManager::Instance().MapDrawUnLit();
 		
-		/*for (auto& obj : m_terrainList)
+		for (auto& obj : m_terrainList)
 		{
 			if (obj->GetTag() != KdGameObject::tPlayerAttack)
 			{
 				obj->DrawLit();
 			}
-		}*/
+		}
 
 		for (auto& obj : m_playerList)
 		{
@@ -406,6 +408,11 @@ void BaseScene::CurrentSceneCreate(const std::string& fileName)
 	}
 }
 
+void BaseScene::EnemyCreate(const std::string& fileName)
+{
+
+}
+
 void BaseScene::Edit_ImGui()
 {
 	if (ImGui::Button((const char*)u8"シーン読み込み"))
@@ -440,6 +447,7 @@ void BaseScene::Edit_ImGui()
 	}
 
 
+
 	if (ImGui::Button((const char*)u8"オブジェクト追加"))
 	{
 		if (!str.empty())
@@ -466,19 +474,22 @@ void BaseScene::Edit_ImGui()
 		}
 	}
 
-	if (ImGui::Button((const char*)u8"敵追加"))
+	/* static std::string charaName = "";
+	if (ImGui::BeginCombo("SelectCharacter", charaName.empty() ? (const char*)u8"選択してください" : charaName.c_str()))
 	{
-		if (!str.empty())
+		for (auto obj : KdGameObjectFactory::Instance().GetRegisterCharaList())
 		{
-			auto obj = KdGameObjectFactory::Instance().CreateCharacterBase(str);
-			if (obj)
+			if (ImGui::Selectable(obj.c_str(), obj == charaName))
 			{
-				obj->Init();
-				AddEnemy(obj);
+				charaName = obj;
 			}
 		}
-	}
 
+		ImGui::EndCombo();
+	}*/
+
+	
+	EnemyCreater::GetInstance().Editor_ImGui();
 
 
 	/*for (auto obj : m_objList)

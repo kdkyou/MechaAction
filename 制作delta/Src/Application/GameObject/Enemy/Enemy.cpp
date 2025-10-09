@@ -12,13 +12,15 @@
 
 void Enemy::Init()
 {
+	m_name = "Enemy";
+
 	if (!m_spModelWork)
 	{
 		m_spModelWork = std::make_shared<KdModelWork>();
 		m_spModelWork->SetModelData("Asset/Models/Another/Another.gltf");
 		// 初期のアニメーションをセットする
 		m_spAnimator = std::make_shared<KdAnimator>();
-		m_spAnimator->SetAnimation(m_spModelWork->GetData()->GetAnimation("StandUp"), 00.0f, false);
+		m_spAnimator->SetAnimation(m_spModelWork->GetData()->GetAnimation("StandUp"), 1.0f, false);
 	}
 
 	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Enemy.gltf");
@@ -36,6 +38,7 @@ void Enemy::Init()
 		//	m_pCollider->RegisterCollisionShape("Enemy", box, KdCollider::TypeDamage);
 		m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 	}
+
 
 	m_correction = { 0.0f,5.0f,0.0f };
 	m_correctionMat = Math::Matrix::CreateTranslation({ 0.0f,5.0f,0.0f });
@@ -328,6 +331,17 @@ void Enemy::Editor_ImGui()
 
 	ImGui::DragFloat2("distance", &m_dist.x, 0.1f);
 	ImGui::DragFloat("SerchRadius", &m_radius, 0.1f);
+	ImGui::DragFloat((const char*)u8"視野角", &m_viewAngle, 0.1f, 0.0f, 180.0f);
+}
+
+void Enemy::Deserialize(const nlohmann::json& jsonObj)
+{
+	CharacterBase::Deserialize(jsonObj);
+}
+
+void Enemy::Serialize(nlohmann::json& outJson) const
+{
+	CharacterBase::Serialize(outJson);
 }
 
 
@@ -757,6 +771,7 @@ void Enemy::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Enemy>& owner
 void Enemy::Start::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
+	if (!spOwner) { return; }
 	auto spTarget = spObj.lock();
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandUp"), 100.0f);
@@ -771,6 +786,7 @@ void Enemy::Start::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	if (!spOwner) { return; }
 
 	bool isFind = spOwner->SearchPlayer();
 
@@ -802,6 +818,7 @@ void Enemy::StandUp::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdG
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	if (!spOwner) { return; }
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandUp"), 100.0f, false);
 
@@ -815,6 +832,7 @@ void Enemy::StandUp::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<Kd
 
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	if (!spOwner) { return; }
 
 
 	if (spOwner->m_spAnimator->GetProgress() >= 1.0f)
@@ -829,6 +847,7 @@ void Enemy::StandUp::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	if (!spOwner) { return; }
 
 	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
 }
@@ -837,6 +856,8 @@ void Enemy::StandUp::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 {
 	auto spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+
+	if (!spOwner) { return; }
 
 }
 
@@ -847,6 +868,8 @@ void Enemy::Stand::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGam
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+
+	if (!spOwner) { return; }
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Stand"), 3.0f);
 
@@ -860,6 +883,9 @@ void Enemy::Stand::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spOBj = spObj.lock();
+	if (!spOwner) { return; }
+
+
 	auto difference = spOBj->GetMatrix().Translation() - spOwner->m_mWorld.Translation();
 
 
@@ -871,6 +897,9 @@ void Enemy::Stand::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+
+	if (!spOwner) { return; }
+
 	
 	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
 }
@@ -880,6 +909,8 @@ void Enemy::Stand::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGame
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+
+	if (!spOwner) { return; }
 
 }
 

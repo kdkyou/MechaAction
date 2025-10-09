@@ -267,7 +267,7 @@ void Character::OnHit()
 
 void Character::Editor_ImGui()
 {
-	KdGameObject::Editor_ImGui();
+	CharacterBase::Editor_ImGui();
 
 	ImGui::Text("CharacterSpeed");
 	ImGui::SliderFloat("Walk", &m_walkSpeed, 0.0f, 100.0f);
@@ -289,13 +289,13 @@ void Character::Editor_ImGui()
 
 void Character::Deserialize(const nlohmann::json& jsonObj)
 {
-	KdGameObject::Deserialize(jsonObj);
+	CharacterBase::Deserialize(jsonObj);
 
 }
 
 void Character::Serialize(nlohmann::json& outJson) const
 {
-	KdGameObject::Serialize(outJson);
+	CharacterBase::Serialize(outJson);
 }
 
 const bool Character::IsMove()

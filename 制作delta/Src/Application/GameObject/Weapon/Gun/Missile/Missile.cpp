@@ -24,10 +24,13 @@ void Missile::Update()
 	
 	if (parent)
 	{
-		const KdModelWork::Node* _pNode = parent->GetModelWork().lock()->FindWorkNode(m_attachPath);
-		if (_pNode)
+		if (m_attachPath != "")
 		{
-			m_mParentAttach = _pNode->m_worldTransform;
+			const KdModelWork::Node* _pNode = parent->GetModelWork().lock()->FindWorkNode(m_attachPath);
+			if (_pNode)
+			{
+				m_mParentAttach = _pNode->m_worldTransform;
+			}
 		}
 
 		m_mParent = parent->GetMatrix();
@@ -138,7 +141,7 @@ void Missile::Shot()
 	Math::Vector3 direct = Math::Vector3::Zero;
 	
 	{
-		auto trans = m_nodeMats[m_numShot] * m_mWorld;
+		auto trans = m_nodeMats[m_numShot]->matrix * m_mWorld;
 		startPos = trans.Translation();
 
 		direct = trans.Backward();
@@ -177,6 +180,19 @@ void Missile::OnTrigger()
 
 void Missile::Editor_ImGui()
 {
+	ImGui::Text((const char*)u8"Burst回数は発射回数\n");
+	ImGui::Text((const char*)u8"");
+	GunBase::Editor_ImGui();
+}
+
+void Missile::Deserialize(const nlohmann::json& jsonObj)
+{
+	GunBase::Deserialize(jsonObj);
+}
+
+void Missile::Serialize(nlohmann::json& outJson) const
+{
+	GunBase::Serialize(outJson);
 }
 
 

@@ -93,6 +93,7 @@ public :
 protected :
 
 	void CurrentSceneCreate(const std::string& fileName);
+	void EnemyCreate(const std::string& fileName);
 	
 	// 継承先シーンで必要ならオーバーライドする
 	virtual void Event();

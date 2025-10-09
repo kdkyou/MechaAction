@@ -50,7 +50,7 @@ public:
 		float			WaveTime = 0.0f;
 		// アルファディザ切り替え
 		int				AlphaDitherEnable = 1;
-		float			AlphaDitherDist =  6.0f;
+		float			AlphaDitherDist =  1.0f;
 
 		int             LightningEnable = 0;	
 		Math::Vector3   LightningMinPos = {};	  // モデルのローカル最小座標
