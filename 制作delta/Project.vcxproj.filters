@@ -205,6 +205,9 @@
     <Filter Include="Src\Application\GameObject\Enemy\FLAC">
       <UniqueIdentifier>{7164bc43-6851-4566-9d37-cda3d46ea58d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Enemy\Balt">
+      <UniqueIdentifier>{4173b404-e970-4a00-a50d-c23a4a998394}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">

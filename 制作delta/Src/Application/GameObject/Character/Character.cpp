@@ -741,6 +741,8 @@ const bool Character::SwordRangeCheck()
 
 void Character::OverTrans(const std::string& nowAnimName,const float animProgress)
 {
+	m_hp--;
+	
 	std::shared_ptr<TransAC> trans = std::make_shared<TransAC>();
 	std::string modelpath = "Asset/Models/Grint/Grint.gltf";
 	std::string animpath = nowAnimName;

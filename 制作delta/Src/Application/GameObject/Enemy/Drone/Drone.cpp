@@ -622,10 +622,10 @@ void Drone::Destroyed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<K
 
 	if (spOwner == nullptr) { return; }
 
-
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
-	spOwner->Move(m_speed, Math::Vector3::Down, KdCollider::TypeGround, false,false);
+	spOwner->MoveSwept(m_speed,Math::Vector3::Down, KdCollider::TypeGround);
+
 
 	if (m_durationState <= 0)
 	{

@@ -82,7 +82,7 @@ float4 main(VSOutput In) : SV_Target0
 
 		int x = (int) fmod(In.Pos.x, 8);
 		int y = (int) fmod(In.Pos.y, 8);
-		float threshold = spraMatrix[y][x] / 64.0f;
+		float thredshold = spraMatrix[y][x] / 64.0f;
 		//bayerMatrixには0～63の数字が入っている
 		//これを0～1にする
 
@@ -112,10 +112,12 @@ float4 main(VSOutput In) : SV_Target0
 		float rate = 1 - min(1, range);
 		
 		//ディザ抜き
-		//clip(threshold - 1 * rate);
-		if (threshold - 1 * rate < 0)
+		//clip(thredshold - 1 * rate);
+		 // かかり始める最低値
+		thredshold -= 0.03f;
+		thredshold = saturate(thredshold);
+		if (thredshold >= In.Pos.z)
 		{
-			//ピクセル破棄
 			discard;
 		}
 	}

@@ -102,11 +102,21 @@ void GameScene::Init()
 		missile->SetParent(_character);
 		missile->SetAttackTrigger(WeaponBase::RightShoulder);
 		missile->SetAttachPath("RightShoulderWeapon");
-		missile->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/3LineMissile.gltf", 1.8f, 7.0f,0.1f,3, 12, 24);
+		missile->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/3LineMissile.gltf", 1.8f, 7.0f,0.025f,6, 120, 240);
 		missile->MakeAnimator("Close", 20.0f);
 		missile->SetNodeMats("SP1");
 		missile->SetNodeMats("SP2");
 		missile->SetNodeMats("SP3");
+		/*
+		missile->SetNodeMats("SP4");
+		missile->SetNodeMats("SP5");
+		missile->SetNodeMats("SP6");
+		missile->SetNodeMats("SP7");
+		missile->SetNodeMats("SP8");
+		missile->SetNodeMats("SP9");
+		missile->SetNodeMats("SP10");
+		missile->SetNodeMats("SP11");
+		missile->SetNodeMats("SP12");*/
 		missile->Init();
 		missile->SetTag(KdGameObject::tPlayerAttack);
 		
@@ -133,8 +143,9 @@ void GameScene::Init()
 		rifle->SetAttachPath("RightWeapon");
 		rifle->SetAttackTrigger(WeaponBase::RightHand);
 		rifle->SetTag(KdGameObject::tEnemyAttack);
-	rifle->Init();
+		rifle->Init();
 		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 0.7f, 3.0f, 0.0f, 1, 24, 80);
+		rifle->SetNodeMats("SP");
 		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 400, 1000, 200, 40.0f, 0.95f);
 		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.7f, 0.4f, 0.8f), 1.7f, 10);
 		rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
@@ -148,6 +159,7 @@ void GameScene::Init()
 		rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.2f, 2.0f, 0.0f, 1, 36, 250);
+		rifle->SetNodeMats("SP");
 		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 56, 800, 200, 20.0f, 0.9f);
 		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 20);
 		rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
@@ -178,6 +190,7 @@ void GameScene::Init()
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.078f, 5.0f, 0.0f, 1, 80, 300);
+		rifle->SetNodeMats("SP");
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 500, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(1.0f, 0.17f, 0.19f), 1.7f, 10);
 	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Balkan.wav");
@@ -202,6 +215,7 @@ void GameScene::Init()
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.078f, 5.0f, 0.0f, 1, 80, 300);
+		rifle->SetNodeMats("SP");
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 500, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(1.0f, 0.17f, 0.19f), 1.7f, 10);
 	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Balkan.wav");
@@ -225,6 +239,7 @@ void GameScene::Init()
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
+		rifle->SetNodeMats("SP");
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 500, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
 	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Launchur.wav");
@@ -237,6 +252,7 @@ void GameScene::Init()
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
+		rifle->SetNodeMats("SP");
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 500, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.1f, 0.1f), 1.7f, 10);
 	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Launchur.wav");
@@ -259,6 +275,7 @@ void GameScene::Init()
 	rifle->SetTag(KdGameObject::tEnemyAttack);
 	rifle->Init();
 	rifle->SetGunsParam("Asset/Models/Weapon/SMG/MP5.gltf", 0.08f, 5.0f, 0.0f, 1, 40, 250);
+	rifle->SetNodeMats("SP");
 	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 45, 800, 50, 10.0f, 0.9f);
 	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.3f, 0.2f), 1.7f, 10);
 	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Masingun.wav");
@@ -272,10 +289,8 @@ void GameScene::Init()
 	//===================================================================
 	CameraManager::Instance().EnableChangedCamera(true);
 	CameraManager::Instance().SetCameraTarget(_character);
-	//CameraManager::Instance().SetLockTarget(enemy);
 	CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
-	//CameraManager::Instance().Setting("Asset/Data/GameCamera.scene");
-
+	
 	m_duration = 1.0f;
 	m_fade = false;
 	m_once = false;

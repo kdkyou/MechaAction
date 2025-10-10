@@ -112,7 +112,7 @@ void CharacterBase::Deserialize(const nlohmann::json& jsonObj)
 {
 	KdGameObject::Deserialize(jsonObj);
 
-	m_mWorld = Math::Matrix::CreateTranslation(m_pos);
+	m_mWorld = Math::Matrix::CreateFromYawPitchRoll(m_rot) * Math::Matrix::CreateTranslation(m_pos);
 
 	KdJsonUtility::GetValue(jsonObj, "ModelPath", &m_modelPath);
 	SetModelWork(m_modelPath);

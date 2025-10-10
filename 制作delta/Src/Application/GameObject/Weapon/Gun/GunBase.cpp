@@ -48,6 +48,9 @@ void GunBase::Editor_ImGui()
 	ImGui::DragInt((const char*)u8"ダメージ", &m_damage, 1, 0,10000);
 	ImGui::DragFloat((const char*)u8"時間", &m_aliveTime,0.01f,0.0f);
 	ImGui::DragFloat((const char*)u8"速さ", &m_speed, 0.1f, 0.0f);
+	ImGui::DragFloat((const char*)u8"有効範囲",&m_range,0.1f,0.0f);
+	ImGui::DragFloat((const char*)u8"減衰間隔", &m_dampingInterval, 0.01f, 0.0f);
+	ImGui::DragFloat((const char*)u8"減衰力", &m_dampingRate, 0.01f, 0.0f);
 	ImGui::DragFloat((const char*)u8"追尾可能角度", &m_bulletLockAngle,0.01f,0.0f);
 	ImGui::DragFloat((const char*)u8"延長索敵時間", &m_bulletLostTime,0.01f,0.0f);
 	ImGui::DragFloat((const char*)u8"旋回角度", &m_bulletRotateDeg,0.01f,0.0f);
@@ -70,12 +73,25 @@ void GunBase::Deserialize(const nlohmann::json& jsonObj)
 	WeaponBase::Deserialize(jsonObj);
 	KdJsonUtility::GetValue(jsonObj, "AliveTime", &m_aliveTime);
 	KdJsonUtility::GetValue(jsonObj, "Damage", &m_damage);
+	KdJsonUtility::GetValue(jsonObj, "Range", &m_range);
 	KdJsonUtility::GetValue(jsonObj, "FireRate", &m_fireRate);
 	KdJsonUtility::GetValue(jsonObj, "MaxNum", &m_maxNum);
 	KdJsonUtility::GetValue(jsonObj, "MaxNumOfOnce", &m_maxNumofOnce);
 	KdJsonUtility::GetValue(jsonObj, "ReloadTime", &m_reloadTime);
 	KdJsonUtility::GetValue(jsonObj, "BurstTime", &m_burst);
 	KdJsonUtility::GetValue(jsonObj, "BurstNum", &m_numBurst);
+	KdJsonUtility::GetValue(jsonObj, "DampingInterval", &m_dampingInterval);
+	KdJsonUtility::GetValue(jsonObj, "DampingRate",&m_dampingRate);
+
+	m_nodeMats.clear();
+
+	if (jsonObj.contains("ShotNodes"))
+	{
+		for (const auto& nodeJson : jsonObj["ShotNodes"])
+		{
+			SetNodeMats(nodeJson["Name"].get<std::string>());
+		}
+	}
 
 }
 
@@ -85,6 +101,7 @@ void GunBase::Serialize(nlohmann::json& outJson) const
 
 	outJson["AliveTime"] = m_aliveTime;
 	outJson["Damage"] = m_damage;
+	outJson["Range"] = m_range;
 	outJson["FireRate"] = m_fireRate;
 	outJson["MaxNum"] = m_maxNum;
 	outJson["MaxNumOfOnces"] = m_maxNumofOnce;
@@ -96,8 +113,19 @@ void GunBase::Serialize(nlohmann::json& outJson) const
 	outJson["BulletLockAngle"] = m_bulletLockAngle;
 	outJson["BulletLostTime"] = m_bulletLostTime;
 	outJson["BulletLostTime"] = m_bulletTrackingDistance;
+	outJson["DampingInterval"] = m_dampingInterval;
+	outJson["DampingRate"] = m_dampingRate;
 	outJson["BulletTrailPath"] = m_bulletTrailPath;
 
+	outJson["ShotNodes"] = nlohmann::json::array();
+	for (const auto& node : m_nodeMats)
+	{
+		if (!node)continue;
+
+		nlohmann::json nodejson;
+		nodejson["Name"] = node->name;
+		outJson["ShotNodes"].push_back(nodejson);
+	}
 }
 
 void GunBase::Init()
@@ -139,8 +167,7 @@ void GunBase::SetGunsParam(const std::string& gunModelPath, float fireRate, floa
 {
 	if (gunModelPath != "")
 	{
-		m_spModelWork = std::make_shared<KdModelWork>();
-		m_spModelWork->SetModelData(gunModelPath);
+		SetModel(gunModelPath);
 	}
 
 

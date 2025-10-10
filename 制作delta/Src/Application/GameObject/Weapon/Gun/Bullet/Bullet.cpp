@@ -257,6 +257,7 @@ void Bullet::DrawLit()
 
 	if (m_moveType != SightScale)
 	{
+		if (!m_isModelDraw) { return; }
 		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld);
 
 	}
@@ -322,6 +323,13 @@ void Bullet::MoveSlow()
 	float progress = 1.0f / SIGHTTIME;
 	progress *= m_durationSight;
 
+	if (progress < 0.3f) {
+		m_isModelDraw = false;
+	}
+	else {
+		m_isModelDraw = true;
+	}
+
 	KdEase ease;
 
 	float speed = m_speed * ease.OutSine(progress);
@@ -339,8 +347,11 @@ void Bullet::MoveSlow()
 void Bullet::MoveChasing()
 {
 	auto spTarget = m_wpTarget.lock();
-	if (!spTarget) {
-		m_moveType = Sight; return;
+	if (!spTarget || spTarget->IsDestroy()) {
+		m_moveType = Sight; 
+		m_direction = m_mWorld.Backward();
+		m_direction.Normalize();
+		return;
 	}
 
 
@@ -360,6 +371,8 @@ void Bullet::MoveChasing()
 	// 距離が範囲外なら
 	if (distance > m_trackingEndDistance) {
 		m_moveType = Sight;
+		m_direction = m_mWorld.Backward();
+		m_direction.Normalize();
 		return;
 	}
 
@@ -388,6 +401,8 @@ void Bullet::MoveChasing()
 	{
 		// 見失ったら直進に切り替え
 		m_moveType = Sight;
+		m_direction = m_mWorld.Backward();
+		m_direction.Normalize();
 		return;
 	}
 

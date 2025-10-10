@@ -112,6 +112,7 @@ void WeaponBase::Editor_ImGui()
 	}
 
 	ImGui::DragInt((const char*)u8"判定回数", &m_attackNum);
+
 	static std::string attach;
 	ImGui::InputText((const char*)u8"取付位置", &attach);
 	if (attach !="")
@@ -120,6 +121,15 @@ void WeaponBase::Editor_ImGui()
 			m_attachPath = attach;
 		}
 	}
+
+	static const char* dirNames[] = { "RightHand", "LeftHand", "RightShoulder", "LeftShoulder" };
+	int dir = static_cast<int>(m_AttackTrigger);
+	if (ImGui::Combo("TriggerType", &dir, dirNames, IM_ARRAYSIZE(dirNames)))
+	{
+		m_AttackTrigger = static_cast<TriggerType>(dir);
+	}
+
+
 }
 
 void WeaponBase::Deserialize(const nlohmann::json& jsonObj)
@@ -129,6 +139,7 @@ void WeaponBase::Deserialize(const nlohmann::json& jsonObj)
 	KdJsonUtility::GetValue(jsonObj,"ModelPath",&m_modelPath);
 	KdJsonUtility::GetValue(jsonObj,"AttackNum",&m_attackNum);
 	KdJsonUtility::GetValue(jsonObj,"AttachPath",&m_attachPath);
+	KdJsonUtility::GetValue(jsonObj, "AttackTrigger", &m_AttackTrigger);
 
 	SetModel(m_modelPath);
 }
@@ -140,7 +151,7 @@ void WeaponBase::Serialize(nlohmann::json& outJson) const
 	outJson["ModelPath"] = m_modelPath;
 	outJson["AttackNum"] = m_attackNum;
 	outJson["AttachPath"] = m_attachPath;
-
+	outJson["AttackTrigger"] = m_AttackTrigger;
 }
 
 

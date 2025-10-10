@@ -69,6 +69,8 @@ private:
 
 	float m_durationSight = 0.0f;
 
+	bool m_isModelDraw = true;
+
 
 	std::weak_ptr<CharacterBase> m_wpTarget;
 

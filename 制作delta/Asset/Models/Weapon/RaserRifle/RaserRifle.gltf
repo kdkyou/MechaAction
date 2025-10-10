@@ -461,14 +461,14 @@
 		{
 			"bufferView":20,
 			"componentType":5126,
-			"count":48,
+			"count":96,
 			"max":[
 				0.10000002384185791,
 				2.621093273162842,
 				0.12289070338010788
 			],
 			"min":[
-				-0.10000002384185791,
+				-0.9199999570846558,
 				-1.1349555253982544,
 				-0.0771094262599945
 			],
@@ -477,32 +477,32 @@
 		{
 			"bufferView":21,
 			"componentType":5126,
-			"count":48,
+			"count":96,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":22,
 			"componentType":5126,
-			"count":48,
+			"count":96,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":23,
 			"componentType":5123,
-			"count":84,
+			"count":168,
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":24,
 			"componentType":5126,
-			"count":186,
+			"count":372,
 			"max":[
 				0.5739649534225464,
 				0.48109322786331177,
-				0.4161861836910248
+				1.1477315425872803
 			],
 			"min":[
-				-0.38381388783454895,
+				-1.1153593063354492,
 				-3.3167686462402344,
 				-0.5415926575660706
 			],
@@ -511,19 +511,19 @@
 		{
 			"bufferView":25,
 			"componentType":5126,
-			"count":186,
+			"count":372,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":26,
 			"componentType":5126,
-			"count":186,
+			"count":372,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":27,
 			"componentType":5123,
-			"count":324,
+			"count":648,
 			"type":"SCALAR"
 		},
 		{
@@ -684,80 +684,80 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":576,
+			"byteLength":1152,
 			"byteOffset":48076,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":576,
-			"byteOffset":48652,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":384,
+			"byteLength":1152,
 			"byteOffset":49228,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":168,
-			"byteOffset":49612,
+			"byteLength":768,
+			"byteOffset":50380,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":336,
+			"byteOffset":51148,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":2232,
-			"byteOffset":49780,
+			"byteLength":4464,
+			"byteOffset":51484,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2232,
-			"byteOffset":52012,
+			"byteLength":4464,
+			"byteOffset":55948,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1488,
-			"byteOffset":54244,
+			"byteLength":2976,
+			"byteOffset":60412,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":648,
-			"byteOffset":55732,
+			"byteLength":1296,
+			"byteOffset":63388,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":576,
-			"byteOffset":56380,
+			"byteOffset":64684,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":576,
-			"byteOffset":56956,
+			"byteOffset":65260,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":384,
-			"byteOffset":57532,
+			"byteOffset":65836,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":168,
-			"byteOffset":57916,
+			"byteOffset":66220,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":58084,
+			"byteLength":66388,
 			"uri":"RaserRifle.bin"
 		}
 	]
