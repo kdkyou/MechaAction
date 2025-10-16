@@ -47,6 +47,10 @@ if (ImGui::Button((const char*)u8"テクスチャのロード"))
 	}
 }
 
+	ImGui::Checkbox((const char*)u8"時間制限ありか", &m_isTimeRimit);
+	ImGui::DragFloat((const char*)u8"描画時間", &m_aliveTime, 0.01f, 0.0f);
+
+
 }
 
 void UIBase::SetTexture(const std::string& path)

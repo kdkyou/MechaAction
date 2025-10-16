@@ -14,6 +14,7 @@ public :
 		Title,
 		TitleMovie,
 		Game,
+		Retry,
 	};
 
 	void PreUpdate();

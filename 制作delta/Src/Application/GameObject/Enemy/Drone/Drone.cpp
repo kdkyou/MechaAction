@@ -13,9 +13,7 @@ void Drone::Init()
 	m_limColor = { 0.12f,0.09f,0.08f };
 	m_limPow = 0.3f;
 						
-	m_correction = { 0.0f,1.0f,0.0f };
-
-	m_correctionMat = Math::Matrix::CreateTranslation({0.0f,1.0f,0.0f});
+	m_correctionMat = Math::Matrix::CreateTranslation(m_correction);
 
 	m_boxExtents = { 4.0f,3.0f,3.0f };
 
@@ -25,21 +23,15 @@ void Drone::Init()
 
 	m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 
-	m_dist = { 20.0f,80.0f };
-
 	ChangeActionState(std::make_shared<Idle>());
 
 	m_name = "Drone";
-
-	m_hp = 200;
 
 	m_viewAngle = 60.0f;
 
 	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 
 	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Enemy.gltf");
-
-
 }
 
 void Drone::Update()
@@ -624,7 +616,7 @@ void Drone::Destroyed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<K
 
 	m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 
-	spOwner->MoveSwept(m_speed,Math::Vector3::Down, KdCollider::TypeGround);
+	spOwner->Move(spOwner->m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, false, true);
 
 
 	if (m_durationState <= 0)

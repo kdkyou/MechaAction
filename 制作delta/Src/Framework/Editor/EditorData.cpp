@@ -207,6 +207,22 @@ void EditorData::UpdateImGui()
 	ImGui::End();
 
 	//===========================
+	// WeaponInspectorウィンドウ
+	//===========================
+	if (ImGui::Begin("Weapon"))
+	{
+		auto nowSelectedObj = SelectWeapon.lock();
+		if (nowSelectedObj != nullptr)
+		{
+			nowSelectedObj->Editor_ImGui();
+		}
+
+	}
+	ImGui::End();
+
+	
+
+	//===========================
 	// Hierarchyウィンドウ
 	//===========================
 	if(ImGui::Begin((const char*)u8"オブジェクトリスト", 0, 0))

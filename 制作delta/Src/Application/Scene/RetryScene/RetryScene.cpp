@@ -8,4 +8,5 @@ void RetryScene::Init()
 
 void RetryScene::Event()
 {
+
 }

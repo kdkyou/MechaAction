@@ -124,7 +124,7 @@ protected:
 	std::vector<std::weak_ptr<KdGameObject>>	m_wpWeapons;
 
 	
-	Math::Matrix 								m_scale;
+	Math::Matrix 								m_mScale;
 
 	Math::Matrix								m_correctionMat = Math::Matrix::Identity;
 
@@ -156,6 +156,7 @@ protected:
 
 	// パラメータ関係
 	float										m_hp = 0;
+	float										m_maxHp = 0;
 	bool										m_isHit = false;
 	Math::Vector3								m_hitDir = {};
 	float										m_nockBackDamage = 0.0f;

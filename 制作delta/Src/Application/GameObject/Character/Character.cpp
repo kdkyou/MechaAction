@@ -592,7 +592,8 @@ void Character::LockOn()
 	// ②HIT対象オブジェクトに総当たり
 	for (auto& obj : SceneManager::Instance().GetEnemyList())
 	{
-		if (obj->IsDestroy() == true) { continue; }
+		if (obj->IsDestroy() == true) 
+		{ continue; }
 
 
 		if (obj->Intersects(sphereInfo, nullptr))
@@ -2156,7 +2157,7 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 		auto sin = std::sinf(spOwner->m_spAnimator->GetProgress() * DirectX::XM_2PI);
 
 
-		KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(6, sin, { 0.5f,0.5f }, 0.15f, 0, 0.0f);
+		KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(8, sin, { 0.5f,0.5f }, 0.15f, 0, 0.0f);
 		UINT kind = KdShaderManager::Instance().m_postProcessShader.RadialBlur;
 		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	}
@@ -4054,7 +4055,7 @@ void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 	}
 	else {
 		CameraManager::Instance().ResetMultiLocks();
-		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Retry);
 		UINT kind = KdShaderManager::Instance().m_postProcessShader.Normal;
 		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	}

@@ -1,0 +1,39 @@
+[
+	{
+		"Add": false,
+		"AliveTime": 0.0,
+		"Color": [ 1.0, 1.0, 1.0, 1.0 ],
+		"DrawHeight": 128,
+		"DrawWidth": 1280,
+		"IsTarget": false,
+		"Name": "DrawUI",
+		"Path": "Asset\\Textures\\Text\\Title.png",
+		"Pivot": [ 0.5, 0.5 ],
+		"Pos": [ 0.0, 200.0, 0.0 ],
+		"RectHeight": 128,
+		"RectWidth": 1280,
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 0,
+		"TimeRimit": false,
+		"UITag": "None"
+	},
+	{
+		"AliveTime": 0.0,
+		"Color": [ 1.0, 1.0, 1.0, 0.9799997210502625 ],
+		"DrawHeight": 64,
+		"DrawWidth": 320,
+		"IsTarget": false,
+		"Name": "BlinkUI",
+		"Path": "Asset\\Textures\\Text\\Enter.png",
+		"Pivot": [ 0.5, 0.5 ],
+		"Pos": [ 0.0, -250.0, 0.0 ],
+		"RectHeight": 64,
+		"RectWidth": 320,
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 0,
+		"TimeRimit": false,
+		"UITag": "None"
+	}
+]

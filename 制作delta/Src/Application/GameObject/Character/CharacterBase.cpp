@@ -51,14 +51,46 @@ void CharacterBase::SetModelWork(const std::string& path)
 	}
 
 	m_spModelWork->SetModelData(KdAssets::Instance().m_modeldatas.GetData(path));
-
+	if (m_pCollider)
+	{
+		if (m_tag == tEnemy)
+		{
+			m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
+		}
+		else {
+			m_pCollider->RegisterCollisionShape("Player", m_spModelWork, KdCollider::TypeDamage);
+		}
+	}
 }
 
 void CharacterBase::Editor_ImGui()
 {
-	KdGameObject::Editor_ImGui();
+	if (ImGui::Button((const char*)u8"消去")) {
+		m_isExpired = true;
+	}
+
+	if (ImGui::DragFloat3("Pos", &m_pos.x, 0.1f, -FLT_MAX, FLT_MAX))
+	{
+		m_mWorld = Math::Matrix::CreateScale(m_scale) * Math::Matrix::CreateFromYawPitchRoll(m_rot * KdToRadians) * Math::Matrix::CreateTranslation(m_pos);
+	}
+	if(ImGui::DragFloat3("Scale", &m_scale.x, 0.1f, -FLT_MAX, FLT_MAX)) {
+		m_mWorld = Math::Matrix::CreateScale(m_scale) * Math::Matrix::CreateFromYawPitchRoll(m_rot * KdToRadians) * Math::Matrix::CreateTranslation(m_pos);
+	}
+	if(ImGui::DragFloat3("Rotation", &m_rot.x, 0.1f, -FLT_MAX, FLT_MAX))
+	{
+		m_mWorld = Math::Matrix::CreateScale(m_scale) * Math::Matrix::CreateFromYawPitchRoll(m_rot * KdToRadians) * Math::Matrix::CreateTranslation(m_pos);
+	}
+
+	static const char* dirNames[] = { "tNone", "tPlayer", "tEnemy", "tPlayerAttack","tEnemyAttack" ,"tTerrain","tUI" };
+	int tag = static_cast<int>(m_tag);
+	if (ImGui::Combo((const char*)u8"タグ設定", &tag, dirNames, IM_ARRAYSIZE(dirNames)))
+	{
+		m_tag = static_cast<ObjectTag>(tag);
+	}
+
+	ImGui::Checkbox((const char*)u8"カメラ対象", &m_isCameraTarget);
 	
-	m_mWorld = Math::Matrix::CreateTranslation(m_pos);
+	
 
 
 	if (ImGui::Button((const char*)u8"モデルのロード"))
@@ -103,8 +135,27 @@ void CharacterBase::Editor_ImGui()
 				obj->Init();
 				obj->SetParent(parent);
 				SceneManager::Instance().AddObject(obj);
+				m_wpWeapons.push_back(obj);
 			}
 		}
+	}
+
+	if (ImGui::BeginListBox((const char*)u8"武器リスト"))
+	{
+		for (auto& wpObj : m_wpWeapons)
+		{
+			auto obj = wpObj.lock();
+			std::string str = obj->GetName();
+			//bool isSelected = (selectedObj.lock() == obj);  // 今の選択と同じか？
+
+			ImGui::PushID(obj.get());
+			if (ImGui::Selectable((const char*)str.c_str()))
+			{
+				EditorData::GetInstance().SelectWeapon = obj;
+			}
+			ImGui::PopID();
+		}
+		ImGui::EndListBox();
 	}
 }
 
@@ -137,6 +188,7 @@ void CharacterBase::Deserialize(const nlohmann::json& jsonObj)
 					obj->Deserialize(weaponsData);
 					obj->SetParent(parent);
 					SceneManager::Instance().AddObject(obj);
+					m_wpWeapons.push_back(obj);
 				}
 			}
 		}
@@ -229,7 +281,7 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 	m_pos = pos;
 
 	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_rot.y));
-	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(m_pos);
+	m_mWorld = m_mScale * _rotation * Math::Matrix::CreateTranslation(m_pos);
 
 
 	return isHit;
@@ -296,7 +348,7 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 	m_pos = pos;
 
 	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_rot.y));
-	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(m_pos);
+	m_mWorld = m_mScale * _rotation * Math::Matrix::CreateTranslation(m_pos);
 
 
 	return isHit;
@@ -421,7 +473,7 @@ bool CharacterBase::Gravity(const Math::Vector3& startPos, const Math::Vector3& 
 
 
 	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_rot.y));
-	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(m_pos);
+	m_mWorld = m_mScale * _rotation * Math::Matrix::CreateTranslation(m_pos);
 
 
 	return hit;

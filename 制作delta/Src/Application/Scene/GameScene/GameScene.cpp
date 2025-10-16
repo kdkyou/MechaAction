@@ -18,6 +18,8 @@
 
 #include "../../GameObject/UI/UIManager.h"
 
+#include "../../GameObject/Enemy/EnemyCreater.h"
+
 // 少数第n位で四捨五入する
 void round_n(float& number, int n)
 {
@@ -128,158 +130,158 @@ void GameScene::Init()
 	}
 
 	//エネミー
-	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
-	enemy->SetThis(enemy);
-	enemy->SetThisBase(enemy);
-	enemy->Init();
-	enemy->SetTag(KdGameObject::tEnemy);
-	AddEnemy(enemy);
+	//std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
+	//enemy->SetThis(enemy);
+	//enemy->SetThisBase(enemy);
+	//enemy->Init();
+	//enemy->SetTag(KdGameObject::tEnemy);
+	//AddEnemy(enemy);
 
-	//エネミー武器
-	std::shared_ptr<Rifle> rifle;
-	{
-		rifle = std::make_shared<Rifle>();
-		rifle->SetParent(enemy);
-		rifle->SetAttachPath("RightWeapon");
-		rifle->SetAttackTrigger(WeaponBase::RightHand);
-		rifle->SetTag(KdGameObject::tEnemyAttack);
-		rifle->Init();
-		rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 0.7f, 3.0f, 0.0f, 1, 24, 80);
-		rifle->SetNodeMats("SP");
-		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 400, 1000, 200, 40.0f, 0.95f);
-		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.7f, 0.4f, 0.8f), 1.7f, 10);
-		rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
-		AddObject(rifle);
-	}
-	{
-		rifle = std::make_shared<Rifle>();
-		rifle->SetParent(enemy);
-		rifle->SetAttachPath("LeftWeapon");
-		rifle->SetAttackTrigger(WeaponBase::LeftHand);
-		rifle->SetTag(KdGameObject::tEnemyAttack);
-	rifle->Init();
-		rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.2f, 2.0f, 0.0f, 1, 36, 250);
-		rifle->SetNodeMats("SP");
-		rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 56, 800, 200, 20.0f, 0.9f);
-		rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 20);
-		rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
-		AddObject(rifle);
-	}
-
-
+	////エネミー武器
+	//std::shared_ptr<Rifle> rifle;
+	//{
+	//	rifle = std::make_shared<Rifle>();
+	//	rifle->SetParent(enemy);
+	//	rifle->SetAttachPath("RightWeapon");
+	//	rifle->SetAttackTrigger(WeaponBase::RightHand);
+	//	rifle->SetTag(KdGameObject::tEnemyAttack);
+	//	rifle->Init();
+	//	rifle->SetGunsParam("Asset/Models/Weapon/RailGun/RailGun.gltf", 0.7f, 3.0f, 0.0f, 1, 24, 80);
+	//	rifle->SetNodeMats("SP");
+	//	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 400, 1000, 200, 40.0f, 0.95f);
+	//	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.7f, 0.4f, 0.8f), 1.7f, 10);
+	//	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
+	//	AddObject(rifle);
+	//}
+	//{
+	//	rifle = std::make_shared<Rifle>();
+	//	rifle->SetParent(enemy);
+	//	rifle->SetAttachPath("LeftWeapon");
+	//	rifle->SetAttackTrigger(WeaponBase::LeftHand);
+	//	rifle->SetTag(KdGameObject::tEnemyAttack);
+	//rifle->Init();
+	//	rifle->SetGunsParam("Asset/Models/Weapon/LinearRifle/LinearRifle.gltf", 0.2f, 2.0f, 0.0f, 1, 36, 250);
+	//	rifle->SetNodeMats("SP");
+	//	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 56, 800, 200, 20.0f, 0.9f);
+	//	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 20);
+	//	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
+	//	AddObject(rifle);
+	//}
 
 
-	_character->RegistHitObject(enemy);
-
-	auto drone = std::make_shared<Drone>();
-	drone->SetThis(drone);
-	drone->SetModelWork("Asset/Models/Drone/Drone.gltf");
-	drone->Init();
-	drone->SetThisBase(drone);
-	drone->SetParam(100);
-	drone->SetPos({ 10.0f,15.0f,150.0f });
-	drone->SetTag(KdGameObject::tEnemy);
-	AddEnemy(drone);
-	
-
-	// バルカン想定
-	rifle = std::make_shared<Rifle>();
-	rifle->SetParent(drone);
-	rifle->SetAttachPath("RightWeapon");
-	rifle->SetAttackTrigger(WeaponBase::RightHand);
-	rifle->SetTag(KdGameObject::tEnemyAttack);
-	rifle->Init();
-	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.078f, 5.0f, 0.0f, 1, 80, 300);
-		rifle->SetNodeMats("SP");
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 500, 50, 10.0f, 0.9f);
-	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(1.0f, 0.17f, 0.19f), 1.7f, 10);
-	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Balkan.wav");
-	AddObject(rifle);
-
-	drone = std::make_shared<Drone>();
-	drone->SetThis(drone);
-	drone->SetModelWork("Asset/Models/Drone/Drone.gltf");
-	drone->Init();
-	drone->SetThisBase(drone);
-	drone->SetParam(100);
-	drone->SetPos({ 10.0f,15.0f,170.0f });
-	drone->SetTag(KdGameObject::tEnemy);
-	AddEnemy(drone);
 
 
-	// バルカン想定
-	rifle = std::make_shared<Rifle>();
-	rifle->SetParent(drone);
-	rifle->SetAttachPath("RightWeapon");
-	rifle->SetAttackTrigger(WeaponBase::RightHand);
-	rifle->SetTag(KdGameObject::tEnemyAttack);
-	rifle->Init();
-	rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.078f, 5.0f, 0.0f, 1, 80, 300);
-		rifle->SetNodeMats("SP");
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 500, 50, 10.0f, 0.9f);
-	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(1.0f, 0.17f, 0.19f), 1.7f, 10);
-	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Balkan.wav");
-	AddObject(rifle);
+	//_character->RegistHitObject(enemy);
 
-	// 4脚
-	drone = std::make_shared<Drone>();
-	drone->SetThis(drone);
-	drone->SetModelWork("Asset/Models/4LegMT/5LegMT.gltf");
-	drone->Init();
-	drone->SetThisBase(drone);
-	drone->SetParam(500);
-	drone->SetPos({ -100.0f,0.0f,50.0f });
-	drone->SetTag(KdGameObject::tEnemy);
-	AddEnemy(drone);
+	//auto drone = std::make_shared<Drone>();
+	//drone->SetThis(drone);
+	//drone->SetModelWork("Asset/Models/Drone/Drone.gltf");
+	//drone->Init();
+	//drone->SetThisBase(drone);
+	//drone->SetParam(100);
+	//drone->SetPos({ 10.0f,15.0f,150.0f });
+	//drone->SetTag(KdGameObject::tEnemy);
+	//AddEnemy(drone);
+	//
 
-	rifle = std::make_shared<Rifle>();
-	rifle->SetParent(drone);
-	rifle->SetAttachPath("RightWeapon");
-	rifle->SetAttackTrigger(WeaponBase::RightHand);
-	rifle->SetTag(KdGameObject::tEnemyAttack);
-	rifle->Init();
-	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
-		rifle->SetNodeMats("SP");
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 500, 50, 10.0f, 0.9f);
-	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
-	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Launchur.wav");
-	AddObject(rifle);
+	//// バルカン想定
+	//rifle = std::make_shared<Rifle>();
+	//rifle->SetParent(drone);
+	//rifle->SetAttachPath("RightWeapon");
+	//rifle->SetAttackTrigger(WeaponBase::RightHand);
+	//rifle->SetTag(KdGameObject::tEnemyAttack);
+	//rifle->Init();
+	//rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.078f, 5.0f, 0.0f, 1, 80, 300);
+	//	rifle->SetNodeMats("SP");
+	//rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 500, 50, 10.0f, 0.9f);
+	//rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(1.0f, 0.17f, 0.19f), 1.7f, 10);
+	//rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Balkan.wav");
+	//AddObject(rifle);
 
-	rifle = std::make_shared<Rifle>();
-	rifle->SetParent(drone);
-	rifle->SetAttachPath("LeftWeapon");
-	rifle->SetAttackTrigger(WeaponBase::LeftHand);
-	rifle->SetTag(KdGameObject::tEnemyAttack);
-	rifle->Init();
-	rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
-		rifle->SetNodeMats("SP");
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 500, 50, 10.0f, 0.9f);
-	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.1f, 0.1f), 1.7f, 10);
-	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Launchur.wav");
-	AddObject(rifle);
+	//drone = std::make_shared<Drone>();
+	//drone->SetThis(drone);
+	//drone->SetModelWork("Asset/Models/Drone/Drone.gltf");
+	//drone->Init();
+	//drone->SetThisBase(drone);
+	//drone->SetParam(100);
+	//drone->SetPos({ 10.0f,15.0f,170.0f });
+	//drone->SetTag(KdGameObject::tEnemy);
+	//AddEnemy(drone);
 
-	auto mt = std::make_shared<MT>();
-	mt->SetThis(mt);
-	mt->SetModelWork("Asset/Models/Leg/Leg.gltf");
-	mt->Init();
-	mt->SetThisBase(mt);
-	mt->SetParam(3000);
-	mt->SetPos({ -100.0f,0.0f,-200.0f });
-	mt->SetTag(KdGameObject::tEnemy);
-	AddEnemy(mt);
 
-	rifle = std::make_shared<Rifle>();
-	rifle->SetParent(mt);
-	rifle->SetAttachPath("RightWeapon");
-	rifle->SetAttackTrigger(WeaponBase::RightHand);
-	rifle->SetTag(KdGameObject::tEnemyAttack);
-	rifle->Init();
-	rifle->SetGunsParam("Asset/Models/Weapon/SMG/MP5.gltf", 0.08f, 5.0f, 0.0f, 1, 40, 250);
-	rifle->SetNodeMats("SP");
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 45, 800, 50, 10.0f, 0.9f);
-	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.3f, 0.2f), 1.7f, 10);
-	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Masingun.wav");
-	AddObject(rifle);	
+	//// バルカン想定
+	//rifle = std::make_shared<Rifle>();
+	//rifle->SetParent(drone);
+	//rifle->SetAttachPath("RightWeapon");
+	//rifle->SetAttackTrigger(WeaponBase::RightHand);
+	//rifle->SetTag(KdGameObject::tEnemyAttack);
+	//rifle->Init();
+	//rifle->SetGunsParam("Asset/Models/Weapon/Balkan/Balkan.gltf", 0.078f, 5.0f, 0.0f, 1, 80, 300);
+	//	rifle->SetNodeMats("SP");
+	//rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 16, 500, 50, 10.0f, 0.9f);
+	//rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(1.0f, 0.17f, 0.19f), 1.7f, 10);
+	//rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Balkan.wav");
+	//AddObject(rifle);
+
+	//// 4脚
+	//drone = std::make_shared<Drone>();
+	//drone->SetThis(drone);
+	//drone->SetModelWork("Asset/Models/4LegMT/5LegMT.gltf");
+	//drone->Init();
+	//drone->SetThisBase(drone);
+	//drone->SetParam(500);
+	//drone->SetPos({ -100.0f,0.0f,50.0f });
+	//drone->SetTag(KdGameObject::tEnemy);
+	//AddEnemy(drone);
+
+	//rifle = std::make_shared<Rifle>();
+	//rifle->SetParent(drone);
+	//rifle->SetAttachPath("RightWeapon");
+	//rifle->SetAttackTrigger(WeaponBase::RightHand);
+	//rifle->SetTag(KdGameObject::tEnemyAttack);
+	//rifle->Init();
+	//rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
+	//	rifle->SetNodeMats("SP");
+	//rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 500, 50, 10.0f, 0.9f);
+	//rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.2f, 0.1f), 1.7f, 10);
+	//rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Launchur.wav");
+	//AddObject(rifle);
+
+	//rifle = std::make_shared<Rifle>();
+	//rifle->SetParent(drone);
+	//rifle->SetAttachPath("LeftWeapon");
+	//rifle->SetAttackTrigger(WeaponBase::LeftHand);
+	//rifle->SetTag(KdGameObject::tEnemyAttack);
+	//rifle->Init();
+	//rifle->SetGunsParam("Asset/Models/Weapon/GrenadeLauncher/GrenadeLauncher.gltf", 3.0f, 5.0f, 0.0f, 1, 5, 25);
+	//	rifle->SetNodeMats("SP");
+	//rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/GrenadeBullet.gltf", 2.0f, 790, 500, 50, 10.0f, 0.9f);
+	//rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.9f, 0.1f, 0.1f), 1.7f, 10);
+	//rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Launchur.wav");
+	//AddObject(rifle);
+
+	//auto mt = std::make_shared<MT>();
+	//mt->SetThis(mt);
+	//mt->SetModelWork("Asset/Models/Leg/Leg.gltf");
+	//mt->Init();
+	//mt->SetThisBase(mt);
+	//mt->SetParam(3000);
+	//mt->SetPos({ -100.0f,0.0f,-200.0f });
+	//mt->SetTag(KdGameObject::tEnemy);
+	//AddEnemy(mt);
+
+	//rifle = std::make_shared<Rifle>();
+	//rifle->SetParent(mt);
+	//rifle->SetAttachPath("RightWeapon");
+	//rifle->SetAttackTrigger(WeaponBase::RightHand);
+	//rifle->SetTag(KdGameObject::tEnemyAttack);
+	//rifle->Init();
+	//rifle->SetGunsParam("Asset/Models/Weapon/SMG/MP5.gltf", 0.08f, 5.0f, 0.0f, 1, 40, 250);
+	//rifle->SetNodeMats("SP");
+	//rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 2.0f, 45, 800, 50, 10.0f, 0.9f);
+	//rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.3f, 0.2f), 1.7f, 10);
+	//rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Masingun.wav");
+	//AddObject(rifle);	
 
 	UIManager::GetInstance().SceneUICreate();
 
@@ -305,11 +307,36 @@ void GameScene::Init()
 void GameScene::Event()
 {
 	auto& key = KeyInput::GetInstance().GetKeyboardState();
-	if (m_enemyList.empty() == true || key.D9) {
+	if (m_enemyList.empty() == true)
+	{
+		switch (m_waveProgress)
+		{
+		case Wave::Start:
+			m_waveProgress = First;
+			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/First.enemy");
+			break;
+		case Wave::First:
+			m_waveProgress = Second;
+			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Second.enemy");
+
+			break;
+		case Wave::Second:
+			m_waveProgress = Last;
+			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Last.enemy");
+			break;
+		case Wave::Last:
+			m_waveProgress = Complete;
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (m_waveProgress == Complete || key.D9) {
 		if (!m_once)
 		{
 			m_once = true;
-			UIManager::GetInstance().SceneUICreate("Asset/Data/CompleteUI.scene");
+			UIManager::GetInstance().SceneUICreate("Asset/Data/UI/CompleteUI.scene");
 		}
 	}
 

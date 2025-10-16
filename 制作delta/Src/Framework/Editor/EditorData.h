@@ -8,6 +8,7 @@ class EditorData
 public:
 	// 選択GameObject
 	std::weak_ptr<KdGameObject>		SelectObj;
+	std::weak_ptr<KdGameObject>		SelectWeapon;
 
 	uint32_t	m_ScreenW = 1280;
 	uint32_t	m_ScreenWh = 640;

@@ -4,6 +4,7 @@
 #include "Drone/Drone.h"
 #include "MT/MT.h"
 #include "FLAC/FLAC.h"
+#include "Balt/Balt.h"
 
 #include "../../Scene/SceneManager.h"
 
@@ -23,35 +24,45 @@ void EnemyCreater::EnemysCreate(const std::string& filePath)
 				if (str == "Drone")
 				{
 					auto obj = std::make_shared<Drone>();
-					obj->Init();
 					obj->SetThis(obj);
+					obj->SetThisBase(obj);
+					obj->SetTag(KdGameObject::tEnemy);
 					obj->Deserialize(json);
+					obj->Init();
 					SceneManager::Instance().AddEnemy(obj);
 				}
 
 				if (str == "MT")
 				{
 					auto obj = std::make_shared<MT>();
-					obj->Init();
 					obj->SetThis(obj);
+					obj->SetTag(KdGameObject::tEnemy);
 					obj->SetThisBase(obj);
 					obj->Deserialize(json);
+					obj->Init();
 					SceneManager::Instance().AddEnemy(obj);
 				}
 
 				if (str == "Enemy")
 				{
 					auto obj = std::make_shared<Enemy>();
-					obj->Init();
 					obj->SetThis(obj);
 					obj->SetThisBase(obj);
+					obj->SetTag(KdGameObject::tEnemy);
 					obj->Deserialize(json);
+					obj->Init();
 					SceneManager::Instance().AddEnemy(obj);
 				}
 
 				if (str == "Balt")
 				{
-				//	obj->SetThisBase(obj);
+					auto obj = std::make_shared<Enemy>();
+					obj->SetThis(obj);
+					obj->SetThisBase(obj);
+					obj->SetTag(KdGameObject::tEnemy);
+					obj->Deserialize(json);
+					obj->Init();
+					SceneManager::Instance().AddEnemy(obj);
 				}
 
 				if (str == "FLAC")
@@ -60,8 +71,8 @@ void EnemyCreater::EnemysCreate(const std::string& filePath)
 					obj->SetThis(obj);
 					obj->SetThisBase(obj);
 					obj->Init();
-					obj->Deserialize(json);
 					obj->SetTag(KdGameObject::tEnemy);
+					obj->Deserialize(json);
 					SceneManager::Instance().AddEnemy(obj);
 				}
 			}

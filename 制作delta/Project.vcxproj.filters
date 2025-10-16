@@ -558,6 +558,9 @@
     <ClInclude Include="Src\Application\GameObject\Enemy\FLAC\FLAC.h">
       <Filter>Src\Application\GameObject\Enemy\FLAC</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Enemy\Balt\Balt.h">
+      <Filter>Src\Application\GameObject\Enemy\Balt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -874,6 +877,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Enemy\FLAC\FLAC.cpp">
       <Filter>Src\Application\GameObject\Enemy\FLAC</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Enemy\Balt\Balt.cpp">
+      <Filter>Src\Application\GameObject\Enemy\Balt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

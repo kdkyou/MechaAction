@@ -73,7 +73,7 @@ void BaseScene::Update()
 			obj->Update();
 		}
 	}
-	
+//	else
 	{
 		for (auto& obj : m_playerList)
 		{
@@ -89,8 +89,6 @@ void BaseScene::Update()
 		{
 			obj->Update();
 		}
-
-
 	}
 
 	KdEffekseerManager::GetInstance().Update();
@@ -100,8 +98,11 @@ void BaseScene::Update()
 	UIManager::GetInstance().Update();
 
 
-	// シーン毎のイベント処理
-	Event();
+	if (EditorData::GetInstance().IsEditorMode() == false)
+	{
+		// シーン毎のイベント処理
+		Event();
+	}
 }
 
 void BaseScene::PostUpdate()

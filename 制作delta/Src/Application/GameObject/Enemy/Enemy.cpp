@@ -39,9 +39,8 @@ void Enemy::Init()
 		m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 	}
 
-
 	m_correction = { 0.0f,5.0f,0.0f };
-	m_correctionMat = Math::Matrix::CreateTranslation({ 0.0f,5.0f,0.0f });
+	m_correctionMat = Math::Matrix::CreateTranslation(m_correction);
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -54,7 +53,7 @@ void Enemy::Init()
 
 	m_clampSize = 20.0f;
 
-	m_hp = 10320.0f;
+	m_hp = 5320.0f;
 
 	m_nockBackDamage = 800.0f;
 
@@ -116,6 +115,10 @@ void Enemy::PostUpdate()
 			return;
 		}
 		m_nowAction->PostUpdate(m_wpThis, spTarget);
+	}
+
+	if (m_spModelWork) {
+		m_spModelWork->CalcNodeMatrices();
 	}
 
 	m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });
@@ -235,7 +238,7 @@ const Math::Matrix& Enemy::UpdateMatrix()
 {
 	auto pos = m_mWorld.Translation();
 	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_rot.y));
-	m_mWorld = m_scale * _rotation * Math::Matrix::CreateTranslation(pos);
+	m_mWorld = m_mScale * _rotation * Math::Matrix::CreateTranslation(pos);
 	return m_mWorld;
 }
 
@@ -1059,9 +1062,6 @@ void Enemy::MoveForward::Update(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 
 	spOwner->UpdateRotate(vec);
 	auto& mat = spOwner->UpdateMatrix();
-
-	auto vect = mat.Backward();
-	
 
 	m_direct = mat.Backward();
 

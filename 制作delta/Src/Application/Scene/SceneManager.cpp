@@ -6,6 +6,7 @@
 #include "TitleScene/TitleScene.h"
 #include "GameScene/GameScene.h"
 #include "TileMovieScene/TitleMovieScene.h"
+#include "RetryScene/RetryScene.h"
 
 void SceneManager::PreUpdate()
 {
@@ -236,6 +237,7 @@ void SceneManager::ChangeScene(SceneType sceneType)
 	std::shared_ptr<GameScene> game;
 	std::shared_ptr<TitleScene> title;
 	std::shared_ptr<TitleMovieScene> titleMovie;
+	std::shared_ptr<RetryScene> retry;
 
 
 	switch (sceneType)
@@ -251,6 +253,10 @@ void SceneManager::ChangeScene(SceneType sceneType)
 	case SceneType::Game:
 		game =  std::make_shared<GameScene>();
 		m_currentScene = game;
+		break;
+	case SceneType::Retry:
+		retry = std::make_shared<RetryScene>();
+		m_currentScene = retry;
 		break;
 	}
 

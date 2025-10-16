@@ -1,0 +1,45 @@
+[
+	{
+		"Correction": [ 0.0, 1.0, 0.0 ],
+		"HP": 200.0,
+		"IsTarget": false,
+		"ModelPath": "Asset\\Models\\Drone\\Drone.gltf",
+		"Name": "Drone",
+		"NockBackDamage": 0.0,
+		"Pos": [ 0.0, 10.199999809265137, 28.5 ],
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 2,
+		"Weapons": [
+			{
+				"AliveTime": 5.0,
+				"AttachPath": "RightWeapon",
+				"AttackNum": 1,
+				"AttackTrigger": 0,
+				"BulletLockAngle": 0.0,
+				"BulletLostTime": 0.0,
+				"BulletModelPath": "Asset\\Models\\Weapon\\Bullet\\Bullet-Live.gltf",
+				"BulletRotateDeg": 0.0,
+				"BulletTrailPath": "",
+				"BurstNum": 0,
+				"BurstTime": 0.0,
+				"Damage": 23,
+				"DampingInterval": 30.0,
+				"DampingRate": 0.8999999761581421,
+				"FireRate": 0.03999999910593033,
+				"IsTarget": false,
+				"MaxNum": 2000,
+				"MaxNumOfOnces": 500,
+				"ModelPath": "Asset\\Models\\Weapon\\Balkan\\Balkan.gltf",
+				"Name": "Rifle",
+				"Pos": [ 0.0, 0.0, 0.0 ],
+				"Range": 250.0,
+				"ReloadTime": 5.0,
+				"Rot": [ 0.0, 0.0, 0.0 ],
+				"Scale": [ 1.0, 1.0, 1.0 ],
+				"ShotNodes": [ { "Name": "SP" } ],
+				"Tag": 0
+			}
+		]
+	}
+]

@@ -27,10 +27,10 @@ void UIManager::SceneUICreate()
 	switch (sceneType)
 	{
 	case SceneManager::SceneType::Title:
-		str = "Asset/Data/TitleUI.Scene";
+		str = "Asset/Data/UI/TitleUI.scene";
 		break;
 	case SceneManager::SceneType::Game:
-		str = "Asset/Data/GameUI.Scene";
+		str = "Asset/Data/UI/GameUI.scene";
 		break;
 	default:
 		break;
@@ -47,6 +47,12 @@ void UIManager::SceneUICreate(const std::string& path)
 
 	m_uiList.clear();
 
+	Deserialize(path);
+}
+
+void UIManager::SceneUIAdd(const std::string& path)
+{
+	if (path == "") { return; }
 	Deserialize(path);
 }
 
@@ -137,10 +143,10 @@ void UIManager::Editor_ImGui()
 		switch (sceneType)
 		{
 		case SceneManager::SceneType::Title:
-			str = "Asset/Data/TitleUI.Scene";
+			str = "Asset/Data/UI/TitleUI.scene";
 			break;
 		case SceneManager::SceneType::Game:
-			str = "Asset/Data/GameUI.Scene";
+			str = "Asset/Data/UI/GameUI.scene";
 			break;
 		default:
 			break;

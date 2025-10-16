@@ -26,6 +26,8 @@ public:
 		KdJsonUtility::GetValue(jsonObj, "RectHeight", &m_rectHe);
 		KdJsonUtility::GetArray(jsonObj, "Color", &m_color.x,4);
 		KdJsonUtility::GetArray(jsonObj, "Pivot", &m_pivot.x,2);
+		KdJsonUtility::GetValue(jsonObj, "TimeRimit", &m_isTimeRimit);
+		KdJsonUtility::GetValue(jsonObj, "AliveTime", &m_aliveTime);
 
 		if (m_fileName != "")
 		{
@@ -45,6 +47,8 @@ public:
 		outJson["RectHeight"] = m_rectHe;
 		outJson["Color"] = KdJsonUtility::CreateArray(&m_color.x, 4);
 		outJson["Pivot"] = KdJsonUtility::CreateArray(&m_pivot.x, 2);
+		outJson["TimeRimit"] = m_isTimeRimit;
+		outJson["AliveTime"] = m_aliveTime;
 
 	}
 
@@ -56,6 +60,8 @@ protected:
 
 	std::shared_ptr<KdTexture> m_spTex = nullptr;
 
+	bool					   m_isTimeRimit = false;
+	float					   m_aliveTime = 0.0f;
 
 	Math::Rectangle			   m_rect;
 

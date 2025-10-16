@@ -5,6 +5,7 @@
 #include "../../main.h"
 
 #include "../../Scene/SceneManager.h"
+#include "../UI/UIManager.h"
 
 void TitleMovie::Init()
 {
@@ -65,6 +66,7 @@ void TitleMovie::Update()
 				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera4.scene");
 				if (m_spAnimator) {
 				m_spAnimator->SetAnimation(m_spModel->GetAnimation(m_animPath), 10.0f, false);
+				UIManager::GetInstance().SceneUIAdd("Asset/Data/UI/SystemUI.scene");
 				}
 			}
 		}

@@ -25,7 +25,10 @@ public:
 
 private:
 
-	enum FLACStateType
+	void UpdateRotate(const Math::Vector3& srcMoveVec)override;
+
+
+	enum class FLACStateType
 	{
 		Start,
 		Stand,
@@ -46,6 +49,11 @@ private:
 
 	std::weak_ptr<FLAC>				    m_wpThis;
 
+	bool CheckLengthBulPlay();
+
+	const Math::Matrix& UpdateMatrix();
+
+	const FLACStateType GetPrevState()const { return m_prevAction->GetType(); }
 
 	class ActionStateBase
 	{
@@ -79,11 +87,15 @@ private:
 		void ChangeStateWithPrev(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj);
 		void ChangeStateWithDistance(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj);
 
+		void CheckAttackLevel(std::weak_ptr<FLAC>& owner);
+		void AttackOff(std::weak_ptr<FLAC>& owner);
+
 		// ステートの継続時間
 		float m_durationState = 0.0f;
 
 		// ステートタイプ
 		FLACStateType m_type = FLACStateType::Start;
+		TargetSide	m_avoidSide = TargetSide::Front;
 
 		Math::Vector3 m_direct = {};
 		float					m_speed = 0.0f;
@@ -99,5 +111,188 @@ private:
 		std::list<std::shared_ptr<Effect>> m_spEffects;
 	};
 
+	class StandUp :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	class Stand :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	class Fly :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	class Boost :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	class FrontMove :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	class FrontMoveAttack :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	class BackMove :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+	
+	class BackMoveAttack :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+	
+	class LeftMove :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	class LeftMoveAttack :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+	
+		class RightMove :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	class RightMoveAttack :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	class Hited :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+	
+		class Avoid :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	class Destroyed :public ActionStateBase
+	{
+	public:
+		virtual void Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void Update(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		virtual void PostUpdate(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+		virtual void Exit(std::weak_ptr<FLAC>& owner, const  std::weak_ptr<KdGameObject>& spObj) override;
+
+	private:
+
+	};
+
+	void ChangeActionState(std::shared_ptr<ActionStateBase> nextAction);
+	std::shared_ptr<ActionStateBase>		m_nowAction = nullptr;
+	std::shared_ptr<ActionStateBase>		m_prevAction = nullptr;
 
 };

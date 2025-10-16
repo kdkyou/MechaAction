@@ -19,6 +19,15 @@ void GuageUI::Init()
 
 void GuageUI::Update()
 {
+	if (m_isTimeRimit)
+	{
+		m_aliveTime -= KdFPSController::GetInstance().GetDeltaTime();
+		if (m_aliveTime < 0.0f) {
+			m_isExpired = true;
+		}
+	}
+
+
 	if (m_isAuto)
 	{
 

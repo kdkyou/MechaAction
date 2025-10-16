@@ -21,6 +21,7 @@ public:
 
 	void SceneUICreate();
 	void SceneUICreate(const std::string& path);
+	void SceneUIAdd(const std::string& path);
 
 	void PreUpdate();
 	void Update();

@@ -176,6 +176,7 @@
     <ClInclude Include="Src\Application\GameObject\Effect\Fade\Fade.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.h" />
+    <ClInclude Include="Src\Application\GameObject\Enemy\Balt\Balt.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Drone\Drone.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\EnemyCreater.h" />
@@ -288,6 +289,7 @@
     <ClCompile Include="Src\Application\GameObject\Effect\Fade\Fade.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Enemy\Balt\Balt.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Drone\Drone.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\EnemyCreater.cpp" />
