@@ -16,6 +16,7 @@
 #include "../../GameObject/Weapon/Gun/Rifle/Rifle.h"
 #include "../../GameObject/Weapon/Gun/Charge/Charge.h"
 #include "../../GameObject/Weapon/Gun/Missile/Missile.h"
+#include "../../GameObject/Weapon/Sowrd/Sowrd.h" 
 
 #include "../../GameObject/Enemy/Drone/Drone.h"
 
@@ -42,6 +43,7 @@ void TitleScene::Init()
 	KdGameObjectFactory::Instance().RegisterWeaponBase<Rifle> ("Rifle");
 	KdGameObjectFactory::Instance().RegisterWeaponBase<Charge> ("Charge");
 	KdGameObjectFactory::Instance().RegisterWeaponBase<Missile> ("Missile");
+	KdGameObjectFactory::Instance().RegisterWeaponBase<Sowrd>("Sowrd");
 
 	CurrentSceneCreate("Asset/Data/Title.scene");
 

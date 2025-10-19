@@ -15,13 +15,14 @@
 				"AliveTime": 5.0,
 				"AttachPath": "RightWeapon",
 				"AttackNum": 1,
-				"AttackTrigger": 0,
+				"AttackTrigger": 2,
 				"BulletLockAngle": 0.0,
 				"BulletLostTime": 0.0,
 				"BulletModelPath": "Asset\\Models\\Weapon\\Bullet\\Bullet-Live.gltf",
 				"BulletRotateDeg": 0.0,
 				"BulletTrailPath": "",
-				"BurstNum": 0,
+				"BulletTrackingDistance":0.0,
+				"BurstNum": 1,
 				"BurstTime": 0.0,
 				"Damage": 23,
 				"DampingInterval": 30.0,
@@ -29,7 +30,7 @@
 				"FireRate": 0.03999999910593033,
 				"IsTarget": false,
 				"MaxNum": 2000,
-				"MaxNumOfOnces": 500,
+				"MaxNumOfOnce": 500,
 				"ModelPath": "Asset\\Models\\Weapon\\Balkan\\Balkan.gltf",
 				"Name": "Rifle",
 				"Pos": [ 0.0, 0.0, 0.0 ],
@@ -38,7 +39,9 @@
 				"Rot": [ 0.0, 0.0, 0.0 ],
 				"Scale": [ 1.0, 1.0, 1.0 ],
 				"ShotNodes": [ { "Name": "SP" } ],
-				"Tag": 0
+				"ShotSoundPath": "Asset/Sounds/SE/Weapon/Shot_Balkan.wav",
+				"Speed": 200,
+				"Tag": 4
 			}
 		]
 	}

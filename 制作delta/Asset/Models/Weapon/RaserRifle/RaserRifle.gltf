@@ -118,44 +118,38 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material",
+			"name":"Material.001",
+			"normalTexture":{
+				"index":0,
+				"scale":10
+			},
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0,
-					0.04811244457960129,
-					0.8005527257919312,
+					0.12440706044435501,
+					0.12440706044435501,
+					0.12440706044435501,
 					1
 				],
-				"metallicFactor":0,
-				"roughnessFactor":0.5
+				"metallicFactor":0.906732439994812,
+				"roughnessFactor":0.23413898050785065
 			}
 		},
 		{
 			"doubleSided":true,
-			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.002",
+			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.003",
+			"normalTexture":{
+				"index":1,
+				"scale":0.3000001907348633
+			},
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.013800974003970623,
-					0.07977153360843658,
-					0.09294775128364563,
+					0.00934496521949768,
+					0.00934496521949768,
+					0.00934496521949768,
 					1
 				],
-				"metallicFactor":0,
-				"roughnessFactor":0.5
-			}
-		},
-		{
-			"doubleSided":true,
-			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.001",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.10370373725891113,
-					0.10370373725891113,
-					0.10370373725891113,
-					1
-				],
-				"metallicFactor":0,
-				"roughnessFactor":0.5
+				"metallicFactor":0.8580060601234436,
+				"roughnessFactor":0.17975831031799316
 			}
 		},
 		{
@@ -226,7 +220,7 @@
 						"TEXCOORD_0":14
 					},
 					"indices":15,
-					"material":2
+					"material":0
 				}
 			]
 		},
@@ -240,7 +234,7 @@
 						"TEXCOORD_0":18
 					},
 					"indices":19,
-					"material":2
+					"material":0
 				}
 			]
 		},
@@ -254,7 +248,7 @@
 						"TEXCOORD_0":22
 					},
 					"indices":23,
-					"material":3
+					"material":1
 				}
 			]
 		},
@@ -268,7 +262,7 @@
 						"TEXCOORD_0":26
 					},
 					"indices":27,
-					"material":2
+					"material":0
 				}
 			]
 		},
@@ -282,9 +276,31 @@
 						"TEXCOORD_0":30
 					},
 					"indices":31,
-					"material":3
+					"material":2
 				}
 			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/png",
+			"name":"rubber_tiles_nor_gl_4k",
+			"uri":"rubber_tiles_nor_gl_4k.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"miniaNol",
+			"uri":"miniaNol.png"
 		}
 	],
 	"accessors":[
@@ -753,6 +769,12 @@
 			"byteLength":168,
 			"byteOffset":66220,
 			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
 		}
 	],
 	"buffers":[

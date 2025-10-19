@@ -21,6 +21,7 @@
 				"BulletModelPath": "Asset/Models/Weapon/Bullet/Bullet-Live.gltf",
 				"BulletRotateDeg": 0.0,
 				"BulletTrailPath": "Asset/Textures/GameObject/ClockHand.png",
+				"BulletTrackingDistance": 0.0,
 				"BurstNum": 1,
 				"BurstTime": 0.0,
 				"Damage": 56,
@@ -37,7 +38,13 @@
 				"ReloadTime": 2.0,
 				"Rot": [ 0.0, 0.0, 0.0 ],
 				"Scale": [ 1.0, 1.0, 1.0 ],
-				"ShotNodes": [],
+				"Speed": 220,
+				"ShotNodes": [
+					{ "Name": "SP1" },
+					{ "Name": "SP2" },
+					{ "Name": "SP3" },
+					{ "Name": "SP4" }
+				],
 				"Tag": 4
 			},
 			{
@@ -50,9 +57,10 @@
 				"BulletModelPath": "Asset/Models/Weapon/Bullet/Bullet-Live.gltf",
 				"BulletRotateDeg": 0.0,
 				"BulletTrailPath": "Asset/Textures/GameObject/ClockHand.png",
+				"BulletTrackingDistance": 0.0,
 				"BurstNum": 1,
 				"BurstTime": 0.0,
-				"Damage": 56,
+				"Damage": 556,
 				"DampingInterval": 20.0,
 				"DampingRate": 0.8999999761581421,
 				"FireRate": 0.20000000298023224,
@@ -66,7 +74,10 @@
 				"ReloadTime": 2.0,
 				"Rot": [ 0.0, 0.0, 0.0 ],
 				"Scale": [ 1.0, 1.0, 1.0 ],
-				"ShotNodes": [],
+				"ShotNodes": [
+					{ "Name": "SP" }
+				],
+				"Speed": 320,
 				"Tag": 4
 			}
 		]

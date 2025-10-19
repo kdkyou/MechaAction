@@ -863,7 +863,7 @@ void FLAC::FrontMoveAttack::Enter(std::weak_ptr<FLAC>& owner, const std::weak_pt
 	m_direct = spOwner->GetMatrix().Backward();
 	m_direct.Normalize();
 
-	m_durationState = 0.4f;
+	m_durationState = 1.0f;
 
 	CheckAttackLevel(owner);
 }
@@ -926,7 +926,7 @@ void FLAC::BackMove::Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGam
 	m_direct = spOwner->GetMatrix().Forward();
 	m_direct.Normalize();
 
-	m_durationState = 0.4f;
+	m_durationState = 1.0f;
 }
 
 void FLAC::BackMove::Update(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)
@@ -985,7 +985,7 @@ void FLAC::BackMoveAttack::Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr
 	m_direct = spOwner->GetMatrix().Forward();
 	m_direct.Normalize();
 
-	m_durationState = 0.4f;
+	m_durationState = 1.4f;
 
 	CheckAttackLevel(owner);
 }
@@ -1108,7 +1108,7 @@ void FLAC::LeftMoveAttack::Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr
 	m_direct = spOwner->GetMatrix().Left();
 	m_direct.Normalize();
 
-	m_durationState = 0.4f;
+	m_durationState = 1.7f;
 
 	CheckAttackLevel(owner);
 }
@@ -1232,7 +1232,7 @@ void FLAC::RightMoveAttack::Enter(std::weak_ptr<FLAC>& owner, const std::weak_pt
 	m_direct = spOwner->GetMatrix().Right();
 	m_direct.Normalize();
 
-	m_durationState = 0.4f;
+	m_durationState = 0.9f;
 
 	CheckAttackLevel(owner);
 }
@@ -1308,7 +1308,7 @@ void FLAC::Avoid::Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameOb
 	}
 	m_direct.Normalize();
 
-	m_durationState = 0.4f;
+	m_durationState = 0.7f;
 }
 
 void FLAC::Avoid::Update(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)

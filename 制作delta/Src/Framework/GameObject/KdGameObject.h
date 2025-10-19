@@ -118,7 +118,36 @@ public:
 		KdJsonUtility::GetArray(jsonObj,"Rot",&m_rot.x, 3);
 		KdJsonUtility::GetArray(jsonObj,"Scale",&m_scale.x, 3);
 		KdJsonUtility::GetValue(jsonObj, "IsTarget", &m_isCameraTarget);
-		KdJsonUtility::GetValue(jsonObj, "Tag", &m_tag);
+		int i = 0;
+		KdJsonUtility::GetValue(jsonObj, "Tag", &i);
+		if (i == ObjectTag::tNone)
+		{
+			m_tag = ObjectTag::tNone;
+		}
+		else if (i == ObjectTag::tPlayer)
+		{
+			m_tag = ObjectTag::tPlayer;
+		}
+		else if (i == ObjectTag::tPlayerAttack)
+		{
+			m_tag = ObjectTag::tPlayerAttack;
+		}
+		else if (i == ObjectTag::tEnemy)
+		{
+			m_tag = ObjectTag::tEnemy;
+		}
+		else if (i == ObjectTag::tEnemyAttack)
+		{
+			m_tag = ObjectTag::tEnemyAttack;
+		}
+		else if (i == ObjectTag::tTerrain)
+		{
+			m_tag = ObjectTag::tTerrain;
+		}
+		if (i == ObjectTag::tUI)
+		{
+			m_tag = ObjectTag::tUI;
+		}
 	}
 
 	// このクラスの内容をJSONデータ化する

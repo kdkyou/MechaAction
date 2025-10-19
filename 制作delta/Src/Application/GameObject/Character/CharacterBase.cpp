@@ -184,9 +184,17 @@ void CharacterBase::Deserialize(const nlohmann::json& jsonObj)
 				{
 					auto parent = m_wpBase.lock();
 
+					if (parent->GetTag() == tPlayer)
+					{
+						obj->SetTag(tPlayerAttack);
+					}
+					else if (parent->GetTag() == tEnemy)
+					{
+						obj->SetTag(tEnemyAttack);
+					}
+					obj->SetParent(parent);
 					obj->Init();
 					obj->Deserialize(weaponsData);
-					obj->SetParent(parent);
 					SceneManager::Instance().AddObject(obj);
 					m_wpWeapons.push_back(obj);
 				}

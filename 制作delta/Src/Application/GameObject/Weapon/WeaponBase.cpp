@@ -139,8 +139,24 @@ void WeaponBase::Deserialize(const nlohmann::json& jsonObj)
 	KdJsonUtility::GetValue(jsonObj,"ModelPath",&m_modelPath);
 	KdJsonUtility::GetValue(jsonObj,"AttackNum",&m_attackNum);
 	KdJsonUtility::GetValue(jsonObj,"AttachPath",&m_attachPath);
-	KdJsonUtility::GetValue(jsonObj, "AttackTrigger", &m_AttackTrigger);
-
+	int i = 0;
+	KdJsonUtility::GetValue(jsonObj, "AttackTrigger", &i);
+	if (i == TriggerType::RightHand)
+	{
+	m_AttackTrigger = TriggerType::RightHand;
+	}
+	else if (TriggerType::LeftHand)
+	{
+	m_AttackTrigger = TriggerType::LeftHand;
+	}
+	else if (TriggerType::RightShoulder)
+	{
+	m_AttackTrigger = TriggerType::RightShoulder;
+	}
+	else if (TriggerType::LeftShoulder)
+	{
+	m_AttackTrigger = TriggerType::LeftShoulder;
+	}
 	SetModel(m_modelPath);
 }
 

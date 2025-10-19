@@ -104,7 +104,7 @@ void GameScene::Init()
 		missile->SetParent(_character);
 		missile->SetAttackTrigger(WeaponBase::RightShoulder);
 		missile->SetAttachPath("RightShoulderWeapon");
-		missile->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/3LineMissile.gltf", 1.8f, 7.0f,0.025f,6, 120, 240);
+		missile->SetGunsParam("Asset/Models/Weapon/Missile/FrontMissile/3LineMissile.gltf", 1.8f, 7.0f,0.025f,3, 12, 24);
 		missile->MakeAnimator("Close", 20.0f);
 		missile->SetNodeMats("SP1");
 		missile->SetNodeMats("SP2");

@@ -70,9 +70,9 @@ void EnemyCreater::EnemysCreate(const std::string& filePath)
 					auto obj = std::make_shared<FLAC>();
 					obj->SetThis(obj);
 					obj->SetThisBase(obj);
-					obj->Init();
 					obj->SetTag(KdGameObject::tEnemy);
 					obj->Deserialize(json);
+					obj->Init();
 					SceneManager::Instance().AddEnemy(obj);
 				}
 			}
@@ -124,6 +124,12 @@ void EnemyCreater::Editor_ImGui()
 	
 	if (ImGui::Button((const char*)u8"Balt"))
 	{
+		auto obj = std::make_shared<Balt>();
+		obj->SetThis(obj);
+		obj->SetThisBase(obj);
+		obj->Init();
+		obj->SetTag(KdGameObject::tEnemy);
+		SceneManager::Instance().AddEnemy(obj);
 	}
 	
 	if (ImGui::Button((const char*)u8"FLAC"))

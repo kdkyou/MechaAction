@@ -44,17 +44,17 @@ void Sowrd::OnHit()
 
 void Sowrd::Editor_ImGui()
 {
-	KdGameObject::Editor_ImGui();
+	WeaponBase::Editor_ImGui();
 }
 
 void Sowrd::Deserialize(const nlohmann::json& jsonObj)
 {
-	KdGameObject::Deserialize(jsonObj);
+	WeaponBase::Deserialize(jsonObj);
 }
 
 void Sowrd::Serialize(nlohmann::json& outJson) const
 {
-	KdGameObject::Serialize(outJson);
+	WeaponBase::Serialize(outJson);
 }
 
 void Sowrd::Init()
@@ -105,14 +105,16 @@ void Sowrd::Update()
 
 	if (_spParent)
 	{
-		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode(m_attachPath);
-		if (_pNode)
+		if (m_attachPath != "")
 		{
-			m_mParentAttach = _pNode->m_worldTransform;
+			const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode(m_attachPath);
+			if (_pNode)
+			{
+				m_mParentAttach = _pNode->m_worldTransform;
+			}
+
+			_parentMat = _spParent->GetMatrix();
 		}
-
-		_parentMat = _spParent->GetMatrix();
-
 	}
 
 

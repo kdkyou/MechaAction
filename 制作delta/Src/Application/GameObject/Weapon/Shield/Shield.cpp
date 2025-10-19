@@ -18,6 +18,21 @@ void Shield::SetModel(const std::string& path)
 	//KdShaderManager::Instance().m_StandardShader.SetWaterNormalTexture(*tex);
 }
 
+void Shield::Editor_ImGui()
+{
+	WeaponBase::Editor_ImGui();
+}
+
+void Shield::Deserialize(const nlohmann::json& jsonObj)
+{
+	WeaponBase::Deserialize(jsonObj);
+}
+
+void Shield::Serialize(nlohmann::json& outJson) const
+{
+	WeaponBase::Serialize(outJson);
+}
+
 void Shield::CreateShield()
 {
 	if (!m_spModelWork) { return; }
@@ -83,16 +98,19 @@ void Shield::Update()
 	Math::Matrix _rotMat = Math::Matrix::Identity;
 	Math::Matrix _parentMat = Math::Matrix::Identity;
 
-	if (_spParent)
+	auto parent = m_wpParent.lock();
+	if (parent)
 	{
-		const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode("LeftWeapon");
-		if (_pNode)
+		if (m_attachPath != "")
 		{
-			m_mParentAttach = _pNode->m_worldTransform;
+			const KdModelWork::Node* _pNode = _spParent->GetModelWork().lock()->FindWorkNode("LeftWeapon");
+			if (_pNode)
+			{
+				m_mParentAttach = _pNode->m_worldTransform;
+			}
+
+			_parentMat = _spParent->GetMatrix();
 		}
-
-		_parentMat = _spParent->GetMatrix();
-
 	}
 
 	if (_spParent)

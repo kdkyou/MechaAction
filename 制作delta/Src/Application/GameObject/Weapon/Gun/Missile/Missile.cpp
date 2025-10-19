@@ -10,6 +10,7 @@ void Missile::Init()
 	m_durationFire = 0.0f;
 
 	m_name = "Missile";
+	m_shotSoundPath = "Asset/Sounds/SE/Weapon/MissileShot.wav";
 }
 
 void Missile::Update()
@@ -148,10 +149,11 @@ void Missile::Shot()
 		direct.Normalize();
 
 	}
-	
-	auto& am = KdAudioManager::Instance();
-	am.Play("Asset/Sounds/SE/Weapon/MissileShot.wav")->SetVolume(am.GetSEVolume());
-
+	if (m_shotSoundPath != "")
+	{
+		auto& am = KdAudioManager::Instance();
+		am.Play(m_shotSoundPath)->SetVolume(am.GetSEVolume());
+	}
 
 	std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
 	bullet->SetModelData(m_bulletModelPath);

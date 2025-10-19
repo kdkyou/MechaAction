@@ -8,6 +8,8 @@
 
 void Charge::Init()
 {
+	m_name = "Charge";
+
 	m_durationFire = 0.0f;
 
 	m_chargeSoundPath = "Asset/Sounds/Sound/lazer_charge.wav";
@@ -143,9 +145,12 @@ void Charge::Trigger()
 			{
 				soundInstance->Stop();
 			}
-			auto& am = KdAudioManager::Instance();
-			m_sounds = am.Play(m_shotSoundPath, false);
-			m_sounds.lock()->SetVolume(am.GetSEVolume());
+			if (m_shotSoundPath != "")
+			{
+				auto& am = KdAudioManager::Instance();
+				m_sounds = am.Play(m_shotSoundPath, false);
+				m_sounds.lock()->SetVolume(am.GetSEVolume());
+			}
 	}
 	
 	if (m_numOnce <= 0)

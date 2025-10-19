@@ -82,6 +82,17 @@ void GunBase::Deserialize(const nlohmann::json& jsonObj)
 	KdJsonUtility::GetValue(jsonObj, "BurstNum", &m_numBurst);
 	KdJsonUtility::GetValue(jsonObj, "DampingInterval", &m_dampingInterval);
 	KdJsonUtility::GetValue(jsonObj, "DampingRate",&m_dampingRate);
+	KdJsonUtility::GetValue(jsonObj, "ShotSoundPath", &m_shotSoundPath);
+	KdJsonUtility::GetValue(jsonObj, "BulletModelPath", &m_bulletModelPath);
+	KdJsonUtility::GetValue(jsonObj, "BulletLockAngle", &m_bulletLockAngle);
+	KdJsonUtility::GetValue(jsonObj, "BulletRotateDeg", &m_bulletRotateDeg);
+	KdJsonUtility::GetValue(jsonObj, "BulletLostTime", &m_bulletLostTime);
+	KdJsonUtility::GetValue(jsonObj, "BulletTrackingDistance", &m_bulletTrackingDistance);
+	KdJsonUtility::GetValue(jsonObj, "BulletTrailPath", &m_bulletTrailPath);
+	KdJsonUtility::GetValue(jsonObj, "Speed", &m_speed);
+
+	m_num = m_maxNum;
+	m_numOnce = m_maxNumofOnce;
 
 	m_nodeMats.clear();
 
@@ -104,7 +115,7 @@ void GunBase::Serialize(nlohmann::json& outJson) const
 	outJson["Range"] = m_range;
 	outJson["FireRate"] = m_fireRate;
 	outJson["MaxNum"] = m_maxNum;
-	outJson["MaxNumOfOnces"] = m_maxNumofOnce;
+	outJson["MaxNumOfOnce"] = m_maxNumofOnce;
 	outJson["ReloadTime"] = m_reloadTime;
 	outJson["BurstTime"] = m_burst;
 	outJson["BurstNum"] = m_numBurst;
@@ -112,10 +123,12 @@ void GunBase::Serialize(nlohmann::json& outJson) const
 	outJson["BulletRotateDeg"] = m_bulletRotateDeg;
 	outJson["BulletLockAngle"] = m_bulletLockAngle;
 	outJson["BulletLostTime"] = m_bulletLostTime;
-	outJson["BulletLostTime"] = m_bulletTrackingDistance;
+	outJson["BulletTrackingDistance"] = m_bulletTrackingDistance;
 	outJson["DampingInterval"] = m_dampingInterval;
 	outJson["DampingRate"] = m_dampingRate;
 	outJson["BulletTrailPath"] = m_bulletTrailPath;
+	outJson["ShotSoundPath"] = m_shotSoundPath;
+	outJson["Speed"] = m_speed;
 
 	outJson["ShotNodes"] = nlohmann::json::array();
 	for (const auto& node : m_nodeMats)

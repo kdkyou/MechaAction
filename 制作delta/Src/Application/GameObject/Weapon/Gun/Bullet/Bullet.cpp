@@ -132,8 +132,7 @@ void Bullet::Intersects()
 			if (obj->Intersects(boxInfo, nullptr))
 			{
 				OnHit();
-				m_parameter = obj->GetParameter();
-				obj->HitDamage(GetParameter());
+				obj->HitDamage(m_parameter);
 				obj->OnHit();
 			}
 		}
@@ -145,8 +144,7 @@ void Bullet::Intersects()
 			if (obj->Intersects(boxInfo, nullptr))
 			{
 				OnHit();
-				m_parameter = obj->GetParameter();
-				obj->HitDamage(GetParameter());
+				obj->HitDamage(m_parameter);
 				obj->OnHit();		
 			}
 		}
@@ -258,6 +256,7 @@ void Bullet::DrawLit()
 	if (m_moveType != SightScale)
 	{
 		if (!m_isModelDraw) { return; }
+		if (!m_spModelData) { return; }
 		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld);
 
 	}

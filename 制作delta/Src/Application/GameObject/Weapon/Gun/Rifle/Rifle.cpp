@@ -9,8 +9,6 @@
 
 void Rifle::Init()
 {
-	m_rot.x = 15.0f;
-	m_rot.y = 20.0f;
 
 	m_muzzleFlashPath = "Asset/Textures/GameObject/MuzzleCross.png";
 
@@ -57,8 +55,10 @@ void Rifle::Trigger()
 
 	if (m_num <= 0) { return; }
 
-	if (m_nowTrigger & m_AttackTrigger) { OnTrigger(); }
-	else { m_trigger = false; }
+	if (m_nowTrigger & m_AttackTrigger) { 
+		OnTrigger(); }
+	else {
+		m_trigger = false; }
 
 	if (m_isReload) 
 	{
@@ -78,7 +78,9 @@ void Rifle::Trigger()
 	}
 
 	// 発射可能か
-	if (!m_trigger) { return; }
+	if (!m_trigger) { 
+		int it = 0;
+		return; }
 
 	// 砲身調整
 	auto  angle =Math::Vector2{ m_rot.x,m_rot.y };
@@ -130,9 +132,11 @@ void Rifle::Shot()
 		Flash(trans);
 	}
 
-	
+	if (m_shotSoundPath!="")
+	{
 	auto& am = KdAudioManager::Instance();
 	am.Play(m_shotSoundPath)->SetVolume(am.GetSEVolume());
+	}
 
 	std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
 	bullet->SetModelData(m_bulletModelPath);
@@ -156,7 +160,6 @@ void Rifle::OnTrigger()
 {
 	if (m_trigger == false)
 	{
-
 		m_trigger = true;
 		m_durationFire = m_fireRate;
 	}

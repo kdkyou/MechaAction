@@ -225,6 +225,8 @@ void Balt::UpdateCollision()
 			}
 		}
 	}
+
+	m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, m_correction);
 }
 
 const Math::Matrix& Balt::UpdateMatrix()
