@@ -90,7 +90,7 @@ void TitleScene::Event()
 		if (um.IsFadeComplete())
 		{
 			SceneManager::Instance().SetNextScene(
-				SceneManager::SceneType::TitleMovie
+				SceneManager::SceneType::Training
 			);
 		}
 	}

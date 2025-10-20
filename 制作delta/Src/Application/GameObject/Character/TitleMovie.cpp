@@ -88,8 +88,8 @@ void TitleMovie::Update()
 			KdModelWork::Node* pNode = m_spModel->FindWorkNode("CBP");
 			if (pNode) {
 				auto nodeMat = pNode->m_worldTransform;
-				auto mat = nodeMat * m_mWorld;
-				m_efk = KdEffekseerManager::GetInstance().Play("Thruster.efkefc",mat.Translation(), 3.0f,0.5f);
+				auto mat = nodeMat.Translation() * m_mWorld.Translation();
+				m_efk = KdEffekseerManager::GetInstance().Play("Thruster.efkefc",mat, 3.0f,1.0f, false);
 				Application::Instance().m_log.AddLog("Create\n");
 			}
 			}
@@ -151,19 +151,6 @@ void TitleMovie::PostUpdate()
 		}
 
 		Effekseer::Handle handle = 0;
-
-
-		if (spefct == nullptr)
-		{
-			m_efk = KdEffekseerManager::GetInstance().SerchEffect("Thruster.efkefc");
-			spefct = m_efk.lock();
-			if (spefct) {
-				handle = spefct->GetHandle();
-			}
-		}
-		else {
-				handle = spefct->GetHandle();
-		}
 
 		auto matrix = mat * m_mWorld;
 		KdEffekseerManager::GetInstance().SetWorldMatrix(handle, matrix);

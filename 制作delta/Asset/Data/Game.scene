@@ -219,6 +219,19 @@
 		"Tag": 5,
 		"UnLit": true,
 		"path": "Asset/Models/Stage/Area/Area.gltf"
+	},
+	{
+		"Bright": false,
+		"Generate": false,
+		"IsTarget": false,
+		"Lit": false,
+		"Name": "Terrain",
+		"Pos": [ 0.0, 0.0, -920.0 ],
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"Tag": 5,
+		"UnLit": true,
+		"path": "Asset/Models/Stage/Building/Building.gltf"
 	}
 
 ]

@@ -89,6 +89,8 @@ public :
 	}
 
 	void Edit_ImGui();
+
+	const int GetNum()const { return m_num; }
 	
 protected :
 
@@ -108,4 +110,6 @@ protected :
 	std::list<std::shared_ptr<KdGameObject>> m_terrainList;
 
 	bool m_once;
+
+	int m_num = 0;
 };

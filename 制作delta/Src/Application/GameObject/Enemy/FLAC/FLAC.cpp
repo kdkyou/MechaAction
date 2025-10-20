@@ -287,7 +287,7 @@ void FLAC::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<FLAC>& owner, cons
 		if (spOwner->GetPrevState() == FLACStateType::Avoid) {
 			if (spOwner->m_rand.GetInt(1, 2) == 1)
 			{
-				spOwner->ChangeActionState(std::make_shared<BackMoveAttack>());
+				spOwner->ChangeActionState(std::make_shared<Avoid>());
 				return;
 			}
 			else {
@@ -344,7 +344,7 @@ void FLAC::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<FLAC>& owner, cons
 				return;
 			}
 			else {
-				spOwner->ChangeActionState(std::make_shared<LeftMove>());
+				spOwner->ChangeActionState(std::make_shared<FrontMoveAttack>());
 				return;
 			}
 		}
@@ -441,7 +441,7 @@ void FLAC::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<FLAC>& owner, cons
 	}
 
 	{
-		spOwner->ChangeActionState(std::make_shared<Stand>());
+		spOwner->ChangeActionState(std::make_shared<Fly>());
 		return;
 	}
 

@@ -109,22 +109,13 @@ void GameScene::Init()
 		missile->SetNodeMats("SP1");
 		missile->SetNodeMats("SP2");
 		missile->SetNodeMats("SP3");
-		/*
-		missile->SetNodeMats("SP4");
-		missile->SetNodeMats("SP5");
-		missile->SetNodeMats("SP6");
-		missile->SetNodeMats("SP7");
-		missile->SetNodeMats("SP8");
-		missile->SetNodeMats("SP9");
-		missile->SetNodeMats("SP10");
-		missile->SetNodeMats("SP11");
-		missile->SetNodeMats("SP12");*/
+	
 		missile->Init();
 		missile->SetTag(KdGameObject::tPlayerAttack);
 		
 		missile->SetBulletsParam("Asset/Models/Weapon/Bullet/MissileBullet.gltf",20.0f,200, 200.0f, 200, 40.0f, 0.95f);
 		missile->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke.png", Math::Color(0.36f, 0.3f, 0.3f), 3.5f, 30);
-		missile->SetBulletChaisingData(10, 150.0f, 0.8f, 2000.0f);
+		missile->SetBulletChaisingData(5, 70.0f, 0.8f, 2000.0f);
 		AddObject(missile);
 
 	}
@@ -314,18 +305,21 @@ void GameScene::Event()
 		case Wave::Start:
 			m_waveProgress = First;
 			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/First.enemy");
+			m_num = First;
 			break;
 		case Wave::First:
 			m_waveProgress = Second;
 			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Second.enemy");
-
+			m_num = Second;
 			break;
 		case Wave::Second:
 			m_waveProgress = Last;
 			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Last.enemy");
+			m_num = Last;
 			break;
 		case Wave::Last:
 			m_waveProgress = Complete;
+			m_num = Complete;
 			break;
 		default:
 			break;

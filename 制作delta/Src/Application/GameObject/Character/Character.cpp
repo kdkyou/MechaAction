@@ -2087,7 +2087,7 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
 			auto mat = effect->pNodeMat * spOwner->m_mWorld;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", mat.Translation(), 3.0f, 1.0f);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", mat.Translation(), 3.0f, 1.0f,false);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 
@@ -3394,7 +3394,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 3.0f, 1.0f);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 3.0f, 1.0f, false);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}
@@ -3523,7 +3523,7 @@ void Character::ActionRightAttackMid::Enter(std::weak_ptr<Character>& owner)
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = "Thruster.efkefc";
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 3.0f, 1.0f);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play("Thruster.efkefc", pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 3.0f, 1.0f, false);
 			effect->handle = effect->wpEffect.lock()->GetHandle();
 			m_spEffects.push_back(effect);
 		}

@@ -46,7 +46,7 @@ private:
 	bool m_isIncDec = true; // true=Inc
 	bool m_isAuto = false;
 
-	int m_current;
+	int m_current = 1;
 	int m_max =1;
 
 	bool m_isHorizontal = true;	// true 横方向ゲージ

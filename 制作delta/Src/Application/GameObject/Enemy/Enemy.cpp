@@ -374,7 +374,7 @@ void Enemy::ActionStateBase::CreateEffect(std::weak_ptr<Enemy>& owner,const std:
 		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 		effect->name = effectName;
 		effect->pNodeMat = pNode->m_worldTransform;
-		effect->wpEffect = KdEffekseerManager::GetInstance().Play(effectName, pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(),1.0f,3.0f);
+		effect->wpEffect = KdEffekseerManager::GetInstance().Play(effectName, pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(),1.0f,3.0f, false);
 		m_spEffects.push_back(effect);
 	}
 }

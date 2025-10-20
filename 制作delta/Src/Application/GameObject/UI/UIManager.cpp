@@ -35,6 +35,9 @@ void UIManager::SceneUICreate()
 	case SceneManager::SceneType::Retry:
 		str = "Asset/Data/UI/RetryUI.scene";
 		break;
+	case SceneManager::SceneType::Training:
+		str = "Asset/Data/UI/TrainingUI.scene";
+		break;
 	default:
 		break;
 	}

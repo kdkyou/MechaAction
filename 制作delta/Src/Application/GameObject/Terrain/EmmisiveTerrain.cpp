@@ -31,7 +31,7 @@ void EmmisiveTerrain::Update()
 		float t = (m_durationWait / m_waitTime) * m_waitChangeSpeed;
 
 		Math::Vector3 zero = {};
-		m_emmisive = Math::Vector3::Lerp(zero, m_firstEmmisive, t);
+		m_emmisive = { 10.0f,10.0f,10.0f };
 
 	}
 	else
@@ -61,10 +61,11 @@ void EmmisiveTerrain::PostUpdate()
 
 void EmmisiveTerrain::DrawLit()
 {
-	float t = (m_durationChange / m_changeTime) * m_changeSpeed / 3.0f;
 
 	if (m_isEnableChange)
 	{
+		float t = (m_durationChange / m_changeTime) * m_changeSpeed / 3.0f;
+		
 		KdShaderManager::Instance().m_StandardShader.SetLightningEnable(true);
 
 		KdShaderManager::Instance().m_StandardShader.SetLightningLocalPos(m_maxPos, m_minPos);
@@ -77,9 +78,17 @@ void EmmisiveTerrain::DrawLit()
 
 	}
 	else {
+		float t = (m_durationWait / m_waitTime) * m_waitChangeSpeed;
+
+		KdShaderManager::Instance().m_StandardShader.SetLightningEnable(true);
+
+		KdShaderManager::Instance().m_StandardShader.SetLightningLocalPos(m_maxPos, m_minPos);
+		KdShaderManager::Instance().m_StandardShader.SetLightningColor({0.0f,0.0f,0.0f}, m_firstEmmisive);
+		KdShaderManager::Instance().m_StandardShader.SetLightningProgress(t);
 
 		DrawTerrain::DrawLit();
 
+		KdShaderManager::Instance().m_StandardShader.SetLightningEnable(false);
 	}
 
 

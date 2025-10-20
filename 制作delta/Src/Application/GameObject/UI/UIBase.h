@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#define UIFILEPATH "Asset/Textures/UI/"
+
 
 class UIBase :public KdGameObject
 {

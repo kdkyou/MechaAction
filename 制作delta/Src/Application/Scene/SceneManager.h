@@ -15,6 +15,7 @@ public :
 		TitleMovie,
 		Game,
 		Retry,
+		Training,
 	};
 
 	void PreUpdate();
@@ -83,6 +84,8 @@ private :
 
 	// 現在のシーンのインスタンスを保持しているポインタ
 	std::shared_ptr<BaseScene> m_currentScene = nullptr;
+	// 前のシーン
+	std::shared_ptr<BaseScene> m_prevScene = nullptr;
 
 	// 現在のシーンの種類を保持している変数
 	SceneType m_currentSceneType = SceneType::Title;

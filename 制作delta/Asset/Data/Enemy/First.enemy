@@ -30,7 +30,7 @@
 				"FireRate": 0.03999999910593033,
 				"IsTarget": false,
 				"MaxNum": 2000,
-				"MaxNumOfOnce": 500,
+				"MaxNumOfOnce": 50,
 				"ModelPath": "Asset\\Models\\Weapon\\Balkan\\Balkan.gltf",
 				"Name": "Rifle",
 				"Pos": [ 0.0, 0.0, 0.0 ],

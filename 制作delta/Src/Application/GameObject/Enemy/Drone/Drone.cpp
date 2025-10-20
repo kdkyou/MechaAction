@@ -591,7 +591,7 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 {
 	m_speed = 30.0f;
 
-	m_durationState = 2.0f;
+	m_durationState = 0.4f;
 
 	auto spOwner = owner.lock();
 	auto spTarget = obj.lock();
