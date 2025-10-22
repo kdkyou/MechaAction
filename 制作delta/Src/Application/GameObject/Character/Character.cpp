@@ -948,7 +948,10 @@ void Character::ActionStateBase::EffectUpdate(std::weak_ptr<Character>& owner)
 		{
 			eff->wpEffect = KdEffekseerManager::GetInstance().SerchEffect(eff->name);
 			spefct = eff->wpEffect.lock();
+			if (spefct)
+			{
 			eff->handle = spefct->GetHandle();
+			}
 		}
 
 		KdEffekseerManager::GetInstance().SetWorldMatrix(eff->handle, mat * spOwner->m_mWorld);

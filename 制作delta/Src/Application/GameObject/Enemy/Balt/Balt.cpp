@@ -21,13 +21,13 @@ void Balt::Init()
 	if (!m_spModelWork)
 	{
 		m_spModelWork = std::make_shared<KdModelWork>();
-		m_spModelWork->SetModelData("Asset/Models/Another/Another.gltf");
+		m_spModelWork->SetModelData("Asset/Models/Leg/BaltLeg.gltf");
 		// 初期のアニメーションをセットする
 		m_spAnimator = std::make_shared<KdAnimator>();
 		m_spAnimator->SetAnimation(m_spModelWork->GetData()->GetAnimation("StandUp"), 1.0f, false);
 	}
 
-	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Balt.gltf");
+	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Enemy.gltf");
 
 
 	if (!m_pCollider)

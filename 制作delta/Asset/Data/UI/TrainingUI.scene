@@ -9,7 +9,7 @@
 		"Name": "DrawUI",
 		"Path": "Asset/Textures/Text/KeyConfig.png",
 		"Pivot": [ 0.5, 0.5 ],
-		"Pos": [ 340.0, 200.0, 0.0 ],
+		"Pos": [ 470.0, 230.0, 0.0 ],
 		"RectHeight": 169,
 		"RectWidth": 300,
 		"Rot": [ 0.0, 0.0, 0.0 ],
