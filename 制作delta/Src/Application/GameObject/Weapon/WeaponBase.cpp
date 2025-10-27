@@ -129,6 +129,7 @@ void WeaponBase::Editor_ImGui()
 		m_AttackTrigger = static_cast<TriggerType>(dir);
 	}
 
+	ImGui::DragInt((const char*)u8"ダメージ", &m_damage, 1, 0, 10000);
 
 }
 
@@ -158,6 +159,8 @@ void WeaponBase::Deserialize(const nlohmann::json& jsonObj)
 	m_AttackTrigger = TriggerType::LeftShoulder;
 	}
 	SetModel(m_modelPath);
+	KdJsonUtility::GetValue(jsonObj, "Damage", &m_damage);
+
 }
 
 void WeaponBase::Serialize(nlohmann::json& outJson) const
@@ -168,6 +171,11 @@ void WeaponBase::Serialize(nlohmann::json& outJson) const
 	outJson["AttackNum"] = m_attackNum;
 	outJson["AttachPath"] = m_attachPath;
 	outJson["AttackTrigger"] = m_AttackTrigger;
+	outJson["Damage"] = m_damage;
+
 }
 
-
+void WeaponBase::SetTarget(const std::weak_ptr<CharacterBase>& target)
+{
+	m_wpTarget = target;
+}

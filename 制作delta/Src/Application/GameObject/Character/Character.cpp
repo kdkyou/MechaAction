@@ -111,11 +111,6 @@ void Character::Update()
 		CameraManager::Instance().SetNextType(CameraManager::None);
 	}
 
-	if (key.H)
-	{
-		CameraManager::Instance().SetNextType(CameraManager::Hit);
-	}
-
 	if (key.T)
 	{
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
@@ -142,7 +137,7 @@ void Character::Update()
 		}
 		else {
 			//ブルーム
-			KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.55f);
+			//KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.55f);
 			// リムライト
 			m_limEnable = false;
 
@@ -189,7 +184,7 @@ void Character::Update()
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
 	LockOn();
 
-	CreatePolygon();
+//	CreatePolygon();
 
 	UpdateCollision();
 
@@ -578,7 +573,7 @@ void Character::LockOn()
 	KdCollider::SphereInfo sphereInfo;
 
 	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 3.5f, 0);
-	sphereInfo.m_sphere.Radius = 200.0f;
+	sphereInfo.m_sphere.Radius = 600.0f;
 	sphereInfo.m_type = KdCollider::TypeDamage;
 
 
@@ -607,11 +602,16 @@ void Character::LockOn()
 
 			auto& camMat = CameraManager::Instance().GetCurrentCamera().lock()->GetMatrix();
 
-			if (SearchDetect(targetPos, camMat, 80) == true)
+			if (SearchDetect(targetPos, camMat, 60) == true)
 			{
+				auto vect = targetPos - pos;
+				vect.Normalize();
+				if (SeaarchObstacle(pos, vect, distance))
+				{
 				info->wpLockTarget = obj;
 				info->distance = distance;
 				vec.push_back(info);
+				}
 			}
 		}
 	}
@@ -715,7 +715,7 @@ void Character::CreatePolygon()
 		poly->SetRotation({90.0f,0.0f,0.0f });
 		poly->SetMatrix(mat);
 	}
-	poly->SetPolygonParam("Asset/Textures/GameObject/Thurster.png", 2.0f, 0.2f);
+	poly->SetPolygonParam("Asset/Textures/GameObject/Thurster.png", 0.5f, 0.2f);
 
 	SceneManager::Instance().AddObject(poly);
 }
@@ -3635,7 +3635,7 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 	Checkkey(owner);
 
 	//移動
-	if (m_durationStiffness <= m_stiffnessTime / 8)
+	/*if (m_durationStiffness <= m_stiffnessTime / 8)
 	{
 		auto flg =
 		spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround);
@@ -3648,7 +3648,7 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 
 			spOwner->ChangeEnableRightAttack(true);
 
-	}
+	}*/
 
 	//エフェクト
 	EffectUpdate(owner);
@@ -3656,7 +3656,7 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 
 	if (spOwner->m_spAnimator->IsComp() == false)
 	{
-	
+		spOwner->ChangeEnableRightAttack(false);
 		//加算
 		m_durationStiffness += KdFPSController::GetInstance().GetDeltaTime();
 	}
@@ -3737,6 +3737,7 @@ void Character::ActionRightAttackSecond::Enter(std::weak_ptr<Character>& owner)
 
 	m_stateNum = spOwner->CharacterStateName::RightSorwdSeco;
 
+	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightAttack(true);
 
 	auto& am = KdAudioManager::Instance();
@@ -3755,6 +3756,15 @@ void Character::ActionRightAttackSecond::Update(std::weak_ptr<Character>& owner)
 	//移動
 	if (!spOwner->m_spAnimator->IsAnimationEnd())
 	{
+		auto target = spOwner->m_wpCharacterTarget.lock();
+		if (target)
+		{
+			Math::Vector3 targetPos = target->GetCorrectionMatrix().Translation() + target->GetMatrix().Translation();
+			m_direction = targetPos - spOwner->GetPos();
+			m_direction.Normalize();
+		}
+
+
 		if (!spOwner->SwordRangeCheck())
 		{
 			auto flg =
@@ -3827,6 +3837,7 @@ void Character::ActionRightAttackSecond::Exit(std::weak_ptr<Character>& owner)
 
 	spOwner->UnEnableTrail();
 	spOwner->ChangeEnableRightAttack(false);
+	spOwner->ChangeEnableAttack(false);
 }
 
 void Character::ActionRightAttackCharge::Enter(std::weak_ptr<Character>& owner)
@@ -3844,7 +3855,9 @@ void Character::ActionRightAttackCharge::Enter(std::weak_ptr<Character>& owner)
 
 	m_stateNum = spOwner->CharacterStateName::RightSorwdCharge;
 
+	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightAttack(true);
+
 }
 
 void Character::ActionRightAttackCharge::Update(std::weak_ptr<Character>& owner)
@@ -3852,8 +3865,6 @@ void Character::ActionRightAttackCharge::Update(std::weak_ptr<Character>& owner)
 	Application::Instance().m_log.AddLog("ChargeAttack\n");
 
 	std::shared_ptr<Character> spOwner = owner.lock();
-
-	spOwner->ChangeEnableRightAttack(true);
 
 	if (spOwner->m_spAnimator->GetProgress() <= 0.6f)
 	{
@@ -3921,6 +3932,7 @@ void Character::ActionRightAttackCharge::Exit(std::weak_ptr<Character>& owner)
 	//エフェクト
 	EffectExit();
 	spOwner->UnEnableTrail();
+	spOwner->ChangeEnableAttack(false);
 	spOwner->ChangeEnableRightAttack(false);
 }
 
@@ -4037,7 +4049,7 @@ void Character::ActionDestroyed::Enter(std::weak_ptr<Character>& owner)
 	am.Play("Asset/Sounds/Sound/down_player.wav")->SetVolume(am.GetSEVolume());
 
 
-	UIManager::GetInstance().SceneUICreate("Asset/Data/FailedUI.scene");
+	UIManager::GetInstance().SceneUICreate("Asset/Data/UI/FailedUI.scene");
 }
 
 void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
@@ -4058,7 +4070,7 @@ void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 	}
 	else {
 		CameraManager::Instance().ResetMultiLocks();
-		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Retry);
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 		UINT kind = KdShaderManager::Instance().m_postProcessShader.Normal;
 		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 	}

@@ -4,10 +4,10 @@ void NumberUI::Init()
 {
 	m_name = "NumberUI";
 
-	SetTexture("Asset/Textures/UI/Number3.png");
+	/*SetTexture("Asset/Textures/UI/Number3.png");
 	m_drawWi = kDigitWidth;
 	m_drawHe = kDigitHeight;
-	m_rect = { 0,0,kDigitWidth,kDigitHeight };
+	m_rect = { 0,0,kDigitWidth,kDigitHeight };*/
 
 }
 
@@ -96,6 +96,8 @@ void NumberUI::DrawNumber()
 		int digit = strNum[i] - '0';
 
 		m_rect.x = digit * kDigitWidth;
+		m_rect.width = m_rectWi;
+		m_rect.height = m_rectHe;
 
 		Math::Vector2 pos = drawPos + Math::Vector2(i * m_spacing, 0);
 

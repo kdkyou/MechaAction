@@ -143,8 +143,8 @@ void LockCamera::Lock()
 	Math::Vector3 nowVec = m_mWorld.Backward();
 
 	Math::Vector3 toVec = targetPos - pos;
+	toVec.y = 0.0f;
 	auto distance = toVec.Length();
-	if (distance < 0.001) { return; }
 
 	// 注視用のビュー行列を作る（Z軸がtoVecを向く）
 	Math::Matrix lookMat = Math::Matrix::CreateLookAt(targetPos, pos, { 0, 1, 0 });
@@ -158,6 +158,15 @@ void LockCamera::Lock()
 	float angleDiffRad = currentQuat.Dot(targetQuat);
 	angleDiffRad = std::clamp(angleDiffRad, -1.0f, 1.0f);
 	float deg = DirectX::XMConvertToDegrees(acosf(angleDiffRad) * 2.0f); // クオータニオンの角度差
+
+	
+	if (distance < 27.001) { 
+//		if (angleDiffRad > -0.6f && angleDiffRad < 0.6f)
+		{
+			return; 
+		}
+	}
+
 
 	//float deg = Math::Quaternion::Angle(currentQuat, targetQuat);
 	// 補間スピード設定
@@ -176,16 +185,16 @@ void LockCamera::Lock()
 	// 球面線形補間
 	Math::Quaternion newQuat = Math::Quaternion::Slerp(currentQuat, targetQuat, t);
 
-	// 回転行列へ戻す
-	Math::Matrix rotMat = Math::Matrix::CreateFromQuaternion(newQuat);
-
-	m_mRotation = rotMat;
-
 	// 角度保存
 	Math::Vector3 euler;
 	euler = newQuat.ToEuler();
 	m_DegAng.x = DirectX::XMConvertToDegrees(euler.x);
 	m_DegAng.y = DirectX::XMConvertToDegrees(euler.y);
-	m_DegAng.z = DirectX::XMConvertToDegrees(euler.z);
+	m_DegAng.z = DirectX::XMConvertToDegrees(0);
+
+	// 回転行列へ戻す
+	Math::Matrix rotMat = Math::Matrix::CreateFromYawPitchRoll(m_DegAng*KdToRadians);
+
+	m_mRotation = rotMat;
 
 }

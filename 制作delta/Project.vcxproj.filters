@@ -211,6 +211,12 @@
     <Filter Include="Src\Application\Scene\TrainingScene">
       <UniqueIdentifier>{3aa7749c-58e6-4b40-8560-30bd3bc1d904}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Enemy\Scarecrow">
+      <UniqueIdentifier>{9540132a-9d27-47bf-bda5-e9be7f9aa81c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\SelectUI">
+      <UniqueIdentifier>{10ca4a24-a504-4279-a757-ea44ece50798}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -567,6 +573,12 @@
     <ClInclude Include="Src\Application\Scene\TrainingScene\TrainingScene.h">
       <Filter>Src\Application\Scene\TrainingScene</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Enemy\Scarecrow\Scarecrow.h">
+      <Filter>Src\Application\GameObject\Enemy\Scarecrow</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\SelectUI\SelectUI.h">
+      <Filter>Src\Application\GameObject\UI\SelectUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -889,6 +901,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Scene\TrainingScene\TrainingScene.cpp">
       <Filter>Src\Application\Scene\TrainingScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Enemy\Scarecrow\Scarecrow.cpp">
+      <Filter>Src\Application\GameObject\Enemy\Scarecrow</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\SelectUI\SelectUI.cpp">
+      <Filter>Src\Application\GameObject\UI\SelectUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

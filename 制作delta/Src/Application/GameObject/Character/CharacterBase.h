@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 class CameraBase;
+class WeaponBase;
 class CharacterBase : public KdGameObject
 {
 public:
@@ -78,6 +79,8 @@ public:
 
 protected:
 
+	void SetWeapon();
+
 	virtual void UpdateCollision(){}
 
 	//				移動量　　方向		当たり判定するタイプ（基本地面） 判定のみか キャラが回転するか 座標補正なし　レイに補正をかけるか
@@ -121,7 +124,7 @@ protected:
 	std::weak_ptr<CharacterBase>				m_wpCharacterTarget;
 	std::weak_ptr<CharacterBase>				m_wpBase;
 	std::weak_ptr<KdGameObject>					m_wpTarget;
-	std::vector<std::weak_ptr<KdGameObject>>	m_wpWeapons;
+	std::vector<std::weak_ptr<WeaponBase>>	m_wpWeapons;
 
 	
 	Math::Matrix 								m_mScale;

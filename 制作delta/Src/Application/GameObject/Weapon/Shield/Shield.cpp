@@ -33,6 +33,12 @@ void Shield::Serialize(nlohmann::json& outJson) const
 	WeaponBase::Serialize(outJson);
 }
 
+void Shield::OnHit()
+{
+	KdAudioManager::Instance().Play("Asset/Sounds/SE/Weapon/Guard.wav")
+		->SetVolume(KdAudioManager::Instance().GetSEVolume());
+}
+
 void Shield::CreateShield()
 {
 	if (!m_spModelWork) { return; }

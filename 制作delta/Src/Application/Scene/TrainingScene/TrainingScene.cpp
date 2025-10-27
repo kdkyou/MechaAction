@@ -27,7 +27,6 @@ void TrainingScene::Init()
 
 	CurrentSceneCreate("Asset/Data/Training.scene");
 
-
 	//===================================================================
 	// キャラクター初期化
 	//===================================================================
@@ -35,6 +34,7 @@ void TrainingScene::Init()
 	_character->SetThis(_character);
 	_character->SetThisBase(_character);
 	_character->Init();
+	_character->SetPos({ 0.0f,1.0f,0.0f });
 	AddPlayer(_character);
 
 
@@ -93,7 +93,9 @@ void TrainingScene::Init()
 		missile->SetBulletChaisingData(5, 70.0f, 0.8f, 300.0f);
 		AddObject(missile);
 
-	}
+	} 
+
+
 
 	UIManager::GetInstance().ListClear();
 	UIManager::GetInstance().SceneUICreate();
@@ -107,10 +109,20 @@ void TrainingScene::Init()
 	CameraManager::Instance().SetCameraTarget(_character);
 	CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
 
+	RenderSetting::GetInstance().RenderLoad("Asset/Data/Render/Training.render");
+
+	m_duration = 1.0f;
+	m_once = false;
+	
 }
 
 void TrainingScene::Event()
 {
+	if (!m_fade) {
+		m_fade = true;
+		EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Training.enemy");
+	}
+
 	auto flg = UIManager::GetInstance().IsFadeComplete();
 
 	auto& key = KeyInput::GetInstance().GetKeyboardState();
@@ -118,16 +130,21 @@ void TrainingScene::Event()
 
 	auto& um = UIManager::GetInstance();
 
-	if (flg) {
-		if (key.Enter || pad.IsAPressed())
-		{
-			if (!m_once)
+	m_duration -= KdFPSController::GetInstance().GetDeltaTime();
+	if (m_duration <= 0.0f)
+	{
+		m_duration = 0.0f;
+		if (flg) {
+			if (key.Enter || pad.IsAPressed())
 			{
-				m_once = true;
-				um.SetFade(Fade::FadeIn, 0.2f, true);
-				auto& am = KdAudioManager::Instance();
-				am.Play("Asset/Sounds/SE/Enter.wav", false)->SetVolume(am.GetSEVolume());
+				if (!m_once)
+				{
+					m_once = true;
+					um.SetFade(Fade::FadeIn, 0.14f, true);
+					auto& am = KdAudioManager::Instance();
+					am.Play("Asset/Sounds/SE/Enter.wav", false)->SetVolume(am.GetSEVolume());
 
+				}
 			}
 		}
 	}

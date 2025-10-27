@@ -56,6 +56,8 @@ public:
 	void SetBGMVolume(const float val) { m_bgmVolume = val; }
 	const float GetSEVolume()const { return m_musterVolume * m_seVolume; }
 	void SetSEVolume(const float val) { m_seVolume = val; }
+	const float GetVoiceVolume()const { return m_musterVolume * m_voiceVolume; }
+	void SetVoiceVolume(const float val) { m_voiceVolume = val; }
 
 
 	// サウンドアセットの一括読込
@@ -84,9 +86,11 @@ private:
 	// マスターの音量
 	float m_musterVolume = 1.0f;
 	// BGMの音量
-	float m_bgmVolume = 0.2f;
+	float m_bgmVolume = 0.15f;
 	// SEの音量
-	float m_seVolume = 0.3f;
+	float m_seVolume = 0.15f;
+	// Voiceの音量
+	float m_voiceVolume = 0.45f;
 
 
 	// シングルトンパターン

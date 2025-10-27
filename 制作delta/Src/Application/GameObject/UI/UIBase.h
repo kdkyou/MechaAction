@@ -20,6 +20,12 @@ public:
 		KdGameObject::Deserialize(jsonObj);
 		KdJsonUtility::GetValue(jsonObj, "UITag", &m_uiTag);
 		KdJsonUtility::GetValue(jsonObj,"Path",&m_fileName);
+		
+		if (m_fileName != "")
+		{
+			SetTexture(m_fileName);
+		}
+
 		KdJsonUtility::GetValue(jsonObj, "DrawWidth", & m_drawWi);
 		KdJsonUtility::GetValue(jsonObj,"DrawHeight",&m_drawHe);
 		KdJsonUtility::GetValue(jsonObj, "RectWidth", &m_rectWi);
@@ -29,10 +35,6 @@ public:
 		KdJsonUtility::GetValue(jsonObj, "TimeRimit", &m_isTimeRimit);
 		KdJsonUtility::GetValue(jsonObj, "AliveTime", &m_aliveTime);
 
-		if (m_fileName != "")
-		{
-			SetTexture(m_fileName);
-		}
 	}
 
 	// このクラスの内容をJSONデータ化する

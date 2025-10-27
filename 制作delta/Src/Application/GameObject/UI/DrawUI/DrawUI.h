@@ -10,6 +10,7 @@ public:
 
 	void Editor_ImGui()override;
 
+	void Update()override;
 
 
 	virtual void Deserialize(const nlohmann::json& jsonObj)

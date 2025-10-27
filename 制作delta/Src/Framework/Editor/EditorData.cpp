@@ -117,7 +117,9 @@ void EditorData::UpdateImGui()
 
 	auto& key = KeyInput::GetInstance().GetKeyboardState();
 	if (key.F5) { m_editorMode = false; }
-	if (key.F4) { m_editorMode = true; }
+	if (key.F4) { m_editorMode = true;
+	CameraManager::Instance().SetNextType(CameraManager::None);
+	}
 
 	if (!m_editorMode) { return; }
 	
@@ -377,7 +379,7 @@ void EditorData::UpdateImGui()
 	//===========================
 	// シェーダーウィンドウ
 	//===========================
-	if (ImGui::Begin("Render Settings", 0, 0))
+	if (ImGui::Begin((const char*)u8"レンダー関係", 0, 0))
 	{
 		// 
 		RenderSetting::GetInstance().Editor_ImGui();

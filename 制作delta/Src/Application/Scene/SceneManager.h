@@ -65,6 +65,8 @@ public :
 		return m_rtPack.m_RTTexture;
 	}
 	
+	void  SetIsMovie(const bool ismovie);
+	const bool GetIsMovie() const;
 
 private :
 

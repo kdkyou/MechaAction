@@ -24,7 +24,6 @@ public:
 
 	bool SetNodeMats(const std::string& nodeName);
 	
-	void SetTarget(const std::weak_ptr<CharacterBase>& target);
 
 	void Editor_ImGui()override;
 
@@ -56,7 +55,6 @@ protected:
 
 	virtual void NoNum(){}
 
-	std::weak_ptr<CharacterBase> m_wpTarget;
 	
 	bool					 m_trigger = false;
 
@@ -93,7 +91,6 @@ protected:
 	// 弾本体の情報
 	std::string				 m_bulletModelPath;
 	float					 m_aliveTime =0.0f;
-	int						 m_damage = 0;
 	float					 m_speed = 0.0f;
 	float					 m_range = 0.0f;
 	float					 m_dampingInterval = 0.0f;
@@ -101,8 +98,8 @@ protected:
 
 	// 弾のトレイル関係
 	std::string				 m_bulletTrailPath;
-	Math::Color				 m_bulletTrailColor;
-	float					 m_bulletTrailWidth = 0.5f;
+	Math::Color				 m_bulletTrailColor = {0.3f,0.1f,0.1f};
+	float					 m_bulletTrailWidth = 0.3f;
 	UINT					 m_bulletTrailLength = 10;
 
 	// 追尾式の情報

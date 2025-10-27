@@ -43,7 +43,7 @@ void Bullet::Update()
 	m_aliveTime -= KdFPSController::GetInstance().GetDeltaTime();
 	if (m_aliveTime <= 0.0f)
 	{
-		m_isExpired = true;
+		OnHit();
 	}
 	float sightTime = 0.0f;
 
@@ -100,7 +100,8 @@ void Bullet::Update()
 
 
 	Math::Matrix trans = Math::Matrix::CreateTranslation(m_pos);
-	m_mWorld = m_mLocalRot * trans;
+	Math::Matrix scale = Math::Matrix::CreateScale(m_scale);
+	m_mWorld = scale * m_mLocalRot * trans;
 
 
 	Intersects();
@@ -124,6 +125,13 @@ void Bullet::Intersects()
 	box.Extents = { 0.5f,0.5f,1.0f };
 	UINT type = KdCollider::TypeDamage;
 	KdCollider::BoxInfo boxInfo(type, box);
+	for (auto& obj : SceneManager::Instance().GetTerrainList())
+	{
+		if (obj->Intersects(boxInfo, nullptr))
+		{
+			OnHit();
+		}
+	}
 
 	if (m_tag == ObjectTag::tPlayerAttack)
 	{
@@ -131,6 +139,7 @@ void Bullet::Intersects()
 		{
 			if (obj->Intersects(boxInfo, nullptr))
 			{
+				if (obj->IsDestroy()) { continue; }
 				OnHit();
 				obj->HitDamage(m_parameter);
 				obj->OnHit();
@@ -143,6 +152,7 @@ void Bullet::Intersects()
 		{
 			if (obj->Intersects(boxInfo, nullptr))
 			{
+				if (obj->IsDestroy()) { continue; }
 				OnHit();
 				obj->HitDamage(m_parameter);
 				obj->OnHit();		
@@ -173,7 +183,11 @@ bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float lengt
 	std::list<KdCollider::CollisionResult> results;
 	for (auto& obj : SceneManager::Instance().GetTerrainList())
 	{
-		obj->Intersects(ray, &results);
+		if (obj->Intersects(ray, &results))
+		{
+			OnHit();
+		}
+		
 	}
 
 	if (m_tag == tEnemyAttack) {
@@ -276,7 +290,9 @@ void Bullet::DrawBright()
 {
 	if (m_moveType == SightScale)
 	{
+		KdShaderManager::Instance().ChangeRasterizerState(KdRasterizerState::CullNone);
 		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelData, m_mWorld);
+		KdShaderManager::Instance().ChangeRasterizerState(KdRasterizerState::CullBack);
 	}
 }
 
@@ -291,7 +307,7 @@ void Bullet::OnHit()
 		m_isExpired = true;
 		m_trail->SetEnable(false);
 		float scale = CameraManager::Instance().CalcLength(m_mWorld.Translation());
-		KdEffekseerManager::GetInstance().Play("burn.efkefc", GetMatrix().Translation(), scale, 1.0f, false);
+		KdEffekseerManager::GetInstance().Play("burn.efkefc", GetMatrix().Translation(), scale, 5.0f, false);
 	}
 
 }
@@ -483,6 +499,7 @@ void Bullet::SetChasingData(float rotateSpeedDeg, float lockAngle, float lostTim
 
 void Bullet::ScaleUp(float scale, int damageNum)
 {
+	m_scale = { scale,scale,scale };
 	SetScale(scale);
 	m_attackNum = damageNum;
 }

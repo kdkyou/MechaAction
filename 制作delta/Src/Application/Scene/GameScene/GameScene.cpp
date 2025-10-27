@@ -30,9 +30,6 @@ void round_n(float& number, int n)
 
 void GameScene::Init()
 {
-	KdGameObjectFactory::Instance().RegisterGameObject<Character>("Player");
-	KdGameObjectFactory::Instance().RegisterGameObject<Enemy>("Another");
-	KdGameObjectFactory::Instance().RegisterGameObject<Drone>("Drone");
 	
 	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherEnable(true);
 	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherDist(6.0f);
@@ -53,17 +50,13 @@ void GameScene::Init()
 	_character->SetThis(_character);
 	_character->SetThisBase(_character);
 	_character->Init();
+	_character->SetPos({ 0.0f,0.0f,-650.0f });
 	AddPlayer(_character);
 
 
 	// プレイヤー武器
 	{
-		/*std::shared_ptr<Blade> _blade = std::make_shared<Blade>();
-		_blade->Init();
-		_blade->SetModel("Asset/Models/Weapon/Blade/Blade.gltf");
-		_blade->SetParent(_character);
-		_blade->SetAttachPath("RightWeapon");
-		AddObject(_blade);*/
+	
 
 		std::shared_ptr<Sowrd> _sowrd = std::make_shared<Sowrd>();
 		_sowrd->Init();
@@ -115,7 +108,7 @@ void GameScene::Init()
 		
 		missile->SetBulletsParam("Asset/Models/Weapon/Bullet/MissileBullet.gltf",20.0f,200, 200.0f, 200, 40.0f, 0.95f);
 		missile->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke.png", Math::Color(0.36f, 0.3f, 0.3f), 3.5f, 30);
-		missile->SetBulletChaisingData(5, 70.0f, 0.8f, 2000.0f);
+		missile->SetBulletChaisingData(9, 70.0f, 0.8f, 2000.0f);
 		AddObject(missile);
 
 	}
@@ -292,7 +285,7 @@ void GameScene::Init()
 	am.StopAllSound();
 	am.Play("Asset/Sounds/BGM/Rusty.wav", true)->SetVolume(am.GetBGMVolume());
 
-	RenderSetting::GetInstance().RenderLoad("Asset/Data/Game.render");
+	RenderSetting::GetInstance().RenderLoad("Asset/Data/Render/Game.render");
 }
 
 void GameScene::Event()
@@ -324,6 +317,11 @@ void GameScene::Event()
 		default:
 			break;
 		}
+	}
+
+	if (key.D7) {
+		m_enemyList.clear();
+			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Last.enemy");
 	}
 
 	if (m_waveProgress == Complete || key.D9) {

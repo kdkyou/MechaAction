@@ -8,6 +8,8 @@ public :
 
 	void Editor_ImGui();
 
+	void EnemyInit();
+
 private:
 
 	EnemyCreater() {}

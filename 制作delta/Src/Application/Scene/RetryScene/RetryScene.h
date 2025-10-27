@@ -6,6 +6,8 @@ class RetryScene :public BaseScene
 {
 public :
 
+	RetryScene() { Init(); }
+	~RetryScene(){}
 
 private:
 

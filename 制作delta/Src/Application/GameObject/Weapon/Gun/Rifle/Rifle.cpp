@@ -53,7 +53,7 @@ void Rifle::Trigger()
 
 	CheckTrigger();
 
-	if (m_num <= 0) { return; }
+	if (m_num <= 0 && m_numOnce <= 0) { return; }
 
 	if (m_nowTrigger & m_AttackTrigger) { 
 		OnTrigger(); }
@@ -68,7 +68,16 @@ void Rifle::Trigger()
 		if (m_durationReload >= 1.0f)
 		{
 			// 一回の残弾を最大値へ
-			m_numOnce = m_maxNumofOnce;
+			if (m_num >= m_maxNumofOnce)
+			{
+				m_numOnce = m_maxNumofOnce;
+				m_num -= m_maxNumofOnce;
+			}
+			else {
+				m_numOnce = m_num;
+				m_num = 0;
+			}
+
 			// リロード時間を0に
 			m_durationReload = 0.0f;
 			m_isReload = false;
@@ -106,7 +115,7 @@ void Rifle::Trigger()
 	{
 		m_durationFire = 0;
 		Shot();
-		m_num -= 1;
+		
 		m_numOnce -= 1;
 		if (m_numOnce <= 0)
 		{

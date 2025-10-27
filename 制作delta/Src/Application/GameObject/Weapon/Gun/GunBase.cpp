@@ -9,11 +9,6 @@
 #include "../../UI/UIManager.h"
 
 
-void GunBase::SetTarget(const std::weak_ptr<CharacterBase>& target) 
-{
-	m_wpTarget = target;
-}
-
 void GunBase::Editor_ImGui() 
 {
 	WeaponBase::Editor_ImGui();
@@ -45,7 +40,6 @@ void GunBase::Editor_ImGui()
 			m_bulletModelPath = filepath;
 		}
 	}
-	ImGui::DragInt((const char*)u8"ダメージ", &m_damage, 1, 0,10000);
 	ImGui::DragFloat((const char*)u8"時間", &m_aliveTime,0.01f,0.0f);
 	ImGui::DragFloat((const char*)u8"速さ", &m_speed, 0.1f, 0.0f);
 	ImGui::DragFloat((const char*)u8"有効範囲",&m_range,0.1f,0.0f);
@@ -72,7 +66,6 @@ void GunBase::Deserialize(const nlohmann::json& jsonObj)
 {
 	WeaponBase::Deserialize(jsonObj);
 	KdJsonUtility::GetValue(jsonObj, "AliveTime", &m_aliveTime);
-	KdJsonUtility::GetValue(jsonObj, "Damage", &m_damage);
 	KdJsonUtility::GetValue(jsonObj, "Range", &m_range);
 	KdJsonUtility::GetValue(jsonObj, "FireRate", &m_fireRate);
 	KdJsonUtility::GetValue(jsonObj, "MaxNum", &m_maxNum);
@@ -111,7 +104,6 @@ void GunBase::Serialize(nlohmann::json& outJson) const
 	WeaponBase::Serialize(outJson);
 
 	outJson["AliveTime"] = m_aliveTime;
-	outJson["Damage"] = m_damage;
 	outJson["Range"] = m_range;
 	outJson["FireRate"] = m_fireRate;
 	outJson["MaxNum"] = m_maxNum;

@@ -91,6 +91,9 @@ public :
 	void Edit_ImGui();
 
 	const int GetNum()const { return m_num; }
+
+	void SetIsMovie(bool flg) { m_isMovie = flg; }
+	const bool GetIsMovie()const { return m_isMovie; }
 	
 protected :
 
@@ -110,6 +113,8 @@ protected :
 	std::list<std::shared_ptr<KdGameObject>> m_terrainList;
 
 	bool m_once;
+
+	bool m_isMovie = false;
 
 	int m_num = 0;
 };

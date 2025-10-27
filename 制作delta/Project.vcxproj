@@ -183,6 +183,7 @@
     <ClInclude Include="Src\Application\GameObject\Enemy\FLAC\FLAC.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\MT\MT.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h" />
+    <ClInclude Include="Src\Application\GameObject\Enemy\Scarecrow\Scarecrow.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\AnimTerrain.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\DrawTerrain.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\EmmisiveTerrain.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Src\Application\GameObject\UI\GuageUI\GuageUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\MapUI\MapUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\NumberUI\NumberUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\SelectUI\SelectUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\UIBase.h" />
     <ClInclude Include="Src\Application\GameObject\UI\UIManager.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Blade\Blade.h" />
@@ -296,6 +298,7 @@
     <ClCompile Include="Src\Application\GameObject\Enemy\EnemyCreater.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\FLAC\FLAC.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\MT\MT.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Enemy\Scarecrow\Scarecrow.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\AnimTerrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\DrawTerrain.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrain\EmmisiveTerrain.cpp" />
@@ -308,6 +311,7 @@
     <ClCompile Include="Src\Application\GameObject\UI\GuageUI\GuageUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\MapUI\MapUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\NumberUI\NumberUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\SelectUI\SelectUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\UIManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Blade\Blade.cpp" />

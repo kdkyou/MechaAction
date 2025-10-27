@@ -17,6 +17,7 @@
 #include "../../GameObject/Weapon/Gun/Charge/Charge.h"
 #include "../../GameObject/Weapon/Gun/Missile/Missile.h"
 #include "../../GameObject/Weapon/Sowrd/Sowrd.h" 
+#include "../../GameObject/Weapon/Shield/Shield.h"
 
 #include "../../GameObject/Enemy/Drone/Drone.h"
 
@@ -40,10 +41,12 @@ void TitleScene::Init()
 	KdGameObjectFactory::Instance().RegisterGameObject<EmmisiveTerrain>("EmmisiveTerrain");
 	KdGameObjectFactory::Instance().RegisterGameObject<TitleMovie>("TitleMovie");
 	KdGameObjectFactory::Instance().RegisterGameObject<Terrain>("Terrain");
+
 	KdGameObjectFactory::Instance().RegisterWeaponBase<Rifle> ("Rifle");
 	KdGameObjectFactory::Instance().RegisterWeaponBase<Charge> ("Charge");
 	KdGameObjectFactory::Instance().RegisterWeaponBase<Missile> ("Missile");
 	KdGameObjectFactory::Instance().RegisterWeaponBase<Sowrd>("Sowrd");
+	KdGameObjectFactory::Instance().RegisterWeaponBase<Shield>("Shield");
 
 	CurrentSceneCreate("Asset/Data/Title.scene");
 
@@ -52,7 +55,7 @@ void TitleScene::Init()
 	CameraManager::Instance().Setting("Asset/Data/TitleCamera.scene");
 	CameraManager::Instance().EnableChangedCamera(true);
 
-	RenderSetting::GetInstance().RenderLoad("Asset/Data/Title.render");
+	RenderSetting::GetInstance().RenderLoad("Asset/Data/Render/Title.render");
 
 	UIManager::GetInstance().SceneUICreate("Asset/Data/UI/TitleUI.scene");
 
@@ -73,7 +76,7 @@ void TitleScene::Event()
 	
 	auto& um = UIManager::GetInstance();
 
-	if (key.Enter || pad.IsAPressed())
+	if (key.Space || pad.IsAPressed())
 	{
 		if (!m_once)
 		{
@@ -83,6 +86,13 @@ void TitleScene::Event()
 			am.Play("Asset/Sounds/SE/Enter.wav", false)->SetVolume(am.GetSEVolume());
 			
 		}
+	}
+
+	if (key.D0)
+	{
+			SceneManager::Instance().SetNextScene(
+				SceneManager::SceneType::Retry
+			);
 	}
 	
 	if (m_once)

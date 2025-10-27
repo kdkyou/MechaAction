@@ -11,6 +11,7 @@ void Missile::Init()
 
 	m_name = "Missile";
 	m_shotSoundPath = "Asset/Sounds/SE/Weapon/MissileShot.wav";
+
 }
 
 void Missile::Update()
@@ -51,7 +52,7 @@ void Missile::Trigger()
 {
 	CheckTrigger();
 	
-	if (m_num <= 0) { return; }
+	if (m_num <= 0 && m_numOnce <= 0) { return; }
 
 	if (m_nowTrigger & m_AttackTrigger) { OnTrigger(); }
 
@@ -73,8 +74,15 @@ void Missile::Trigger()
 		// リロード完了したら
 		if (m_durationReload >= 1.0f)
 		{
-			// 一回の残弾を最大値へ
-			m_numOnce = m_maxNumofOnce;
+			if (m_num >= m_maxNumofOnce)
+			{
+				m_numOnce = m_maxNumofOnce;
+				m_num -= m_maxNumofOnce;
+			}
+			else {
+				m_numOnce = m_num;
+				m_num = 0;
+			}
 			// リロード時間を0に
 			m_durationReload = 0.0f;
 			m_isReload = false;
@@ -119,7 +127,6 @@ void Missile::Trigger()
 			else
 			{
 				Shot();
-				m_num -= 1;
 				m_numOnce -= 1;
 			}
 
@@ -160,8 +167,18 @@ void Missile::Shot()
 	bullet->SetBulletParam(m_aliveTime,m_damage, m_range, startPos, direct, m_speed, m_dampingInterval, m_dampingRate);
 	bullet->Init();
 	bullet->SetBulletTrail(m_bulletTrailPath, m_bulletTrailColor,m_bulletTrailWidth, m_bulletTrailLength);
-	auto spParent = CameraManager::Instance().GetLockTarget(0);
-	bullet->SetBulletType(Bullet::SightChasing, spParent);
+	if (m_wpParent.lock())
+	{
+		if (m_wpParent.lock()->GetTag() == tPlayer)
+		{
+			auto spParent = CameraManager::Instance().GetLockTarget(0);
+			bullet->SetBulletType(Bullet::SightChasing, spParent);
+		}
+		else {
+			auto& target = m_wpParent.lock()->GetCharacterTarget();
+			bullet->SetBulletType(Bullet::SightChasing, target);
+		}
+	}
 	bullet->SetTag(m_tag);
 	bullet->SetChasingData(m_bulletRotateDeg,m_bulletLockAngle,m_bulletLostTime,m_bulletTrackingDistance);
 	SceneManager::Instance().AddObject(bullet);
@@ -190,6 +207,8 @@ void Missile::Editor_ImGui()
 void Missile::Deserialize(const nlohmann::json& jsonObj)
 {
 	GunBase::Deserialize(jsonObj);
+
+	MakeAnimator("Close", 20.0f, false);
 }
 
 void Missile::Serialize(nlohmann::json& outJson) const

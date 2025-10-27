@@ -83,8 +83,8 @@ private:
 	float m_durationWait = 0.0f;
 
 	bool m_isThurster = false;
-	bool m_isFirstAnim = true;
-	bool m_isSecondAnim = true;
+	bool m_isFirstAnim = false;
+	bool m_isSecondAnim = false;
 
 	std::weak_ptr<KdEffekseerObject> m_efk;
 

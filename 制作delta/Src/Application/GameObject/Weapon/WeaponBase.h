@@ -42,6 +42,8 @@ public:
 
 	void CheckTrigger();
 
+	void SetTarget(const std::weak_ptr<CharacterBase>& target);
+
 	void SetCollisionType(CollType type) { m_collisionType = type; }
 
 	void SetDamage(int damage) { m_damage = damage; }
@@ -62,6 +64,8 @@ protected:
 	std::string						m_weaponName;
 	
 	std::weak_ptr<CharacterBase>    m_wpParent;
+	std::weak_ptr<CharacterBase>	m_wpTarget;
+
 
 	std::shared_ptr<KdModelData>	m_spModelData = nullptr;
 	std::shared_ptr<KdModelWork>	m_spModelWork = nullptr;

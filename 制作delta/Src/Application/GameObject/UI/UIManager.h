@@ -15,6 +15,7 @@ public:
 		Guage,
 		Blink,
 		Map,
+		Select,
 	};
 
 	void UIInit();

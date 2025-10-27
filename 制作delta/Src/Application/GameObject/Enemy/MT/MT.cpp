@@ -37,9 +37,6 @@ void MT::Init()
 
 	m_viewAngle = 140.0f;
 
-	m_nockBackDamage = 800;
-
-	m_hp = 1600;
 
 	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 }
@@ -83,6 +80,8 @@ void MT::Update()
 	}
 
 	UpdateCollision();
+
+	SetWeapon();
 
 
 }
@@ -912,11 +911,13 @@ void MT::Destroyed::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameO
 		m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 	}
 
-	spOwner->Move(m_speed, Math::Vector3::Down, KdCollider::TypeGround, false, false);
+	spOwner->MoveSwept(m_speed, Math::Vector3::Down, KdCollider::TypeGround, false, false);
 
 	if (m_durationState <= 0)
 	{
 		spOwner->Burn();
+		auto pos = spOwner->m_mWorld.Translation();
+		KdEffekseerManager::GetInstance().Play("Expload.efkefc", pos, 1.0f, 3.0f, false);
 		spOwner->m_isExpired = true;
 	}
 

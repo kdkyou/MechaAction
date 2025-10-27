@@ -49,11 +49,11 @@ void Enemy::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
 
-	m_dist = { 50.0f,300.0f };
+	m_dist = { 70.0f,550.0f };
 
 	m_clampSize = 20.0f;
 
-	m_hp = 5320.0f;
+	m_hp = 4320.0f;
 
 	m_nockBackDamage = 800.0f;
 
@@ -92,6 +92,8 @@ void Enemy::Update()
 		Application::Instance().m_log.AddLog("AnotherFallNow\n");
 	}
 	UpdateCollision();
+
+	SetWeapon();
 
 	auto translation = m_mWorld.Translation();
 	Application::Instance().m_log.AddLog("HP%0.f\n", m_hp);
@@ -392,7 +394,10 @@ void Enemy::ActionStateBase::EffectUpdate(std::weak_ptr<Enemy>& owner)
 		{
 			eff->wpEffect = KdEffekseerManager::GetInstance().SerchEffect(eff->name);
 			spefct = eff->wpEffect.lock();
+			if (spefct)
+			{
 			eff->handle = spefct->GetHandle();
+			}
 		}
 
 		KdEffekseerManager::GetInstance().SetWorldMatrix(eff->handle, mat * spOwner->m_mWorld);
@@ -1381,6 +1386,7 @@ void Enemy::AttackForWard::Enter(std::weak_ptr<Enemy>& owner, const std::weak_pt
 
 	spOwner->ChangeEnableRightAttack(true);
 	spOwner->ChangeEnableLeftAttack(true);
+	spOwner->ChangeEnableLeftShoulderAttack(true);
 
 	auto alert = std::make_shared<Alert>();
 	auto pos = CameraManager::Instance().GetLocalDirectionTo(spOwner->GetMatrix().Translation());
@@ -1440,6 +1446,7 @@ void Enemy::AttackForWard::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 
 	spOwner->ChangeEnableRightAttack(false);
 	spOwner->ChangeEnableLeftAttack(false);
+	spOwner->ChangeEnableLeftShoulderAttack(false);
 
 	EffectExit();
 }
@@ -1756,6 +1763,8 @@ void Enemy::Destoroy::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<K
 	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
 		spOwner->Burn();
+		auto pos = spOwner->m_mWorld.Translation();
+		KdEffekseerManager::GetInstance().Play("Expload.efkefc", pos, 1.0f, 3.0f, false);
 		spOwner->m_isExpired = true;
 		return;
 	}

@@ -6,6 +6,7 @@
 #include "GuageUI/GuageUI.h"
 #include "BlinkUI/BlinkUI.h"
 #include "MapUI/MapUI.h"
+#include "SelectUI/SelectUI.h"
 
 
 #include "../Weapon/Gun/GunBase.h"
@@ -28,6 +29,9 @@ void UIManager::SceneUICreate()
 	{
 	case SceneManager::SceneType::Title:
 		str = "Asset/Data/UI/TitleUI.scene";
+		break;
+	case SceneManager::SceneType::TitleMovie:
+		str = "Asset/Data/UI/TitleMovieUI.scene";
 		break;
 	case SceneManager::SceneType::Game:
 		str = "Asset/Data/UI/GameUI.scene";
@@ -151,8 +155,17 @@ void UIManager::Editor_ImGui()
 		case SceneManager::SceneType::Title:
 			str = "Asset/Data/UI/TitleUI.scene";
 			break;
+		case SceneManager::SceneType::TitleMovie:
+			str = "Asset/Data/UI/TitleMovieUI.scene";
+			break;
 		case SceneManager::SceneType::Game:
 			str = "Asset/Data/UI/GameUI.scene";
+			break;
+		case SceneManager::SceneType::Retry:
+			str = "Asset/Data/UI/RetryUI.scene";
+			break;
+		case SceneManager::SceneType::Training:
+			str = "Asset/Data/UI/TrainingUI.scene";
 			break;
 		default:
 			break;
@@ -199,7 +212,7 @@ void UIManager::Editor_ImGui()
 	
 	if (ImGui::BeginMenu((const char*)u8"UI作成"))
 	{
-		const char* alignStr[] = { "None","Draw", "Number","Guage","Blink","Map"};
+		const char* alignStr[] = { "None","Draw", "Number","Guage","Blink","Map","Select"};
 		int alignIndex = static_cast<int>(m_nowCreateType);
 		if (ImGui::Combo("Create", &alignIndex, alignStr, IM_ARRAYSIZE(alignStr)))
 		{
@@ -231,6 +244,7 @@ void UIManager::CreateUI()
 	std::shared_ptr<GuageUI> guage;
 	std::shared_ptr<BlinkUI> blink;
 	std::shared_ptr<MapUI> map;
+	std::shared_ptr<SelectUI>select;
 	switch (m_nowCreateType)
 	{
 	case UIManager::CreateType::No:
@@ -259,6 +273,11 @@ void UIManager::CreateUI()
 		map = std::make_shared<MapUI>();
 		map->Init();
 		AddUI(map);
+		break;
+	case UIManager::CreateType::Select:
+		select = std::make_shared<SelectUI>();
+		select->Init();
+		AddUI(select);
 		break;
 	default:
 		break;
@@ -356,6 +375,13 @@ void UIManager::Deserialize(const std::string& path)
 					AddUI(obj);
 				}
 				
+				if (str == "SelectUI")
+				{
+					auto select = std::make_shared<SelectUI>();
+					select->Init();
+					select->Deserialize(json);
+					AddUI(select);
+				}
 			}
 		}
 	}

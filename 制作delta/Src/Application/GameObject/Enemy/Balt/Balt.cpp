@@ -23,9 +23,10 @@ void Balt::Init()
 		m_spModelWork = std::make_shared<KdModelWork>();
 		m_spModelWork->SetModelData("Asset/Models/Leg/BaltLeg.gltf");
 		// 初期のアニメーションをセットする
-		m_spAnimator = std::make_shared<KdAnimator>();
-		m_spAnimator->SetAnimation(m_spModelWork->GetData()->GetAnimation("StandUp"), 1.0f, false);
 	}
+
+	m_spAnimator = std::make_shared<KdAnimator>();
+	m_spAnimator->SetAnimation(m_spModelWork->GetData()->GetAnimation("StandUp"), 1.0f, false);
 
 	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Enemy.gltf");
 
@@ -49,18 +50,12 @@ void Balt::Init()
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-	SetPos({ 0.0f,0.0f,600.0f });
-
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
 
 	m_dist = { 50.0f,300.0f };
 
 	m_clampSize = 20.0f;
-
-	m_hp = 10320.0f;
-
-	m_nockBackDamage = 800.0f;
 
 	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 
@@ -83,8 +78,10 @@ void Balt::Update()
 		m_nowAction->Update(m_wpThis, spTarget);
 
 	}
-	
+
 	UpdateCollision();
+
+	SetWeapon();
 
 	auto translation = m_mWorld.Translation();
 	Application::Instance().m_log.AddLog("HP%0.f\n", m_hp);
@@ -322,6 +319,7 @@ bool Balt::Search(bool areaOnly)
 
 void Balt::AttackOff()
 {
+	ChangeEnableAttack(false);
 	ChangeEnableLeftAttack(false);
 	ChangeEnableRightAttack(false);
 	ChangeEnableLeftShoulderAttack(false);
@@ -494,8 +492,23 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 	{
 		if (spOwner->GetPrevState() == tRotateLeft)
 		{
+			int i = spOwner->m_rand.GetInt(1, 5);
+			if (i == 1) {
 			spOwner->ChangeActionState(std::make_shared<AttackLeft>());
 			return;
+			}
+			else if (i == 2) {
+			spOwner->ChangeActionState(std::make_shared<AttackRight>());
+			return;
+			}
+			else if (i == 3) {
+			spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
+			return;
+			}
+			else if (i == 4) {
+			spOwner->ChangeActionState(std::make_shared<AttackBack>());
+			return;
+			}
 		}
 
 		if (spOwner->GetPrevState() == tMoveBack)
@@ -543,7 +556,6 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 		}
 
 	}
-
 	else if (side == ActionStateBase::TargetSide::Right)
 	{
 		if (spOwner->GetPrevState() == tRotateRight) {
@@ -1078,7 +1090,7 @@ void Balt::MoveForward::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<K
 
 	m_type = tMoveForward;
 
-//	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
+	//	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 }
 
 void Balt::MoveForward::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1430,6 +1442,7 @@ void Balt::AttackForWard::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<
 
 	m_durationState = 0.7f;
 
+	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightAttack(true);
 
 	auto alert = std::make_shared<Alert>();
@@ -1523,7 +1536,7 @@ void Balt::AttackBack::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdG
 	alert->Init();
 	SceneManager::Instance().AddObject(alert);
 
-//	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
+	//	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 
 
 }
@@ -1676,6 +1689,7 @@ void Balt::AttackRight::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<Kd
 	m_speed = 70.0f;
 
 	spOwner->ChangeEnableLeftAttack(true);
+	spOwner->ChangeEnableLeftShoulderAttack(true);
 
 
 	auto alert = std::make_shared<Alert>();

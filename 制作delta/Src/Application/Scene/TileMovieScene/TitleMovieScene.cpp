@@ -16,10 +16,13 @@ void TitleMovieScene::Init()
 	
 	UIManager::GetInstance().ListClear();
 	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.2f, false);
+	UIManager::GetInstance().SceneUICreate("Asset/Data/UI/TitleMovieUI.scene");
 
-	RenderSetting::GetInstance().RenderLoad("Asset/Data/TitleMovie.render");
+	RenderSetting::GetInstance().RenderLoad("Asset/Data/Render/TitleMovie.render");
 	
-	
+	/*KdAudioManager::Instance().Play("Asset/Sounds/Voice/Mission.wav")
+		->SetVolume(KdAudioManager::Instance().GetVoiceVolume());
+	*/
 }
 
 void TitleMovieScene::Event()
@@ -39,36 +42,8 @@ void TitleMovieScene::Event()
 
 	if (m_once)
 	{
-		duration -= KdFPSController::GetInstance().GetDeltaTime();
-
-		//if (duration <= 5.5f && duration>=5.4f) {
-		//	if (!m_isFirstChange) {
-		//		m_isFirstChange = true;
-		//		CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
-		//		if (UIManager::GetInstance().IsFadeComplete()) {
-		//			UIManager::GetInstance().SetFade(Fade::FadeIn, 0.2f, true);
-		//		}
-		//	}
-		//}
-		//else if(duration <= 5.1f && duration >= 4.9f)
-		//{
-		//	if (m_isFirstChange) {
-		//		if (UIManager::GetInstance().IsFadeComplete()) {
-		//			m_isFirstChange = false;
-		//			UIManager::GetInstance().SetFade(Fade::FadeOut, 0.4f, false);
-		//			//CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera3.scene");
-		//		}
-		//	}
-		//}
-
-		//if (duration <= 4.0f && duration>=3.9f) {
-		//	if (!m_isSecondChange) {
-		//		m_isSecondChange = true;
-		//		CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera3.scene");
-		//	}
-		//}
-
-		if (key.Enter || pad.IsAPressed())
+		
+		if (key.Space || pad.IsAPressed())
 		{
 			SceneManager::Instance().SetNextScene
 			(

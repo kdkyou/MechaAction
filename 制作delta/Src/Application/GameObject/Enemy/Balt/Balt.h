@@ -146,6 +146,18 @@ private:
 	private:
 	};
 
+	class Movie :public ActionStateBase
+	{
+	public:
+		~Movie()override {}
+
+		void Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+		void Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		void PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)override;
+		void Exit(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdGameObject>& spObj)override;
+	private:
+	};
+
 
 	class StandUp :public ActionStateBase
 	{

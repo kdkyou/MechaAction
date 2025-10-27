@@ -60,6 +60,8 @@ void Drone::Update()
 
 	UpdateCollision();
 
+	SetWeapon();
+
 	m_pDebugWire->AddDebugBox(m_mWorld, m_boxExtents);
 
 }
@@ -591,7 +593,7 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 {
 	m_speed = 30.0f;
 
-	m_durationState = 0.4f;
+	m_durationState = 0.2f;
 
 	auto spOwner = owner.lock();
 	auto spTarget = obj.lock();
@@ -604,6 +606,8 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 	auto& am = KdAudioManager::Instance();
 	am.Play("Asset/Sounds/Sound/drone_explode.wav")->SetVolume(am.GetSEVolume());
 
+	auto pos = spOwner->m_mWorld.Translation();
+	KdEffekseerManager::GetInstance().Play("Expload.efkefc",pos, 1.0f, 3.0f, false);
 	spOwner->Burn();
 }
 

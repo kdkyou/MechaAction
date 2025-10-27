@@ -225,6 +225,7 @@ bool Application::Init(int w, int h)
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/Apartment/Apartment.gltf");
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/LowApartment/LowApartment.gltf");
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/Lab/Catapult.gltf");
+		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Stage/Building/Building.gltf");
 	}
 
 	return true;
@@ -336,7 +337,7 @@ void Application::Execute()
 
 		KdFPSController::GetInstance().Update();
 
-		std::string titleBar = "EchoSteel fps=" + std::to_string(KdFPSController::GetInstance().GetFPS());
+		std::string titleBar = "ECHO STEEL fps=" + std::to_string(KdFPSController::GetInstance().GetFPS());
 		SetWindowTextA(m_window.GetWndHandle(), titleBar.c_str());
 	}
 

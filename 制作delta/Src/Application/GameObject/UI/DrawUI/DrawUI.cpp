@@ -12,6 +12,17 @@ void DrawUI::Editor_ImGui()
 	ImGui::Checkbox((const char*)u8"加算", &m_isAdd);
 }
 
+void DrawUI::Update()
+{
+	if (m_isTimeRimit)
+	{
+		m_aliveTime -= KdFPSController::GetInstance().GetDeltaTime();
+		if (m_aliveTime < 0.0f) {
+			m_isExpired = true;
+		}
+	}
+}
+
 void DrawUI::DrawSprite()
 {
 	if (m_spTex)

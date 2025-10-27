@@ -73,11 +73,13 @@ void BaseScene::Update()
 			obj->Update();
 		}
 	}
-//	else
+	else
 	{
-		for (auto& obj : m_playerList)
-		{
-			obj->Update();
+		if (!m_isMovie) {
+			for (auto& obj : m_playerList)
+			{
+				obj->Update();
+			}
 		}
 
 		for (auto& obj : m_enemyList)
@@ -131,6 +133,7 @@ void BaseScene::PreDraw()
 	for (auto& obj : m_objList)
 	{
 		obj->PreDraw();
+		obj->DrawMarker();
 	}
 
 	CameraManager::Instance().PreDraw();

@@ -93,7 +93,7 @@ void Sowrd::Init()
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-	m_name = "Sword";
+	m_name = "Sowrd";
 }
 
 void Sowrd::Update()
@@ -120,58 +120,62 @@ void Sowrd::Update()
 
 	m_mWorld = m_mParentAttach * _parentMat;
 
-	if (_spParent->IsRightAttack())
+	if (_spParent)
 	{
-		if (m_isOnece == true)
+		if (_spParent->IsRightAttack())
 		{
-			m_spTrail->SetEnable(true);
-			m_spTrail2->SetEnable(true);
-			m_isOnece = false;
-			auto& am = KdAudioManager::Instance();
-			am.Play("Asset/Sounds/Sound/sword_swing.wav", false)->SetVolume(am.GetSEVolume());
 
+			if (m_isOnece == true)
+			{
+				m_spTrail->SetEnable(true);
+				m_spTrail2->SetEnable(true);
+				m_isOnece = false;
+				auto& am = KdAudioManager::Instance();
+				am.Play("Asset/Sounds/Sound/sword_swing.wav", false)->SetVolume(am.GetSEVolume());
+
+			}
+
+
+			if (m_attackNum > 0)
+			{
+				m_pCollider->SetEnableAll(true);
+			}
+
+			if (!_spParent->IsEnableAttack())
+			{
+				m_pCollider->SetEnableAll(false);
+			}
+
+
+
+			static bool flg = false;
+			if (flg == false)
+			{
+				m_spTrail->AddPoint(m_startMat * m_mWorld);
+				flg = true;
+			}
+			else
+			{
+				m_spTrail->AddPoint(m_endMat * m_mWorld);
+				flg = false;
+			}
+
+			m_spTrail2->AddPoint(m_endMat * m_mWorld);
 		}
+		else {
+			m_spTrail->ClearPoints();
+			m_spTrail->SetEnable(false);
 
-		
-		if (m_attackNum > 0)
-		{
-			m_pCollider->SetEnableAll(true);
-		}
+			m_attackNum = m_maxAttackNum;
 
-		if (!_spParent->IsEnableAttack())
-		{
+			m_spTrail2->ClearPoints();
+			m_spTrail2->SetEnable(false);
+
 			m_pCollider->SetEnableAll(false);
+
+
+			m_isOnece = true;
 		}
-
-
-
-		static bool flg = false;
-		if (flg == false)
-		{
-			m_spTrail->AddPoint(m_startMat * m_mWorld);
-			flg = true;
-		}
-		else
-		{
-			m_spTrail->AddPoint(m_endMat * m_mWorld);
-			flg = false;
-		}
-
-		m_spTrail2->AddPoint(m_endMat * m_mWorld);
-	}
-	else {
-		m_spTrail->ClearPoints();
-		m_spTrail->SetEnable(false);
-
-		m_attackNum = m_maxAttackNum;
-
-		m_spTrail2->ClearPoints();
-		m_spTrail2->SetEnable(false);
-
-		m_pCollider->SetEnableAll(false);
-
-		
-		m_isOnece = true;
 	}
 
 	auto mat =  Math::Matrix::CreateTranslation({ 0.0f,5.0f,9.0f })*m_mWorld;

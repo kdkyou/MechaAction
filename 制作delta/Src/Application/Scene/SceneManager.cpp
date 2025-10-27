@@ -110,6 +110,16 @@ void SceneManager::UndoRenderTarget()
 	m_rtChanger.UndoRenderTarget();
 }
 
+void SceneManager::SetIsMovie(const bool isMovie)
+{
+	m_currentScene->SetIsMovie(isMovie);
+}
+
+const bool SceneManager::GetIsMovie()const
+{
+	return m_currentScene->GetIsMovie();
+}
+
 
 void SceneManager::Edit_ImGui()
 {

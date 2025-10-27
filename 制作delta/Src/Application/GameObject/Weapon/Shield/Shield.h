@@ -21,6 +21,8 @@ public:
 	// このクラスの内容をJSONデータ化する
 	virtual void Serialize(nlohmann::json& outJson) const override;
 
+	void OnHit()override;
+
 private:
 
 	void CreateShield();

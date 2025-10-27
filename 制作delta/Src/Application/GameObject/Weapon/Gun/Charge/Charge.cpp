@@ -91,7 +91,7 @@ void Charge::Trigger()
 {
 	CheckTrigger();
 
-	if (m_num <= 0) { return; }
+	if (m_num <= 0 && m_numOnce <= 0) { return; }
 
 	if (m_nowTrigger & m_AttackTrigger) { OnTrigger(); }
 	else { m_trigger = false; }
@@ -104,7 +104,15 @@ void Charge::Trigger()
 		if (m_durationReload >= 1.0f)
 		{
 			// 一回の残弾を最大値へ
-			m_numOnce = m_maxNumofOnce;
+			if (m_num >= m_maxNumofOnce)
+			{
+				m_numOnce = m_maxNumofOnce;
+				m_num -= m_maxNumofOnce;
+			}
+			else {
+				m_numOnce = m_num;
+				m_num = 0;
+			}
 			// リロード時間を0に
 			m_durationReload = 0.0f;
 			m_isReload = false;
@@ -126,7 +134,7 @@ void Charge::Trigger()
 			m_isSoundOnce = true;
 
 			auto& am = KdAudioManager::Instance();
-			am.Play("Asset/Sounds/SE/Weapon/Charge_Comp.wav", false)->SetVolume(am.GetSEVolume());
+			am.Play("Asset/Sounds/SE/Weapon/Comp.wav", false)->SetVolume(am.GetSEVolume());
 		}
 	}
 
@@ -192,7 +200,6 @@ void Charge::Shot()
 	SceneManager::Instance().AddObject(bullet);
 
 	m_durationFire = 0;
-	m_num -= 1;
 	m_numOnce -= 1;
 
 	m_isSoundOnce = false;
@@ -225,13 +232,12 @@ void Charge::ShotCharge()
 	bullet->SetBulletType(Bullet::SightScale, {});
 	bullet->SetTag(m_tag);
 	auto num = std::clamp(m_numOnce/m_maxNumofOnce,1,3);
-	bullet->ScaleUp(3.0f, num);
+	bullet->ScaleUp(8.0f, num);
 
 	bullet->SetBulletTrail(m_bulletTrailPath, m_bulletTrailColor, m_bulletTrailWidth, m_bulletTrailLength);
 	SceneManager::Instance().AddObject(bullet);
 
 	m_durationFire = 0.0f;
-	m_num -= m_numOnce;
 	m_numOnce = 0;
 
 	m_isSoundOnce = false;

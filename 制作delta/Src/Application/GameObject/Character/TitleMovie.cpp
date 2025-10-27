@@ -47,7 +47,11 @@ void TitleMovie::Update()
 		m_durationWait += delta;
 		if (m_durationWait > m_secondWaitTime / 5.0f)
 		{
-			CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
+			if (!m_isFirstAnim)
+			{
+				m_isFirstAnim = true;
+				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
+			}
 		}
 		
 		if (m_durationWait > m_secondWaitTime) {
@@ -67,6 +71,7 @@ void TitleMovie::Update()
 				if (m_spAnimator) {
 				m_spAnimator->SetAnimation(m_spModel->GetAnimation(m_animPath), 10.0f, false);
 				UIManager::GetInstance().SceneUIAdd("Asset/Data/UI/SystemUI.scene");
+				
 				}
 			}
 		}
@@ -77,7 +82,11 @@ void TitleMovie::Update()
 
 		if (m_spAnimator->IsAnimationEnd())
 		{
-			CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
+			if (!m_isSecondAnim)
+			{
+				m_isSecondAnim = true;
+				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
+			}
 		}
 
 		if (m_durationWait > m_thirdWaitTime) {
@@ -89,8 +98,10 @@ void TitleMovie::Update()
 			if (pNode) {
 				auto nodeMat = pNode->m_worldTransform;
 				auto mat = nodeMat.Translation() * m_mWorld.Translation();
-				m_efk = KdEffekseerManager::GetInstance().Play("Thruster.efkefc",mat, 3.0f,1.0f, false);
+				//m_efk = KdEffekseerManager::GetInstance().Play("Thruster.efkefc",mat, 3.0f,1.0f, false);
 				Application::Instance().m_log.AddLog("Create\n");
+				auto& am = KdAudioManager::Instance();
+				am.Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(am.GetSEVolume());
 			}
 			}
 
@@ -142,18 +153,21 @@ void TitleMovie::PostUpdate()
 	{
 		if (!m_spModel) { return; }
 		auto spefct = m_efk.lock();
+		if (spefct)
+		{
 
-		Math::Matrix mat = Math::Matrix::Identity;
+			Math::Matrix mat = Math::Matrix::Identity;
 
-		KdModelWork::Node* pNode = m_spModel->FindWorkNode("CBP");
-		if (pNode) {
-			mat = pNode->m_worldTransform;
+			KdModelWork::Node* pNode = m_spModel->FindWorkNode("CBP");
+			if (pNode) {
+				mat = pNode->m_worldTransform;
+			}
+
+			Effekseer::Handle handle = 0;
+
+			auto matrix = mat * m_mWorld;
+			KdEffekseerManager::GetInstance().SetWorldMatrix(handle, matrix);
 		}
-
-		Effekseer::Handle handle = 0;
-
-		auto matrix = mat * m_mWorld;
-		KdEffekseerManager::GetInstance().SetWorldMatrix(handle, matrix);
 	}
 }
 

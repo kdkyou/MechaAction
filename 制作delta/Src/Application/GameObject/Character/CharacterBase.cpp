@@ -229,6 +229,18 @@ void CharacterBase::Serialize(nlohmann::json& outJson) const
 	outJson["Weapons"] = weaponsArray;
 }
 
+void CharacterBase::SetWeapon()
+{
+	for (auto& weapon : m_wpWeapons)
+	{
+		if (m_wpCharacterTarget.lock())
+		{
+			auto obj = weapon.lock();
+			obj->SetTarget(m_wpCharacterTarget);
+		}
+	}
+}
+
 bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool rotate, bool direct, bool step)
 {
 	auto direction = dir;
@@ -441,14 +453,17 @@ bool CharacterBase::RayCast(const Math::Vector3& startPos, const Math::Vector3& 
 
 	if (type & KdCollider::TypeGround)
 	{
-		if (hit)
+		if (vec.y <= -0.6f)
 		{
-			m_isGround = true;
-			m_gravity = 0.0f;
-		}
-		else
-		{
-			m_isGround = false;
+			if (hit)
+			{
+				m_isGround = true;
+				m_gravity = 0.0f;
+			}
+			else
+			{
+				m_isGround = false;
+			}
 		}
 	}
 

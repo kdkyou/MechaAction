@@ -98,7 +98,7 @@ private:
 	std::weak_ptr<CharacterBase> m_wpLockTarget;
 
 	std::vector<std::weak_ptr<CharacterBase>>	m_wpMultiLocks;
-	int											m_multiLockNum = 3;
+	int											m_multiLockNum = 5;
 
 	
 

@@ -9,7 +9,7 @@ void RenderSetting::Editor_ImGui()
 	ImGui::InputText((const char*)u8"ファイル名", &fileName);
 
 	nlohmann::json outJson;
-	if (ImGui::Button((const char*)u8"シーン保存"))
+	if (ImGui::Button((const char*)u8"レンダー保存"))
 	{
 
 		{
@@ -28,13 +28,19 @@ void RenderSetting::Editor_ImGui()
 		switch (sceneType)
 		{
 		case SceneManager::SceneType::Title:
-			str = "Asset/Data/Title.render";
+			str = "Asset/Data/Render/Title.render";
 			break;
 		case SceneManager::SceneType::TitleMovie:
-			str = "Asset/Data/TitleMovie.render";
+			str = "Asset/Data/Render/TitleMovie.render";
 			break;
 		case SceneManager::SceneType::Game:
-			str = "Asset/Data/Game.render";
+			str = "Asset/Data/Render/Game.render";
+			break;
+		case SceneManager::SceneType::Training:
+			str = "Asset/Data/Render/Training.render";
+			break;
+		case SceneManager::SceneType::Retry:
+			str = "Asset/Data/Render/Retry.render";
 			break;
 		default:
 			break;
@@ -42,7 +48,7 @@ void RenderSetting::Editor_ImGui()
 
 		if (fileName != "")
 		{
-			str = "Asset/Data/" + fileName;
+			str = "Asset/Data/Render/" + fileName;
 		}
 
 

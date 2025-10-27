@@ -86,6 +86,8 @@ void FLAC::Update()
 	}
 	UpdateCollision();
 
+	SetWeapon();
+
 	auto translation = m_mWorld.Translation();
 	Application::Instance().m_log.AddLog("HP%0.f\n", m_hp);
 	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
@@ -1430,6 +1432,8 @@ void FLAC::Destroyed::Update(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdG
 
 		m_durationState -= KdFPSController::GetInstance().GetDeltaTime();
 		if (m_durationState < 0.0f) {
+			auto pos = spOwner->m_mWorld.Translation();
+			KdEffekseerManager::GetInstance().Play("Expload.efkefc", pos, 1.0f, 3.0f, false);
 			spOwner->m_isExpired = true;
 		}
 	}
