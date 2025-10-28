@@ -26,7 +26,7 @@
 				"Damage": 18,
 				"DampingInterval": 10.0,
 				"DampingRate": 0.8700000047683716,
-				"FireRate": 0.016,
+				"FireRate": 1.2,
 				"IsTarget": false,
 				"MaxNum": 4000,
 				"MaxNumOfOnce": 200,
@@ -93,7 +93,7 @@
 					{ "Name": "SP12" }
 				],
 				"ShotSoundPath": "Asset/Sounds/SE/Weapon/MissileShot.wav",
-				"Speed": 120,
+				"Speed": 230,
 				"Tag": 4
 			},
 			{
@@ -124,7 +124,7 @@
 				"Scale": [ 1.0, 1.0, 1.0 ],
 				"ShotNodes": [ { "Name": "SP" } ],
 				"ShotSoundPath": "Asset/Sounds/SE/Weapon/Shot_Launchur.wav",
-				"Speed": 170,
+				"Speed": 300,
 				"Tag": 4
 			},
 			{
@@ -133,7 +133,7 @@
 				"AttackTrigger": 2,
 				"Damage": 1020,
 				"IsTarget": false,
-				"ModelPath": "Asset/Models/Weapon/Sowrd/ChainBlade.gltf",
+				"ModelPath": "Asset/Models/Weapon/Sowrd/Sowrd.gltf",
 				"Name": "Sowrd",
 				"Pos": [ 0.0, 0.0, 0.0 ],
 				"Rot": [ 0.0, 0.0, 0.0 ],

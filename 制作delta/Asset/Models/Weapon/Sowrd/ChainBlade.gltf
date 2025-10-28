@@ -45,7 +45,7 @@
 			"translation":[
 				0,
 				0.15711715817451477,
-				-5.5
+				-12.413984298706055
 			]
 		},
 		{
@@ -135,7 +135,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":350,
+			"count":356,
 			"max":[
 				0.10475167632102966,
 				0.42549246549606323,
@@ -144,20 +144,20 @@
 			"min":[
 				-0.10475214570760727,
 				-0.19999998807907104,
-				-5.800000190734863
+				-12.800000190734863
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":350,
+			"count":356,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":350,
+			"count":356,
 			"type":"VEC2"
 		},
 		{
@@ -169,14 +169,14 @@
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":932,
+			"count":959,
 			"max":[
 				0.030510425567626953,
 				0.03835918754339218,
-				1.0932629108428955
+				3.618229866027832
 			],
 			"min":[
-				-0.040715597569942474,
+				-0.04071665555238724,
 				-0.5431591868400574,
 				-1.0845181941986084
 			],
@@ -185,13 +185,13 @@
 		{
 			"bufferView":5,
 			"componentType":5126,
-			"count":932,
+			"count":959,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":6,
 			"componentType":5126,
-			"count":932,
+			"count":959,
 			"type":"VEC2"
 		},
 		{
@@ -204,50 +204,50 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":4200,
+			"byteLength":4272,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4200,
-			"byteOffset":4200,
+			"byteLength":4272,
+			"byteOffset":4272,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2800,
-			"byteOffset":8400,
+			"byteLength":2848,
+			"byteOffset":8544,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1260,
-			"byteOffset":11200,
+			"byteOffset":11392,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":11184,
-			"byteOffset":12460,
+			"byteLength":11508,
+			"byteOffset":12652,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":11184,
-			"byteOffset":23644,
+			"byteLength":11508,
+			"byteOffset":24160,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":7456,
-			"byteOffset":34828,
+			"byteLength":7672,
+			"byteOffset":35668,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":3072,
-			"byteOffset":42284,
+			"byteOffset":43340,
 			"target":34963
 		}
 	],
@@ -259,7 +259,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":45356,
+			"byteLength":46412,
 			"uri":"ChainBlade.bin"
 		}
 	]

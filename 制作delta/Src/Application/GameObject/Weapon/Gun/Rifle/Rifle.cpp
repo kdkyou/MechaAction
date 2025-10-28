@@ -109,21 +109,51 @@ void Rifle::Trigger()
 		}
 	}
 
-	m_durationFire +=m_fireRateAccel * KdFPSController::GetInstance().GetDeltaTime();
+	static int burstCount = 0;
 
+	// 発射レート
+	m_durationFire += m_fireRateAccel * KdFPSController::GetInstance().GetDeltaTime();
+
+
+
+	//時間になったか
 	if (m_durationFire >= m_fireRate)
 	{
-		m_durationFire = 0;
-		Shot();
-		
-		m_numOnce -= 1;
+		//　複数を連続して発射する
+		m_durationBurst += m_burstAccel * KdFPSController::GetInstance().GetDeltaTime();
+
+		//時間になったか
+		if (m_durationBurst >= m_burst)
+		{
+			burstCount++;
+
+			if (burstCount > m_numBurst)
+			{
+				burstCount = 0;
+				m_durationFire = 0.0f;
+
+				if (m_animChanged == true)
+				{
+					m_animChanged = false;
+					m_trigger = false;
+					m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Close"), 10.0f, false);
+				}
+			}
+			else
+			{
+				Shot();
+				m_numOnce -= 1;
+			}
+
+			m_durationBurst = 0.0f;
+
+		}
+
 		if (m_numOnce <= 0)
 		{
 			m_isReload = true;
-			m_trigger = false;
 		}
 	}
-
 }
 
 void Rifle::Shot()

@@ -111,8 +111,7 @@ void Balt::PostUpdate()
 		m_spModelWork->CalcNodeMatrices();
 	}
 
-	m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });
-
+	
 }
 
 
@@ -517,6 +516,12 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 			return;
 		}
 
+		if (spOwner->GetPrevState() == tMoveForward)
+		{
+			spOwner->ChangeActionState(std::make_shared<AttackForWard>());
+			return;
+		}
+
 		if (spOwner->GetPrevState() == tRotateRight)
 		{
 			spOwner->ChangeActionState(std::make_shared<Boost>());
@@ -546,7 +551,7 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 		{
 			if (spOwner->m_rand.GetInt(1, 2) == 1)
 			{
-				spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
+				spOwner->ChangeActionState(std::make_shared<MoveForward>());
 				return;
 			}
 			else {
@@ -641,7 +646,7 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 
 		if (spOwner->GetPrevState() == tBoostStop)
 		{
-			spOwner->ChangeActionState(std::make_shared<MoveForward>());
+			spOwner->ChangeActionState(std::make_shared<AttackForWard>());
 			return;
 		}
 	}
@@ -1495,7 +1500,7 @@ void Balt::AttackForWard::PostUpdate(std::weak_ptr<Balt>& owner, const  std::wea
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 6.0f);
 	}
 }
 
