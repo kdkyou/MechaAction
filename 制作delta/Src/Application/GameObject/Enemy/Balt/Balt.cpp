@@ -111,7 +111,8 @@ void Balt::PostUpdate()
 		m_spModelWork->CalcNodeMatrices();
 	}
 
-	
+	CharacterBase::PostUpdate();
+
 }
 
 

@@ -68,6 +68,8 @@ public:
 
 protected:
 
+	void TerrainCheck();
+
 	std::string									m_name;
 
 	// カメラ回転用角度

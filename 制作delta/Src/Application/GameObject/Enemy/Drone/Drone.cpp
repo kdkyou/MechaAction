@@ -86,6 +86,8 @@ void Drone::PostUpdate()
 		m_nowAction->PostUpdate(m_wpThis, spTarget);
 	}
 
+	CharacterBase::PostUpdate();
+
 }
 
 void Drone::DrawLit()

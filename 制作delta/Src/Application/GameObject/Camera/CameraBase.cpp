@@ -1,8 +1,10 @@
 ﻿#include "CameraBase.h"
 
-#include"CameraManager.h"
+#include "CameraManager.h"
 
-#include"../Character/CharacterBase.h"
+#include "../Character/CharacterBase.h"
+
+#include "../../Scene/SceneManager.h"
 
 void CameraBase::Init()
 {
@@ -126,4 +128,64 @@ void CameraBase::UpdateRotateByMouse()
 
 	// 回転制御
 	m_DegAng.x = std::clamp(m_DegAng.x, -45.f, 45.f);
+}
+
+void CameraBase::TerrainCheck()
+{
+	auto _spTarget = m_wpTarget.lock();
+
+	KdCollider::RayInfo rayInfo;
+	// レイの発射位置を設定
+	rayInfo.m_pos = GetPos();
+
+	// レイの発射方向を設定
+	rayInfo.m_dir = Math::Vector3::Down;
+	// レイの長さを設定
+	rayInfo.m_range = 100.f;
+	if (_spTarget)
+	{
+		Math::Vector3 _targetPos = _spTarget->GetPos();
+		_targetPos.y += 0.1f;
+		rayInfo.m_dir = _targetPos - GetPos();
+		rayInfo.m_range = rayInfo.m_dir.Length();
+		rayInfo.m_dir.Normalize();
+	}
+
+	// 当たり判定をしたいタイプを設定
+	rayInfo.m_type = KdCollider::TypeGround;
+
+	// ②HIT判定対象オブジェクトに総当たり
+	for (std::weak_ptr<KdGameObject> wpGameObj : SceneManager::Instance().GetTerrainList())
+	{
+		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
+		if (spGameObj)
+		{
+			std::list<KdCollider::CollisionResult> retRayList;
+			spGameObj->Intersects(rayInfo, &retRayList);
+
+			// ③ 結果を使って座標を補完する
+			// レイに当たったリストから一番近いオブジェクトを検出
+			float maxOverLap = 0;
+			Math::Vector3 hitPos = {};
+			bool hit = false;
+			for (auto& ret : retRayList)
+			{
+				// レイを遮断しオーバーした長さが
+				// 一番長いものを探す
+				if (maxOverLap < ret.m_overlapDistance)
+				{
+					maxOverLap = ret.m_overlapDistance;
+					hitPos = ret.m_hitPos;
+					hit = true;
+				}
+			}
+			if (hit)
+			{
+				// 何かしらの障害物に当たっている
+				Math::Vector3 _hitPos = hitPos;
+				_hitPos += rayInfo.m_dir * 0.4f;
+				SetPos(_hitPos);
+			}
+		}
+	}
 }

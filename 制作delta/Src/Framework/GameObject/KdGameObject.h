@@ -178,6 +178,7 @@ protected:
 
 	// 3D空間に存在する機能
 	Math::Matrix	m_mWorld;
+	Math::Matrix	m_mMarker;
 
 	ObjectTag m_tag = tNone;
 

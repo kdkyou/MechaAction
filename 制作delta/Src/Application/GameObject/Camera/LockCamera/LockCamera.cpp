@@ -93,6 +93,8 @@ void LockCamera::PostUpdate()
 
 	Lock();
 
+	TerrainCheck();
+
 	//m_mRotation = GetRotationMatrix();
 	m_mWorld = m_mLocalPos * m_mRotation * _targetMat;
 

@@ -15,32 +15,6 @@ void FLAC::Init()
 
 	m_spAnimator = std::make_shared<KdAnimator>();
 
-	/*auto rifle = std::make_shared<Rifle>();
-	rifle->SetParent(m_wpThis.lock());
-	rifle->SetAttackTrigger(WeaponBase::LeftHand);
-	rifle->SetTag(KdGameObject::tEnemyAttack);
-	rifle->Init();
-	rifle->SetGunsParam("Asset/Models/Weapon/Gatring/Gatring.gltf", 0.2f, 2.0f, 0.0f, 1, 36, 250);
-	rifle->SetAttachPath("LeftWeapon");
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 56, 800, 200, 20.0f, 0.9f);
-	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 20);
-	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
-	SceneManager::Instance().AddObject(rifle);
-	m_wpWeapons.push_back(rifle);
-
-	rifle = std::make_shared<Rifle>();
-	rifle->SetParent(m_wpThis.lock());
-	rifle->SetAttackTrigger(WeaponBase::RightHand);
-	rifle->SetTag(KdGameObject::tEnemyAttack);
-	rifle->Init();
-	rifle->SetGunsParam("Asset/Models/Weapon/Rifle/Rifle.gltf", 0.2f, 2.0f, 0.0f, 1, 36, 250);
-	rifle->SetAttachPath("RightWeapon");
-	rifle->SetBulletsParam("Asset/Models/Weapon/Bullet/Bullet-Live.gltf", 5.0f, 56, 800, 200, 20.0f, 0.9f);
-	rifle->SetBulletsTrailParam("Asset/Textures/GameObject/ClockHand.png", Math::Color(0.7f, 0.4f, 0.1f), 1.7f, 20);
-	rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Raifl.wav");
-	SceneManager::Instance().AddObject(rifle);
-	m_wpWeapons.push_back(rifle);*/
-
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
 	m_pCollider = std::make_unique<KdCollider>();
@@ -113,6 +87,9 @@ void FLAC::PostUpdate()
 	if (m_spModelWork) {
 		m_spModelWork->CalcNodeMatrices();
 	}
+
+	CharacterBase::PostUpdate();
+
 }
 
 void FLAC::DrawLit()

@@ -4,6 +4,66 @@
 
 #include "../Effect/Polygon/PolygonEffect.h"
 #include "../Weapon/WeaponBase.h"
+#include "../Camera/CameraManager.h"
+#include "../Camera/CameraBase.h"
+
+void CharacterBase::PostUpdate()
+{
+	auto spCamera = CameraManager::Instance().GetMapCamera().lock();
+	if (spCamera)
+	{
+		if (SceneManager::Instance().GetTerrainList().size() <= 0) { return; }
+		Math::Vector3 resultPos;
+		spCamera->GetCamera()->ConvertWorldToScreenDetail(m_mWorld.Translation(),resultPos);
+
+		if (resultPos.x > EditorData::GetInstance().m_ScreenWh)
+		{
+			resultPos.x = EditorData::GetInstance().m_ScreenWh;
+		}
+		else if(resultPos.x < -EditorData::GetInstance().m_ScreenWh)
+		{
+			resultPos.x = -EditorData::GetInstance().m_ScreenWh;
+		}
+
+		if(resultPos.y > EditorData::GetInstance().m_ScreenHh)
+		{
+			resultPos.y = EditorData::GetInstance().m_ScreenHh;
+		}
+		else if(resultPos.y < -EditorData::GetInstance().m_ScreenHh)
+		{
+			resultPos.y = -EditorData::GetInstance().m_ScreenHh;
+		}
+		auto camPos = spCamera->GetMatrix().Translation();
+		Math::Vector3 rayDir = Math::Vector3::Zero;
+		float rayRange = 1000.0f;
+		POINT Pointpos = { resultPos.x,resultPos.y };
+
+		spCamera->GetCamera()->GenerateRayInfoFromClientPos(Pointpos,camPos,rayDir,rayRange);
+
+		Math::Vector3 endRayPos = camPos + (rayDir * rayRange);
+		KdCollider::RayInfo ray(KdCollider::TypeGround, camPos, endRayPos);
+		std::list<KdCollider::CollisionResult>results;
+
+		for (auto& obj : SceneManager::Instance().GetTerrainList())
+		{
+			if (obj->GetTag() != tPlayerAttack)
+			{
+				obj->Intersects(ray, &results);
+			}
+		}
+
+		Math::Vector3 pos = Math::Vector3::Zero;
+		if (results.size())
+		{
+			for (auto& result : results)
+			{
+				pos = result.m_hitPos;
+			}
+		}
+
+		m_mMarker = Math::Matrix::CreateTranslation(pos);
+	}
+}
 
 void CharacterBase::GenerateDepthMapFromLight()
 {
@@ -22,7 +82,7 @@ void CharacterBase::DrawMarker()
 {
 	if (!m_spMrkModel) { return; }
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spMrkModel, m_mWorld);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spMrkModel, m_mMarker);
 
 }
 

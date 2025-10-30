@@ -106,6 +106,9 @@ void MT::PostUpdate()
 		m_nowAction->PostUpdate(m_wpThis, spTarget);
 	}
 
+	CharacterBase::PostUpdate();
+
+
 	DirectX::BoundingOrientedBox box;
 	box.Center = GetPos() + m_correctionMat.Translation();
 	box.Extents = { 2.0f,5.0f,2.0f };

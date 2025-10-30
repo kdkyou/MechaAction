@@ -8,6 +8,8 @@ public:
 	CharacterBase() {}
 	~CharacterBase()			override {}
 
+	void PostUpdate()override;
+
 	void GenerateDepthMapFromLight()override;
 
 	void DrawMarker()override;

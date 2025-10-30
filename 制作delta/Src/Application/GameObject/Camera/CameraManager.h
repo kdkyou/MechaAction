@@ -63,6 +63,7 @@ public:
 	void AnimationChange(std::shared_ptr<CameraBase> next);
 
 	const std::weak_ptr<CameraBase> GetCurrentCamera() { return m_currentCamera; }
+	const std::weak_ptr<CameraBase> GetMapCamera() { return m_mapCamera; }
 
 	const CameraType GetPrevType()const { return m_prevType; }
 	const CameraType GetNowType()const { return m_nowType; }

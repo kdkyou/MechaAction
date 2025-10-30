@@ -123,6 +123,9 @@ void Enemy::PostUpdate()
 		m_spModelWork->CalcNodeMatrices();
 	}
 
+	CharacterBase::PostUpdate();
+
+
 	m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });
 
 }

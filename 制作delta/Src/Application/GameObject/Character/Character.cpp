@@ -206,6 +206,8 @@ void Character::PostUpdate()
 
 	m_spModelWork->CalcNodeMatrices();
 
+	m_mMarker = m_mWorld;
+
 	AddTrail();
 
 }
@@ -242,11 +244,13 @@ void Character::DrawUnLit()
 
 void Character::OnHit()
 {
+	if (m_isDestroy) { return; }
+	
 	if (m_hp <= 0)
 	{
-		ChangeActionState(std::make_shared<ActionDestroyed>());
-		m_parameter = 0;
-		return;
+			ChangeActionState(std::make_shared<ActionDestroyed>());
+			m_parameter = 0;
+			return;
 	}
 
 	if (m_parameter >= m_nockBackDamage)
