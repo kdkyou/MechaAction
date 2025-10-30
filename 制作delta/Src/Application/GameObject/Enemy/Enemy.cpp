@@ -124,6 +124,8 @@ void Enemy::PostUpdate()
 	}
 
 	CharacterBase::PostUpdate();
+	auto pos = m_mMarker.Translation();
+	Application::Instance().m_log.AddLog("Another:X.%.1fY.%.1fZ.%.1f\n", pos.x, pos.y, pos.z);
 
 
 	m_pDebugWire->AddDebugBox(m_mWorld, { 3,5,3 }, {}, true, { 1,0,0,1 });

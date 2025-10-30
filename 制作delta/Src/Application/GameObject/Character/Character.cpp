@@ -200,6 +200,7 @@ void Character::PostUpdate()
 		m_nowAction->PostUpdate(m_wpThis);
 	}
 
+	Application::Instance().m_log.Clear();
 	auto progress = m_spAnimator->GetProgress();
 	Application::Instance().m_log.AddLog("AnimProgress:%.1f\n", progress);
 

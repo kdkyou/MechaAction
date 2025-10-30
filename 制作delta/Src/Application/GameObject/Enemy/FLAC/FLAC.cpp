@@ -89,6 +89,8 @@ void FLAC::PostUpdate()
 	}
 
 	CharacterBase::PostUpdate();
+	auto pos = m_mMarker.Translation();
+	Application::Instance().m_log.AddLog("FLAC:X.%.1fY.%.1fZ.%.1f\n", pos.x, pos.y, pos.z);
 
 }
 

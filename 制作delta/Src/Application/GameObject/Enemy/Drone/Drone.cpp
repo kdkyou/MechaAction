@@ -62,7 +62,6 @@ void Drone::Update()
 
 	SetWeapon();
 
-	m_pDebugWire->AddDebugBox(m_mWorld, m_boxExtents);
 
 }
 
@@ -86,7 +85,11 @@ void Drone::PostUpdate()
 		m_nowAction->PostUpdate(m_wpThis, spTarget);
 	}
 
+	m_pDebugWire->AddDebugBox(m_mWorld, m_boxExtents);
+
 	CharacterBase::PostUpdate();
+	auto pos = m_mMarker.Translation();
+	Application::Instance().m_log.AddLog("Drone:X.%.1fY.%.1fZ.%.1f\n",pos.x,pos.y,pos.z);
 
 }
 

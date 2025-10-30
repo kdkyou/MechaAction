@@ -107,6 +107,8 @@ void MT::PostUpdate()
 	}
 
 	CharacterBase::PostUpdate();
+	auto pos = m_mMarker.Translation();
+	Application::Instance().m_log.AddLog("MT:X.%.1fY.%.1fZ.%.1f\n", pos.x, pos.y, pos.z);
 
 
 	DirectX::BoundingOrientedBox box;

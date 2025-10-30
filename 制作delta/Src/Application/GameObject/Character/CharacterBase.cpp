@@ -16,23 +16,9 @@ void CharacterBase::PostUpdate()
 		Math::Vector3 resultPos;
 		spCamera->GetCamera()->ConvertWorldToScreenDetail(m_mWorld.Translation(),resultPos);
 
-		if (resultPos.x > EditorData::GetInstance().m_ScreenWh)
-		{
-			resultPos.x = EditorData::GetInstance().m_ScreenWh;
-		}
-		else if(resultPos.x < -EditorData::GetInstance().m_ScreenWh)
-		{
-			resultPos.x = -EditorData::GetInstance().m_ScreenWh;
-		}
+		resultPos.x = std::clamp(resultPos.x, (float)- EditorData::GetInstance().m_ScreenWh, (float)EditorData::GetInstance().m_ScreenWh);
+		resultPos.y = std::clamp(resultPos.y, (float)-EditorData::GetInstance().m_ScreenHh, (float)EditorData::GetInstance().m_ScreenHh);
 
-		if(resultPos.y > EditorData::GetInstance().m_ScreenHh)
-		{
-			resultPos.y = EditorData::GetInstance().m_ScreenHh;
-		}
-		else if(resultPos.y < -EditorData::GetInstance().m_ScreenHh)
-		{
-			resultPos.y = -EditorData::GetInstance().m_ScreenHh;
-		}
 		auto camPos = spCamera->GetMatrix().Translation();
 		Math::Vector3 rayDir = Math::Vector3::Zero;
 		float rayRange = 1000.0f;
@@ -61,7 +47,7 @@ void CharacterBase::PostUpdate()
 			}
 		}
 
-		m_mMarker = Math::Matrix::CreateTranslation(pos);
+		m_mMarker = m_mWorld;
 	}
 }
 

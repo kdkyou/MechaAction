@@ -112,6 +112,8 @@ void Balt::PostUpdate()
 	}
 
 	CharacterBase::PostUpdate();
+	auto pos = m_mMarker.Translation();
+	Application::Instance().m_log.AddLog("Balt:X.%.1fY.%.1fZ.%.1f\n", pos.x, pos.y, pos.z);
 
 }
 
