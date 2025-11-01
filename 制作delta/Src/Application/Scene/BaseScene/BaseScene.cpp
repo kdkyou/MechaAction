@@ -314,6 +314,7 @@ void BaseScene::DrawMap()
 	{
 		CameraManager::Instance().MapDrawUnLit();
 		
+	//	KdShaderManager::Instance().m_StandardShader.SetGrayEnable(true);
 		for (auto& obj : m_terrainList)
 		{
 			if (obj->GetTag() != KdGameObject::tPlayerAttack)
@@ -321,6 +322,7 @@ void BaseScene::DrawMap()
 				obj->DrawLit();
 			}
 		}
+	//	KdShaderManager::Instance().m_StandardShader.SetGrayEnable(false);
 
 		for (auto& obj : m_playerList)
 		{

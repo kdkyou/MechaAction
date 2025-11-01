@@ -13,7 +13,7 @@ void CharacterBase::PostUpdate()
 	if (spCamera)
 	{
 		if (SceneManager::Instance().GetTerrainList().size() <= 0) { return; }
-		Math::Vector3 resultPos;
+		/*Math::Vector3 resultPos;
 		spCamera->GetCamera()->ConvertWorldToScreenDetail(m_mWorld.Translation(),resultPos);
 
 		resultPos.x = std::clamp(resultPos.x, (float)- EditorData::GetInstance().m_ScreenWh, (float)EditorData::GetInstance().m_ScreenWh);
@@ -47,7 +47,21 @@ void CharacterBase::PostUpdate()
 			}
 		}
 
-		m_mMarker = m_mWorld;
+		m_mMarker = m_mWorld;*/
+		auto worldPos = m_mWorld.Translation();
+
+		Math::Vector3 viewPos = Math::Vector3::Transform(worldPos, spCamera->GetCamera()->GetCameraViewMatrix());
+		
+		float halfRange = 100.0f;
+		viewPos.x = std::clamp(viewPos.x, -halfRange, halfRange);
+		viewPos.z = std::clamp(viewPos.z, -halfRange, halfRange);
+
+		// ビュー空間→ワールド空間に戻す
+		Math::Matrix invView = spCamera->GetCamera()->GetCameraViewMatrix().Invert();
+		Math::Vector3 clampedWorld = Math::Vector3::Transform(viewPos, invView);
+
+		// ミニマップマーカー座標設定
+		m_mMarker = Math::Matrix::CreateTranslation(clampedWorld);
 	}
 }
 

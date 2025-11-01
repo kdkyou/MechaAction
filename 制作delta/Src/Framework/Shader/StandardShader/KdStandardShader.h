@@ -59,7 +59,7 @@ public:
 		Math::Vector3   LightningMaxPos = {};	  // モデルのローカル最大座標
 
 		Math::Vector3   LightningColorA = { 0.0f,0.0f,0.0f };
-		float			dummy1 = 0.0f;
+		int				GrayScaleEnable = 0;
 	
 		Math::Vector3   LightningColorB = { 0.0f,0.0f,0.0f };
 		float			dummy2 = 0.0f;
@@ -149,6 +149,11 @@ public:
 
 	void SetWaveTime(float time) {
 		m_cb0_Obj.Work().WaveTime = time;
+		m_dirtyCBObj = true;
+	}
+
+	void SetGrayEnable(bool enable) {
+		m_cb0_Obj.Work().GrayScaleEnable = enable;
 		m_dirtyCBObj = true;
 	}
 

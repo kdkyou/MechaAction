@@ -138,11 +138,11 @@ void SelectUI::Editor_ImGui()
 			}
 			ImGui::DragFloat2((const char*)u8"LocalPos", &obj->pos.x,0.1f);
 
-			static const char* dirNames[] = { "Title", "TitleMovie", "Game", "Retry","Training"};
-			int dir = obj->sceneType;
-			if (ImGui::Combo("SceneType", &dir, dirNames, IM_ARRAYSIZE(dirNames)))
+			static const char* sceneNames[] = { "Title", "TitleMovie", "Game", "Retry","Training"};
+			int name = obj->sceneType;
+			if (ImGui::Combo("SceneType", &name, sceneNames, IM_ARRAYSIZE(sceneNames)))
 			{
-				obj->sceneType = dir;
+				obj->sceneType = name;
 			}
 
 		}

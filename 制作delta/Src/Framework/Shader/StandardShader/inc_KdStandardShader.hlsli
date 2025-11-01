@@ -33,6 +33,8 @@ cbuffer cbObject : register(b0)
 	float3 g_lightningMaxPos;
 	float3 g_lightningColorA;	// 開始色
 	float3 g_lightningColorB;   // 終了色
+
+	float g_grayScaleEnable;
 	
 };
 

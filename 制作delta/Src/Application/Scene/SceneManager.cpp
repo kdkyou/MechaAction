@@ -40,7 +40,6 @@ void SceneManager::PreDraw()
 
 void SceneManager::Draw()
 {
-
 	m_currentScene->Draw();
 }
 

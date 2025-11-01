@@ -56,6 +56,18 @@ float4 main(VSOutputNoLighting In) : SV_Target0
 		outColor += float3(0.2f, 0.8f, 1.0f) * intensity;
 
 	}
+
+	if(g_grayScaleEnable)
+	{
+		// テクスチャから色を取ってくる
+		float4 outColor = g_tex.Sample(g_ss, In.UV);
+		 // モノクロ変換
+		float gray = outColor.r * 0.299f + outColor.g * 0.587f + outColor.b * 0.114f;
+    
+		outColor.rgb = gray;
+    
+		return outColor;
+	}
 	
 	// Alphaテスト
 	if (baseColor.a < 0.05f)
