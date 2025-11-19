@@ -92,7 +92,7 @@ void Shield::Init()
 	m_spShieldPoly->SetMaterial(material);
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Shield", m_spShieldPoly, KdCollider::TypeGround);
+	m_pCollider->RegisterCollisionShape("Shield", m_spShieldPoly, KdCollider::TypeGround+KdCollider::TypeDamage);
 	m_pCollider->SetEnable("Shield",false);
 
 }

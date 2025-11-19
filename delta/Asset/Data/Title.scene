@@ -9,9 +9,13 @@
 		"Name": "AnimTerrain",
 		"Pos": [ 0.0, 0.7, 30.4 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
-		"Scale": [ 1.0, 1.0, 1.0 ],
-		"SoundPath": "",
-		"Tag": 0
+		"Points": [{	
+				"Color": [ 3.98, 1.2, 1.17 ],
+				"Pos": [ 0.0, 1.0, 6.0 ],
+				"Radius": 40.0}],
+			"Scale":[ 1.0, 1.0, 1.0 ],
+			"SoundPath":"",
+			"Tag":0
 	},
 	{
 		"AnimPath": "",

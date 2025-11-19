@@ -623,7 +623,7 @@ bool CharacterBase::SearchDetect(const Math::Vector3& hitPos, const Math::Matrix
 	// デグリー角に
 	float targetAngle = DirectX::XMConvertToDegrees(acos(d));
 
-	if (targetAngle < viewRange)
+	if (-viewRange < targetAngle && targetAngle < viewRange)
 	{
 		return true;
 	}

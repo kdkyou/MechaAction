@@ -44,6 +44,7 @@ public:
 
 	//外部から変更する際に通る関数
 	bool SetNextType(const CameraType& type);
+	void ResetAngle();
 
 	void SetCameraTarget(const std::shared_ptr<CharacterBase>& target) { m_wpCameraTarget = target; }
 	void SetLockTarget(const std::shared_ptr<CharacterBase>& target) { m_wpLockTarget = target; }

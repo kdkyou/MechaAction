@@ -9,6 +9,8 @@ public :
 	GameScene()		{ Init(); }
 	~GameScene()	{}
 
+	virtual void SetNum(int num)override;
+
 private:
 
 	enum Wave

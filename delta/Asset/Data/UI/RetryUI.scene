@@ -37,12 +37,17 @@
 			{
 				"Path": "Asset\\Textures\\Text\\SPACE.png",
 				"Pos": [ 0.0, 60.0 ],
-				"SceneType": 0
+				"SceneType": 5
 			},
 			{
 				"Path": "Asset\\Textures\\Text\\Enter.png",
 				"Pos": [ 0.0, -60.0 ],
-				"SceneType": 1
+				"SceneType": 2
+			},
+			{
+				"Path": "Asset\\Textures\\Text\\Title.png",
+				"Pos": [ 0.0, -120.0 ],
+				"SceneType": 0
 			}
 		],
 		"Tag": 0,

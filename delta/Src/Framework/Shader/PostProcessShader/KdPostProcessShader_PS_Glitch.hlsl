@@ -90,14 +90,6 @@ float4 main(VSOutput In) : SV_Target0
 		if(g_playerHit==1)
 		{
 			
-			//指定範囲にマスクをしてグリッチ
-			float2 center = g_center;
-			float dist = distance(uv, center);
-			float effectRadius = 0.3; // 半径50%
-			float glitchMask = smoothstep(effectRadius - 0.2, effectRadius + 0.05, dist);
-			//glitch *= 1.0f- glitchMask;
-			glitch *= glitchMask;
-
 		//速度調整
 			uv.x = lerp(uv.x, uv.x + noiseX, glitch);
 

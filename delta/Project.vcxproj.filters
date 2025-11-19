@@ -211,11 +211,14 @@
     <Filter Include="Src\Application\Scene\TrainingScene">
       <UniqueIdentifier>{3aa7749c-58e6-4b40-8560-30bd3bc1d904}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Enemy\Scarecrow">
-      <UniqueIdentifier>{9540132a-9d27-47bf-bda5-e9be7f9aa81c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\UI\SelectUI">
       <UniqueIdentifier>{10ca4a24-a504-4279-a757-ea44ece50798}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Framework\Shader\ParticleShader">
+      <UniqueIdentifier>{c4e08294-539b-4343-88c9-b85bf628d052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Enemy\Scarecrow">
+      <UniqueIdentifier>{9540132a-9d27-47bf-bda5-e9be7f9aa81c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -579,6 +582,9 @@
     <ClInclude Include="Src\Application\GameObject\UI\SelectUI\SelectUI.h">
       <Filter>Src\Application\GameObject\UI\SelectUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Framework\Shader\ParticleShader\ParticleShader.h">
+      <Filter>Src\Framework\Shader\ParticleShader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -908,6 +914,9 @@
     <ClCompile Include="Src\Application\GameObject\UI\SelectUI\SelectUI.cpp">
       <Filter>Src\Application\GameObject\UI\SelectUI</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Framework\Shader\ParticleShader\ParticleShader.cpp">
+      <Filter>Src\Framework\Shader\ParticleShader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Framework\Shader\inc_KdCommon.hlsli">
@@ -921,6 +930,9 @@
     </None>
     <None Include="Src\Framework\Shader\StandardShader\inc_KdStandardShader.hlsli">
       <Filter>Src\Framework\Shader\StandardShader</Filter>
+    </None>
+    <None Include="Src\Framework\Shader\ParticleShader\inc_ParticleShader.hlsli">
+      <Filter>Src\Framework\Shader\ParticleShader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -968,6 +980,15 @@
     </FxCompile>
     <FxCompile Include="Src\Framework\Shader\PostProcessShader\KdPostProcessShader_PS_Combine.hlsl">
       <Filter>Src\Framework\Shader\PostProcessShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Framework\Shader\ParticleShader\ParticleShader_GS.hlsl">
+      <Filter>Src\Framework\Shader\ParticleShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Framework\Shader\ParticleShader\ParticleShader_PS.hlsl">
+      <Filter>Src\Framework\Shader\ParticleShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Framework\Shader\ParticleShader\ParticleShader_VS.hlsl">
+      <Filter>Src\Framework\Shader\ParticleShader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

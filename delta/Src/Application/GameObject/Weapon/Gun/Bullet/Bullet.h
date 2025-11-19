@@ -2,7 +2,7 @@
 
 #include"../../WeaponBase.h"
 
-#define SIGHTTIME 0.6f;
+#define SIGHTTIME 0.5f;
 
 class CharacterBase;
 

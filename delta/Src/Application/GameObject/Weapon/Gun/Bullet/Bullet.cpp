@@ -130,6 +130,7 @@ void Bullet::Intersects()
 		if (obj->Intersects(boxInfo, nullptr))
 		{
 			OnHit();
+			obj->OnHit();
 		}
 	}
 

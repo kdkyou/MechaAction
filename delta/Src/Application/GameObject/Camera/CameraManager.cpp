@@ -285,6 +285,12 @@ bool CameraManager::SetNextType(const CameraType& type)
 	return true;
 }
 
+void CameraManager::ResetAngle()
+{
+	Math::Vector3 deg = {};
+	m_currentCamera->SetDeg(deg);
+}
+
 const std::weak_ptr<CharacterBase> CameraManager::GetLockTarget(int num)
 {
 	// TODO: return ステートメントをここに挿入します

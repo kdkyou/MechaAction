@@ -3,7 +3,7 @@
 		"AnimPath": "",
 		"AnimSpeed": 0.0,
 		"Chain": true,
-		"ChangeSpeed": 2.0,
+		"ChangeSpeed": 1.0,
 		"ChangeTime": 0.3,
 		"Emmisive": [ 0.0, 0.0, 0.0 ],
 		"FirstEmmisive": [ 15.0, 0.0, 0.0 ],
@@ -17,7 +17,7 @@
 		"SecondEmmisive": [ 0.0, 15.0, 0.5 ],
 		"SoundPath": "Asset\\Sounds\\SE\\CatapultActivate.wav",
 		"Tag": 0,
-		"Wait": 2.5999999046325684,
+		"Wait": 3.09,
 		"WaitChangeSpeed": 1.5
 	},
 	{
@@ -28,7 +28,7 @@
 		"FirstTime": 0.4,
 		"FirstWaitTime": 0.2,
 		"ForthPos": [ 0.0, 0.0, 650.0 ],
-		"ForthTime": 1.0,
+		"ForthTime": 0.2,
 		"ForthWaitTime": 0.2,
 		"IsTarget": true,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
@@ -43,8 +43,8 @@
 		"SoundPath": "",
 		"Tag": 0,
 		"ThirdPos": [ 0.0, 0.0, -35.0 ],
-		"ThirdTime": 0.24,
-		"ThirdWaitTime": 1.9
+		"ThirdTime": 0.4,
+		"ThirdWaitTime": 0.5
 	},
 	{
 		"AnimPath": "",
@@ -282,6 +282,58 @@
 		"MoveTime": 2.0,
 		"MoveVec": [ 0.0, 1.0, 0.0 ],
 		"Name": "MoveTerrain",
+		"Points": [
+			{
+				"Color": [ 5.0, 5.0, 5.0 ],
+				"Pos": [ 0.0, 1.0, -30.0 ],
+				"Radius": 60.0
+			},
+			{
+				"Color": [ 5.0, 5.0, 5.0 ],
+				"Pos": [ 2.0, 23.0, -30.0 ],
+				"Radius": 30.0
+			},
+			{
+				"Color": [ 5.0, 5.0, 5.0 ],
+				"Pos": [ 0.0, 1.0, 0.0 ],
+				"Radius": 30.0
+			},
+			{
+				"Color": [ 5.0, 5.0, 5.0 ],
+				"Pos": [ 0.0, 1.0, 30.0 ],
+				"Radius": 50.0
+			},
+			{
+				"Color": [ 5.0, 5.0, 5.0 ],
+				"Pos": [ 0.0, 1.0, 60.0 ],
+				"Radius": 50.0
+			},
+			{
+				"Color": [ 5.0, 5.0, 5.0 ],
+				"Pos": [ 0.0, 1.0, 90.0 ],
+				"Radius": 50.0
+			},
+			{
+				"Color": [ 5.0, 5.0, 5.0 ],
+				"Pos": [ 0.0, 1.0, 120.0 ],
+				"Radius": 100.0
+			},
+			{
+				"Color": [ 5.0, 5.0, 5.0 ],
+				"Pos": [ 0.0, 1.0, 150.0 ],
+				"Radius": 100.0
+			},
+			{
+				"Color": [ 5.0, 0.0, 0.0 ],
+				"Pos": [ 0.0, -20.0, -48.0 ],
+				"Radius": 30.0
+			},
+			{
+				"Color": [ 5.0, 0.0, 0.0 ],
+				"Pos": [ 0.0, -40.0, -48.0 ],
+				"Radius": 50.0
+			}
+		],
 		"Pos": [ 0.0, -43.5, -48.0 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],

@@ -31,8 +31,7 @@ void Character::Init()
 	SetPos({ 0, 8.0f, 0 });
 
 	m_correction = { 0.0,8.0f,0.0f };
-	Math::Vector3 pos = { 0.0f,8.0f,0.0f };
-	m_correctionMat = Math::Matrix::CreateTranslation(pos);
+	m_correctionMat = Math::Matrix::CreateTranslation(m_correction);
 
 	m_emissiveColor = { 10.0f,1.0f,1.0f };
 
@@ -74,8 +73,8 @@ void Character::Init()
 	m_limColor = { 0.12f,0.0f,0.23f };
 
 	m_TACColor = { 0.63f,0.1f,0.75f };
-	m_TACProg = 0.3f;
-	m_TACspeed = 3.5f;
+	m_TACProg = 0.13f;
+	m_TACspeed = 1.5f;
 
 }
 
@@ -184,7 +183,7 @@ void Character::Update()
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
 	LockOn();
 
-//	CreatePolygon();
+	CreatePolygon();
 
 	UpdateCollision();
 
@@ -203,6 +202,8 @@ void Character::PostUpdate()
 	Application::Instance().m_log.Clear();
 	auto progress = m_spAnimator->GetProgress();
 	Application::Instance().m_log.AddLog("AnimProgress:%.1f\n", progress);
+
+	m_pDebugWire->AddDebugBox(m_correctionMat * m_mWorld, {2.0f,6.0f,2.0f}, {}, true, color);
 
 
 	m_spModelWork->CalcNodeMatrices();
@@ -234,13 +235,23 @@ void Character::DrawUnLit()
 	if (m_spTrails.size() <= 0) { return; }
 
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
-
 	for (auto& trail : m_spTrails)
 	{
 		KdShaderManager::Instance().m_StandardShader.DrawPolygon(*trail->trail);
 	}
 
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
+}
+
+void Character::DrawParticle()
+{
+	auto& camMat = CameraManager::Instance().GetCurrentCamera().lock()->GetMatrix();
+	auto camRight = camMat.Right();
+	camRight.Normalize();
+	auto camUp = camMat.Up();
+	camUp.Normalize();
+	
+	KdShaderManager::Instance().m_particleShader.Draw(m_particles, camRight, camUp,m_mWorld);
 }
 
 void Character::OnHit()
@@ -420,6 +431,7 @@ const bool Character::IsLStick()
 	auto& key = KeyInput::GetInstance().GetKeyboard();
 	auto& keyTrack = KeyInput::GetInstance().GetKeyboardTracker();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
+	auto& padTrack = KeyInput::GetInstance().GetPadButtonTracker();
 
 	if (keyTrack.IsKeyPressed(key.LeftControl) || pad.IsLeftStickPressed())
 	{
@@ -568,9 +580,7 @@ void Character::UpdateCollision()
 
 	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 
-	m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, color);
-	m_pDebugWire->AddDebugBox(m_correctionMat * m_mWorld, box.Extents, {}, true, color);
-
+	
 }
 
 void Character::LockOn()
@@ -607,27 +617,20 @@ void Character::LockOn()
 
 			auto& camMat = CameraManager::Instance().GetCurrentCamera().lock()->GetMatrix();
 
-			if (SearchDetect(targetPos, camMat, 60) == true)
-			{
-				auto vect = targetPos - pos;
-				vect.Normalize();
-				if (SeaarchObstacle(pos, vect, distance))
-				{
-				info->wpLockTarget = obj;
-				info->distance = distance;
-				vec.push_back(info);
-				}
-			}
+			if (SearchDetect(targetPos, camMat, 60) == false) { continue; }
+			
+			auto vect = targetPos - pos;
+			vect.Normalize();
+			if (SeaarchObstacle(pos, vect, distance) == false){continue;}
+			info->wpLockTarget = obj;
+			info->distance = distance;
+			vec.push_back(info);
 		}
 	}
 
 	std::sort(vec.begin(), vec.end());
-	if (vec.empty() == false) {
-		CameraManager::Instance().ResetMultiLocks();
-	}
 
 	float dist = 0;
-
 
 	for (int i = 0; i < std::min((int)vec.size(), CameraManager::Instance().GetMultiLockNum()); i++)
 	{
@@ -638,8 +641,8 @@ void Character::LockOn()
 		CameraManager::Instance().SetLockTarget(vec[0]->wpLockTarget.lock());
 		dist = vec[0]->distance;
 		m_wpCharacterTarget = vec[0]->wpLockTarget;
-
 	}
+
 }
 
 bool Character::IsIgnoreGravityState() const
@@ -710,19 +713,37 @@ void Character::WalkSounds()
 
 void Character::CreatePolygon()
 {
-	auto poly = std::make_shared<ScaleEffect>();
+
 	KdModelWork::Node* pNode =m_spModelWork->FindWorkNode("CBP");
+	//m_particles.clear();
 	if (pNode)
 	{
 		auto pNodeMat = pNode->m_worldTransform;
-		auto mat = Math::Matrix::CreateRotationX(87 * KdToRadians) * pNodeMat * m_mWorld;
-	//	auto mat =  pNodeMat * m_mWorld;
-		poly->SetRotation({90.0f,0.0f,0.0f });
-		poly->SetMatrix(mat);
-	}
-	poly->SetPolygonParam("Asset/Textures/GameObject/Thurster.png", 0.5f, 0.2f);
 
-	SceneManager::Instance().AddObject(poly);
+		for (int i = 0; i < 30; ++i)
+		{
+			ParticleShader::Particle p;
+		
+			Math::Vector3 corre ={ m_rand.GetFloat(-10.0f, 10.0f),m_rand.GetFloat(-10.0f, 10.0f),m_rand.GetFloat(-10.0f, 10.0f) };
+			p.pos = corre + pNodeMat.Translation() + m_mWorld.Translation();
+			p.vel = { 0,1,-1 };
+			p.life = 0.5f;
+			p.size = 10.0f;
+
+			auto ColorToUint = [](float r, float g, float b, float a = 1.0f)
+				{
+					uint8_t R = static_cast<uint8_t>(r * 255.0f);
+					uint8_t G = static_cast<uint8_t>(g * 255.0f);
+					uint8_t B = static_cast<uint8_t>(b * 255.0f);
+					uint8_t A = static_cast<uint8_t>(a * 255.0f);
+					return (uint32_t(A) << 24) | (uint32_t(R) << 16) | (uint32_t(G) << 8) | uint32_t(B);
+				};
+
+			p.color = ColorToUint( 1,0.5f, 0.1f, 1);
+			m_particles.push_back(p);
+		}
+	}
+
 }
 
 const bool Character::SwordRangeCheck()
@@ -1728,42 +1749,42 @@ void Character::ActionMove::Enter(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	if (CameraManager::Instance().GetNowType() != CameraManager::Lock)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 10.0f, true, false);
 	}
 	else {
 		Checkkey(owner);
 		auto& move = spOwner->m_vMove;
 		if (move.x > 0) {
 			if (move.z < 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 10.0f, true,false);
 			}
 			else if (move.z > 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 10.0f, true,false);
 			}
 			else {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightWalk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightWalk"), 10.0f, true, false);
 			}
 		}
 		else if (move.x < 0) {
 
 			if (move.z < 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 10.0f, true);
 			}
 			else if (move.z > 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 10.0f, true);
 			}
 			else
 			{
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("LeftWalk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("LeftWalkC"), 10.0f, true);
 			}
 		}
 		else
 		{
 			if (move.z < 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 10.0f, true);
 			}
 			else if (move.z > 0) {
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 10.0f, true);
 			}
 		}
 
@@ -1798,21 +1819,21 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 				m_type = Back;
 				if (m_type != m_prevType)
 				{
-					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 10.0f, true);
 				}
 			}
 			else if (move.z > 0) {
 				m_type = Front;
 				if (m_type != m_prevType)
 				{
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 10.0f, true);
 				}
 			}
 			else {
 				m_type = Right;
 				if (m_type != m_prevType)
 				{
-					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightWalk"), 6.0f, true);
+					spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightWalk"), 10.0f, true);
 				}
 			}
 		}
@@ -1822,14 +1843,14 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 				m_type = Back;
 				if (m_type != m_prevType)
 				{
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 10.0f, true);
 				}
 			}
 			else if (move.z > 0) {
 				m_type = Front;
 				if (m_type != m_prevType)
 				{
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 10.0f, true);
 				}
 			}
 			else
@@ -1837,7 +1858,7 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 				m_type = Left;
 				if (m_type != m_prevType)
 				{
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("LeftWalk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("LeftWalkC"), 10.0f, true);
 				}
 			}
 		}
@@ -1847,14 +1868,14 @@ void Character::ActionMove::Update(std::weak_ptr<Character>& owner)
 				m_type = Back;
 				if (m_type != m_prevType)
 				{
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackWalk"), 10.0f, true);
 				}
 			}
 			else if (move.z > 0) {
 				m_type = Front;
 				if (m_type != m_prevType)
 				{
-				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 6.0f, true);
+				spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 10.0f, true);
 				}
 			}
 		}
@@ -3618,7 +3639,7 @@ void Character::ActionRightAttackMid::Exit(std::weak_ptr<Character>& owner)
 void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 {
 	std::shared_ptr<Character> spOwner = owner.lock();
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightSowrd"), 40.0f, false);
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightSowrd"), 30.0f, false);
 
 	m_speed = spOwner->m_bladeAttackSpeed * spOwner->m_speedMag;
 
@@ -3629,6 +3650,9 @@ void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 	m_animName = "RightSowrd";
 
 	m_stateNum = spOwner->CharacterStateName::RightSorwdAf;	
+
+	spOwner->ChangeEnableRightAttack(true);
+
 }
 
 void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
@@ -3661,7 +3685,7 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 
 	if (spOwner->m_spAnimator->IsComp() == false)
 	{
-		spOwner->ChangeEnableRightAttack(false);
+		spOwner->ChangeEnableAttack(false);
 		//加算
 		m_durationStiffness += KdFPSController::GetInstance().GetDeltaTime();
 	}
@@ -4065,19 +4089,27 @@ void Character::ActionDestroyed::Update(std::weak_ptr<Character>& owner)
 
 	//グリッチ表現
 	if (spOwner->m_spAnimator->IsAnimationEnd() == false) {
-		auto time = KdFPSController::GetInstance().GetFPS();
+		auto time = spOwner->m_rand.GetInt(0,1)  + KdFPSController::GetInstance().GetFPS();
 
 		UINT kind = KdShaderManager::Instance().m_postProcessShader.Glitch;
 		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
 		KdShaderManager::Instance().m_postProcessShader.
-			SetGlitch({ 1,1 }, time, 5.0f, 0.8f, 0, 0, { 0.5f,0.5f });
+			SetGlitch({ 1,1 }, time, 5.0f, 0.8f, 0, 1, { 0.5f,0.5f });
 
 	}
 	else {
 		CameraManager::Instance().ResetMultiLocks();
-		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 		UINT kind = KdShaderManager::Instance().m_postProcessShader.Normal;
 		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+		if (SceneManager::Instance().GetSceneType() == SceneManager::SceneType::Training)
+		{
+			SceneManager::Instance().SetNextScene(SceneManager::SceneType::TitleMovie);
+		}
+		else if (SceneManager::Instance().GetSceneType() == SceneManager::SceneType::Game||
+			SceneManager::Instance().GetSceneType() == SceneManager::SceneType::CheckStart)
+		{
+			SceneManager::Instance().SetNextScene(SceneManager::SceneType::Retry);
+		}
 	}
 
 

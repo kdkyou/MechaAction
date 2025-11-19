@@ -53,7 +53,7 @@ void Balt::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
 
-	m_dist = { 50.0f,300.0f };
+	m_dist = { 90.0f,400.0f };
 
 	m_clampSize = 20.0f;
 
@@ -155,7 +155,7 @@ void Balt::UpdateRotate(const Math::Vector3& srcMoveVec)
 	//角度求める
 	float ang = DirectX::XMConvertToDegrees(acos(d));
 
-	if (ang >= 0.1f)
+	if (ang >= 5.0f)
 	{
 		if (ang > m_clampSize)
 		{

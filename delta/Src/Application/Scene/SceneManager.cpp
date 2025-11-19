@@ -264,6 +264,7 @@ void SceneManager::ChangeScene(SceneType sceneType)
 	case SceneType::Game:
 		game =  std::make_shared<GameScene>();
 		m_currentScene = game;
+		m_prevScene = nullptr;
 		break;
 	case SceneType::Retry:
 		m_prevScene = m_currentScene;
@@ -273,6 +274,16 @@ void SceneManager::ChangeScene(SceneType sceneType)
 	case SceneType::Training:
 		training = std::make_shared<TrainingScene>();
 		m_currentScene = training;
+		break;
+	case SceneType::CheckStart:
+		game = std::make_shared<GameScene>();
+		m_currentScene = game;
+		if (m_prevScene)
+		{
+			int wave = m_prevScene->GetNum();
+			m_currentScene->SetNum(wave);
+		}
+		m_prevScene = nullptr;
 		break;
 	default:
 		break;

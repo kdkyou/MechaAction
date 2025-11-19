@@ -11,7 +11,7 @@ void FLAC::Init()
 	m_hp = 5800;
 	m_maxHp = m_hp;
 	
-	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Balt.gltf");
+	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Enemy.gltf");
 
 	m_spAnimator = std::make_shared<KdAnimator>();
 
@@ -45,10 +45,7 @@ void FLAC::Update()
 		m_nowAction->Update(m_wpThis, spTarget);
 
 	}
-	auto pos = m_mWorld.Translation();
-	//auto flg = Gravity(pos, Math::Vector3::Down, m_gravity);
-	//auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false);
-	auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, false, true);
+	/*auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, false, true);
 
 	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
 
@@ -57,7 +54,8 @@ void FLAC::Update()
 	}
 	else {
 		Application::Instance().m_log.AddLog("AnotherFallNow\n");
-	}
+	}*/
+
 	UpdateCollision();
 
 	SetWeapon();
@@ -382,7 +380,7 @@ void FLAC::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<FLAC>& owner, cons
 		}
 	}
 
-	else if (side == ActionStateBase::TargetSide::Front)
+	else
 	{
 		if (spOwner->GetPrevState() == FLACStateType::FrontMove)
 		{
@@ -398,7 +396,7 @@ void FLAC::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<FLAC>& owner, cons
 		if (spOwner->GetPrevState() == FLACStateType::Avoid) {
 			if (spOwner->m_rand.GetInt(1, 2) == 1)
 			{
-				spOwner->ChangeActionState(std::make_shared<Stand>());
+				spOwner->ChangeActionState(std::make_shared<RightMoveAttack>());
 				return;
 			}
 			else {
@@ -780,7 +778,7 @@ void FLAC::FrontMove::Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGa
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("FlontMove"), false);
 	}
 
-	m_speed = 130.0f;
+	m_speed = 230.0f;
 	m_direct = spOwner->GetMatrix().Backward();
 	m_direct.Normalize();
 
@@ -840,7 +838,7 @@ void FLAC::FrontMoveAttack::Enter(std::weak_ptr<FLAC>& owner, const std::weak_pt
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("FlontMoveAttack"), false);
 	}
 
-	m_speed = 100.0f;
+	m_speed = 160.0f;
 	m_direct = spOwner->GetMatrix().Backward();
 	m_direct.Normalize();
 
@@ -903,7 +901,7 @@ void FLAC::BackMove::Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGam
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("BackMove"), false);
 	}
 
-	m_speed = 120.0f;
+	m_speed = 170.0f;
 	m_direct = spOwner->GetMatrix().Forward();
 	m_direct.Normalize();
 
@@ -962,7 +960,7 @@ void FLAC::BackMoveAttack::Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("BackMoveAttack"), false);
 	}
 
-	m_speed = 90.0f;
+	m_speed = 110.0f;
 	m_direct = spOwner->GetMatrix().Forward();
 	m_direct.Normalize();
 
@@ -1029,7 +1027,7 @@ void FLAC::LeftMove::Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGam
 	m_direct = spOwner->GetMatrix().Left();
 	m_direct.Normalize();
 
-	m_durationState = 0.4f;
+	m_durationState = 0.7f;
 }
 
 void FLAC::LeftMove::Update(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)
@@ -1306,6 +1304,10 @@ void FLAC::Avoid::Update(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameO
 
 	if (spOwner->m_spAnimator->IsAnimationEnd()) {
 		ChangeStateWithDistance(owner, spObj);
+	}
+
+	if (m_durationState < 0.0f) {
+		ChangeStateWithPrev(owner, spObj);
 	}
 }
 

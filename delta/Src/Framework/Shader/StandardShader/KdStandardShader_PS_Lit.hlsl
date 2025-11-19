@@ -397,7 +397,7 @@ float4 main(VSOutput In) : SV_Target0
 	// 簡易AO
 	{
 		float ao = saturate(dot(wN, float3(0, 1, 0)));
-		outColor.rgb *= 0.7f + 0.3 * ao;
+		outColor.rgb *= 0.8f + 0.3 * ao;
 	}
 	
 	totalBrightness = saturate(totalBrightness);

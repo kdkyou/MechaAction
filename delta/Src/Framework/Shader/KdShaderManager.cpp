@@ -16,6 +16,7 @@ void KdShaderManager::Init()
 	m_spriteShader.Init();
 	m_StandardShader.Init();
 	m_postProcessShader.Init();
+	m_particleShader.Init();
 
 	//============================================
 	// 定数バッファ
@@ -491,7 +492,7 @@ void KdShaderManager::WriteCBShadowArea(const Math::Matrix& proj, float dirLight
 void KdShaderManager::WriteCBPointLight(const std::list<PointLight>& pointLights)
 {
 	cbLight& light = m_cb9_Light.Work();
-
+	light.PointLights = {};
 	light.PointLight_Num = pointLights.size();
 
 	UINT pointIndex = 0;
@@ -506,6 +507,14 @@ void KdShaderManager::WriteCBPointLight(const std::list<PointLight>& pointLights
 	m_cb9_Light.Write();
 }
 
+void KdShaderManager::ClearCBPointLight()
+{
+	cbLight& light = m_cb9_Light.Work();
+	light.PointLights = {};
+	light.PointLight_Num = 0;
+	m_cb9_Light.Write();
+}
+
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // パラメータの解放：シェーダー本体・共通の定数バッファ・各パイプラインステート
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -515,6 +524,8 @@ void KdShaderManager::Release()
 	m_StandardShader.Release();
 	m_postProcessShader.Release();
 	m_spriteShader.Release();
+	m_particleShader.Release();
+
 
 	m_cb7_Camera.Release();
 	m_cb8_Fog.Release();

@@ -34,6 +34,7 @@ void UIManager::SceneUICreate()
 		str = "Asset/Data/UI/TitleMovieUI.scene";
 		break;
 	case SceneManager::SceneType::Game:
+	case SceneManager::SceneType::CheckStart:
 		str = "Asset/Data/UI/GameUI.scene";
 		break;
 	case SceneManager::SceneType::Retry:

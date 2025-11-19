@@ -13,29 +13,30 @@ void SelectUI::Update()
 {
 	if (m_dataes.empty() == true) { return; }
 
-	auto& key = KeyInput::GetInstance().GetKeyboardState();
+	auto& key = KeyInput::GetInstance().GetKeyboard();
+	auto& keyTrack = KeyInput::GetInstance().GetKeyboardTracker();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
 	if (m_type == MoveType::TopDown)
 	{
 
-		if (key.W || pad.IsLeftThumbStickUp()) {
+		if (keyTrack.IsKeyPressed(key.W) || pad.IsLeftThumbStickUp()) {
 			m_subscript -= 1;
 		}
-		
-		if (key.S || pad.IsLeftThumbStickDown()) {
+
+		if (keyTrack.IsKeyPressed(key.S) || pad.IsLeftThumbStickDown()) {
 			m_subscript += 1;
 		}
 	}
 	else if (m_type == MoveType::LeftRight)
 	{
-	 if (key.D || pad.IsLeftThumbStickRight()) {
-		m_subscript += 1;
-	}
-	 
-	 if (key.S || pad.IsLeftThumbStickLeft()) {
-		 m_subscript -= 1;
-	 }
+		if (keyTrack.IsKeyPressed(key.D) || pad.IsLeftThumbStickRight()) {
+			m_subscript += 1;
+		}
+
+		if (keyTrack.IsKeyPressed(key.A) || pad.IsLeftThumbStickLeft()) {
+			m_subscript -= 1;
+		}
 	}
 
 	if (m_subscript < 0)
@@ -59,11 +60,11 @@ void SelectUI::Update()
 		num++;
 	}
 
-	if (key.Space||pad.IsAPressed()) {
+	if (keyTrack.IsKeyPressed(key.Space)||pad.IsAPressed()) {
 		if (!m_isChangeScene)
 		{
 			m_isChangeScene = true;
-		UIManager::GetInstance().SetFade(Fade::FadeIn, 0.2f, true);
+			UIManager::GetInstance().SetFade(Fade::FadeIn, 0.2f, true);
 		}
 	}
 

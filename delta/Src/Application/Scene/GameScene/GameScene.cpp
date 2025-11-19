@@ -267,6 +267,7 @@ void GameScene::Init()
 	//rifle->SetShotSoundPath("Asset/Sounds/SE/Weapon/Shot_Masingun.wav");
 	//AddObject(rifle);	
 
+	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.01f, false);
 	UIManager::GetInstance().SceneUICreate();
 
 
@@ -276,7 +277,8 @@ void GameScene::Init()
 	CameraManager::Instance().EnableChangedCamera(true);
 	CameraManager::Instance().SetCameraTarget(_character);
 	CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
-	
+	CameraManager::Instance().ResetAngle();
+
 	m_duration = 1.0f;
 	m_fade = false;
 	m_once = false;
@@ -286,6 +288,12 @@ void GameScene::Init()
 	am.Play("Asset/Sounds/BGM/Rusty.wav", true)->SetVolume(am.GetBGMVolume());
 
 	RenderSetting::GetInstance().RenderLoad("Asset/Data/Render/Game.render");
+}
+
+void GameScene::SetNum(int num)
+{
+	m_waveProgress = (Wave)num;
+	m_num = num;
 }
 
 void GameScene::Event()
@@ -298,20 +306,23 @@ void GameScene::Event()
 		case Wave::Start:
 			m_waveProgress = First;
 			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/First.enemy");
-			m_num = First;
+			m_num = Start;
 			break;
 		case Wave::First:
 			m_waveProgress = Second;
 			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Second.enemy");
-			m_num = Second;
+			m_num = First;
 			break;
 		case Wave::Second:
 			m_waveProgress = Last;
 			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Last.enemy");
-			m_num = Last;
+			m_num = Second;
 			break;
 		case Wave::Last:
 			m_waveProgress = Complete;
+			m_num = Last;
+			break;
+		case Wave::Complete:
 			m_num = Complete;
 			break;
 		default:
@@ -321,7 +332,7 @@ void GameScene::Event()
 
 	if (key.D7) {
 		m_enemyList.clear();
-			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Last.enemy");
+		m_waveProgress = Second;
 	}
 
 	if (m_waveProgress == Complete || key.D9) {

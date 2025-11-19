@@ -20,9 +20,9 @@ void TitleMovieScene::Init()
 
 	RenderSetting::GetInstance().RenderLoad("Asset/Data/Render/TitleMovie.render");
 	
-	/*KdAudioManager::Instance().Play("Asset/Sounds/Voice/Mission.wav")
+	KdAudioManager::Instance().Play("Asset/Sounds/Voice/Mission.wav")
 		->SetVolume(KdAudioManager::Instance().GetVoiceVolume());
-	*/
+	
 }
 
 void TitleMovieScene::Event()

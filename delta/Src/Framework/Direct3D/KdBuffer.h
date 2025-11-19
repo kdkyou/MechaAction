@@ -1,5 +1,11 @@
 ﻿#pragma once
 
+class KdDirect3D;
+// 遅延呼び出し用関数
+void KdSetConstantBufferVS(ID3D11DeviceContext* ctx, UINT slot, ID3D11Buffer* const* buffer);
+void KdSetConstantBufferGS(ID3D11DeviceContext* ctx, UINT slot, ID3D11Buffer* const* buffer);
+void KdSetConstantBufferPS(ID3D11DeviceContext* ctx, UINT slot, ID3D11Buffer* const* buffer);
+void KdSetConstantBufferCS(ID3D11DeviceContext* ctx, UINT slot, ID3D11Buffer* const* buffer);
 
 
 //===============================================================
@@ -142,6 +148,13 @@ public:
 		}
 	}
 
+	// シェーダーにセット
+
+	void SetVS(UINT slot)const;
+	void SetGS(UINT slot)const;
+	void SetPS(UINT slot)const;
+	void SetCS(UINT slot)const;
+
 
 	//=================================================
 	//
@@ -202,3 +215,27 @@ private:
 	KdConstantBuffer(const KdConstantBuffer& src) = delete;
 	void operator=(const KdConstantBuffer& src) = delete;
 };
+
+template<class DataType>
+inline void KdConstantBuffer<DataType>::SetVS(UINT slot) const
+{
+	KdSetConstantBufferVS(KdDirect3D::Instance().WorkDevContext(), slot, m_buffer.GetAddress());
+}
+
+template<class DataType>
+inline void KdConstantBuffer<DataType>::SetGS(UINT slot) const
+{
+	KdSetConstantBufferGS(KdDirect3D::Instance().WorkDevContext(), slot, m_buffer.GetAddress());
+}
+
+template<class DataType>
+inline void KdConstantBuffer<DataType>::SetPS(UINT slot) const
+{
+	KdSetConstantBufferPS(KdDirect3D::Instance().WorkDevContext(), slot, m_buffer.GetAddress());
+}
+
+template<class DataType>
+inline void KdConstantBuffer<DataType>::SetCS(UINT slot) const
+{
+	KdSetConstantBufferCS(KdDirect3D::Instance().WorkDevContext(), slot, m_buffer.GetAddress());
+}

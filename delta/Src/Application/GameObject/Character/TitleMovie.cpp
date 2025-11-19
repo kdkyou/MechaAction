@@ -68,42 +68,44 @@ void TitleMovie::Update()
 				m_durationMove = 0.0f;
 				m_type = ThreetoFour;
 				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera4.scene");
-				if (m_spAnimator) {
-				m_spAnimator->SetAnimation(m_spModel->GetAnimation(m_animPath), 10.0f, false);
 				UIManager::GetInstance().SceneUIAdd("Asset/Data/UI/SystemUI.scene");
+				if (m_spAnimator) {
+				m_spAnimator->SetAnimation(m_spModel->GetAnimation(m_animPath), 10.0f, false,false);
 				
 				}
 			}
 		}
 		break;
 	case TitleMovie::ThreetoFour:
-		// 待機時間
-		m_durationWait += delta;
 
 		if (m_spAnimator->IsAnimationEnd())
 		{
+			// 待機時間
+			m_durationWait += delta;
+
 			if (!m_isSecondAnim)
 			{
 				m_isSecondAnim = true;
 				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
+
+				if (!m_isThurster) {
+					m_isThurster = true;
+					KdModelWork::Node* pNode = m_spModel->FindWorkNode("CBP");
+					if (pNode) {
+						auto nodeMat = pNode->m_worldTransform;
+						auto mat = nodeMat.Translation() * m_mWorld.Translation();
+						m_efk = KdEffekseerManager::GetInstance().Play("MovieThruster.efkefc", mat, 2.0f, 0.3f, false);
+						Application::Instance().m_log.AddLog("Create\n");
+						auto& am = KdAudioManager::Instance();
+						am.Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(am.GetSEVolume());
+					}
+				}
+
+
 			}
 		}
 
 		if (m_durationWait > m_thirdWaitTime) {
-			if (!m_isThurster) {
-			m_isThurster = true;
-
-
-			KdModelWork::Node* pNode = m_spModel->FindWorkNode("CBP");
-			if (pNode) {
-				auto nodeMat = pNode->m_worldTransform;
-				auto mat = nodeMat.Translation() * m_mWorld.Translation();
-				//m_efk = KdEffekseerManager::GetInstance().Play("Thruster.efkefc",mat, 3.0f,1.0f, false);
-				Application::Instance().m_log.AddLog("Create\n");
-				auto& am = KdAudioManager::Instance();
-				am.Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(am.GetSEVolume());
-			}
-			}
 
 			// 時間増加
 			m_durationMove += delta;
@@ -153,9 +155,19 @@ void TitleMovie::PostUpdate()
 	{
 		if (!m_spModel) { return; }
 		auto spefct = m_efk.lock();
+
+		/*if (!spefct)
+		{
+			KdModelWork::Node* pNode = m_spModel->FindWorkNode("CBP");
+			if (pNode) {
+				auto nodeMat = pNode->m_worldTransform;
+				auto mat = nodeMat.Translation() * m_mWorld.Translation();
+				m_efk = KdEffekseerManager::GetInstance().Play("MovieThruster.efkefc", mat, 0.5f, 1.0f, false);
+			}
+		}*/
+		
 		if (spefct)
 		{
-
 			Math::Matrix mat = Math::Matrix::Identity;
 
 			KdModelWork::Node* pNode = m_spModel->FindWorkNode("CBP");
@@ -166,7 +178,7 @@ void TitleMovie::PostUpdate()
 			Effekseer::Handle handle = 0;
 
 			auto matrix = mat * m_mWorld;
-			KdEffekseerManager::GetInstance().SetWorldMatrix(handle, matrix);
+			spefct->SetWorldMatrix(matrix);
 		}
 	}
 }

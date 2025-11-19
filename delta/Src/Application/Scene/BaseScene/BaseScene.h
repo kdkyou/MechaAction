@@ -91,6 +91,7 @@ public :
 	void Edit_ImGui();
 
 	const int GetNum()const { return m_num; }
+	virtual void SetNum(int num) { m_num = num; };
 
 	void SetIsMovie(bool flg) { m_isMovie = flg; }
 	const bool GetIsMovie()const { return m_isMovie; }

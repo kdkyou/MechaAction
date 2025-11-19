@@ -16,6 +16,7 @@ public :
 		Game,
 		Retry,
 		Training,
+		CheckStart,
 	};
 
 	void PreUpdate();
