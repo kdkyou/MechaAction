@@ -25,11 +25,11 @@ bool ParticleShader::Init(UINT maxParticles)
 		p.vel = { 0,0,0 };
 		p.life = 0.0f;
 		p.size = 0.1f;
-		p.color = { 1,1,1,1 };
+		p.color = { 0,1,1,1 };
 	}
 	srd.pSysMem = init.data();
 
-	HRESULT hr = dev.WorkDev()->CreateBuffer(&desc, nullptr, &m_particleBuffer);
+	HRESULT hr = dev.WorkDev()->CreateBuffer(&desc, &srd, &m_particleBuffer);
 	if (FAILED(hr)) {
 		assert(0 && "Buffer作成失敗");
 		Release();
@@ -109,6 +109,17 @@ bool ParticleShader::Init(UINT maxParticles)
 			return false;
 		}
 	}
+
+	//コンピュートシェーダー
+	{
+#include "ParticleShader_CS.shaderInc"
+		if (FAILED(KdDirect3D::Instance().WorkDev()->CreateComputeShader(compiledBuffer, sizeof(compiledBuffer), nullptr, &m_CS))) {
+			assert(0 && "コンピュートシェーダー作成失敗");
+			Release();
+			return false;
+		}
+	}
+
 
 	//ジオメトリシェーダー
 	{
@@ -280,7 +291,7 @@ void ParticleShader::BeginParticle()
 
 	KdShaderManager::Instance().ChangeSamplerState(KdSamplerState::Anisotropic_Wrap);
 	KdShaderManager::Instance().ChangeDepthStencilState(KdDepthStencilState::ZDisable); 
-	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
+	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
 	KdShaderManager::Instance().ChangeRasterizerState(KdRasterizerState::CullNone); 
 }
 
@@ -302,16 +313,23 @@ void ParticleShader::EndParticle()
 	KdShaderManager::Instance().UndoRasterizerState();
 }
 
-void ParticleShader::UpdateGPU(float deltaTme, const Math::Vector3& targetPos)
+void ParticleShader::UpdateGPU(float deltaTme, const Math::Vector3& targetPos, const Math::Vector3& Vec)
 {
 	auto ctx = KdDirect3D::Instance().WorkDevContext();
 
 
 	// 定数バッファ転送
 	m_cbFrame.Work().deltaTime = deltaTme;
-	m_cbFrame.Work().gravity = {rand() %5-2.0f, 9.1f,-5.0f };
+	m_cbFrame.Work().gravity = Vec;
 	m_cbFrame.Work().targetPos = targetPos;
+	m_cbFrame.Work().maxParticles = m_maxParticles;
+
+	// 追加: シードと振れ幅を設定（振れ幅は任意に調整）
+	m_cbFrame.Work().randomSeed = (rand() % 3); // or frame counter
+	m_cbFrame.Work().spawnRange = { 2.0f, 2.0f, 1.0f }; // 例: X,Z 範囲 ±1、Y ±0.5
 	m_cbFrame.Write();
+
+	
 	ctx->CSSetConstantBuffers(0, 1,m_cbFrame.GetAddress());
 	ctx->CSSetUnorderedAccessViews(0, 1, &m_particleUAV, nullptr);
 	

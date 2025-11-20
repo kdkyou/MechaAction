@@ -990,5 +990,8 @@
     <FxCompile Include="Src\Framework\Shader\ParticleShader\ParticleShader_VS.hlsl">
       <Filter>Src\Framework\Shader\ParticleShader</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Framework\Shader\ParticleShader\ParticleShader_CS.hlsl">
+      <Filter>Src\Framework\Shader\ParticleShader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

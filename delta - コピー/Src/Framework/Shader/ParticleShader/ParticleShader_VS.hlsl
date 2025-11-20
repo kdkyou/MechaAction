@@ -10,7 +10,7 @@ VSOutput main(uint vertexID : SV_VertexID)
 	Particle p = g_Particles[vertexID];
 
 	//ワールド行列
-	float4 pos = mul(float4(p.pos,1),g_mWorld);
+	float4 pos = float4(p.pos,1);
 	pos =  mul(pos, g_mView); //ビュー変換 
 	pos = mul(pos, g_mProj); // 射影変換
 	

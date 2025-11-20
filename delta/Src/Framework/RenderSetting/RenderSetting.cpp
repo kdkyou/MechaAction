@@ -92,14 +92,14 @@ void RenderSetting::Editor_ImGui()
 	{
 
 		ImGui::DragFloat3("widthColor", &widthColor.x, 0.01f, 0.0f, 1.0f);
-		ImGui::DragFloat("deninty", &height, 0.01f, 0.0f);
+		ImGui::DragFloat("deninty", &height, 0.0011f, 0.0f);
 		KdShaderManager::Instance().WorkAmbientController().SetDistanceFog(widthColor, height);
 	}
 
 	if (m_fogHeight)
 	{
-		ImGui::DragFloat2("height", &width.x, 0.01f, 0.0f);
-		ImGui::DragFloat("dist", &dist, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat2("Volume", &width.x, 0.001f, 0.0f);
+		ImGui::DragFloat("distance", &dist, 0.01f, 0.0f, 1000.0f);
 		ImGui::DragFloat3("Color", &heightColor.x, 0.01f, 0.0f, 1.0f);
 		KdShaderManager::Instance().WorkAmbientController().SetheightFog(heightColor, width.y, width.x, dist);
 	}

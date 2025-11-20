@@ -1,20 +1,25 @@
 #include "inc_ParticleShader.hlsli"
+#include "../inc_KdCommon.hlsli"
 
-VSOutput main(
-float4 Pos : POSITION,
-float3 Vel : VELOCITY,
-float Life : LIFE,
-float Size : SIZE,
-float4 Color : COLOR
-)
+StructuredBuffer<Particle> g_Particles : register(t0);
+
+VSOutput main(uint vertexID : SV_VertexID)
 {
-	VSOutput Out;
-	Out.Pos = mul(Pos, g_mWorld); // ローカル座標系 -> ワールド座標系へ変換
-	Out.wPos = Out.Pos.xyz; // ワールド座標を別途保存
-	Out.Color = float4(1,0,0,1);
-	Out.Vel = Vel;
-	Out.Life =Life;
-	Out.Size = Size;
 	
+	VSOutput Out;
+	Particle p = g_Particles[vertexID];
+
+	//ワールド行列
+	float4 pos = float4(p.pos, 1);
+	pos = mul(pos, g_mView); //ビュー変換 
+	pos = mul(pos, g_mProj); // 射影変換
+	
+	
+	Out.Pos = pos;
+	Out.Color = p.color;
+	Out.UV = float2(0.5f, 0.5f);
+	Out.Size = p.size;
+	Out.lPos = pos;
+
 	return Out;
 }

@@ -263,9 +263,7 @@ void Character::DrawParticle()
 		auto pNodeMat = pNode->m_worldTransform;
 
 
-	//	Math::Vector3 corre = { m_rand.GetFloat(-10.0f, 10.0f),m_rand.GetFloat(-2.0f, 2.0f),m_rand.GetFloat(-10.0f, 10.0f) };
 		mat	= pNodeMat * m_mWorld;
-
 	}
 
 	KdShaderManager::Instance().m_particleShader.SetCamRightUp(camRight,camUp,mat);
@@ -744,19 +742,19 @@ void Character::CreatePolygon()
 	KdModelWork::Node* pNode =m_spModelWork->FindWorkNode("CBP");
 	//m_particles.clear();
 	Math::Vector3 pos = {};
+	Math::Vector3 vec = {};
 	if (pNode)
 	{
 		auto pNodeMat = pNode->m_worldTransform;
 
 		m_particles.clear();
 
-		Math::Vector3 corre ={ m_rand.GetFloat(-10.0f, 10.0f),m_rand.GetFloat(-10.0f, 10.0f),m_rand.GetFloat(-10.0f, 10.0f) };
-		Math::Matrix corMat = Math::Matrix::CreateTranslation(corre);
-		pos = (corMat * pNodeMat* m_mWorld).Translation();
+		pos = ( pNodeMat* m_mWorld).Translation();
+		vec = (pNodeMat * m_mWorld).Forward();
 	}
 	auto delta = KdFPSController::GetInstance().GetDeltaTime();
 	
-	KdShaderManager::Instance().m_particleShader.UpdateGPU(delta,pos);
+	KdShaderManager::Instance().m_particleShader.UpdateGPU(delta,pos,vec);
 }
 
 const bool Character::SwordRangeCheck()
@@ -781,8 +779,8 @@ const bool Character::SwordRangeCheck()
 
 void Character::OverTrans(const std::string& nowAnimName,const float animProgress)
 {
+	if (m_hp <= 0) { return; }
 	m_hp--;
-	
 	std::shared_ptr<TransAC> trans = std::make_shared<TransAC>();
 	std::string modelpath = "Asset/Models/Grint/Grint.gltf";
 	std::string animpath = nowAnimName;

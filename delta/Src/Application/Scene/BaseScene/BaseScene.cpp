@@ -65,7 +65,7 @@ void BaseScene::PreUpdate()
 void BaseScene::Update()
 {
 	
-	// KdGameObjectを継承した全てのオブジェクトの更新 (ポリモーフィズム)
+	// オブジェクトの更新 (ポリモーフィズム)
 	if (EditorData::GetInstance().IsEditorMode() == true)
 	{
 		for (auto& obj : m_terrainList)

@@ -13,6 +13,9 @@ cbuffer cbFrame : register(b0)
 	float g_deltaTime;
 	float3 g_gravity;
 	float3 g_targetPos;
+	int g_maxParticles;
+	int g_randomSeed;
+	float3 g_spawnRange;
 };
 
 cbuffer cbScene : register(b1)

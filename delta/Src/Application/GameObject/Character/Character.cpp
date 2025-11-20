@@ -250,8 +250,23 @@ void Character::DrawParticle()
 	camRight.Normalize();
 	auto camUp = camMat.Up();
 	camUp.Normalize();
-	
-	KdShaderManager::Instance().m_particleShader.Draw(m_particles, camRight, camUp,m_mWorld);
+
+
+	KdModelWork::Node* pNode = m_spModelWork->FindWorkNode("CBP");
+
+	Math::Matrix mat = Math::Matrix::Identity;
+	Math::Vector3 pos = {};
+	if (pNode)
+	{
+		auto pNodeMat = pNode->m_worldTransform;
+
+
+		mat = pNodeMat * m_mWorld;
+	}
+
+	KdShaderManager::Instance().m_particleShader.SetCamRightUp(camRight, camUp, mat);
+
+	KdShaderManager::Instance().m_particleShader.Draw();
 }
 
 void Character::OnHit()
@@ -714,35 +729,22 @@ void Character::WalkSounds()
 void Character::CreatePolygon()
 {
 
-	KdModelWork::Node* pNode =m_spModelWork->FindWorkNode("CBP");
+	KdModelWork::Node* pNode = m_spModelWork->FindWorkNode("CBP");
 	//m_particles.clear();
+	Math::Vector3 pos = {};
+	Math::Vector3 vec = {};
 	if (pNode)
 	{
 		auto pNodeMat = pNode->m_worldTransform;
 
-		for (int i = 0; i < 30; ++i)
-		{
-			ParticleShader::Particle p;
-		
-			Math::Vector3 corre ={ m_rand.GetFloat(-10.0f, 10.0f),m_rand.GetFloat(-10.0f, 10.0f),m_rand.GetFloat(-10.0f, 10.0f) };
-			p.pos = corre + pNodeMat.Translation() + m_mWorld.Translation();
-			p.vel = { 0,1,-1 };
-			p.life = 0.5f;
-			p.size = 10.0f;
+		m_particles.clear();
 
-			auto ColorToUint = [](float r, float g, float b, float a = 1.0f)
-				{
-					uint8_t R = static_cast<uint8_t>(r * 255.0f);
-					uint8_t G = static_cast<uint8_t>(g * 255.0f);
-					uint8_t B = static_cast<uint8_t>(b * 255.0f);
-					uint8_t A = static_cast<uint8_t>(a * 255.0f);
-					return (uint32_t(A) << 24) | (uint32_t(R) << 16) | (uint32_t(G) << 8) | uint32_t(B);
-				};
-
-			p.color = ColorToUint( 1,0.5f, 0.1f, 1);
-			m_particles.push_back(p);
-		}
+		pos = (pNodeMat * m_mWorld).Translation();
+		vec = (pNodeMat * m_mWorld).Forward();
 	}
+	auto delta = KdFPSController::GetInstance().GetDeltaTime();
+
+	KdShaderManager::Instance().m_particleShader.UpdateGPU(delta, pos, vec);
 
 }
 

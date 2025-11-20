@@ -6,7 +6,7 @@ StructuredBuffer<Particle> g_Particles : register(t0);
 [maxvertexcount(4)]
 void main(
 	point VSOutput In[1], 
-	inout TriangleStream<GSOutput > stream
+	inout LineStream<GSOutput> stream
 )
 {
 	// 中心点の取得
@@ -41,6 +41,7 @@ void main(
 	{
 		 GSOutput Out = In[0];
 		float4 clip = corner[i];
+	
 		Out.Pos = clip;
 		Out.UV = uv[i];
 		stream.Append(Out);

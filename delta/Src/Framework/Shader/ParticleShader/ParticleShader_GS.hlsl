@@ -1,26 +1,31 @@
 #include "inc_ParticleShader.hlsli"
 #include "../inc_KdCommon.hlsli"
 
-
+StructuredBuffer<Particle> g_Particles : register(t0);
 
 [maxvertexcount(4)]
 void main(
-	point VSOutput In[1], 
-	inout TriangleStream< GSOutput > stream
+	point VSOutput In[1],
+	inout LineStream<GSOutput> stream
 )
 {
 	// 中心点の取得
-	float3 right = g_camRight * 0.5f;
-	float3 up = g_camUp * 0.5f;
-	float3 c = In[0].Pos;
+	float4 c = In[0].Pos;
+	float size = In[0].Size * 0.5f;
 
+	float4 right = float4(g_camRight * size, 1);
+	float4 up = float4(g_camUp * size, 1);
+
+	// float4x4 mViewProj = mul(g_mView, g_mProj);
+
+	
 	// 四隅の座標作成
-	float3 corner[4] =
+	float4 corner[4] =
 	{
-		c + (-right + up),
-        c + (right + up),
-        c + (-right - up),
-        c + (right - up)
+		c - right + up,
+        c + right + up,
+        c - right - up,
+        c + right - up
 	};
 
 	float2 uv[4] =
@@ -31,17 +36,16 @@ void main(
 		float2(1, 1)
 	};
 
-	float4x4 mViewProj = mul(g_mView, g_mProj);
-
-	[unroll]
-	for (int i = 0;i < 4;i++)
+	
+	for (int i = 0; i < 4; i++)
 	{
-		 GSOutput Out;
-		Out.Pos = mul(float4(corner[i], 1), mViewProj);
+		GSOutput Out = In[0];
+		float4 clip = corner[i];
+	
+		Out.Pos = clip;
 		Out.UV = uv[i];
-		Out.Color = float4(0,1,0,1);
 		stream.Append(Out);
 	}
+	stream.RestartStrip();
 
-	
 }

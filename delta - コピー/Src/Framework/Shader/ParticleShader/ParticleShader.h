@@ -31,7 +31,10 @@ public:
 		float deltaTime = 0.0f;
 		Math::Vector3 gravity = {};
 		Math::Vector3 targetPos = {};
-		float dummy1 = 0.0f;
+		int maxParticles = 0;
+
+		int randomSeed = 0;      // 追加: CPU 側シード
+		Math::Vector3 spawnRange = { 0.0f, 0.0f, 0.0f }; // 追加: 振れ幅
 	}; 
 
 	bool Init(UINT maxParticles);
@@ -42,7 +45,7 @@ public:
 	void BeginParticle();
 	void EndParticle();
 
-	void UpdateGPU(float deltaTme,const Math::Vector3& targetPos);
+	void UpdateGPU(float deltaTme,const Math::Vector3& targetPos,const Math::Vector3& Vec);
 
 	void Draw(const std::vector<Particle>& particles, const Math::Vector3& camRight, const Math::Vector3& camUp,const Math::Matrix& mWorld);
 	void Draw();
@@ -50,7 +53,7 @@ public:
 private:
 
 	// GPU上のバッファ
-	ID3D11Buffer*							m_particleBuffer;		 // StructuredBuffer<Particle>
+	ID3D11Buffer*							m_particleBuffer = nullptr;		 // StructuredBuffer<Particle>
 	KdConstantBuffer<CBFrame>		m_cbFrame;		 // StructuredBuffer<Frame>
 	KdConstantBuffer<CBScene>		m_cbScene;		 // StructuredBuffer<Scene>
 	ID3D11UnorderedAccessView*	m_particleUAV = nullptr; // Compute書き込み用
