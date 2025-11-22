@@ -65,8 +65,6 @@ private:
 
 	bool									m_isForWard = false;
 
-	//			追いかける範囲　x = Near　y = Far
-	Math::Vector2							m_dist = { 10.0f,180.0f };
 	// 視野角
 	float									m_viewAngle = 0.0f;
 	// 索敵範囲

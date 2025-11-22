@@ -25,7 +25,7 @@ void TrainingScene::Init()
 	// ステージ初期化
 	//===================================================================
 
-	CurrentSceneCreate("Asset/Data/Training.scene");
+	CurrentSceneCreate("Asset/Data/Scene/Training.scene");
 
 	//===================================================================
 	// キャラクター初期化

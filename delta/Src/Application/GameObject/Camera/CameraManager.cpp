@@ -140,13 +140,13 @@ void CameraManager::Editor_ImGui() {
 		switch (sceneType)
 		{
 		case SceneManager::SceneType::Title:
-			str = "Asset/Data/TitleCamera.Scene";
+			str = "Asset/Data/Camera/TitleCamera.Scene";
 			break;
 		case SceneManager::SceneType::TitleMovie:
-			str = "Asset/Data/TitleMovieCamera.Scene";
+			str = "Asset/Data/Camera/TitleMovieCamera.Scene";
 			break;
 		case SceneManager::SceneType::Game:
-			str = "Asset/Data/GameCamera.Scene";
+			str = "Asset/Data/Camera/GameCamera.Scene";
 			break;
 		default:
 			break;

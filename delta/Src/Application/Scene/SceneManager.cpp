@@ -141,11 +141,17 @@ void SceneManager::Edit_ImGui()
 		switch (m_currentSceneType)
 		{
 		case SceneManager::SceneType::Title:
-			str = "Asset/Data/Title.Scene";
+			str = "Asset/Data/Scene/Title.Scene";
 			break;
 		case SceneManager::SceneType::Game:
-			str = "Asset/Data/Game.Scene";
+		case SceneManager::SceneType::CheckStart:
+			str = "Asset/Data/Scene/Game.Scene";
 			break;
+		case SceneManager::SceneType::TitleMovie:
+			str = "Asset/Data/Scene/TitleMovie.Scene";
+			break;
+		case SceneManager::SceneType::Training:
+			str = "Asset/Data/Scene/Training.Scene";
 		default:
 			break;
 		}

@@ -198,7 +198,7 @@ void Character::PostUpdate()
 		m_nowAction->PostUpdate(m_wpThis);
 	}
 
-	Application::Instance().m_log.Clear();
+//	Application::Instance().m_log.Clear();
 	auto progress = m_spAnimator->GetProgress();
 	Application::Instance().m_log.AddLog("AnimProgress:%.1f\n", progress);
 
@@ -495,32 +495,13 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 			Math::Vector3 c = targetDir.Cross(nowDir);
 			if (c.y >= 0)
 			{
-				//if (m_nowAction->GetState() == CharacterStateName::BoostDush)
-				//{
-				//	ang = 5.0f;
-				//	//右回転
-				//	m_rot.y -= ang;
-				//}
-				//else
-				{
-
-					//右回転
-					m_rot.y -= ang;
-				}
+				//右回転
+				m_rot.y -= ang;
 			}
 			else
 			{
-			/*	if (m_nowAction->GetState() == CharacterStateName::BoostDush)
-				{
-					ang = 5.0f;
-				
-					m_rot.y += ang;
-				}
-				else*/ 
-				{
-					//左回転
-					m_rot.y += ang;
-				}
+				//左回転
+				m_rot.y += ang;
 			}
 		}
 
@@ -750,31 +731,32 @@ void Character::LockOn(bool force)
 const Math::Vector3& Character::GetSmoothedAimDir(const Math::Vector3& desiredDir, float dt)
 {
 	// 無効な入力なら現状維持（微小ならノイズ防止）
-	if (desiredDir.LengthSquared() < 1e-6f) { return m_aimSmoothedDir; }
+	if (desiredDir.LengthSquared() < 1e-6f) { 
+		return m_aimSmoothedDir; }
 
 	Math::Vector3 targetVec = desiredDir;
 	targetVec.Normalize();
 
-	// 指数移動平均ライクに lerp 係数を dt ベースで決める
+	// 指数移動平均的に lerp 係数を dt ベースで決める
 	const float k = m_aimSmoothSpeed;
 	float alpha = 1.0f - std::expf(-k * dt);
-	if (alpha < 0.0f) alpha = 0.0f;
-	if (alpha > 1.0f) alpha = 1.0f;
+	if (alpha < 0.0f) { alpha = 0.0f; }
+	if (alpha > 1.0f) { alpha = 1.0f; }
 
 	Math::Vector3 next = Math::Vector3::Lerp(m_aimSmoothedDir, targetVec, alpha);
-	if (next.LengthSquared() > 1e-6f) next.Normalize();
+	if (next.LengthSquared() > 1e-6f) { next.Normalize(); }
 
 	// 回転速度制限
 	float dot = m_aimSmoothedDir.Dot(next);
-	if (dot > 1.0f) dot = 1.0f;
-	if (dot < -1.0f) dot = -1.0f;
-	float angleRad = std::acos(dot); // 0..pi
+	if (dot > 1.0f) { dot = 1.0f; }
+	if (dot < -1.0f) { dot = -1.0f; }
+	float angleRad = acos(dot); // 0..pi
 	const float maxDeltaRad = (m_aimMaxTurnDegPerSec * (3.14159265f / 180.0f)) * dt;
 	if (angleRad > maxDeltaRad && angleRad > 1e-6f)
 	{
 		float t = maxDeltaRad / angleRad;
 		m_aimSmoothedDir = Math::Vector3::Lerp(m_aimSmoothedDir, next, t);
-		if (m_aimSmoothedDir.LengthSquared() > 1e-6f) m_aimSmoothedDir.Normalize();
+		if (m_aimSmoothedDir.LengthSquared() > 1e-6f) { m_aimSmoothedDir.Normalize(); }
 	}
 	else
 	{
@@ -2260,13 +2242,7 @@ void Character::ActionBoost::Enter(std::weak_ptr<Character>& owner)
 			auto& am = KdAudioManager::Instance();
 			am.Play("Asset/Sounds/Sound/burst_start.wav")->SetVolume(am.GetSEVolume());
 
-			/*	auto instance = KdAudioManager::Instance().Play3D("Asset/Sounds/Thruster2.wav", spOwner->GetPos());
-				auto vec = CameraManager::Instance().ToCameraVec(mat.Translation());
-				instance->SetVolume(1.0f);
-				instance->SetEmitterMatrix(mat,mat.Forward());
-				instance->SetVelocity(m_direction);
-				instance->SetCurveDistanceScaler(1.0f);
-				instance->SetInnerRadiusAngle(45);*/
+			
 		}
 	}
 
@@ -2334,16 +2310,11 @@ void Character::ActionBoost::Update(std::weak_ptr<Character>& owner)
 
 	if (spOwner->m_spAnimator->IsAnimationEnd())
 	{
-		//if (spOwner->m_isGround)
 		{
 			spOwner->ChangeActionState(std::make_shared<ActionBoostEnd>());
 			return;
 		}
-		/*else
-		{
-			spOwner->ChangeActionState(std::make_shared<ActionBoostNow>());
-			return;
-		}*/
+	
 
 	}
 
@@ -3619,14 +3590,13 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 	}
 
 
-	//敵が一定範囲内なら敵のほうに向いて敵に
 	auto target = spOwner->m_wpCharacterTarget.lock();
 	if (target)
 	{
 		float dt = KdFPSController::GetInstance().GetDeltaTime();
-		Math::Vector3 targetPos = target->GetCorrectionMatrix().Translation() + target->GetMatrix().Translation();
+		Math::Vector3 targetPos =( target->GetCorrectionMatrix() * target->GetMatrix()).Translation();
 		Math::Vector3 desired = targetPos - (spOwner->GetCorrectionMatrix() * spOwner->GetMatrix()).Translation();
-		if (desired.LengthSquared() < INNER_LENGTH) {
+		if (desired.Length() < INNER_LENGTH) {
 			desired = spOwner->GetMatrix().Backward();
 		}
 		desired.Normalize();
@@ -3635,7 +3605,7 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 
 	//owner.Move(m_speed, m_direction, KdCollider::TypeDamage, true);
 	auto flg =
-	spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround);
+	spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround,false,true,true,false);
 		if (flg) {
 			Application::Instance().m_log.AddLog("FetchSuccess\n");
 		}
@@ -3723,9 +3693,9 @@ void Character::ActionRightAttackMid::Update(std::weak_ptr<Character>& owner)
 	if (target)
 	{
 		float dt = KdFPSController::GetInstance().GetDeltaTime();
-		Math::Vector3 targetPos = target->GetCorrectionMatrix().Translation() + target->GetMatrix().Translation();
+		Math::Vector3 targetPos = (target->GetCorrectionMatrix() * target->GetMatrix()).Translation();
 		Math::Vector3 desired = targetPos - (spOwner->GetCorrectionMatrix() * spOwner->GetMatrix()).Translation();
-		if (desired.LengthSquared() < INNER_LENGTH) {
+		if (desired.Length() < INNER_LENGTH) {
 			desired = spOwner->GetMatrix().Backward();
 		}
 		desired.Normalize();
@@ -3741,7 +3711,7 @@ void Character::ActionRightAttackMid::Update(std::weak_ptr<Character>& owner)
 
 	{
 		auto flg =
-		spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround);
+			spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, true, true, false);
 			if (flg) {
 				Application::Instance().m_log.AddLog("FetchSuccess\n");
 			}
@@ -3819,6 +3789,23 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 		spOwner->ChangeEnableAttack(false);
 		//加算
 		m_durationStiffness += KdFPSController::GetInstance().GetDeltaTime();
+	}
+	else {
+		auto target = spOwner->m_wpCharacterTarget.lock();
+		if (target)
+		{
+			float dt = KdFPSController::GetInstance().GetDeltaTime();
+			Math::Vector3 targetPos = (target->GetCorrectionMatrix() * target->GetMatrix()).Translation();
+			Math::Vector3 desired = targetPos - (spOwner->GetCorrectionMatrix() * spOwner->GetMatrix()).Translation();
+			if (desired.Length() < INNER_LENGTH) {
+				desired = spOwner->GetMatrix().Backward();
+			}
+			desired.Normalize();
+			m_direction = spOwner->GetSmoothedAimDir(desired, dt);
+		}
+
+		spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, true, true, false);
+
 	}
 
 	
@@ -3921,9 +3908,9 @@ void Character::ActionRightAttackSecond::Update(std::weak_ptr<Character>& owner)
 		if (target)
 		{
 			float dt = KdFPSController::GetInstance().GetDeltaTime();
-			Math::Vector3 targetPos = target->GetCorrectionMatrix().Translation() + target->GetMatrix().Translation();
+			Math::Vector3 targetPos = (target->GetCorrectionMatrix() * target->GetMatrix()).Translation();
 			Math::Vector3 desired = targetPos - (spOwner->GetCorrectionMatrix() * spOwner->GetMatrix()).Translation();
-			if (desired.LengthSquared() < INNER_LENGTH) {
+			if (desired.Length() < INNER_LENGTH) {
 				desired = spOwner->GetMatrix().Backward();
 			}
 			desired.Normalize();
@@ -3933,7 +3920,7 @@ void Character::ActionRightAttackSecond::Update(std::weak_ptr<Character>& owner)
 		if (!spOwner->SwordRangeCheck())
 		{
 			auto flg =
-				spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround);
+				spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, true, true, false);
 			if (flg) {
 				Application::Instance().m_log.AddLog("FetchSuccess\n");
 			}
@@ -4036,7 +4023,7 @@ void Character::ActionRightAttackCharge::Update(std::weak_ptr<Character>& owner)
 		if (!spOwner->SwordRangeCheck())
 		{
 			auto flg =
-				spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround);
+				spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, true, true, false);
 			if (flg) {
 				Application::Instance().m_log.AddLog("FetchSuccess\n");
 			}

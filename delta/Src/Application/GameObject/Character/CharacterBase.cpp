@@ -367,7 +367,7 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 	return isHit;
 }
 
-bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool rotate, bool direct, bool step)
+bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool rotate, bool isAttack, bool step)
 {
 	auto direction = dir;
 	direction.Normalize();
@@ -382,7 +382,7 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 
 	auto empty = type;
 
-	bool isDir = direct;
+	isAttack;
 
 	bool isRay = ray;
 
@@ -396,17 +396,21 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 	Math::Vector3 newPos = oldPos + moveVec;
 
 	float len = dir.Length();
-
-	float m_radius = len + 1.5f;
+	float radius = 0.0f;
+	if (!isAttack){
+	 radius =  len + 1.5f;
+	}	else {
+		radius = 1.5f;
+	}
 
 	KdCollider::CollisionResult hit;
 
 	bool isHit = false;
 
-	if (CheckSweptSphere(oldPos, newPos, m_radius, hit))
+	if (CheckSweptSphere(oldPos, newPos, radius, hit))
 	{
 		// 衝突直前の位置にセット
-		pos = hit.m_hitPos + hit.m_hitDir * m_radius;
+		pos = hit.m_hitPos + hit.m_hitDir * radius;
 
 		// スライド移動（壁に沿わせる場合）
 		Math::Vector3 slide = moveVec - (moveVec.Dot(hit.m_hitDir)) * hit.m_hitDir;

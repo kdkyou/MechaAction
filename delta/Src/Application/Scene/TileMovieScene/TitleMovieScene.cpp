@@ -7,12 +7,12 @@
 
 void TitleMovieScene::Init()
 {
-	CurrentSceneCreate("Asset/Data/TitleMovie.scene");
+	CurrentSceneCreate("Asset/Data/Scene/TitleMovie.scene");
 
 	KdShaderManager::Instance().m_StandardShader.SetAlphaDitherEnable(false);
 
 	CameraManager::Instance().EnableChangedCamera(true);
-	CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera.scene");
+	CameraManager::Instance().Setting("Asset/Data/Camera/TitleMovieCamera.scene");
 	
 	UIManager::GetInstance().ListClear();
 	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.2f, false);

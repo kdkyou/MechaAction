@@ -50,7 +50,7 @@ void TitleMovie::Update()
 			if (!m_isFirstAnim)
 			{
 				m_isFirstAnim = true;
-				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
+				CameraManager::Instance().Setting("Asset/Data/Camera/TitleMovieCamera2.scene");
 			}
 		}
 		
@@ -67,7 +67,7 @@ void TitleMovie::Update()
 				m_durationWait = 0.0f;
 				m_durationMove = 0.0f;
 				m_type = ThreetoFour;
-				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera4.scene");
+				CameraManager::Instance().Setting("Asset/Data/Camera/TitleMovieCamera4.scene");
 				UIManager::GetInstance().SceneUIAdd("Asset/Data/UI/SystemUI.scene");
 				if (m_spAnimator) {
 				m_spAnimator->SetAnimation(m_spModel->GetAnimation(m_animPath), 10.0f, false,false);
@@ -86,7 +86,7 @@ void TitleMovie::Update()
 			if (!m_isSecondAnim)
 			{
 				m_isSecondAnim = true;
-				CameraManager::Instance().Setting("Asset/Data/TitleMovieCamera2.scene");
+				CameraManager::Instance().Setting("Asset/Data/Camera/TitleMovieCamera2.scene");
 
 				if (!m_isThurster) {
 					m_isThurster = true;

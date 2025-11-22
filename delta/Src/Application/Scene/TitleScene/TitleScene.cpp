@@ -48,17 +48,16 @@ void TitleScene::Init()
 	KdGameObjectFactory::Instance().RegisterWeaponBase<Sowrd>("Sowrd");
 	KdGameObjectFactory::Instance().RegisterWeaponBase<Shield>("Shield");
 
-	CurrentSceneCreate("Asset/Data/Title.scene");
+	CurrentSceneCreate("Asset/Data/Scene/Title.scene");
 
 	CameraManager::Instance().SetNextType(CameraManager::CameraType:: None);
 	CameraManager::Instance().EnableChangedCamera(false);
-	CameraManager::Instance().Setting("Asset/Data/TitleCamera.scene");
+	CameraManager::Instance().Setting("Asset/Data/Camera/TitleCamera.scene");
 	CameraManager::Instance().EnableChangedCamera(true);
 
 	RenderSetting::GetInstance().RenderLoad("Asset/Data/Render/Title.render");
 
 	UIManager::GetInstance().SceneUICreate("Asset/Data/UI/TitleUI.scene");
-
 
 	m_once = false;
 

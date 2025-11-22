@@ -45,14 +45,14 @@ void main(uint3 DTid : SV_DispatchThreadID)
 		float rz = (Rand01(seedBase + 47u) - 0.5f) * g_spawnRange.z;
 		rz = clamp(rz, -1, 1);
 
-		float size = 1.0f + Rand01(seedBase + 59u) * 5.0f;
+		float size = 1.0f + Rand01(seedBase + 59u) * 2.0f;
 		float life = 1.0f + Rand01(seedBase + 31u) * 4.0f;
 				
 		
 		// リスポーン
 		g_Particles[id].pos = g_targetPos;
 		g_Particles[id].vel = float3(rx + g_gravity.x, ry, rz );
-		g_Particles[id].life = 0.15f * life;
+		g_Particles[id].life = 0.105f * life;
 		g_Particles[id].size =  0.0021f*size;
 		g_Particles[id].color = float4(1.0f, 0.0f, 0.0f, 1.0f);
 	}

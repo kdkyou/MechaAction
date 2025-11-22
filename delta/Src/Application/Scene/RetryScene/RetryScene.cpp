@@ -7,7 +7,6 @@
 void RetryScene::Init()
 {
 	KdAudioManager::Instance().StopAllSound();
-//	RenderSetting::GetInstance().RenderLoad("Asset/Data/Render/Retry.render");
 	CameraManager::Instance().SetNextType(CameraManager::CameraType::None);
 	UIManager::GetInstance().SceneUICreate();
 }
