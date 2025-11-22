@@ -123,30 +123,29 @@ void Character::Update()
 
 	if (IsLStick())
 	{
-		m_transAC = !m_transAC;
-		if (m_transAC) {
-			//ブルーム
-			//KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.15f);
-			// リムライト
-			m_limEnable = true;
-
-			m_transAC = true;
-
-			m_speedMag = 1.5f;
-		}
-		else {
-			//ブルーム
-			//KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.55f);
-			// リムライト
-			m_limEnable = false;
-
-			m_transAC = false;
-
-			m_speedMag = 1.0f;
-		}
-		
+		m_transAC = !m_transAC;	
 	}
 
+	if (m_transAC) {
+		//ブルーム
+		//KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.15f);
+		// リムライト
+		m_limEnable = true;
+
+		m_transAC = true;
+
+		m_speedMag = TRANS_SPEED;
+	}
+	else {
+		//ブルーム
+		//KdShaderManager::Instance().m_postProcessShader.SetBrightThreshold(0.55f);
+		// リムライト
+		m_limEnable = false;
+
+		m_transAC = false;
+
+		m_speedMag = NORMAL_SPEED;
+	}
 
 
 
@@ -181,11 +180,11 @@ void Character::Update()
 	Application::Instance().m_log.AddLog("PlayerGravity:%.2f\n",m_gravity);
 
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
-	LockOn();
+	UpdateCollision();
 
 	CreatePolygon();
 
-	UpdateCollision();
+	LockOn();
 
 	UIManager::GetInstance().SetPlayerHP((int)m_hp);
 
@@ -264,6 +263,7 @@ void Character::DrawParticle()
 		mat = pNodeMat * m_mWorld;
 	}
 
+	
 	KdShaderManager::Instance().m_particleShader.SetCamRightUp(camRight, camUp, mat);
 
 	KdShaderManager::Instance().m_particleShader.Draw();
@@ -481,7 +481,7 @@ void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 
 		//角度求める(でも残念ながらラジアン角)11
 		float ang = DirectX::XMConvertToDegrees(acos(d));
-
+		
 		//内積から角度を求めて少しでも角度が変わったら
 		//ゆっくり回転するようにする
 		if (ang >= 0.1f)
@@ -660,6 +660,130 @@ void Character::LockOn()
 
 }
 
+void Character::LockOn(bool force)
+{
+	KdCollider::SphereInfo sphereInfo;
+
+	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 3.5f, 0);
+	sphereInfo.m_sphere.Radius = 600.0f;
+	sphereInfo.m_type = KdCollider::TypeDamage;
+	
+	m_wpCharacterTarget.reset();
+	CameraManager::Instance().ResetMultiLocks();
+	
+	// 検索を間引き（頻繁な毎フレーム検索を防ぐ）
+	float dt = KdFPSController::GetInstance().GetDeltaTime();
+	if (!force)
+	{
+		m_lockOnFindTimer -= dt;
+		// タイマーが残っていて既にターゲットが有効なら検索スキップ
+		if (m_lockOnFindTimer > 0.0f && m_wpCharacterTarget.lock())
+		{
+			return;
+		}
+	}
+	
+	// 次回検索までの待ち時間をリセット
+	m_lockOnFindTimer = m_lockOnFindInterval;
+	
+	// 検索開始時は既存のターゲット/ロックをクリアして再構築
+	m_wpCharacterTarget.reset();
+	CameraManager::Instance().ResetMultiLocks();
+	
+	std::vector<std::shared_ptr<CameraManager::LockTargetInfo>> vec;
+	// ②HIT対象オブジェクトに総当たり
+	for (auto& obj : SceneManager::Instance().GetEnemyList())
+	{
+		if (obj->IsDestroy() == true)
+		{
+			continue;
+		}
+
+
+		if (obj->Intersects(sphereInfo, nullptr))
+		{
+			std::shared_ptr<CameraManager::LockTargetInfo> info = std::make_shared<CameraManager::LockTargetInfo>();
+			auto targetPos = obj->GetMatrix().Translation();
+			targetPos.y = 0.0f;
+			auto pos = m_mWorld.Translation();
+			pos.y = 0.0f;
+			float distance = (targetPos - pos).Length();
+
+			auto& camMat = CameraManager::Instance().GetCurrentCamera().lock()->GetMatrix();
+
+			if (SearchDetect(targetPos, camMat, 60) == false) { continue; }
+
+			auto vect = targetPos - pos;
+			vect.Normalize();
+			if (SeaarchObstacle(pos, vect, distance) == false) { continue; }
+			info->wpLockTarget = obj;
+			info->distance = distance;
+			vec.push_back(info);
+		}
+	}
+
+	std::sort(vec.begin(), vec.end());
+	
+	if (vec.empty() == false)
+	{
+
+		CameraManager::Instance().SetLockTarget(vec[0]->wpLockTarget.lock());
+		auto dist = vec[0]->distance;
+		m_wpCharacterTarget = vec[0]->wpLockTarget;
+		// 新しいターゲットをキャッシュ
+		// スムース初期値はターゲット方向にしてスナップを防ぐ
+		auto newTarget = vec[0]->wpLockTarget.lock();
+		if (newTarget)
+		{
+			auto targetPos = newTarget->GetMatrix().Translation();
+			Math::Vector3 p = m_mWorld.Translation();
+			p.y = 0.0f; targetPos.y = 0.0f;
+			Math::Vector3 dir = targetPos - p;
+			dir.Normalize();
+			if (dir.LengthSquared() > 1e-6f) m_aimSmoothedDir = dir;
+		}
+		m_wpCharacterTarget = vec[0]->wpLockTarget;
+	}
+
+}
+
+const Math::Vector3& Character::GetSmoothedAimDir(const Math::Vector3& desiredDir, float dt)
+{
+	// 無効な入力なら現状維持（微小ならノイズ防止）
+	if (desiredDir.LengthSquared() < 1e-6f) { return m_aimSmoothedDir; }
+
+	Math::Vector3 targetVec = desiredDir;
+	targetVec.Normalize();
+
+	// 指数移動平均ライクに lerp 係数を dt ベースで決める
+	const float k = m_aimSmoothSpeed;
+	float alpha = 1.0f - std::expf(-k * dt);
+	if (alpha < 0.0f) alpha = 0.0f;
+	if (alpha > 1.0f) alpha = 1.0f;
+
+	Math::Vector3 next = Math::Vector3::Lerp(m_aimSmoothedDir, targetVec, alpha);
+	if (next.LengthSquared() > 1e-6f) next.Normalize();
+
+	// 回転速度制限
+	float dot = m_aimSmoothedDir.Dot(next);
+	if (dot > 1.0f) dot = 1.0f;
+	if (dot < -1.0f) dot = -1.0f;
+	float angleRad = std::acos(dot); // 0..pi
+	const float maxDeltaRad = (m_aimMaxTurnDegPerSec * (3.14159265f / 180.0f)) * dt;
+	if (angleRad > maxDeltaRad && angleRad > 1e-6f)
+	{
+		float t = maxDeltaRad / angleRad;
+		m_aimSmoothedDir = Math::Vector3::Lerp(m_aimSmoothedDir, next, t);
+		if (m_aimSmoothedDir.LengthSquared() > 1e-6f) m_aimSmoothedDir.Normalize();
+	}
+	else
+	{
+		m_aimSmoothedDir = next;
+	}
+
+	return m_aimSmoothedDir;
+}
+
 bool Character::IsIgnoreGravityState() const
 {
 	// 判定
@@ -737,8 +861,6 @@ void Character::CreatePolygon()
 	{
 		auto pNodeMat = pNode->m_worldTransform;
 
-		m_particles.clear();
-
 		pos = (pNodeMat * m_mWorld).Translation();
 		vec = (pNodeMat * m_mWorld).Forward();
 	}
@@ -770,6 +892,12 @@ const bool Character::SwordRangeCheck()
 
 void Character::OverTrans(const std::string& nowAnimName,const float animProgress)
 {
+	if (m_hp <= 0) { 
+		m_limEnable = true;
+		m_transAC = false;
+		m_speedMag = NORMAL_SPEED;
+		return; 
+	}
 	m_hp--;
 	
 	std::shared_ptr<TransAC> trans = std::make_shared<TransAC>();
@@ -790,7 +918,7 @@ void Character::InitTrail()
 	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
 	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
 	newObj->trail->SetWidth(1.6f);
-	newObj->trail->SetLength(20);
+	newObj->trail->SetLength(30);
 	newObj->trail->ClearPoints();
 	m_spTrails.push_back(newObj);
 
@@ -802,7 +930,7 @@ void Character::InitTrail()
 	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
 	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
 	newObj->trail->SetWidth(1.6f);
-	newObj->trail->SetLength(20);
+	newObj->trail->SetLength(30);
 	newObj->trail->ClearPoints();
 	m_spTrails.push_back(newObj);
 
@@ -814,7 +942,7 @@ void Character::InitTrail()
 	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
 	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
 	newObj->trail->SetWidth(1.7f);
-	newObj->trail->SetLength(20);
+	newObj->trail->SetLength(30);
 	newObj->trail->ClearPoints();
 	m_spTrails.push_back(newObj);
 
@@ -826,7 +954,7 @@ void Character::InitTrail()
 	//	trail->SetColor(Math::Color{ 3.0f,3.0f,3.0f });
 	newObj->trail->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
 	newObj->trail->SetWidth(1.4f);
-	newObj->trail->SetLength(20);
+	newObj->trail->SetLength(30);
 	newObj->trail->ClearPoints();
 	m_spTrails.push_back(newObj);
 
@@ -1751,7 +1879,13 @@ void Character::ActionMove::Enter(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	if (CameraManager::Instance().GetNowType() != CameraManager::Lock)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 10.0f, true, false);
+		if (!spOwner->m_transAC)
+		{
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Walk"), 10.0f, true, false);
+		}
+		else {
+			spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 10.0f, true, false);
+		}
 	}
 	else {
 		Checkkey(owner);
@@ -3489,9 +3623,14 @@ void Character::ActionRightAttack::Update(std::weak_ptr<Character>& owner)
 	auto target = spOwner->m_wpCharacterTarget.lock();
 	if (target)
 	{
+		float dt = KdFPSController::GetInstance().GetDeltaTime();
 		Math::Vector3 targetPos = target->GetCorrectionMatrix().Translation() + target->GetMatrix().Translation();
-		m_direction = targetPos - spOwner->GetPos();
-		m_direction.Normalize();
+		Math::Vector3 desired = targetPos - (spOwner->GetCorrectionMatrix() * spOwner->GetMatrix()).Translation();
+		if (desired.LengthSquared() < INNER_LENGTH) {
+			desired = spOwner->GetMatrix().Backward();
+		}
+		desired.Normalize();
+		m_direction = spOwner->GetSmoothedAimDir(desired, dt);
 	}
 
 	//owner.Move(m_speed, m_direction, KdCollider::TypeDamage, true);
@@ -3577,16 +3716,22 @@ void Character::ActionRightAttackMid::Update(std::weak_ptr<Character>& owner)
 
 	std::shared_ptr<Character> spOwner = owner.lock();
 	
-	spOwner->ChangeEnableRightAttack(true);
-
+	
 	//敵が一定範囲内なら敵のほうに向いて敵に
+	
 	auto target = spOwner->m_wpCharacterTarget.lock();
 	if (target)
 	{
+		float dt = KdFPSController::GetInstance().GetDeltaTime();
 		Math::Vector3 targetPos = target->GetCorrectionMatrix().Translation() + target->GetMatrix().Translation();
-		m_direction = targetPos - spOwner->GetPos();
-		m_direction.Normalize();
+		Math::Vector3 desired = targetPos - (spOwner->GetCorrectionMatrix() * spOwner->GetMatrix()).Translation();
+		if (desired.LengthSquared() < INNER_LENGTH) {
+			desired = spOwner->GetMatrix().Backward();
+		}
+		desired.Normalize();
+		m_direction = spOwner->GetSmoothedAimDir(desired, dt);
 	}
+		
 
 	if (spOwner->SwordRangeCheck()) {
 		spOwner->ChangeActionState(std::make_shared<ActionRightAttackAf>());
@@ -3664,22 +3809,6 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	
 	Checkkey(owner);
-
-	//移動
-	/*if (m_durationStiffness <= m_stiffnessTime / 8)
-	{
-		auto flg =
-		spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround);
-			if (flg) {
-				Application::Instance().m_log.AddLog("FetchSuccess\n");
-			}
-			else {
-				Application::Instance().m_log.AddLog("Move\n");
-			}
-
-			spOwner->ChangeEnableRightAttack(true);
-
-	}*/
 
 	//エフェクト
 	EffectUpdate(owner);
@@ -3787,14 +3916,19 @@ void Character::ActionRightAttackSecond::Update(std::weak_ptr<Character>& owner)
 	//移動
 	if (!spOwner->m_spAnimator->IsAnimationEnd())
 	{
+		//敵が一定範囲内なら敵のほうに向いて敵に
 		auto target = spOwner->m_wpCharacterTarget.lock();
 		if (target)
 		{
+			float dt = KdFPSController::GetInstance().GetDeltaTime();
 			Math::Vector3 targetPos = target->GetCorrectionMatrix().Translation() + target->GetMatrix().Translation();
-			m_direction = targetPos - spOwner->GetPos();
-			m_direction.Normalize();
+			Math::Vector3 desired = targetPos - (spOwner->GetCorrectionMatrix() * spOwner->GetMatrix()).Translation();
+			if (desired.LengthSquared() < INNER_LENGTH) {
+				desired = spOwner->GetMatrix().Backward();
+			}
+			desired.Normalize();
+			m_direction = spOwner->GetSmoothedAimDir(desired, dt);
 		}
-
 
 		if (!spOwner->SwordRangeCheck())
 		{

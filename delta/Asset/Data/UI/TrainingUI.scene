@@ -26,7 +26,7 @@
 		"DrawWidth": 330,
 		"IsTarget": false,
 		"Name": "DrawUI",
-		"Path": "Asset/Textures/Text/KeyConfig.png",
+		"Path": "Asset/Textures/Text/KeyConfig2.png",
 		"Pivot": [ 0.5, 0.5 ],
 		"Pos": [ 470.0, 230.0, 0.0 ],
 		"RectHeight": 720,

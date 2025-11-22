@@ -25,7 +25,7 @@ bool ParticleShader::Init(UINT maxParticles)
 		p.vel = { 0,0,0 };
 		p.life = 0.0f;
 		p.size = 0.1f;
-		p.color = { 0,1,1,1 };
+		p.color = { 1,1,1,0 };
 	}
 	srd.pSysMem = init.data();
 
@@ -160,11 +160,6 @@ void ParticleShader::Draw()
 
 	ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	// シェーダー設定
-	ctx->VSSetShader(m_VS, nullptr, 0);
-	ctx->GSSetShader(m_GS, nullptr, 0);
-	ctx->PSSetShader(m_PS, nullptr, 0);
-
 	// バッファ書き込み
 	if (m_dirtyCBObj)
 	{
@@ -290,7 +285,7 @@ void ParticleShader::BeginParticle()
 	}
 
 	KdShaderManager::Instance().ChangeSamplerState(KdSamplerState::Anisotropic_Wrap);
-	KdShaderManager::Instance().ChangeDepthStencilState(KdDepthStencilState::ZDisable);
+	KdShaderManager::Instance().ChangeDepthStencilState(KdDepthStencilState::ZEnable);
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
 	KdShaderManager::Instance().ChangeRasterizerState(KdRasterizerState::CullNone);
 }

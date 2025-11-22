@@ -3,10 +3,10 @@
 
 StructuredBuffer<Particle> g_Particles : register(t0);
 
-[maxvertexcount(4)]
+[maxvertexcount(6)]
 void main(
 	point VSOutput In[1],
-	inout LineStream<GSOutput> stream
+	inout TriangleStream<GSOutput> stream
 )
 {
 	// 中心点の取得
@@ -27,6 +27,13 @@ void main(
         c - right - up,
         c + right - up
 	};
+	//float4 corner[4] =
+	//{
+	//	c - right + up,
+ //       c + right - up,
+	//	c - right - up,
+ //       c + right + up
+	//};
 
 	float2 uv[4] =
 	{
@@ -36,14 +43,24 @@ void main(
 		float2(1, 1)
 	};
 
-	
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		GSOutput Out = In[0];
-		float4 clip = corner[i];
 	
-		Out.Pos = clip;
+		Out.Pos = corner[i];
 		Out.UV = uv[i];
+	//	Out.Color = float4(1.0f, 0.0f, 0.0f, 1.0f);
+		stream.Append(Out);
+	}
+	stream.RestartStrip();
+
+	for(int j = 1; j< 4; j++)
+	{
+		GSOutput Out = In[0];
+	
+		Out.Pos = corner[j];
+		Out.UV = uv[j];
+	//	Out.Color = float4(0.0f, 1.0f, 0.0f, 1.0f);
 		stream.Append(Out);
 	}
 	stream.RestartStrip();

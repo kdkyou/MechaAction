@@ -16,7 +16,7 @@ void KdShaderManager::Init()
 	m_spriteShader.Init();
 	m_StandardShader.Init();
 	m_postProcessShader.Init();
-	m_particleShader.Init(1000);
+	m_particleShader.Init(10000);
 
 	//============================================
 	// 定数バッファ

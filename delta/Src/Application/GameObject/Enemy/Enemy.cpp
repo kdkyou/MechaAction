@@ -161,43 +161,63 @@ void Enemy::OnHit()
 
 void Enemy::UpdateRotate(const Math::Vector3& srcMoveVec)
 {
-	auto nowVec = GetMatrix().Backward();
+	// 水平面のみで処理
+	Math::Vector3 targetVec = srcMoveVec;
+	targetVec.y = 0.0f;
+	if (targetVec.LengthSquared() < 1e-6f) { return; }
+	targetVec.Normalize();
 
-	//内積を使って回転する角度を求める
-	float d = nowVec.Dot(srcMoveVec);
-	//dの中にはコサインΘが入っている
-
-	//角度求める
-	float ang = DirectX::XMConvertToDegrees(acos(d));
-
-	if (ang >= 0.1f)
+	// ターゲットとの距離（ワールド）
+	auto wpT = m_wpCharacterTarget.lock();
+	float distance = FLT_MAX;
+	if (wpT)
 	{
-		if (ang > m_clampSize)
-		{
-			ang = m_clampSize;
-		}
-
-		Math::Vector3 c = srcMoveVec.Cross(nowVec);
-
-		if (c.y >= 0)
-		{
-			//右回転
-			m_rot.y -= ang;
-		}
-		else
-		{
-			//左回転
-			m_rot.y += ang;
-		}
+		auto dif = GetMatrix().Translation() - wpT->GetMatrix().Translation();
+		distance = std::sqrt(dif.LengthSquared());
 	}
 
-	if (m_rot.y > 360)
+	// 目標ヨー角（ラジアン）：atan2(x,z)
+	float desiredYaw = std::atan2(targetVec.x, targetVec.z);
+
+	// 現在ヨー角（ラジアン）
+	float currentYaw = DirectX::XMConvertToRadians(m_rot.y);
+
+	// 差分を [-PI, PI] に正規化
+	float delta = desiredYaw - currentYaw;
+	while (delta > DirectX::XM_PI) delta -= DirectX::XM_2PI;
+	while (delta < -DirectX::XM_PI) delta += DirectX::XM_2PI;
+
+	// フレームデルタ
+	float dt = KdFPSController::GetInstance().GetDeltaTime();
+
+	// 最大回転速度（度/秒）と近距離での抑制
+	const float maxDegPerSec = 360.0f;	// 調整可
+	const float closeDist = 3.0f;		// この距離以下で回転抑制（調整可）
+	float speedFactor = 1.0f;
+	if (distance != FLT_MAX && distance < closeDist)
 	{
-		m_rot.y -= 360;
+		// 距離が小さいほど遅くする（下限0.1）
+		speedFactor = std::max(0.1f, distance / closeDist);
 	}
-	else if (m_rot.y < 0)
+
+	// 最大ラジアン変化量（このフレーム）
+	float maxDelta = DirectX::XMConvertToRadians(maxDegPerSec * speedFactor) * dt;
+
+	// 角差を制限して滑らかに回す
+	if (std::abs(delta) > maxDelta)
 	{
-		m_rot.y += 360;
+		delta = (delta > 0.0f) ? maxDelta : -maxDelta;
+	}
+
+	currentYaw += delta;
+	m_rot.y = DirectX::XMConvertToDegrees(currentYaw);
+
+	// 角度正規化（0..360）
+	if (m_rot.y > 360.0f) {
+		m_rot.y -= 360.0f;
+	}
+	else if (m_rot.y < 0.0f) {
+		m_rot.y += 360.0f;
 	}
 }
 

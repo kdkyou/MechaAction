@@ -62,54 +62,46 @@ void TrackingCamera::PostUpdate()
 		CameraManager::Instance().EnableChangedCamera(true);
 	}
 	
-	float margin = 0.21f;
-
+	
 	// 画面範囲外判定
 	CheckScreenPull();
 	
 	Math::Vector3 pos = {};
+	float dt = KdFPSController::GetInstance().GetDeltaTime();
+	// 補正のスムーズ化
+	// - 範囲外時は秒単位の速度で補正（瞬間移動にならないように）
+	// - 範囲内は通常の速度（m_speed）を DeltaTime でスケール
+	const float pullSpeedPerSecond = 18.0f;	// 範囲外補正の速さ（秒あたりのLerp係数換算）
+	const float maxPullLerp = 0.89f;			// Lerp係数の上限（安全対策）
+
 	if (m_isPull)
 	{
-		
 		pos = m_localPos;
 		m_mLocalPos = Math::Matrix::CreateTranslation(pos);
 
-	m_pos = Math::Vector3::Lerp(
-		m_pos,
-		targetPos,
-		margin
-		);
+		float lerpFactor = pullSpeedPerSecond * dt;
+		lerpFactor = (lerpFactor > maxPullLerp) ? maxPullLerp : lerpFactor;
 
+		m_pos = Math::Vector3::Lerp(
+			m_pos,
+			targetPos,
+			lerpFactor
+		);
 	}
 	else {
-		//m_speed = 5.0f;
 		pos = m_localPos;
-	m_mLocalPos = Math::Matrix::CreateTranslation(pos);
+		m_mLocalPos = Math::Matrix::CreateTranslation(pos);
 
-	m_pos = Math::Vector3::Lerp(
-		m_pos,
-		targetPos,
-		m_speed*KdFPSController::GetInstance().GetDeltaTime()			//進行速度*デルタタイム
+		// 通常時は速度にデルタタイムを掛けた滑らかな補間
+		float lerpFactor = m_speed * dt;
+		if (lerpFactor > 1.0f) lerpFactor = 1.0f;
+
+		m_pos = Math::Vector3::Lerp(
+			m_pos,
+			targetPos,
+			lerpFactor			// 進行速度*デルタタイム
 		);
 	}
-		// 補正処理
-	//	m_speed = 10.0f;
-	//	m_mLocalPos = Math::Matrix::CreateTranslation(m_basePos);
-	//}
-	//else {
-	//	m_speed = 5.0f;
-	//	m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
-	//}
-
-	/*auto targetVec = CameraManager::Instance().GetLocalDirectionTo(targetPos);
-	if (targetVec.y < 0 || targetVec.x< -0.9f || targetVec.x > 1.0f) {
-		m_speed = 10.0f;
-		m_mLocalPos = Math::Matrix::CreateTranslation(m_basePos);
-	}
-	else {
-		m_speed = 5.0f;
-		m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
-	}*/
 
 	UpdateRotateByMouse();
 	m_mRotation = GetRotationMatrix();
@@ -131,27 +123,63 @@ void TrackingCamera::Editor_ImGui()
 
 void TrackingCamera::CheckScreenPull()
 {
+	// ヒステリシス（状態反転に必要な継続時間）を導入して
+		// 「範囲外→範囲内」の頻繁な切り替えを防ぐ。
+	static float s_stateTimer = 0.0f;
+	const float hysteresisTime = 0.12f; // 秒、継続して状態が変化してから反映する
+
 	auto _spTarget = m_wpTarget.lock();
+	if (_spTarget == nullptr) return;
 	auto targetPos = _spTarget->GetPos();
 
-	auto viewProjMat = m_spCamera->GetCameraViewMatrix() * m_spCamera->GetProjMatrix();
-	//Math::Vector4 clipPos = DirectX::XMVector4Transform(targetPos,viewProjMat);
-	//clipPos /= clipPos.w; // NDC (-1~1)
 	Math::Vector3 clipPos = {};
 	m_spCamera->ConvertWorldToScreenDetail(targetPos, clipPos);
 
-	if (clipPos.x > 450.0f || clipPos.x < -350.0f || clipPos.y < -320.0f)
+	// 閾値（外側と内側でズレを持たせる）
+	const float rightOuter = 430.0f;
+	const float rightInner = 300.0f;
+	const float leftOuter = -330.0f;
+	const float leftInner = -300.0f;
+	const float bottomOuter = -300.0f;
+	const float bottomInner = -290.0f;
+	// 上方向閾値が必要ならここに追加（現在の実装では下方向だけ使用されているため省略）
+
+	bool wantPull = false;
+
+	// 範囲外判定（外側閾値）
+	if (clipPos.x > rightOuter || clipPos.x < leftOuter || clipPos.y < bottomOuter)
 	{
-		m_isPull = true;
+		wantPull = true;
+	}
+	// 範囲内判定（内側閾値）
+	else if (clipPos.x < rightInner && clipPos.x > leftInner && clipPos.y > bottomInner)
+	{
+		wantPull = false;
+	}
+	else
+	{
+		// どちらでもない（境界帯） -> 現在の状態を維持したいので wantPull = m_isPull とする
+		wantPull = m_isPull;
 	}
 
-	if (clipPos.x <300.0f && clipPos.x > -300.0f && clipPos.y > -300.0f)
+	// タイマー方式で安定化: 新しい状態が一定時間続いたら反映
+	if (wantPull != m_isPull)
 	{
-		m_isPull = false;
+		s_stateTimer += KdFPSController::GetInstance().GetDeltaTime();
+		if (s_stateTimer >= hysteresisTime)
+		{
+			m_isPull = wantPull;
+			s_stateTimer = 0.0f;
+		}
 	}
-	
-	
-	Application::Instance().m_log.AddLog("ClipPos X:%.2f,Y:%.2f\n", clipPos.x, clipPos.y);
+	else
+	{
+		// 状態が同じならタイマーをリセット
+		s_stateTimer = 0.0f;
+	}
+
+	Application::Instance().m_log.AddLog("ClipPos X:%.2f,Y:%.2f, isPull:%d\n", clipPos.x, clipPos.y, (int)m_isPull);
+
 
 }
 

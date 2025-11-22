@@ -4,6 +4,10 @@
 
 class CameraBase;
 
+#define NORMAL_SPEED 1.0f
+#define TRANS_SPEED 1.5f
+#define INNER_LENGTH 11.0f
+
 class Character : public CharacterBase
 {
 public:
@@ -52,7 +56,6 @@ private:
 	const bool IsRStick();
 	const bool IsLStick();
 
-	//bool Move(float speed,const Math::Vector3& dir,const Math::Vector3& step={}, const KdCollider::Type type=KdCollider::TypeGround, bool ray = true, bool sphere = true, bool camera = true);
 
 	// キャラクターの回転行列を作成する
 	void UpdateRotate(const Math::Vector3& srcMoveVec) override;
@@ -60,7 +63,12 @@ private:
 	void UpdateCollision()override;
 
 	void LockOn();
-
+	// LockOn を間引くためのフラグ/タイマー（LockOn の頻度制御）
+	void LockOn(bool force /*= false*/);
+	
+	// Auto-aim smoothing: desiredDir を渡して毎フレーム呼び、滑らかな向きを返す
+	const Math::Vector3& GetSmoothedAimDir(const Math::Vector3 & desiredDir, float dt);
+	
 	void ResetGravity() { m_gravity = 0.0f; }
 
 	bool IsIgnoreGravityState()const;
@@ -107,7 +115,7 @@ private:
 	Math::Vector3								m_stepHigh = { 0.0f,0.2f,0.0f };
 
 	//パラメータ
-	float										m_speedMag = 1.0f;	//スピードの掛け算
+	float										m_speedMag = NORMAL_SPEED;	//スピードの掛け算
 	float										m_stopSpeed = 0.0f;
 	float										m_walkSpeed = 65.0f;
 	float										m_jumpSpeed = 40.0f;
@@ -118,6 +126,15 @@ private:
 	float										m_hitedSpeed = 30.0f;
 
 	float                                       m_boostFloatMeg = 0.6f;
+
+	// LockOn 関連タイマー
+	float m_lockOnFindTimer = 0.0f;
+	float m_lockOnFindInterval = 0.12f; // 0.08～0.25 が目安
+
+	// エイムの滑らかさと回転上限
+	Math::Vector3 m_aimSmoothedDir = Math::Vector3::Backward;
+	float m_aimSmoothSpeed = 12.0f;			// 追従速さ（調整）
+	float m_aimMaxTurnDegPerSec = 720.0f;	// 1秒当たりの最大回転角（度）
 
 	// デバッグ用
 	Math::Color color = { 0,1,0,1 };
