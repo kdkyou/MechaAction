@@ -367,7 +367,7 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 	return isHit;
 }
 
-bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool ray, bool rotate, bool isAttack, bool step)
+bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool fly, bool rotate, bool isAttack, bool step)
 {
 	auto direction = dir;
 	direction.Normalize();
@@ -382,13 +382,16 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 
 	auto empty = type;
 
-	isAttack;
+	bool isRay = fly;
 
-	bool isRay = ray;
-
-	if (step == true)
+	if (step)
 	{
 		pos -= direction * 0.05f;
+	}
+
+	if(fly)
+	{
+		pos += m_correction*1.5f;
 	}
 
 	Math::Vector3 oldPos = pos;
@@ -400,7 +403,7 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 	if (!isAttack){
 	 radius =  len + 1.5f;
 	}	else {
-		radius = 1.5f;
+		radius = 1.0f;
 	}
 
 	KdCollider::CollisionResult hit;
@@ -424,7 +427,12 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 		pos = newPos;
 	}
 
-	if (rotate == true)
+	if (fly)
+	{
+		pos -= m_correction * 1.5f;
+	}
+
+	if (rotate)
 	{
 		UpdateRotate(direction);
 	}

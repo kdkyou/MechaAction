@@ -135,6 +135,7 @@ void Character::Update()
 		m_transAC = true;
 
 		m_speedMag = TRANS_SPEED;
+
 	}
 	else {
 		//ブルーム
@@ -147,6 +148,13 @@ void Character::Update()
 		m_speedMag = NORMAL_SPEED;
 	}
 
+	//　エフェクト
+	if (IsBoostState() || m_transAC) {
+		m_isParticle = true;
+	}
+	else {
+		m_isParticle = false;
+	}
 
 
 	if (spThis)
@@ -182,7 +190,9 @@ void Character::Update()
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
 	UpdateCollision();
 
-	CreatePolygon();
+	if (m_isParticle){
+		CreatePolygon();
+	}
 
 	LockOn();
 
@@ -244,6 +254,7 @@ void Character::DrawUnLit()
 
 void Character::DrawParticle()
 {
+	if (!m_isParticle) { return; }
 	auto& camMat = CameraManager::Instance().GetCurrentCamera().lock()->GetMatrix();
 	auto camRight = camMat.Right();
 	camRight.Normalize();
@@ -777,6 +788,28 @@ bool Character::IsIgnoreGravityState() const
 		return true;
 	}
 
+	return false;
+}
+
+bool Character::IsBoostState() const
+{
+	// 判定
+	if (m_nowAction->GetState() == CharacterStateName::Boost ||
+		m_nowAction->GetState() == CharacterStateName::BoostNow ||
+		m_nowAction->GetState() == CharacterStateName::BoostEnd ||
+		m_nowAction->GetState() == CharacterStateName::BoostDush ||
+		m_nowAction->GetState() == CharacterStateName::BoostDushGuard ||
+		m_nowAction->GetState() == CharacterStateName::BoostFall ||
+		m_nowAction->GetState() == CharacterStateName::BoostFloat ||
+		m_nowAction->GetState() == CharacterStateName::BoostFloatGuard || 
+		m_nowAction->GetState() == CharacterStateName::RightSorwdBef || 
+		m_nowAction->GetState() == CharacterStateName::RightSorwdMid || 
+		m_nowAction->GetState() == CharacterStateName::RightSorwdAf || 
+		m_nowAction->GetState() == CharacterStateName::RightSorwdSeco || 
+		m_nowAction->GetState() == CharacterStateName::RightSorwdCharge 
+		) {
+			return true;
+		}
 	return false;
 }
 
@@ -1524,7 +1557,7 @@ void Character::ActionJump::Update(std::weak_ptr<Character>& owner)
 
 		m_direction.Normalize();
 
-		auto flg = spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
+		auto flg = spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, true, false, false, true);
 		if (flg) {
 			Application::Instance().m_log.AddLog("FetchSuccess\n");
 		}
@@ -1622,7 +1655,7 @@ void Character::ActionJumpShield::Update(std::weak_ptr<Character>& owner)
 			}
 
 			m_direction += Math::Vector3::Up;
-			auto flg = spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
+			auto flg = spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, true, false, false, true);
 			if (flg) {
 				Application::Instance().m_log.AddLog("FetchSuccess\n");
 			}
@@ -3109,7 +3142,7 @@ void Character::ActionBoostFloat::Update(std::weak_ptr<Character>& owner)
 		m_direction.Normalize();
 
 		auto flg =
-		spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
+		spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, true, false, false, true);
 			if (flg) {
 				Application::Instance().m_log.AddLog("FetchSuccess\n");
 			}
@@ -3209,7 +3242,7 @@ void Character::ActionBoostFloatShield::Update(std::weak_ptr<Character>& owner)
 			m_direction.Normalize();
 
 			auto flg =
-				spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, false, false, true);
+				spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround,true, false, false, true);
 			if (flg) {
 				Application::Instance().m_log.AddLog("FetchSuccess\n");
 			}

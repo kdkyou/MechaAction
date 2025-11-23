@@ -73,6 +73,8 @@ private:
 
 	bool IsIgnoreGravityState()const;
 
+	bool IsBoostState()const;
+
 	void WalkSounds();
 
 	void CreatePolygon();
@@ -140,6 +142,7 @@ private:
 	Math::Color color = { 0,1,0,1 };
 
 	bool										m_isWalkSounds =true;
+	bool										m_isParticle = false;
 
 
 
