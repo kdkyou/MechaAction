@@ -32,6 +32,7 @@ public:
 		Math::Vector3 gravity = {};
 		Math::Vector3 targetPos = {};
 		int maxParticles = 0;
+		Math::Color color = { 1,0,0,1 };
 
 		int randomSeed = 0;      // 追加: CPU 側シード
 		Math::Vector3 spawnRange = { 0.0f, 0.0f, 0.0f }; // 追加: 振れ幅
@@ -45,7 +46,7 @@ public:
 	void BeginParticle();
 	void EndParticle();
 
-	void UpdateGPU(float deltaTme, const Math::Vector3& targetPos, const Math::Vector3& Vec);
+	void UpdateGPU(float deltaTme, const Math::Vector3& targetPos, const Math::Vector3& Vec,const Math::Color& color);
 
 	void Draw(const std::vector<Particle>& particles, const Math::Vector3& camRight, const Math::Vector3& camUp, const Math::Matrix& mWorld);
 	void Draw();

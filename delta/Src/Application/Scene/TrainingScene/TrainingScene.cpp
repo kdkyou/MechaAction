@@ -113,6 +113,7 @@ void TrainingScene::Init()
 
 	m_duration = 1.0f;
 	m_once = false;
+
 	
 }
 
@@ -121,6 +122,27 @@ void TrainingScene::Event()
 	if (!m_fade) {
 		m_fade = true;
 		EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Training.enemy");
+	}
+
+	switch (m_trainingState)
+	{
+		case TrainingScene::TrainingState::None:
+		m_trainingState = TrainingScene::TrainingState::WASD;
+	/*	m_voice = KdAudioManager::Instance().Play("Asset/Sounds/Voice/Training/Move.wav", false);
+		m_voice->SetVolume(KdAudioManager::Instance().GetVoiceVolume());*/
+		break;
+		case TrainingScene::TrainingState::WASD:
+		m_trainingState = TrainingScene::TrainingState::Space;
+		break;
+		case TrainingScene::TrainingState::Space:
+		m_trainingState = TrainingScene::TrainingState::Shift;
+		break;
+		case TrainingScene::TrainingState::Shift:
+		m_trainingState = TrainingScene::TrainingState::EnemyLock;
+		break;
+		case TrainingScene::TrainingState::EnemyLock:
+		m_trainingState = TrainingScene::TrainingState::RightAttack;
+		break;
 	}
 
 	auto flg = UIManager::GetInstance().IsFadeComplete();

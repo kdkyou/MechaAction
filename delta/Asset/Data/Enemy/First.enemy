@@ -92,7 +92,7 @@
 		]
 	},
 	{
-		"Correction": [ 0.0, 1.0, 0.0 ],
+		"Correction": [ 0.0, 4.0, 0.0 ],
 		"HP": 200.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\4LegMT\\5LegMT.gltf",
@@ -170,7 +170,7 @@
 		]
 	},
 	{
-		"Correction": [ 0.0, 1.0, 0.0 ],
+		"Correction": [ 0.0, 4.0, 0.0 ],
 		"HP": 200.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\4LegMT\\5LegMT.gltf",

@@ -54,6 +54,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
 		g_Particles[id].vel = float3(rx + g_gravity.x, ry, rz );
 		g_Particles[id].life = 0.105f * life;
 		g_Particles[id].size =  0.0021f*size;
-		g_Particles[id].color = float4(1.0f, 0.0f, 0.0f, 1.0f);
+		g_Particles[id].color = g_color;
 	}
 }

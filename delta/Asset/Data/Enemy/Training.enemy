@@ -1,6 +1,6 @@
 [
 	{
-		"Correction": [ 0.0, 5.0, 0.0 ],
+		"Correction": [ 0.0, 7.0, 0.0 ],
 		"HP": 13000.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\Leg\\Leg.gltf",

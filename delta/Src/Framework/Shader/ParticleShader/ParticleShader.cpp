@@ -308,7 +308,7 @@ void ParticleShader::EndParticle()
 	KdShaderManager::Instance().UndoRasterizerState();
 }
 
-void ParticleShader::UpdateGPU(float deltaTme, const Math::Vector3& targetPos, const Math::Vector3& Vec)
+void ParticleShader::UpdateGPU(float deltaTme, const Math::Vector3& targetPos, const Math::Vector3& Vec, const Math::Color& color)
 {
 	auto ctx = KdDirect3D::Instance().WorkDevContext();
 
@@ -317,6 +317,7 @@ void ParticleShader::UpdateGPU(float deltaTme, const Math::Vector3& targetPos, c
 	m_cbFrame.Work().deltaTime = deltaTme;
 	m_cbFrame.Work().gravity = Vec;
 	m_cbFrame.Work().targetPos = targetPos;
+	m_cbFrame.Work().color = color;
 	m_cbFrame.Work().maxParticles = m_maxParticles;
 
 	// 追加: シードと振れ幅を設定（振れ幅は任意に調整）

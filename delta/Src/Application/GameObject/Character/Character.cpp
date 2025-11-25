@@ -194,7 +194,7 @@ void Character::Update()
 		CreatePolygon();
 	}
 
-	LockOn();
+	LockOn(true);
 
 	UIManager::GetInstance().SetPlayerHP((int)m_hp);
 
@@ -654,15 +654,7 @@ void Character::LockOn()
 
 void Character::LockOn(bool force)
 {
-	KdCollider::SphereInfo sphereInfo;
 
-	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 3.5f, 0);
-	sphereInfo.m_sphere.Radius = 600.0f;
-	sphereInfo.m_type = KdCollider::TypeDamage;
-	
-	m_wpCharacterTarget.reset();
-	CameraManager::Instance().ResetMultiLocks();
-	
 	// 検索を間引き（頻繁な毎フレーム検索を防ぐ）
 	float dt = KdFPSController::GetInstance().GetDeltaTime();
 	if (!force)
@@ -682,6 +674,12 @@ void Character::LockOn(bool force)
 	m_wpCharacterTarget.reset();
 	CameraManager::Instance().ResetMultiLocks();
 	
+	KdCollider::SphereInfo sphereInfo;
+
+	sphereInfo.m_sphere.Center = GetPos() + Math::Vector3(0, 3.5f, 0);
+	sphereInfo.m_sphere.Radius = 600.0f;
+	sphereInfo.m_type = KdCollider::TypeDamage;
+	
 	std::vector<std::shared_ptr<CameraManager::LockTargetInfo>> vec;
 	// ②HIT対象オブジェクトに総当たり
 	for (auto& obj : SceneManager::Instance().GetEnemyList())
@@ -690,7 +688,6 @@ void Character::LockOn(bool force)
 		{
 			continue;
 		}
-
 
 		if (obj->Intersects(sphereInfo, nullptr))
 		{
@@ -719,8 +716,11 @@ void Character::LockOn(bool force)
 	if (vec.empty() == false)
 	{
 
-		CameraManager::Instance().SetLockTarget(vec[0]->wpLockTarget.lock());
-		auto dist = vec[0]->distance;
+		for (int i = 0; i < std::min((int)vec.size(), CameraManager::Instance().GetMultiLockNum()); i++)
+		{
+			CameraManager::Instance().SetMultiLocks(vec[i]->wpLockTarget.lock());
+		}
+
 		m_wpCharacterTarget = vec[0]->wpLockTarget;
 		// 新しいターゲットをキャッシュ
 		// スムース初期値はターゲット方向にしてスナップを防ぐ
@@ -734,7 +734,6 @@ void Character::LockOn(bool force)
 			dir.Normalize();
 			if (dir.LengthSquared() > 1e-6f) m_aimSmoothedDir = dir;
 		}
-		m_wpCharacterTarget = vec[0]->wpLockTarget;
 	}
 
 }
@@ -869,7 +868,7 @@ void Character::CreatePolygon()
 {
 
 	KdModelWork::Node* pNode = m_spModelWork->FindWorkNode("CBP");
-	//m_particles.clear();
+
 	Math::Vector3 pos = {};
 	Math::Vector3 vec = {};
 	if (pNode)
@@ -880,8 +879,13 @@ void Character::CreatePolygon()
 		vec = (pNodeMat * m_mWorld).Forward();
 	}
 	auto delta = KdFPSController::GetInstance().GetDeltaTime();
+	Math::Color color = { 3.0f,0.0f,0.0f,1.0f };
+	if (m_transAC)
+	{
+		color = { 0.0f,3.0f,0.0f,1.0f };
+	}
 
-	KdShaderManager::Instance().m_particleShader.UpdateGPU(delta, pos, vec);
+	KdShaderManager::Instance().m_particleShader.UpdateGPU(delta, pos, vec,color);
 
 }
 
@@ -3824,7 +3828,7 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 		m_durationStiffness += KdFPSController::GetInstance().GetDeltaTime();
 	}
 	else {
-		auto target = spOwner->m_wpCharacterTarget.lock();
+		/*auto target = spOwner->m_wpCharacterTarget.lock();
 		if (target)
 		{
 			float dt = KdFPSController::GetInstance().GetDeltaTime();
@@ -3837,7 +3841,7 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 			m_direction = spOwner->GetSmoothedAimDir(desired, dt);
 		}
 
-		spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, true, true, false);
+		spOwner->MoveSwept(m_speed, m_direction, KdCollider::TypeGround, false, true, true, false);*/
 
 	}
 

@@ -14,6 +14,7 @@ cbuffer cbFrame : register(b0)
 	float3 g_gravity;
 	float3 g_targetPos;
 	int g_maxParticles;
+	float4 g_color;
 	int g_randomSeed;
 	float3 g_spawnRange;
 };

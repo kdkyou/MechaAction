@@ -403,7 +403,7 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 	if (!isAttack){
 	 radius =  len + 1.5f;
 	}	else {
-		radius = 1.0f;
+		radius = 1.3f;
 	}
 
 	KdCollider::CollisionResult hit;
