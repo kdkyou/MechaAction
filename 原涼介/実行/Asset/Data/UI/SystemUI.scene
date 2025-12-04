@@ -1,0 +1,24 @@
+[
+	{
+		"AliveTime": 1.27,
+		"Color": [ 0.2, 1.0, 0.25, 1.0 ],
+		"DrawHeight": 360,
+		"DrawWidth": 640,
+		"FillDirection": 3,
+		"IsTarget": false,
+		"Name": "GuageUI",
+		"Path": "Asset\\Textures\\Text\\System.png",
+		"Pivot": [ 0.5, 0.5 ],
+		"Pos": [ 0.0, -150.0, 0.0 ],
+		"RectHeight": 360,
+		"RectWidth": 640,
+		"Rot": [ 0.0, 0.0, 0.0 ],
+		"Scale": [ 1.0, 1.0, 1.0 ],
+		"UITag": "None",
+		"Ratio": 0.0,
+		"Time": 0.68,
+		"TimeRimit": true,
+		"IncDec": true,
+		"Auto": true
+	}
+]

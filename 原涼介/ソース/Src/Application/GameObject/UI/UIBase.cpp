@@ -1,0 +1,70 @@
+﻿#include "UIBase.h"
+
+void UIBase::Init()
+{
+}
+
+void UIBase::DrawSprite()
+{
+	if (m_spTex)
+	{
+		m_rect = { m_rectX,m_rectY,m_rectWi,m_rectHe };
+
+		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, (int)m_pos.x, (int)m_pos.y, m_drawWi, m_drawHe,&m_rect);
+	}
+}
+
+void UIBase::Editor_ImGui()
+{
+	KdGameObject::Editor_ImGui();
+
+	char buf[64];
+	const char* tag = m_uiTag.c_str();
+	strncpy_s(buf, sizeof(buf), tag,_TRUNCATE);
+	if (ImGui::InputText("Tag", buf, IM_ARRAYSIZE(buf)))
+	{
+		m_uiTag = buf;
+	}
+
+	ImGui::ColorEdit4((const char*)u8"カラー",&m_color.x);
+
+	ImGui::DragInt((const char*)u8"描画範囲：X", &m_drawWi, 1, 0);
+	ImGui::DragInt((const char*)u8"描画範囲：Y", &m_drawHe, 1, 0);
+	ImGui::DragInt((const char*)u8"切り取り位置:X", &m_rectX, 1.0);
+	ImGui::DragInt((const char*)u8"切り取り位置:Y", &m_rectY, 1.0);
+	ImGui::DragInt((const char*)u8"切り取り範囲:X", &m_rectWi, 1.0);
+	ImGui::DragInt((const char*)u8"切り取り範囲:Y", &m_rectHe, 1.0);
+
+	ImGui::DragFloat2((const char*)u8"pivot", &m_pivot.x, 0.01f, 0.0f, 1.0f);
+
+
+if (ImGui::Button((const char*)u8"テクスチャのロード"))
+{
+	std::string filepath;
+	if (EditorData::GetInstance().OpenFileDialog(filepath))
+	{
+		SetTexture(filepath);
+	}
+}
+
+	ImGui::Checkbox((const char*)u8"時間制限ありか", &m_isTimeRimit);
+	ImGui::DragFloat((const char*)u8"描画時間", &m_aliveTime, 0.01f, 0.0f);
+
+
+}
+
+void UIBase::SetTexture(const std::string& path)
+{
+//	if (!m_spTex)
+	{
+		m_spTex = KdAssets::Instance().m_textures.GetData(path);
+
+		m_fileName = path;
+
+		m_drawWi = m_spTex->GetWidth();
+		m_drawHe = m_spTex->GetHeight();
+
+		m_rectWi = m_spTex->GetWidth();
+		m_rectHe = m_spTex->GetHeight();
+	}
+}
