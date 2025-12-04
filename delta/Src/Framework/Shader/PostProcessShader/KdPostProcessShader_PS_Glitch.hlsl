@@ -47,6 +47,7 @@ float4 main(VSOutput In) : SV_Target0
 	
 	if(g_useGrid == 1)
 	{
+		
 		// === グリッド演出 ===
 		float2 gridSize = g_resolution;
 		float2 uvGrid = floor(uv * gridSize) / gridSize;
@@ -58,6 +59,12 @@ float4 main(VSOutput In) : SV_Target0
 
 		color += g_inputTex.Sample(g_ss, uvGrid).rgb;
 		color.rgb *= r; // チカチカ演出
+
+		if (uv.x > g_center.x - 0.4f - g_time && uv.x < g_center.x + 0.4f + g_time &&
+		   uv.y > g_center.y - 0.4f - g_time && uv.y < g_center.y + 0.4f + g_time)
+		{
+			color = g_inputTex.Sample(g_ss, uv).rgb;
+		}
 	}
 	else
 	{

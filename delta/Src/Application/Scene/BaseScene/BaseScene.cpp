@@ -80,7 +80,6 @@ void BaseScene::Update()
 			{
 				obj->Update();
 			}
-		}
 
 		for (auto& obj : m_enemyList)
 		{
@@ -90,6 +89,7 @@ void BaseScene::Update()
 		for (auto& obj : m_objList)
 		{
 			obj->Update();
+		}
 		}
 	}
 
@@ -149,7 +149,7 @@ void BaseScene::PreDraw()
 
 void BaseScene::PreDrawMap()
 {
-	CameraManager::Instance().MapPreDraw();
+	CameraManager::Instance().PreDrawMap();
 }
 
 void BaseScene::Draw()
@@ -211,6 +211,11 @@ void BaseScene::Draw()
 	KdShaderManager::Instance().m_particleShader.BeginParticle();
 	{
 		for (auto& obj : m_playerList)
+		{
+			obj->DrawParticle();
+		}
+		
+		for (auto& obj : m_enemyList)
 		{
 			obj->DrawParticle();
 		}
@@ -289,7 +294,7 @@ void BaseScene::DrawDebug()
 	// デバッグ情報の描画はこの間で行う
 	KdShaderManager::Instance().m_StandardShader.BeginUnLit();
 	{
-		if (EditorData::GetInstance().IsEditorMode() == true)
+		if (EditorData::GetInstance().IsEditorMode() || EditorData::GetInstance().IsDebugMode())
 		{
 
 			for (auto& obj : m_objList)
@@ -432,10 +437,71 @@ void BaseScene::CurrentSceneCreate(const std::string& fileName)
 	}
 }
 
-void BaseScene::EnemyCreate(const std::string& fileName)
+void BaseScene::TerrainCreate(const std::string& fileName)
 {
+	if (fileName == "") { return; }
 
+
+	std::ifstream ifs(fileName);
+	if (ifs.is_open())
+	{
+		m_terrainList.clear();
+
+		nlohmann::json j;
+		ifs >> j;
+		for (auto& json : j)
+		{
+			std::string str;
+
+			KdJsonUtility::GetValue(json, "Name", &str);
+
+			auto obj = KdGameObjectFactory::Instance().CreateGameObject(str);
+			if (obj)
+			{
+				obj->Init();
+				obj->Deserialize(json);
+				auto tag = obj->GetTag();
+				switch (tag)
+				{
+				case KdGameObject::tPlayer:
+					//	AddPlayer(obj);
+					break;
+				case KdGameObject::tEnemy:
+					//	AddEnemy(obj);
+					break;
+				case KdGameObject::tTerrain:
+					AddTerrain(obj);
+					break;
+				case KdGameObject::tUI:
+					break;
+				case KdGameObject::tNone:
+				case KdGameObject::tPlayerAttack:
+				case KdGameObject::tEnemyAttack:
+				default:
+					AddObject(obj);
+					break;
+				}
+
+				bool isTarget = false;
+				KdJsonUtility::GetValue(json, "IsTarget", &isTarget);
+				if (isTarget)
+				{
+					CameraManager::Instance().SetLookTarget(obj);
+				}
+
+			}
+		}
+	}
 }
+
+void BaseScene::PositionReset()
+{
+	for (auto& obj : m_playerList)
+	{
+		obj->ResetPosition();
+	}
+}
+
 
 void BaseScene::Edit_ImGui()
 {
@@ -459,7 +525,7 @@ void BaseScene::Edit_ImGui()
 	static std::string str = "";
 	if (ImGui::BeginCombo("SelectObject", str.empty() ? (const char*)u8"選択してください" : str.c_str()))
 	{
-		for (auto obj : KdGameObjectFactory::Instance().GetRegisterObjectList())
+		for (auto& obj : KdGameObjectFactory::Instance().GetRegisterObjectList())
 		{
 			if (ImGui::Selectable(obj.c_str(), obj == str))
 			{

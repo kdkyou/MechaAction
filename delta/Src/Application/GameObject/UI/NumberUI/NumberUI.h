@@ -31,6 +31,7 @@ public:
 	
 
 	void SetNumber(int num) { m_number = num; }
+	void ChangeColor(const Math::Color& color) { m_color = color; }
 	void SetDigit(int digit) { m_maxDigit = digit; }
 	void SetAlign(AlignType align) { m_align = align; }
 	void SetSpacing(float spacing) { m_spacing = spacing; }

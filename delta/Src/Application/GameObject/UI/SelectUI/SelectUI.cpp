@@ -16,25 +16,26 @@ void SelectUI::Update()
 	auto& key = KeyInput::GetInstance().GetKeyboard();
 	auto& keyTrack = KeyInput::GetInstance().GetKeyboardTracker();
 	auto& pad = KeyInput::GetInstance().GetGamePadState();
+	auto& padTrack = KeyInput::GetInstance().GetPadButtonTracker();
 
 	if (m_type == MoveType::TopDown)
 	{
 
-		if (keyTrack.IsKeyPressed(key.W) || pad.IsLeftThumbStickUp()) {
+		if (keyTrack.IsKeyPressed(key.W) || padTrack.rightStickUp == padTrack.PRESSED) {
 			m_subscript -= 1;
 		}
 
-		if (keyTrack.IsKeyPressed(key.S) || pad.IsLeftThumbStickDown()) {
+		if (keyTrack.IsKeyPressed(key.S) || padTrack.rightStickDown == padTrack.PRESSED) {
 			m_subscript += 1;
 		}
 	}
 	else if (m_type == MoveType::LeftRight)
 	{
-		if (keyTrack.IsKeyPressed(key.D) || pad.IsLeftThumbStickRight()) {
+		if (keyTrack.IsKeyPressed(key.D) || padTrack.rightStickRight == padTrack.PRESSED) {
 			m_subscript += 1;
 		}
 
-		if (keyTrack.IsKeyPressed(key.A) || pad.IsLeftThumbStickLeft()) {
+		if (keyTrack.IsKeyPressed(key.A) || padTrack.rightStickLeft == padTrack.PRESSED) {
 			m_subscript -= 1;
 		}
 	}
@@ -60,11 +61,22 @@ void SelectUI::Update()
 		num++;
 	}
 
+	m_durationTime += m_plamai * KdFPSController::GetInstance().GetDeltaTime();
+
+	if (m_durationTime > m_time || m_durationTime < 0.0f)
+	{
+		m_plamai *= -1;
+	}
+
+	m_alpha = std::clamp(m_durationTime / m_time, m_WorstAlpha, 1.0f);
+
 	if (keyTrack.IsKeyPressed(key.Space)||pad.IsAPressed()) {
 		if (!m_isChangeScene)
 		{
 			m_isChangeScene = true;
-			UIManager::GetInstance().SetFade(Fade::FadeIn, 0.2f, true);
+			UIManager::GetInstance().SetFade(Fade::FadeIn, 0.7f, true);
+			auto& am = KdAudioManager::Instance();
+			am.Play("Asset/Sounds/SE/Enter.wav", false)->SetVolume(am.GetSEVolume());
 		}
 	}
 
@@ -90,7 +102,9 @@ void SelectUI::DrawSprite()
 	if (m_spTex)
 	{
 		m_rect = { 0,0,m_rectWi,m_rectHe };
-		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, (int)m_pos.x + m_selectedPos.x, (int)m_pos.y + m_selectedPos.y, m_drawWi, m_drawHe, &m_rect, &m_color, m_pivot);
+		auto color = m_color;
+		color.w = m_alpha;
+		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, (int)m_pos.x + m_selectedPos.x, (int)m_pos.y + m_selectedPos.y, m_drawWi, m_drawHe, &m_rect, &color, m_pivot);
 	}
 
 	for (auto& obj : m_dataes)

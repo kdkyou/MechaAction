@@ -21,6 +21,8 @@ public:
 
 	void Update();
 
+	void Edit_ImGui();
+
 private:
 
 	std::chrono::system_clock::time_point m_startTime;
@@ -36,6 +38,7 @@ private:
 
 	int			m_fpsCnt = 0;				// FPS計測用カウント
 	DWORD		m_fpsMonitorBeginTime = 0;	// FPS計測開始時間
+
 
 	const int	kSecond = 1000;				// １秒のミリ秒
 

@@ -14,8 +14,6 @@ void Shield::SetModel(const std::string& path)
 		m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Close"), 10.0f,false);
 	}
 
-	//auto tex = KdAssets::Instance().m_textures.GetData("Asset/Textures/GameObject/wave_nml.png");
-	//KdShaderManager::Instance().m_StandardShader.SetWaterNormalTexture(*tex);
 }
 
 void Shield::Editor_ImGui()
@@ -78,10 +76,6 @@ void Shield::ClearShield()
 
 void Shield::Init()
 {
-	
-	Math::Vector3 pos = { 0.0f,5.0f,3.0f };
-	SetPos(pos);
-
 	m_name = "Shield";
 
 	m_spShieldPoly = std::make_shared<ShieldPolygon>();
@@ -92,7 +86,7 @@ void Shield::Init()
 	m_spShieldPoly->SetMaterial(material);
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Shield", m_spShieldPoly, KdCollider::TypeGround+KdCollider::TypeDamage);
+	m_pCollider->RegisterCollisionShape("Shield", m_spShieldPoly, KdCollider::TypeGround | KdCollider::TypeDamage);
 	m_pCollider->SetEnable("Shield",false);
 
 }
@@ -128,7 +122,6 @@ void Shield::Update()
 
 				m_animChanged = true; 
 				m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Open"), 30.0f, false);
-				m_pCollider->SetEnable("Shield",true);
 			}
 		}
 		else
@@ -138,7 +131,6 @@ void Shield::Update()
 
 				m_animChanged = false; 
 				m_spAnimator->SetAnimation(m_spModelWork->GetAnimation("Close"), 30.0f, false);
-				m_pCollider->SetEnable("Shield",false);
 			}
 
 		}
@@ -147,10 +139,12 @@ void Shield::Update()
 	if (m_animChanged == true)
 	{
 		CreateShield();
+		m_pCollider->SetEnable("Shield", true);
 	}
 	else
 	{
 		ClearShield();
+		m_pCollider->SetEnable("Shield", false);
 	}
 
 	m_mWorld = m_mParentAttach * _parentMat;

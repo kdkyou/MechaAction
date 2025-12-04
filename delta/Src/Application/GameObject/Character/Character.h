@@ -7,6 +7,7 @@ class CameraBase;
 #define NORMAL_SPEED 1.0f
 #define TRANS_SPEED 1.5f
 #define INNER_LENGTH 11.0f
+#define DENGERLINE 0.3f
 
 class Character : public CharacterBase
 {
@@ -24,6 +25,8 @@ public:
 	void SetThis(const std::shared_ptr<Character>& _this) { m_wpThis = _this; }
 
 	void OnHit()override;
+
+	void ResetPosition() override;
 
 	virtual void Editor_ImGui() override;
 	// JSONデータから、クラスの内容を設定
@@ -75,6 +78,8 @@ private:
 
 	bool IsBoostState()const;
 
+	void ResetPrevMove() { m_preMove = m_vMove; }
+
 	void WalkSounds();
 
 	void CreatePolygon();
@@ -125,9 +130,10 @@ private:
 	float										m_boostEndSpeed = 180.0f;
 	float										m_boostDushSpeed = 180.0f;
 	float										m_bladeAttackSpeed = 240.0f;
-	float										m_hitedSpeed = 30.0f;
+	float										m_hitedSpeed = 100.0f;
 
 	float                                       m_boostFloatMeg = 0.6f;
+	float										m_boostLerpMeg = 0.2f;
 
 	// LockOn 関連タイマー
 	float m_lockOnFindTimer = 0.0f;
@@ -139,10 +145,11 @@ private:
 	float m_aimMaxTurnDegPerSec = 720.0f;	// 1秒当たりの最大回転角（度）
 
 	// デバッグ用
-	Math::Color color = { 0,1,0,1 };
+	Math::Color m_debugColor = { 0,1,0,1 };
 
 	bool										m_isWalkSounds =true;
 	bool										m_isParticle = false;
+	
 
 
 
@@ -166,13 +173,7 @@ private:
 	std::vector<std::shared_ptr<TrailParam>>								m_spTrails;
 
 
-	Math::Vector3 m_vMove = Math::Vector3::Zero;
-
 	std::weak_ptr<Character>					m_wpThis;
-
-	
-	std::vector<ParticleShader::Particle> m_particles;
-
 
 	//ステートパターン管理系!
 private:
@@ -199,8 +200,9 @@ protected:
 
 		const Math::Vector3 Direct(std::weak_ptr<Character>& owner, bool isCamera);
 
-		void Trans(std::weak_ptr<Character>& owner,const float animProgress);
+		void Trans(std::weak_ptr<Character>& owner,const float animProgress)const;
 
+		bool IsBoostDush();
 
 		void EffectUpdate(std::weak_ptr<Character>& owner);
 		void EffectExit();

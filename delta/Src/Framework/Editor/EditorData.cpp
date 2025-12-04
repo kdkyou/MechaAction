@@ -120,6 +120,11 @@ void EditorData::UpdateImGui()
 	if (key.F4) { m_editorMode = true;
 	CameraManager::Instance().SetNextType(CameraManager::None);
 	}
+	
+	if (IsDebugMode() || IsEditorMode())
+	{
+		Application::Instance().m_log.Draw("Log Window");
+	}
 
 	if (!m_editorMode) { return; }
 	
@@ -128,8 +133,12 @@ void EditorData::UpdateImGui()
 	// ImGui Demo ウィンドウ表示 ※すごく参考になるウィンドウです。imgui_demo.cpp参照。
 	ImGui::ShowDemoWindow(nullptr);
 
-	Application::Instance().m_log.Draw("Log Window");
-
+	
+	if (ImGui::Begin("FPSController"))
+	{
+		KdFPSController::GetInstance().Edit_ImGui();
+	}
+	ImGui::End();
 
 	//===========================
 	// システム
@@ -149,6 +158,7 @@ void EditorData::UpdateImGui()
 
 
 		ImGui::Checkbox((const char*)u8"エディター", &m_editorMode);
+		ImGui::Checkbox((const char*)u8"デバッグ", &m_debugMode);
 		
 		if (m_editorMode)
 		{
@@ -159,30 +169,6 @@ void EditorData::UpdateImGui()
 			ImGui::Text((const char*)u8"ゲームモード");
 		}
 		
-
-		// ImGuizmo
-		/*if (ImGui::CollapsingHeader("Gizmo", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			if (ImGui::RadioButton("Local", GizmoMode == ImGuizmo::LOCAL)) {
-				GizmoMode = ImGuizmo::LOCAL;
-			}
-			ImGui::SameLine();
-			if (ImGui::RadioButton("World", GizmoMode == ImGuizmo::WORLD)) {
-				GizmoMode = ImGuizmo::WORLD;
-			}
-
-			if (ImGui::RadioButton((const char*)u8"座標", GizmoOperation == ImGuizmo::TRANSLATE)) {
-				GizmoOperation = ImGuizmo::TRANSLATE;
-			}
-			ImGui::SameLine();
-			if (ImGui::RadioButton((const char*)u8"回転", GizmoOperation == ImGuizmo::ROTATE)) {
-				GizmoOperation = ImGuizmo::ROTATE;
-			}
-			ImGui::SameLine();
-			if (ImGui::RadioButton((const char*)u8"Scale", GizmoOperation == ImGuizmo::SCALE)) {
-				GizmoOperation = ImGuizmo::SCALE;
-			}
-		}*/
 	}
 	ImGui::End();
 
@@ -195,13 +181,6 @@ void EditorData::UpdateImGui()
 		if (nowSelectedObj != nullptr)
 		{
 			nowSelectedObj->Editor_ImGui();
-
-			/*ImGui::Separator();
-
-			if (ImGui::Button(""))
-			{
-
-			}*/
 
 		}
 

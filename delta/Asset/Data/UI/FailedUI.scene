@@ -16,7 +16,7 @@
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"UITag": "None",
 		"Ratio": 0.0,
-		"Time": 0.5,
+		"Time": 0.9,
 		"TimeRimit": false,
 		"IncDec": true,
 		"Auto": true

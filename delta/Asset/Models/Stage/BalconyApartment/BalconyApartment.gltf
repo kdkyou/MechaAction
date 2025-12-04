@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.4.56",
+		"generator":"Khronos glTF Blender I/O v5.0.21",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -209,15 +209,15 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":1392,
+			"count":1396,
 			"max":[
 				93.86304473876953,
 				78,
 				51
 			],
 			"min":[
-				-68.21244812011719,
-				0.20000000298023224,
+				-68.31244659423828,
+				0,
 				-68.43130493164062
 			],
 			"type":"VEC3"
@@ -225,19 +225,19 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":1392,
+			"count":1396,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":1392,
+			"count":1396,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":2100,
+			"count":2106,
 			"type":"SCALAR"
 		},
 		{
@@ -305,7 +305,7 @@
 		{
 			"bufferView":11,
 			"componentType":5123,
-			"count":5616,
+			"count":5628,
 			"type":"SCALAR"
 		},
 		{
@@ -346,98 +346,98 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":16704,
+			"byteLength":16752,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":16704,
-			"byteOffset":16704,
+			"byteLength":16752,
+			"byteOffset":16752,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":11136,
-			"byteOffset":33408,
+			"byteLength":11168,
+			"byteOffset":33504,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4200,
-			"byteOffset":44544,
+			"byteLength":4212,
+			"byteOffset":44672,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":101376,
-			"byteOffset":48744,
+			"byteOffset":48884,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":101376,
-			"byteOffset":150120,
+			"byteOffset":150260,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":67584,
-			"byteOffset":251496,
+			"byteOffset":251636,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":25344,
-			"byteOffset":319080,
+			"byteOffset":319220,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":36384,
-			"byteOffset":344424,
+			"byteOffset":344564,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":36384,
-			"byteOffset":380808,
+			"byteOffset":380948,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":24256,
-			"byteOffset":417192,
+			"byteOffset":417332,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":11232,
-			"byteOffset":441448,
+			"byteLength":11256,
+			"byteOffset":441588,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":864,
-			"byteOffset":452680,
+			"byteOffset":452844,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":864,
-			"byteOffset":453544,
+			"byteOffset":453708,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":576,
-			"byteOffset":454408,
+			"byteOffset":454572,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":264,
-			"byteOffset":454984,
+			"byteOffset":455148,
 			"target":34963
 		}
 	],
@@ -449,7 +449,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":455248,
+			"byteLength":455412,
 			"uri":"BalconyApartment.bin"
 		}
 	]

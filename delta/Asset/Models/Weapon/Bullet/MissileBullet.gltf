@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.4.56",
+		"generator":"Khronos glTF Blender I/O v5.0.21",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -43,15 +43,15 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":722,
+			"count":724,
 			"max":[
 				0.6967231035232544,
-				4.024803638458252,
+				3.4248037338256836,
 				1.0012311935424805
 			],
 			"min":[
 				-0.6450239419937134,
-				-2.177809953689575,
+				-2.7778100967407227,
 				-0.7016251087188721
 			],
 			"type":"VEC3"
@@ -59,13 +59,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":722,
+			"count":724,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":722,
+			"count":724,
 			"type":"VEC2"
 		},
 		{
@@ -78,32 +78,32 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":8664,
+			"byteLength":8688,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":8664,
-			"byteOffset":8664,
+			"byteLength":8688,
+			"byteOffset":8688,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":5776,
-			"byteOffset":17328,
+			"byteLength":5792,
+			"byteOffset":17376,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2700,
-			"byteOffset":23104,
+			"byteOffset":23168,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":25804,
+			"byteLength":25868,
 			"uri":"MissileBullet.bin"
 		}
 	]

@@ -7,6 +7,7 @@
 #include "../../../Camera/CameraManager.h" 
 
 
+
 void Bullet::Init()
 {
 	m_pCollider = std::make_unique<KdCollider>();
@@ -29,7 +30,6 @@ void Bullet::Init()
 
 	m_isExpired = false;
 
-	m_attackNum = 1;
 }
 
 void Bullet::PreUpdate()
@@ -52,7 +52,6 @@ void Bullet::Update()
 	case Bullet::None:
 		break;
 	case Bullet::Sight:
-
 		MoveSight();
 		break;
 	case Bullet::Chasing:
@@ -115,25 +114,28 @@ void Bullet::PostUpdate()
 
 void Bullet::Intersects()
 {
-	// その他球による衝突判定
+	// その他による衝突判定
 	// ---- ---- ---- ---- ---- ----
 	// ①当たり判定(球判定)用の情報を作成
 
 	DirectX::BoundingOrientedBox box;
 
 	box.Center = GetPos();
-	box.Extents = { 0.5f,0.5f,1.0f };
-	UINT type = KdCollider::TypeDamage;
-	KdCollider::BoxInfo boxInfo(type, box);
+	box.Extents = { 1.5f,1.5f,3.0f };
+	UINT type = KdCollider::TypeGround;
+	KdCollider::BoxInfo boxInfo(type, m_mWorld,{}, box.Extents,true);
 	for (auto& obj : SceneManager::Instance().GetTerrainList())
 	{
 		if (obj->Intersects(boxInfo, nullptr))
 		{
 			OnHit();
 			obj->OnHit();
+			Application::Instance().m_log.Clear();
+			Application::Instance().m_log.AddLog("Bullet Ground Hit\n");
 		}
 	}
 
+	boxInfo.m_type = KdCollider::TypeDamage;
 	if (m_tag == ObjectTag::tPlayerAttack)
 	{
 		for (auto& obj : SceneManager::Instance().GetEnemyList())
@@ -161,6 +163,7 @@ void Bullet::Intersects()
 		}
 	}
 
+	m_pDebugWire->AddDebugBox(m_mWorld, box.Extents,{},true,kRedColor);
 
 }
 
@@ -169,10 +172,10 @@ bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float lengt
 
 	Math::Vector3 dir = vec;
 	float len = length;
-	if (len < FLT_EPSILON) return false;
+	if (len < FLT_EPSILON) { return false; }
 	dir.Normalize();
 
-	float radius = 2.0f;
+	float radius = 3.0f;
 	// Ray情報を作る（球の分だけ余裕を持たせる）
 	KdCollider::RayInfo ray;
 	ray.m_pos = pos;
@@ -187,10 +190,11 @@ bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float lengt
 		if (obj->Intersects(ray, &results))
 		{
 			OnHit();
-		}
-		
+			obj->OnHit();
+		}		
 	}
 
+	ray.m_type = KdCollider::TypeDamage;
 	if (m_tag == tEnemyAttack) {
 		for (auto& obj : SceneManager::Instance().GetPlayerList())
 		{
@@ -199,7 +203,6 @@ bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float lengt
 				OnHit();
 				obj->HitDamage(GetParameter());
 				obj->OnHit();
-				return true;
 			}
 		}
 	}
@@ -228,18 +231,6 @@ bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float lengt
 		}
 	}
 
-	/*if (minDist < FLT_MAX)
-	{
-		out.m_hitPos = nearest.m_hitPos;
-		out.m_hitDir = nearest.m_hitDir;
-		out.m_overlapDistance = minDist;
-		return true;
-	}*/
-	return false;
-
-
-
-
 	float maxOverLap = 0;
 	Math::Vector3 hitPos = Math::Vector3::Zero;
 	bool hit = false;
@@ -251,9 +242,7 @@ bool Bullet::Ray(const Math::Vector3& pos, const Math::Vector3& vec, float lengt
 			maxOverLap = ret.m_overlapDistance;
 			hitPos = ret.m_hitPos;
 			hit = true;
-
 		}
-
 	}
 
 	if (hit)
@@ -309,6 +298,9 @@ void Bullet::OnHit()
 		m_trail->SetEnable(false);
 		float scale = CameraManager::Instance().CalcLength(m_mWorld.Translation());
 		KdEffekseerManager::GetInstance().Play("burn.efkefc", GetMatrix().Translation(), scale, 5.0f, false);
+	}
+	else {
+		m_parameter = 0.0f;
 	}
 
 }
@@ -451,6 +443,7 @@ void Bullet::SetBulletParam(float _aliveTime, int _damage, float _range, const M
 	m_speed = _speed;
 	m_dampingInterval = _dampingInterval;
 	m_dampingRate = _dampingRate;
+	m_attackNum = 1;
 
 	// 進行方向に回転行列を合わせる
 	Math::Vector3 forward = direction;

@@ -13,41 +13,6 @@ void CharacterBase::PostUpdate()
 	if (spCamera)
 	{
 		if (SceneManager::Instance().GetTerrainList().size() <= 0) { return; }
-		/*Math::Vector3 resultPos;
-		spCamera->GetCamera()->ConvertWorldToScreenDetail(m_mWorld.Translation(),resultPos);
-
-		resultPos.x = std::clamp(resultPos.x, (float)- EditorData::GetInstance().m_ScreenWh, (float)EditorData::GetInstance().m_ScreenWh);
-		resultPos.y = std::clamp(resultPos.y, (float)-EditorData::GetInstance().m_ScreenHh, (float)EditorData::GetInstance().m_ScreenHh);
-
-		auto camPos = spCamera->GetMatrix().Translation();
-		Math::Vector3 rayDir = Math::Vector3::Zero;
-		float rayRange = 1000.0f;
-		POINT Pointpos = { resultPos.x,resultPos.y };
-
-		spCamera->GetCamera()->GenerateRayInfoFromClientPos(Pointpos,camPos,rayDir,rayRange);
-
-		Math::Vector3 endRayPos = camPos + (rayDir * rayRange);
-		KdCollider::RayInfo ray(KdCollider::TypeGround, camPos, endRayPos);
-		std::list<KdCollider::CollisionResult>results;
-
-		for (auto& obj : SceneManager::Instance().GetTerrainList())
-		{
-			if (obj->GetTag() != tPlayerAttack)
-			{
-				obj->Intersects(ray, &results);
-			}
-		}
-
-		Math::Vector3 pos = Math::Vector3::Zero;
-		if (results.size())
-		{
-			for (auto& result : results)
-			{
-				pos = result.m_hitPos;
-			}
-		}
-
-		m_mMarker = m_mWorld;*/
 		auto worldPos = m_mWorld.Translation();
 
 		Math::Vector3 viewPos = Math::Vector3::Transform(worldPos, spCamera->GetCamera()->GetCameraViewMatrix());
@@ -104,7 +69,6 @@ void CharacterBase::SetModelWork(const std::string& path)
 	if (path == "") { return; }
 
 	m_modelPath = path;
-	//if(){}
 	if (!m_spModelWork)
 	{
 		m_spModelWork = std::make_shared<KdModelWork>();
@@ -171,7 +135,7 @@ void CharacterBase::Editor_ImGui()
 	static std::string str = "";
 	if (ImGui::BeginCombo("SelectObject", str.empty() ? (const char*)u8"選択してください" : str.c_str()))
 	{
-		for (auto obj : KdGameObjectFactory::Instance().GetRegisterWeaponList())
+		for (auto& obj : KdGameObjectFactory::Instance().GetRegisterWeaponList())
 		{
 			if (ImGui::Selectable(obj.c_str(), obj == str))
 			{
@@ -205,9 +169,8 @@ void CharacterBase::Editor_ImGui()
 		for (auto& wpObj : m_wpWeapons)
 		{
 			auto obj = wpObj.lock();
-			std::string str = obj->GetName();
-			//bool isSelected = (selectedObj.lock() == obj);  // 今の選択と同じか？
-
+			str = obj->GetName();
+			
 			ImGui::PushID(obj.get());
 			if (ImGui::Selectable((const char*)str.c_str()))
 			{
@@ -337,11 +300,6 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 			pos = move;
 		}
 
-		if (step == true)
-		{
-			//move -= {0.0f, 5.0f, 0.0f};
-		}
-
 		auto center = pos + Math::Vector3(0.0f, 0.42f, 0.0f);
 		SphereCast(center, 0.419f, KdCollider::TypeGround, pos);
 	}
@@ -376,13 +334,9 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 
 	auto deltaTime = KdFPSController::GetInstance().GetDeltaTime();
 
-	Math::Vector3 move = Math::Vector3::Zero;
-
 	auto deltaSpeed = speed * deltaTime;
 
 	auto empty = type;
-
-	bool isRay = fly;
 
 	if (step)
 	{
@@ -400,11 +354,7 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 
 	float len = dir.Length();
 	float radius = 0.0f;
-	if (!isAttack){
 	 radius =  len + 1.5f;
-	}	else {
-		radius = 1.3f;
-	}
 
 	KdCollider::CollisionResult hit;
 
@@ -736,6 +686,17 @@ const bool CharacterBase::Burn()
 	SceneManager::Instance().AddObject(polygon);
 
 	return true;
+}
+
+const Math::Vector3 CharacterBase::LerpMove(float prog)
+{
+	auto startPos = m_preMove;
+	auto targetPos = m_vMove;
+	// 線形補間
+	auto move = Math::Vector3::Lerp(startPos, targetPos, prog);
+	m_preMove = move;
+	m_preMove.Normalize();
+	return move;
 }
 
 

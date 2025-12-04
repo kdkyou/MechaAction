@@ -22,6 +22,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR , _In_ int)
 	// mbstowcs_s関数で日本語対応にするために呼ぶ
 	setlocale(LC_ALL, "japanese");
 
+	// DPI変換
+	SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+
 	//===================================================================
 	// 実行
 	//===================================================================
@@ -117,8 +120,6 @@ void Application::PreDraw()
 void Application::Draw()
 {
 	SceneManager::Instance().Draw();
-
-///	SceneManager::Instance().DrawMap();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -256,16 +257,14 @@ void Application::Execute()
 	// ループ
 	while (1)
 	{
-		// 処理開始時間Get
-		KdFPSController::GetInstance().UpdateStartTime();
-		
-	//	m_log.Clear();
-
 		// ゲーム終了指定があるときはループ終了
 		if (m_endFlag)
 		{
 			break;
 		}
+
+		// 処理開始時間Get
+		KdFPSController::GetInstance().UpdateStartTime();
 
 		//=========================================
 		//
@@ -336,7 +335,7 @@ void Application::Execute()
 		//=========================================
 
 		KdFPSController::GetInstance().Update();
-
+		
 		std::string titleBar = "ECHO STEEL fps=" + std::to_string(KdFPSController::GetInstance().GetFPS());
 		SetWindowTextA(m_window.GetWndHandle(), titleBar.c_str());
 	}
@@ -376,6 +375,11 @@ void Application::ImGuiInit()
 	ImGui_ImplWin32_Init(m_window.GetWndHandle());
 	ImGui_ImplDX11_Init(
 		KdDirect3D::Instance().WorkDev(), KdDirect3D::Instance().WorkDevContext());
+
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.configFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
 #include "imgui/ja_glyph_ranges.h"
 	ImGuiIO& io = ImGui::GetIO();

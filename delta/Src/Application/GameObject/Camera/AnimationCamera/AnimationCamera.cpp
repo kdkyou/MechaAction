@@ -11,8 +11,6 @@ void AnimationCamera::Init()
 
 void AnimationCamera::Update()
 {
-	//	if (!m_flg) 
-
 }
 
 void AnimationCamera::PostUpdate()
@@ -42,8 +40,6 @@ void AnimationCamera::PostUpdate()
 	Math::Matrix mat = Math::Matrix::CreateFromQuaternion(newQuat) * Math::Matrix::CreateTranslation(pos);
 
 	m_mWorld = mat;
-
-	//m_mWorld = Math::Matrix::CreateFromYawPitchRoll(m_rot * KdToRadians) * Math::Matrix::CreateTranslation(m_pos);
 
 	CameraBase::PostUpdate();
 }

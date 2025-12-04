@@ -30,8 +30,10 @@ private:
 
 	Wave	m_waveProgress = Start;
 
+	std::weak_ptr<KdGameObject> m_wpShield;
 	float m_duration = 1.0f;
 	bool m_fade = false;
 
+	float m_durationFade = 0.0f;
 
 };

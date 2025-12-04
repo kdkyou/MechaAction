@@ -88,9 +88,9 @@ private:
 	// BGMの音量
 	float m_bgmVolume = 0.15f;
 	// SEの音量
-	float m_seVolume = 0.15f;
+	float m_seVolume = 0.25f;
 	// Voiceの音量
-	float m_voiceVolume = 0.45f;
+	float m_voiceVolume = 0.7f;
 
 
 	// シングルトンパターン

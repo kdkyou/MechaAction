@@ -31,7 +31,7 @@ public:
 
 
 	void PreDraw();
-	void MapPreDraw();
+	void PreDrawMap();
 
 	void DrawUnLit();
 	void MapDrawUnLit();

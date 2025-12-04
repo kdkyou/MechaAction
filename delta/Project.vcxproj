@@ -171,7 +171,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\CharacterBase.h" />
     <ClInclude Include="Src\Application\GameObject\Character\TitleMovie.h" />
     <ClInclude Include="Src\Application\GameObject\Character\TransAC.h" />
-    <ClInclude Include="Src\Application\GameObject\Effect\ConcentrationLine\ConcentrationLine.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Effect.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Fade\Fade.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.h" />
@@ -199,7 +198,6 @@
     <ClInclude Include="Src\Application\GameObject\UI\SelectUI\SelectUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\UIBase.h" />
     <ClInclude Include="Src\Application\GameObject\UI\UIManager.h" />
-    <ClInclude Include="Src\Application\GameObject\Weapon\Blade\Blade.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Bullet\Bullet.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Gun\Charge\Charge.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Gun\GunBase.h" />
@@ -288,7 +286,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\TitleMovie.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\TransAC.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Effect\ConcentrationLine\ConcentrationLine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Effect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Fade\Fade.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.cpp" />
@@ -315,7 +312,6 @@
     <ClCompile Include="Src\Application\GameObject\UI\SelectUI\SelectUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\UIManager.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Weapon\Blade\Blade.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Bullet\Bullet.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Gun\Charge\Charge.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Gun\GunBase.cpp" />

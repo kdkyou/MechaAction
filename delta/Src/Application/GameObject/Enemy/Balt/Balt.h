@@ -31,7 +31,8 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	void DrawLit()			override;
+	void DrawLit()	override;
+	void DrawParticle()override;
 
 
 	void SetThis(const std::shared_ptr<Balt>& spthis) { m_wpThis = spthis; }
@@ -50,6 +51,7 @@ private:
 
 	void UpdateRotate(const Math::Vector3& srcMoveVec)override;
 
+	void UpdateParticle();
 
 	void UpdateCollision()override;
 

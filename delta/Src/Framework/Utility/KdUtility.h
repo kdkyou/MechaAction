@@ -58,6 +58,7 @@ static const Math::Color	kRedColor		= Math::Color(1.0f, 0.0f, 0.0f, 1.0f);
 static const Math::Color	kGreenColor		= Math::Color(0.0f, 1.0f, 0.0f, 1.0f);
 static const Math::Color	kBlueColor		= Math::Color(0.0f, 0.0f, 1.0f, 1.0f);
 static const Math::Color	kNormalColor	= Math::Color(0.5f, 0.5f, 1.0f, 1.0f);	// 垂直に伸びる法線情報
+static const Math::Color	kYellowColor	= Math::Color(1.0f, 1.0f, 0.0f, 1.0f);	// 垂直に伸びる法線情報
 
 
 //===========================================
@@ -150,5 +151,3 @@ float BulletDamage(const Math::Vector3& _startPos, const Math::Vector3& _endPos,
 // ベクトルからSlerpして返す
 Math::Vector3 SlerpDirection(const Math::Vector3& from, const Math::Vector3& to, float t);
 
-// 行列作成
-Math::Matrix LookAtMatrix(const Math::Vector3& forward);

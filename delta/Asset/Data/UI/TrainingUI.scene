@@ -78,7 +78,7 @@
 	{
 		"Add": false,
 		"AliveTime": 0.0,
-		"Color": [ 0.03921568766236305, 1.0, 0.886274516582489, 1.0 ],
+		"Color": [ 0.8, 0.8, 0.8, 1.0 ],
 		"DrawHeight": 150,
 		"DrawWidth": 300,
 		"IsTarget": false,
@@ -97,7 +97,7 @@
 	{
 		"Add": false,
 		"AliveTime": 0.0,
-		"Color": [ 0.03921568766236305, 1.0, 0.886274516582489, 1.0 ],
+		"Color": [ 0.8, 0.8, 0.8, 1.0 ],
 		"DrawHeight": 225,
 		"DrawWidth": 300,
 		"IsTarget": false,

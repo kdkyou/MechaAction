@@ -30,6 +30,7 @@ public:
 	void DrawSprite();
 
 	void SetPlayerHP(int hp) { m_playerHP = hp; }
+	void SetColorHP(const Math::Color& color);
 	void SetRightAmmo(int ammo) { m_playerRightWeaponAmmo = ammo; }
 	void SetLeftAmmo(int ammo) { m_playerLeftWeaponAmmo = ammo; }
 	void SetRightAmmoOne(int ammo) { m_playerRightWeaponAmmoOne = ammo; }

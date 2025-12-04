@@ -146,15 +146,15 @@ void WeaponBase::Deserialize(const nlohmann::json& jsonObj)
 	{
 	m_AttackTrigger = TriggerType::RightHand;
 	}
-	else if (TriggerType::LeftHand)
+	else if (i == TriggerType::LeftHand)
 	{
 	m_AttackTrigger = TriggerType::LeftHand;
 	}
-	else if (TriggerType::RightShoulder)
+	else if (i == TriggerType::RightShoulder)
 	{
 	m_AttackTrigger = TriggerType::RightShoulder;
 	}
-	else if (TriggerType::LeftShoulder)
+	else if (i == TriggerType::LeftShoulder)
 	{
 	m_AttackTrigger = TriggerType::LeftShoulder;
 	}

@@ -29,6 +29,6 @@ private:
 
 	std::weak_ptr<KdSoundInstance> m_sounds;
 
-	bool m_isSoundOnce;
+	bool m_isSoundOnce = false;
 
 };

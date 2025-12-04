@@ -17,8 +17,10 @@ public:
 	uint32_t	m_ScreenSih = 600;
 
 	const bool IsEditorMode()const { return m_editorMode; }
+	const bool IsDebugMode()const { return m_debugMode; }
 
 	bool		m_editorMode = false;
+	bool		m_debugMode = false;
 
 	// エディターカメラ
 	std::shared_ptr<KdGameObject>			m_cameraObject;

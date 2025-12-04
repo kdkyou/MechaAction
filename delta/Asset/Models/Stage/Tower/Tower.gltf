@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.4.56",
+		"generator":"Khronos glTF Blender I/O v5.0.21",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -8,7 +8,8 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				0,
+				1
 			]
 		}
 	],
@@ -16,23 +17,28 @@
 		{
 			"mesh":0,
 			"name":"building_003"
+		},
+		{
+			"mesh":1,
+			"name":"COL",
+			"translation":[
+				0,
+				75.04999542236328,
+				0
+			]
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
 			"name":"Material.001",
-			"normalTexture":{
-				"index":0,
-				"scale":1.1999999284744263
-			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":1
+					"index":0
 				},
 				"metallicFactor":0,
 				"metallicRoughnessTexture":{
-					"index":2
+					"index":1
 				}
 			}
 		}
@@ -51,6 +57,19 @@
 					"material":0
 				}
 			]
+		},
+		{
+			"name":"\u5186\u67f1",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":4,
+						"NORMAL":5,
+						"TEXCOORD_0":6
+					},
+					"indices":7
+				}
+			]
 		}
 	],
 	"textures":[
@@ -61,18 +80,9 @@
 		{
 			"sampler":0,
 			"source":1
-		},
-		{
-			"sampler":0,
-			"source":2
 		}
 	],
 	"images":[
-		{
-			"mimeType":"image/png",
-			"name":"PavingStones084_1K-PNG_NormalDX",
-			"uri":"PavingStones084_1K-PNG_NormalDX.png"
-		},
 		{
 			"mimeType":"image/png",
 			"name":"Plaster007_1K-PNG_Color",
@@ -88,7 +98,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":4096,
+			"count":4110,
 			"max":[
 				6.131958961486816,
 				164.39996337890625,
@@ -104,45 +114,103 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":4096,
+			"count":4110,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":4096,
+			"count":4110,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":7722,
+			"count":7764,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":4,
+			"componentType":5126,
+			"count":48,
+			"max":[
+				6.549999713897705,
+				89.49952697753906,
+				6.549999713897705
+			],
+			"min":[
+				-6.549999713897705,
+				-75,
+				-6.549999713897705
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":5,
+			"componentType":5126,
+			"count":48,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":6,
+			"componentType":5126,
+			"count":48,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":7,
+			"componentType":5123,
+			"count":84,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":49152,
+			"byteLength":49320,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":49152,
-			"byteOffset":49152,
+			"byteLength":49320,
+			"byteOffset":49320,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":32768,
-			"byteOffset":98304,
+			"byteLength":32880,
+			"byteOffset":98640,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":15444,
-			"byteOffset":131072,
+			"byteLength":15528,
+			"byteOffset":131520,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":576,
+			"byteOffset":147048,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":576,
+			"byteOffset":147624,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":384,
+			"byteOffset":148200,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":168,
+			"byteOffset":148584,
 			"target":34963
 		}
 	],
@@ -154,7 +222,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":146516,
+			"byteLength":148752,
 			"uri":"Tower.bin"
 		}
 	]

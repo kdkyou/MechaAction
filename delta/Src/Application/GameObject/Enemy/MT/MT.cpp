@@ -29,7 +29,7 @@ void MT::Init()
 
 	m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 
-	m_dist = { 30.0f,200.0f };
+	m_dist = { 30.0f,500.0f };
 
 	ChangeActionState(std::make_shared<StandUp>());
 
@@ -64,9 +64,6 @@ void MT::Update()
 
 	}
 
-	auto pos = m_mWorld.Translation();
-	//auto flg = Gravity(pos, Math::Vector3::Down, m_gravity);
-	//auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround,false,false);
 	auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, false, true);
 
 

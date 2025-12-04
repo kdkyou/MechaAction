@@ -11,6 +11,7 @@ void Missile::Init()
 
 	m_name = "Missile";
 	m_shotSoundPath = "Asset/Sounds/SE/Weapon/MissileShot.wav";
+	m_muzzleFlashPath = "Asset/Effects/MuzzleFlash/MuzzleBurn.png";
 
 }
 
@@ -154,7 +155,7 @@ void Missile::Shot()
 
 		direct = trans.Backward();
 		direct.Normalize();
-
+		Flash(trans);
 	}
 	if (m_shotSoundPath != "")
 	{

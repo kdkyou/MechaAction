@@ -35,9 +35,6 @@ void LockCamera::Init()
 	m_texScale = 0.03f;
 	m_durationScale = 0.2f;
 
-	/*m_spTex = std::make_shared<KdTexture>();
-	m_spTex = KdAssets::Instance().m_textures.GetData("Asset/Textures/UI/LockOn.png");*/
-
 	CameraManager::Instance().EnableChangedCamera(false);
 }
 
@@ -93,11 +90,9 @@ void LockCamera::PostUpdate()
 
 	Lock();
 
-	TerrainCheck();
-
-	//m_mRotation = GetRotationMatrix();
 	m_mWorld = m_mLocalPos * m_mRotation * _targetMat;
 
+	TerrainCheck();
 
 	CameraBase::PostUpdate();
 }
@@ -107,8 +102,7 @@ void LockCamera::DrawUnLit()
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
 
 	auto camMat = m_mWorld;
-	//camMat.Translation(Math::Vector3::Zero);
-
+	
 	Math::Color color = { 1.0f,1.0f,1.0f,m_texAlpha };
 
 	m_spPolygon->SetColor(color);
@@ -122,11 +116,7 @@ void LockCamera::DrawUnLit()
 
 void LockCamera::DrawSprite()
 {
-	//KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
 
-	//KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, m_lockPos.x, m_lockPos.y);
-
-	//KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
 }
 
 void LockCamera::Lock()
@@ -162,21 +152,16 @@ void LockCamera::Lock()
 	float deg = DirectX::XMConvertToDegrees(acosf(angleDiffRad) * 2.0f); // クオータニオンの角度差
 
 	
-	if (distance < 27.001) { 
-//		if (angleDiffRad > -0.6f && angleDiffRad < 0.6f)
-		{
+	if (distance < 27.001) {
 			return; 
-		}
 	}
 
 
-	//float deg = Math::Quaternion::Angle(currentQuat, targetQuat);
 	// 補間スピード設定
 	float baseSpeedDeg = 90.0f;
 	float boostSpeedDeg = 1080.0f;
 
 	
-	//float boostRate = std::clamp((distance - 5.0f) / 10.0f, 0.0f, 1.0f);
 	float boostRate = std::clamp(deg / 5.0f, 0.0f, 1.0f);
 	float rotateSpeedDeg = baseSpeedDeg + (boostSpeedDeg - baseSpeedDeg) * boostRate;
 	

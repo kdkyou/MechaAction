@@ -84,6 +84,8 @@ void CameraBase::Serialize(nlohmann::json& outJson) const
 
 void CameraBase::UpdateRotateByMouse()
 {
+	const std::shared_ptr<CharacterBase> _spTarget = m_wpTarget.lock();
+	if (_spTarget->IsDestroy() == true) { return; }
 	// マウスでカメラを回転させる処理
 	POINT _nowPos;
 

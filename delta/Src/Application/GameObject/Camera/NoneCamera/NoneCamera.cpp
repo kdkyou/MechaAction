@@ -41,15 +41,16 @@ void NoneCamera::Update()
 					direction.x += 1.0f;
 				}
 
-			auto vec = direction.TransformNormal(direction, GetRotationYMatrix());
+
+			auto vec = direction.TransformNormal(direction, GetRotationMatrix());
 			vec.Normalize();
 
 			m_pos += vec * m_movePow * KdFPSController::GetInstance().GetDeltaTime();
 
 			UpdateRotateByMouse();
-			m_mRotation = GetRotationMatrix();
+			m_mRotation = Math::Matrix::CreateFromYawPitchRoll(m_DegAng * KdToRadians);
 
-			m_mWorld = m_mLocalPos * m_mRotation * Math::Matrix::CreateTranslation(m_pos);
+			m_mWorld =  m_mRotation * Math::Matrix::CreateTranslation(m_pos);
 
 		}
 	}
@@ -57,7 +58,7 @@ void NoneCamera::Update()
 
 void NoneCamera::PostUpdate()
 {
-	//if (!EditorData::GetInstance().m_editorMode)
+	if(!EditorData::GetInstance().m_editorMode)
 	{
 		m_mWorld = Math::Matrix::CreateFromYawPitchRoll(m_rot * KdToRadians) * Math::Matrix::CreateTranslation(m_pos);
 	}
@@ -68,7 +69,7 @@ void NoneCamera::PostUpdate()
 void NoneCamera::Editor_ImGui()
 {
 	CameraBase::Editor_ImGui();
-	ImGui::SliderFloat("MovePow", &m_movePow, 0.0f,100.0f);
+	ImGui::SliderFloat("MovePow", &m_movePow, 0.0f,1000.0f);
 }
 
 void NoneCamera::Deserialize(const nlohmann::json& jsonObj)

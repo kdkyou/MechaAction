@@ -67,6 +67,7 @@ public:
 	void SetThisBase(const std::shared_ptr<CharacterBase>& target) { m_wpBase = target; }
 	const std::weak_ptr<CharacterBase>& GetThisBase()const { return m_wpBase; }
 
+	virtual void ResetPosition(){}
 
 	const Math::Vector2& GetDist()const { return m_dist; }
 
@@ -112,7 +113,7 @@ protected:
 
 	const bool Burn();
 
-	void WeaponCreate(std::weak_ptr<CharacterBase>& parent);
+	const Math::Vector3 LerpMove(float prog);
 
 	std::string									m_modelPath;
 	std::shared_ptr<KdModelWork>				m_spModelWork;
@@ -155,6 +156,7 @@ protected:
 
 	Math::Vector3							m_boxExtents;
 
+	Math::Vector3 m_preMove = Math::Vector3::Zero;
 	Math::Vector3 m_vMove = Math::Vector3::Zero;
 
 	// パラメータ関係

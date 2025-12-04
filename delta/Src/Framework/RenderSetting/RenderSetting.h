@@ -34,6 +34,7 @@ private:
 
 	float m_bgmVal = 0.2f;
 	float m_seVal = 0.3f;
+	float m_voiceVal = 0.7f;
 
 	RenderSetting()
 	{

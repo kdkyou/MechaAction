@@ -7,7 +7,6 @@ Texture2D g_metalRoughTex : register(t1); // メタリック/ラフネステク�
 Texture2D g_emissiveTex : register(t2); // 発光テクスチャ
 Texture2D g_normalTex : register(t3); // 法線マップ
 
-//追加
 Texture2D g_ditherTex : register(t9); //アルファディザ用
 
 // 特殊処理用テクスチャ
@@ -286,7 +285,7 @@ float4 main(VSOutput In) : SV_Target0
 
 	outColor += g_AmbientLight.rgb * baseColor.rgb * baseColor.a;
 
-
+	// ライトニング
 	if (g_lightningEnable)
 	{
 		float3 emissiveTexCol = g_emissiveTex.Sample(g_ss, In.UV).rgb * In.Color.rgb;
@@ -303,10 +302,6 @@ float4 main(VSOutput In) : SV_Target0
 		//// 色の補間
 		float3 emissiveColor = lerp(g_lightningColorA, g_lightningColorB, mask);
 
-		// 色の補間
-		//float3 emissiveColor = lerp(g_lightningColorA, g_lightningColorB, rate);
-
-		//emissiveColor *= mask;
 		
 		// 自己発光色の適応
 		if (g_OnlyEmissie)

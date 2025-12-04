@@ -31,7 +31,6 @@ void Sowrd::OnHit()
 	if (m_attackNum > 0)
 	{
 		auto pos = m_mWorld.Translation() + m_endMat.Translation();
-	//	KdEffekseerManager::GetInstance().Play("Slash.efkefc", pos,1.0f,3.0f,false);
 		auto& am = KdAudioManager::Instance();
 		am.Play("Asset/Sounds/Sound/sword_hit.wav", false)->SetVolume(am.GetSEVolume());
 		m_parameter = (float)m_damage;

@@ -56,67 +56,11 @@ void TPSCamera::PostUpdate()
 	}
 
 	//// カメラの回転
-	//UpdateRotateByMouse();
 	auto ang = m_rot * KdToRadians;
 	m_mLocalPos = Math::Matrix::CreateTranslation(m_localPos);
 	m_mRotation = Math::Matrix::CreateFromYawPitchRoll(ang);
 	m_mWorld = m_mLocalPos * m_mRotation * _targetMat;
 
-	//// ↓めり込み防止の為の座標補正計算↓
-	//// ①当たり判定(レイ判定)用の情報作成
-	//KdCollider::RayInfo rayInfo;
-	//// レイの発射位置を設定
-	//rayInfo.m_pos = GetPos();
-
-	//// レイの発射方向を設定
-	//rayInfo.m_dir = Math::Vector3::Down;
-	//// レイの長さを設定
-	//rayInfo.m_range = 1000.f;
-	//if (_spTarget)
-	//{
-	//	Math::Vector3 _targetPos = _spTarget->GetPos();
-	//	_targetPos.y += 0.1f;
-	//	rayInfo.m_dir = _targetPos - GetPos();
-	//	rayInfo.m_range = rayInfo.m_dir.Length();
-	//	rayInfo.m_dir.Normalize();
-	//}
-
-	//// 当たり判定をしたいタイプを設定
-	//rayInfo.m_type = KdCollider::TypeGround;
-
-	//// ②HIT判定対象オブジェクトに総当たり
-	//for (auto& Obj : SceneManager::Instance().GetTerrainList())
-	//{
-	//	if (Obj)
-	//	{
-	//		std::list<KdCollider::CollisionResult> retRayList;
-	//		Obj->Intersects(rayInfo, &retRayList);
-
-	//		// ③ 結果を使って座標を補完する
-	//		// レイに当たったリストから一番近いオブジェクトを検出
-	//		float maxOverLap = 0;
-	//		Math::Vector3 hitPos = {};
-	//		bool hit = false;
-	//		for (auto& ret : retRayList)
-	//		{
-	//			// レイを遮断しオーバーした長さが
-	//			// 一番長いものを探す
-	//			if (maxOverLap < ret.m_overlapDistance)
-	//			{
-	//				maxOverLap = ret.m_overlapDistance;
-	//				hitPos = ret.m_hitPos;
-	//				hit = true;
-	//			}
-	//		}
-	//		if (hit)
-	//		{
-	//			// 何かしらの障害物に当たっている
-	//			Math::Vector3 _hitPos = hitPos;
-	//			_hitPos += rayInfo.m_dir * 0.4f;
-	//			SetPos(_hitPos);
-	//		}
-	//	}
-	//}
-
+	
 	CameraBase::PostUpdate();
 }

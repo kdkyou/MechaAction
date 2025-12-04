@@ -3,16 +3,11 @@
 void NumberUI::Init()
 {
 	m_name = "NumberUI";
-
-	/*SetTexture("Asset/Textures/UI/Number3.png");
-	m_drawWi = kDigitWidth;
-	m_drawHe = kDigitHeight;
-	m_rect = { 0,0,kDigitWidth,kDigitHeight };*/
-
 }
 
 void NumberUI::Update()
 {
+
 }
 
 void NumberUI::PostUpdate()
@@ -101,8 +96,6 @@ void NumberUI::DrawNumber()
 
 		Math::Vector2 pos = drawPos + Math::Vector2(i * m_spacing, 0);
 
-		//KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
 		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, (int)pos.x, (int)pos.y, m_drawWi, m_drawHe, &m_rect,&m_color);
-		//KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
 	}
 }

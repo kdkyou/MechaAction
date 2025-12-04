@@ -91,9 +91,6 @@
     <Filter Include="Src\Application\GameObject\Weapon">
       <UniqueIdentifier>{321a806b-3343-4012-a697-b081aca9ec4a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\Blade">
-      <UniqueIdentifier>{0819f680-86e3-4336-9ac6-34abf3e696e2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Camera\TrackingCamera">
       <UniqueIdentifier>{d762179f-3487-4f21-9b56-99bf7bc9716f}</UniqueIdentifier>
     </Filter>
@@ -108,9 +105,6 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Effect">
       <UniqueIdentifier>{89852e6a-2aec-48e2-ac46-28629fdd83e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Effect\ConcentrationLine">
-      <UniqueIdentifier>{1709f259-38fb-4e89-bac7-48d86e54d102}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Weapon\Sowrd">
       <UniqueIdentifier>{86651d95-0685-41e8-b424-44c28e103b86}</UniqueIdentifier>
@@ -378,9 +372,6 @@
     <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase.h">
       <Filter>Src\Application\GameObject\Weapon</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\Blade\Blade.h">
-      <Filter>Src\Application\GameObject\Weapon\Blade</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Camera\TrackingCamera\TrackingCamera.h">
       <Filter>Src\Application\GameObject\Camera\TrackingCamera</Filter>
     </ClInclude>
@@ -401,9 +392,6 @@
     </ClInclude>
     <ClInclude Include="Src\Framework\Input\KeyInput.h">
       <Filter>Src\Framework\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Effect\ConcentrationLine\ConcentrationLine.h">
-      <Filter>Src\Application\GameObject\Effect\ConcentrationLine</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\TransAC.h">
       <Filter>Src\Application\GameObject\Character</Filter>
@@ -722,9 +710,6 @@
     <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase.cpp">
       <Filter>Src\Application\GameObject\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\Blade\Blade.cpp">
-      <Filter>Src\Application\GameObject\Weapon\Blade</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Character.cpp">
       <Filter>Src\Application\GameObject\Character</Filter>
     </ClCompile>
@@ -748,9 +733,6 @@
     </ClCompile>
     <ClCompile Include="Src\Framework\Input\KeyInput.cpp">
       <Filter>Src\Framework\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Effect\ConcentrationLine\ConcentrationLine.cpp">
-      <Filter>Src\Application\GameObject\Effect\ConcentrationLine</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\TransAC.cpp">
       <Filter>Src\Application\GameObject\Character</Filter>

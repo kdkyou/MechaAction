@@ -53,7 +53,7 @@ void Balt::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
 
-	m_dist = { 90.0f,400.0f };
+	m_dist = { 90.0f,800.0f };
 
 	m_clampSize = 20.0f;
 
@@ -80,6 +80,8 @@ void Balt::Update()
 	}
 
 	UpdateCollision();
+
+	UpdateParticle();
 
 	SetWeapon();
 
@@ -123,6 +125,11 @@ void Balt::DrawLit()
 	if (!m_spModelWork) return;
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld, m_modelColor, m_emissiveColor);
+}
+
+void Balt::DrawParticle()
+{
+	KdShaderManager::Instance().m_particleShader.Draw();
 }
 
 
@@ -198,7 +205,7 @@ void Balt::UpdateRotate(const Math::Vector3& srcMoveVec)
 	m_rot.y = DirectX::XMConvertToDegrees(currentYaw);
 
 	// 角度正規化（0..360）
-	if (m_rot.y > 360.0f){ 
+	if (m_rot.y > 360.0f) {
 		m_rot.y -= 360.0f;
 	}
 	else if (m_rot.y < 0.0f) {
@@ -206,7 +213,19 @@ void Balt::UpdateRotate(const Math::Vector3& srcMoveVec)
 	}
 }
 
+void Balt::UpdateParticle()
+{
+	Math::Vector3 pos = {};
+	Math::Vector3 vec = {};
+	{
+		pos = (m_correctionMat * m_mWorld).Translation();
+		vec = (m_correctionMat * m_mWorld).Forward();
+	}
+	auto delta = KdFPSController::GetInstance().GetDeltaTime();
+	Math::Color color = { 2.9f,0.0f,3.0f,1.0f };
 
+	KdShaderManager::Instance().m_particleShader.UpdateGPU(delta, pos, vec, color);
+}
 
 void Balt::UpdateCollision()
 {
@@ -516,20 +535,20 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 		{
 			int i = spOwner->m_rand.GetInt(1, 5);
 			if (i == 1) {
-			spOwner->ChangeActionState(std::make_shared<AttackLeft>());
-			return;
+				spOwner->ChangeActionState(std::make_shared<AttackLeft>());
+				return;
 			}
 			else if (i == 2) {
-			spOwner->ChangeActionState(std::make_shared<AttackRight>());
-			return;
+				spOwner->ChangeActionState(std::make_shared<AttackRight>());
+				return;
 			}
 			else if (i == 3) {
-			spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
-			return;
+				spOwner->ChangeActionState(std::make_shared<MoveRightRotate>());
+				return;
 			}
 			else if (i == 4) {
-			spOwner->ChangeActionState(std::make_shared<AttackBack>());
-			return;
+				spOwner->ChangeActionState(std::make_shared<AttackBack>());
+				return;
 			}
 		}
 
@@ -1461,10 +1480,10 @@ void Balt::AttackForWard::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BladeAttack"), 3.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BladeAttack"), 6.0f, false);
 	}
 
-	m_speed = 90.0f;
+	m_speed = 150.0f;
 
 	m_type = tFrontAttack;
 
@@ -1548,7 +1567,7 @@ void Balt::AttackBack::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdG
 	{
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("AttackBack"), 3.0f);
 	}
-	m_speed = 60.0f;
+	m_speed = 90.0f;
 
 	m_type = tBackAttack;
 
@@ -1563,9 +1582,6 @@ void Balt::AttackBack::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdG
 	alert->CalcPos(pos);
 	alert->Init();
 	SceneManager::Instance().AddObject(alert);
-
-	//	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
-
 
 }
 
@@ -1635,7 +1651,7 @@ void Balt::AttackLeft::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdG
 
 	m_durationState = 0.63f;
 
-	m_speed = 70.0f;
+	m_speed = 105.0f;
 
 	spOwner->ChangeEnableLeftAttack(true);
 
@@ -1646,8 +1662,7 @@ void Balt::AttackLeft::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdG
 	alert->Init();
 	SceneManager::Instance().AddObject(alert);
 
-	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
-
+	
 }
 
 void Balt::AttackLeft::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1712,9 +1727,9 @@ void Balt::AttackRight::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<Kd
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("AttackRight"), 3.0f);
 	}
 
-	m_durationState = 0.4f;
+	m_durationState = 1.0f;
 
-	m_speed = 70.0f;
+	m_speed = 105.0f;
 
 	spOwner->ChangeEnableLeftAttack(true);
 	spOwner->ChangeEnableLeftShoulderAttack(true);

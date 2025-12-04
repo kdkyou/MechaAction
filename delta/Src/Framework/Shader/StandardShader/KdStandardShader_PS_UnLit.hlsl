@@ -22,6 +22,13 @@ float4 main(VSOutputNoLighting In) : SV_Target0
 	float4 baseColor = g_tex.Sample(g_ss, In.UV) * In.Color * g_BaseColor;
 	float3 outColor = baseColor.rgb;
 
+	
+	// Alphaテスト
+	if (baseColor.a < 0.05f)
+	{
+		discard;
+	}
+	
 	//------------------------------------------
 	// 波表現
 	//------------------------------------------
@@ -67,12 +74,6 @@ float4 main(VSOutputNoLighting In) : SV_Target0
 		outColor.rgb = gray * 0.5;
     
 		return outColor;
-	}
-	
-	// Alphaテスト
-	if (baseColor.a < 0.05f)
-	{
-		discard;
 	}
 	
 	// 自己発光色の適応

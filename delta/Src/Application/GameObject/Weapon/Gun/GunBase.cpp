@@ -50,7 +50,7 @@ void GunBase::Editor_ImGui()
 	ImGui::DragFloat((const char*)u8"旋回角度", &m_bulletRotateDeg,0.01f,0.0f);
 	ImGui::DragFloat((const char*)u8"最大追尾距離",&m_bulletTrackingDistance,0.1f,0.0f);
 	//ImGui::DragFloat((const char*)u8"移動方式");
-
+	ImGui::ColorEdit4((const char*)u8"カラー", &m_bulletTrailColor.x);
 
 	if (ImGui::Button((const char*)u8"テクスチャのロード"))
 	{
@@ -82,6 +82,7 @@ void GunBase::Deserialize(const nlohmann::json& jsonObj)
 	KdJsonUtility::GetValue(jsonObj, "BulletLostTime", &m_bulletLostTime);
 	KdJsonUtility::GetValue(jsonObj, "BulletTrackingDistance", &m_bulletTrackingDistance);
 	KdJsonUtility::GetValue(jsonObj, "BulletTrailPath", &m_bulletTrailPath);
+	KdJsonUtility::GetArray(jsonObj, "BulletTrailColor", &m_bulletTrailColor.x,4);
 	KdJsonUtility::GetValue(jsonObj, "Speed", &m_speed);
 
 	m_num = m_maxNum;
@@ -119,6 +120,7 @@ void GunBase::Serialize(nlohmann::json& outJson) const
 	outJson["DampingInterval"] = m_dampingInterval;
 	outJson["DampingRate"] = m_dampingRate;
 	outJson["BulletTrailPath"] = m_bulletTrailPath;
+	outJson["BulletTrailColor"] =KdJsonUtility::CreateArray(&m_bulletTrailColor.x,4);
 	outJson["ShotSoundPath"] = m_shotSoundPath;
 	outJson["Speed"] = m_speed;
 

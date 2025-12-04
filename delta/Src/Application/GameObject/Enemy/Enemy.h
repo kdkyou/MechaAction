@@ -2,7 +2,6 @@
 
 #include"../Character/CharacterBase.h"
 
-
 class Enemy :public CharacterBase
 {
 public:
@@ -32,7 +31,7 @@ public:
 	void PostUpdate()override;
 
 	void DrawLit()			override;
-
+	void DrawParticle()		override;
 
 	void SetThis(const std::shared_ptr<Enemy>& spthis) { m_wpThis = spthis; }
 
@@ -52,6 +51,8 @@ private:
 
 
 	void UpdateCollision()override;
+
+	void ParticleUpdate();
 
 	const Math::Matrix& UpdateMatrix();
 
@@ -92,6 +93,7 @@ private:
 
 		void SetParam(float speed,const Math::Vector3& direct);
 
+
 		enum TargetSide
 		{
 			Front,
@@ -106,6 +108,7 @@ private:
 
 		void CreateEffect(std::weak_ptr<Enemy>& owner,const std::string& effectName, const std::string& nodeName);
 		void EffectUpdate(std::weak_ptr<Enemy>& owner);
+		void AttackEnd(std::weak_ptr<Enemy>& owner);
 		void EffectExit();
 
 		UINT Serch(const Math::Vector3& nowVec, const Math::Vector3& targetVec);

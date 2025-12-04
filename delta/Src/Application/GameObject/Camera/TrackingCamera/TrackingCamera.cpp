@@ -43,8 +43,6 @@ void TrackingCamera::Init()
 
 void TrackingCamera::PostUpdate()
 {
-	ShowCursor(false);
-
 
 	Math::Vector3 vMove=Math::Vector3::Zero;
 
@@ -178,7 +176,7 @@ void TrackingCamera::CheckScreenPull()
 		s_stateTimer = 0.0f;
 	}
 
-	Application::Instance().m_log.AddLog("ClipPos X:%.2f,Y:%.2f, isPull:%d\n", clipPos.x, clipPos.y, (int)m_isPull);
+	Application::Instance().m_log.AddLog("ClipPos X:%.2f,Y:%.2f\n", clipPos.x, clipPos.y);
 
 
 }

@@ -39,8 +39,7 @@ private:
 
 	bool Search(bool areaOnly)override;
 
-	std::weak_ptr<KdGameObject>				m_wpTarget;
-
+	
 	float									m_angle = 6.0f;
 
 	bool									m_isForWard = false;

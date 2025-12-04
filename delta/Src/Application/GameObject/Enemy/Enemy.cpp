@@ -35,27 +35,20 @@ void Enemy::Init()
 		box.Center = m_mWorld.Translation();
 		box.Extents = { 3,5,3 };
 
-		//	m_pCollider->RegisterCollisionShape("Enemy", box, KdCollider::TypeDamage);
 		m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 	}
 
-	m_correction = { 0.0f,5.0f,0.0f };
+	
 	m_correctionMat = Math::Matrix::CreateTranslation(m_correction);
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-	SetPos({ 0.0f,0.0f,600.0f });
-
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
 
-	m_dist = { 70.0f,550.0f };
+	m_dist = { 70.0f,750.0f };
 
-	m_clampSize = 20.0f;
-
-	m_hp = 4320.0f;
-
-	m_nockBackDamage = 800.0f;
+	m_clampSize = 20.0f;   
 
 	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 
@@ -79,25 +72,14 @@ void Enemy::Update()
 
 	}
 	auto pos = m_mWorld.Translation();
-	//auto flg = Gravity(pos, Math::Vector3::Down, m_gravity);
-	//auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false);
 	auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, false, true);
 
 	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
 
-	if (flg) {
-		Application::Instance().m_log.AddLog("AnotherGround\n");
-	}
-	else {
-		Application::Instance().m_log.AddLog("AnotherFallNow\n");
-	}
 	UpdateCollision();
 
+	ParticleUpdate();
 	SetWeapon();
-
-	auto translation = m_mWorld.Translation();
-	Application::Instance().m_log.AddLog("HP%0.f\n", m_hp);
-	Application::Instance().m_log.AddLog("pos x:%.2f,y:%.2f,z:%.2f\n", translation.x, translation.y, translation.z);
 
 }
 
@@ -138,6 +120,11 @@ void Enemy::DrawLit()
 	if (!m_spModelWork) return;
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld,m_modelColor,m_emissiveColor);
+}
+
+void Enemy::DrawParticle()
+{
+	KdShaderManager::Instance().m_particleShader.Draw();
 }
 
 
@@ -261,6 +248,22 @@ void Enemy::UpdateCollision()
 	}
 }
 
+void Enemy::ParticleUpdate()
+{
+
+	Math::Vector3 pos = {};
+	Math::Vector3 vec = {};
+	{
+		pos = (m_correctionMat * m_mWorld).Translation();
+		vec = (m_correctionMat * m_mWorld).Forward();
+	}
+	auto delta = KdFPSController::GetInstance().GetDeltaTime();
+	Math::Color color = { 0.1f,0.0f,3.0f,1.0f };
+	
+
+	KdShaderManager::Instance().m_particleShader.UpdateGPU(delta, pos, vec, color);
+}
+
 const Math::Matrix& Enemy::UpdateMatrix()
 {
 	auto pos = m_mWorld.Translation();
@@ -381,8 +384,6 @@ void Enemy::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 
 	auto spTarget = m_wpTarget.lock();
 
-	//if (spTarget == nullptr) { return; }
-
 	if (m_nowAction) {
 		m_nowAction->Exit(m_wpThis, spTarget);
 	}
@@ -415,18 +416,23 @@ void Enemy::ActionStateBase::EffectUpdate(std::weak_ptr<Enemy>& owner)
 		auto spefct = eff->wpEffect.lock();
 		auto mat = eff->pNodeMat;
 
-		if (spefct == nullptr)
+		if (spefct)
 		{
-			eff->wpEffect = KdEffekseerManager::GetInstance().SerchEffect(eff->name);
-			spefct = eff->wpEffect.lock();
-			if (spefct)
-			{
 			eff->handle = spefct->GetHandle();
-			}
+			KdEffekseerManager::GetInstance().SetWorldMatrix(eff->handle, mat * spOwner->m_mWorld);
 		}
-
-		KdEffekseerManager::GetInstance().SetWorldMatrix(eff->handle, mat * spOwner->m_mWorld);
 	}
+}
+
+void Enemy::ActionStateBase::AttackEnd(std::weak_ptr<Enemy>& owner)
+{
+	auto spOwner = owner.lock();
+
+	spOwner->ChangeEnableAttack(false);
+	spOwner->ChangeEnableRightAttack(false);
+	spOwner->ChangeEnableLeftAttack(false);
+	spOwner->ChangeEnableRightShoulderAttack(false);
+	spOwner->ChangeEnableLeftShoulderAttack(false);
 }
 
 void Enemy::ActionStateBase::EffectExit()
@@ -1336,7 +1342,7 @@ void Enemy::AttackStand::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandAttack"), 3.0f);
 
 	spOwner->ChangeEnableRightAttack(true);
-	spOwner->ChangeEnableLeftAttack(true);
+	spOwner->ChangeEnableLeftShoulderAttack(true);
 
 	m_durationState = 0.7f;
 
@@ -1388,8 +1394,7 @@ void Enemy::AttackStand::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
-	spOwner->ChangeEnableRightAttack(false);
-	spOwner->ChangeEnableLeftAttack(false);
+	AttackEnd(owner);
 }
 
 
@@ -1409,6 +1414,8 @@ void Enemy::AttackForWard::Enter(std::weak_ptr<Enemy>& owner, const std::weak_pt
 
 	m_durationState = 0.7f;
 
+	
+	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightAttack(true);
 	spOwner->ChangeEnableLeftAttack(true);
 	spOwner->ChangeEnableLeftShoulderAttack(true);
@@ -1469,9 +1476,7 @@ void Enemy::AttackForWard::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
-	spOwner->ChangeEnableRightAttack(false);
-	spOwner->ChangeEnableLeftAttack(false);
-	spOwner->ChangeEnableLeftShoulderAttack(false);
+	AttackEnd(owner);
 
 	EffectExit();
 }
@@ -1492,9 +1497,9 @@ void Enemy::AttackBack::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<K
 
 	m_durationState = 0.5f;
 
-	spOwner->ChangeEnableRightAttack(true);
-	spOwner->ChangeEnableLeftAttack(true);
-
+	spOwner->ChangeEnableAttack(true);
+	spOwner->ChangeEnableRightShoulderAttack(true);
+	spOwner->ChangeEnableLeftShoulderAttack(true);
 
 	auto alert = std::make_shared<Alert>();
 	auto pos = CameraManager::Instance().GetLocalDirectionTo(spOwner->GetMatrix().Translation());
@@ -1551,8 +1556,7 @@ void Enemy::AttackBack::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<K
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
-	spOwner->ChangeEnableRightAttack(false);
-	spOwner->ChangeEnableLeftAttack(false);
+	AttackEnd(owner);
 
 	EffectExit();
 
@@ -1572,6 +1576,7 @@ void Enemy::AttackLeft::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<K
 
 	m_speed = 70.0f;
 
+	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightAttack(true);
 	spOwner->ChangeEnableLeftAttack(true);
 
@@ -1627,8 +1632,7 @@ void Enemy::AttackLeft::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<K
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
-	spOwner->ChangeEnableRightAttack(false);
-	spOwner->ChangeEnableLeftAttack(false);
+	AttackEnd(owner);
 
 	EffectExit();
 
@@ -1648,8 +1652,9 @@ void Enemy::AttackRight::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<
 
 	m_speed = 70.0f;
 
+	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightAttack(true);
-	spOwner->ChangeEnableLeftAttack(true);
+	spOwner->ChangeEnableLeftShoulderAttack(true);
 
 
 	auto alert = std::make_shared<Alert>();
@@ -1701,10 +1706,10 @@ void Enemy::AttackRight::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
+	AttackEnd(owner);
+
 	EffectExit();
 
-	spOwner->ChangeEnableRightAttack(false);
-	spOwner->ChangeEnableLeftAttack(false);
 }
 
 

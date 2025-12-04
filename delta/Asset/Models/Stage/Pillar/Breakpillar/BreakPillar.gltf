@@ -53,7 +53,7 @@
 			"name":"Material.001",
 			"normalTexture":{
 				"index":0,
-				"scale":3.6999998092651367
+				"scale":9.399999618530273
 			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
@@ -120,7 +120,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":24,
+			"count":14,
 			"max":[
 				1,
 				1,
@@ -136,13 +136,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":24,
+			"count":14,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":24,
+			"count":14,
 			"type":"VEC2"
 		},
 		{
@@ -189,50 +189,50 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":288,
+			"byteLength":168,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":288,
-			"byteOffset":288,
+			"byteLength":168,
+			"byteOffset":168,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":192,
-			"byteOffset":576,
+			"byteLength":112,
+			"byteOffset":336,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":72,
-			"byteOffset":768,
+			"byteOffset":448,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":1392,
-			"byteOffset":840,
+			"byteOffset":520,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1392,
-			"byteOffset":2232,
+			"byteOffset":1912,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":928,
-			"byteOffset":3624,
+			"byteOffset":3304,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":528,
-			"byteOffset":4552,
+			"byteOffset":4232,
 			"target":34963
 		}
 	],
@@ -244,7 +244,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":5080,
+			"byteLength":4760,
 			"uri":"BreakPillar.bin"
 		}
 	]

@@ -29,8 +29,7 @@ bool ParticleShader::Init(UINT maxParticles)
 	}
 	srd.pSysMem = init.data();
 
-	HRESULT hr = dev.WorkDev()->CreateBuffer(&desc, &srd, &m_particleBuffer);
-	if (FAILED(hr)) {
+	if (FAILED(dev.WorkDev()->CreateBuffer(&desc, &srd, &m_particleBuffer))) {
 		assert(0 && "Buffer作成失敗");
 		Release();
 		return false;
@@ -59,8 +58,7 @@ bool ParticleShader::Init(UINT maxParticles)
 	uavDesc.Buffer.FirstElement = 0;
 	uavDesc.Buffer.Flags = 0;
 	uavDesc.Buffer.NumElements = maxParticles;
-	hr = dev.WorkDev()->CreateUnorderedAccessView(m_particleBuffer, &uavDesc, &m_particleUAV);
-	if (FAILED(hr))
+	if (FAILED(dev.WorkDev()->CreateUnorderedAccessView(m_particleBuffer, &uavDesc, &m_particleUAV)))
 	{
 		assert(0 && "UAV作成失敗");
 		Release();
@@ -72,8 +70,7 @@ bool ParticleShader::Init(UINT maxParticles)
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	srvDesc.Buffer.FirstElement = 0;
 	srvDesc.Buffer.NumElements = maxParticles;
-	hr = dev.WorkDev()->CreateShaderResourceView(m_particleBuffer, &srvDesc, &m_particleSRV);
-	if (FAILED(hr))
+	if (FAILED(dev.WorkDev()->CreateShaderResourceView(m_particleBuffer, &srvDesc, &m_particleSRV)))
 	{
 		assert(0 && "SRV作成失敗");
 		Release();

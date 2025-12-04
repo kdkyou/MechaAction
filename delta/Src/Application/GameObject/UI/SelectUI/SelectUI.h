@@ -52,4 +52,12 @@ private:
 	std::list<std::shared_ptr<SelectData>> m_dataes;
 
 	bool m_isChangeScene = false;
+
+	float m_alpha = 1.0f;
+
+	float m_WorstAlpha = 0.4f;
+
+	float m_time = 0.5f;
+	float m_durationTime = 0.0f;
+	int   m_plamai = 1;
 };

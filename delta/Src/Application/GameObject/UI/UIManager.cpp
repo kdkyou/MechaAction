@@ -1,6 +1,5 @@
 ﻿#include "UIManager.h"
 
-//#include "UIBase.h"
 #include "DrawUI/DrawUI.h"
 #include "NumberUI/NumberUI.h"
 #include "GuageUI/GuageUI.h"
@@ -143,6 +142,15 @@ void UIManager::DrawSprite()
 	}
 }
 
+void UIManager::SetColorHP(const Math::Color& color)
+{
+	auto spHPUI = m_hpUI.lock();
+	if (spHPUI)
+	{
+		spHPUI->ChangeColor(color);
+	}
+}
+
 void UIManager::Editor_ImGui()
 {
 	nlohmann::json outJson;
@@ -174,7 +182,7 @@ void UIManager::Editor_ImGui()
 
 		if (ImGui::MenuItem((const char*)u8"保存"))
 		{
-			for (auto obj : m_uiList)
+			for (auto& obj : m_uiList)
 			{
 				nlohmann::json json;
 				obj->Serialize(json);
@@ -308,7 +316,7 @@ void UIManager::Deserialize(const std::string& path)
 	{
 		nlohmann::json j;
 		ifs >> j;
-		for (auto json : j)
+		for (auto& json : j)
 		{
 			std::string str;
 			KdJsonUtility::GetValue(json, "Name", &str);

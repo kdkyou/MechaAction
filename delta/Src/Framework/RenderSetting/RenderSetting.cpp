@@ -120,6 +120,11 @@ void RenderSetting::Editor_ImGui()
 	{
 		KdAudioManager::Instance().SetSEVolume(m_seVal);
 	}
+	
+	if (ImGui::DragFloat((const char*)u8"VOICE", &m_voiceVal, 0.01f, 0.0f, 1.0f))
+	{
+		KdAudioManager::Instance().SetVoiceVolume(m_voiceVal);
+	}
 
 
 }

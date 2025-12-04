@@ -83,7 +83,6 @@ void HitCamera::PostUpdate()
 		}
 	}
 
-	//UpdateRotateByMouse();
 	m_mRotation = GetRotationMatrix();
 
 	auto trans= Math::Matrix::CreateTranslation(m_pos);

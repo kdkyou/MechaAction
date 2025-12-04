@@ -72,7 +72,7 @@ void TrainingScene::Init()
 		charge->Init();
 		charge->SetTag(KdGameObject::tPlayerAttack);
 		charge->SetBulletsParam("Asset/Models/Weapon/Bullet/RaserBullet.gltf", 5.0f, 300, 530.0f, 200, 40.0f, 0.95f);
-		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke2.png", Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
+		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png", Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
 		AddObject(charge);;
 
 		std::shared_ptr<Missile> missile;
@@ -99,7 +99,7 @@ void TrainingScene::Init()
 
 	UIManager::GetInstance().ListClear();
 	UIManager::GetInstance().SceneUICreate();
-	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.2f, false);
+	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.35f, false);
 
 
 	//===================================================================
@@ -128,8 +128,6 @@ void TrainingScene::Event()
 	{
 		case TrainingScene::TrainingState::None:
 		m_trainingState = TrainingScene::TrainingState::WASD;
-	/*	m_voice = KdAudioManager::Instance().Play("Asset/Sounds/Voice/Training/Move.wav", false);
-		m_voice->SetVolume(KdAudioManager::Instance().GetVoiceVolume());*/
 		break;
 		case TrainingScene::TrainingState::WASD:
 		m_trainingState = TrainingScene::TrainingState::Space;
@@ -143,6 +141,20 @@ void TrainingScene::Event()
 		case TrainingScene::TrainingState::EnemyLock:
 		m_trainingState = TrainingScene::TrainingState::RightAttack;
 		break;
+		case TrainingScene::TrainingState::RightAttack:
+		m_trainingState = TrainingScene::TrainingState::LeftAttack;
+		break;
+		case TrainingScene::TrainingState::LeftAttack:
+		m_trainingState = TrainingScene::TrainingState::LSAttack;
+		break;
+		case TrainingScene::TrainingState::RSAttack:
+		m_trainingState = TrainingScene::TrainingState::LSAttack;
+		break;
+		case TrainingScene::TrainingState::LSAttack:
+		m_trainingState = TrainingScene::TrainingState::Clear;
+		break;
+
+
 	}
 
 	auto flg = UIManager::GetInstance().IsFadeComplete();

@@ -29,7 +29,7 @@ void TitleScene::Init()
 	KdEffekseerManager::GetInstance().StopAllEffect();
 
 	CameraManager::Instance().ResetMultiLocks();
-	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.2f, false);
+	UIManager::GetInstance().SetFade(Fade::FadeOut, 0.4f, false);
 	KdAudioManager::Instance().StopAllSound();
 
 	KdGameObjectFactory::Instance().RegisterGameObject<PolygonEffect>("PolygonEffect");
@@ -80,7 +80,7 @@ void TitleScene::Event()
 		if (!m_once)
 		{
 			m_once = true;
-			um.SetFade(Fade::FadeIn, 0.2f, true);
+			um.SetFade(Fade::FadeIn, 0.7f, true);
 			auto& am = KdAudioManager::Instance();
 			am.Play("Asset/Sounds/SE/Enter.wav", false)->SetVolume(am.GetSEVolume());
 			

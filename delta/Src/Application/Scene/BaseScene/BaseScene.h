@@ -99,7 +99,9 @@ public :
 protected :
 
 	void CurrentSceneCreate(const std::string& fileName);
-	void EnemyCreate(const std::string& fileName);
+	void TerrainCreate(const std::string& fileName);
+
+	void PositionReset();
 	
 	// 継承先シーンで必要ならオーバーライドする
 	virtual void Event();

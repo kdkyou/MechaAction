@@ -4,7 +4,7 @@
 		"AnimSpeed": 0.0,
 		"Chain": true,
 		"ChangeSpeed": 1.0,
-		"ChangeTime": 0.3,
+		"ChangeTime": 0.5,
 		"Emmisive": [ 0.0, 0.0, 0.0 ],
 		"FirstEmmisive": [ 15.0, 0.0, 0.0 ],
 		"IsTarget": false,
@@ -17,19 +17,19 @@
 		"SecondEmmisive": [ 0.0, 15.0, 0.5 ],
 		"SoundPath": "Asset\\Sounds\\SE\\CatapultActivate.wav",
 		"Tag": 0,
-		"Wait": 3.09,
-		"WaitChangeSpeed": 1.5
+		"Wait": 12.59,
+		"WaitChangeSpeed": 1.0
 	},
 	{
 		"AnimPath": "Sortie",
-		"AnimSpeed": 30.0,
+		"AnimSpeed": 10.0,
 		"Emmisive": [ 100.0, 100.0, 100.0 ],
 		"FirstPos": [ 0.0, -43.5, -48.0 ],
-		"FirstTime": 0.4,
-		"FirstWaitTime": 0.2,
+		"FirstTime": 2.4,
+		"FirstWaitTime": 1.0,
 		"ForthPos": [ 0.0, 0.0, 650.0 ],
-		"ForthTime": 0.2,
-		"ForthWaitTime": 0.2,
+		"ForthTime": 0.8,
+		"ForthWaitTime": 0.7,
 		"IsTarget": true,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Grint\\Grint.gltf",
@@ -38,13 +38,13 @@
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"SecondPos": [ 0.0, 2.0, -48.0 ],
-		"SecondTime": 0.5,
-		"SecondWaitTime": 0.5,
+		"SecondTime": 1.5,
+		"SecondWaitTime": 3.5,
 		"SoundPath": "",
 		"Tag": 0,
 		"ThirdPos": [ 0.0, 0.0, -35.0 ],
 		"ThirdTime": 0.4,
-		"ThirdWaitTime": 0.5
+		"ThirdWaitTime": 2.5
 	},
 	{
 		"AnimPath": "",
@@ -69,7 +69,7 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Closure.gltf",
-		"MoveTime": 0.15,
+		"MoveTime": 0.95,
 		"MoveVec": [ 0.0, -1.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Pos": [ 0.0, 2.7, 13.5 ],
@@ -79,7 +79,7 @@
 		"Speed": 1.0,
 		"StartPos": [ 0.0, 2.7, 13.5 ],
 		"Tag": 0,
-		"WaitTime": 0.95
+		"WaitTime": 4.95
 	},
 	{
 		"AnimPath": "",
@@ -90,7 +90,7 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Closure.gltf",
-		"MoveTime": 0.15,
+		"MoveTime": 0.95,
 		"MoveVec": [ 0.0, 1.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Pos": [ 0.0, 12.5, 13.5 ],
@@ -100,7 +100,7 @@
 		"Speed": 1.0,
 		"StartPos": [ 0.0, 12.5, 13.5 ],
 		"Tag": 0,
-		"WaitTime": 0.95
+		"WaitTime": 4.95
 	},
 	{
 		"AnimPath": "",
@@ -111,17 +111,17 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Closure.gltf",
-		"MoveTime": 0.15,
+		"MoveTime": 0.95,
 		"MoveVec": [ -1.0, 0.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Pos": [ 0.0, 2.7, 39.5 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"SoundPath": "Asset\\Sounds\\SE\\CatapultHatch.wav",
-		"Speed": 2.0,
+		"Speed": 1.0,
 		"StartPos": [ 0.0, 2.7, 39.5 ],
 		"Tag": 0,
-		"WaitTime": 1.05
+		"WaitTime": 6.05
 	},
 	{
 		"AnimPath": "",
@@ -132,17 +132,17 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Closure.gltf",
-		"MoveTime": 0.15,
+		"MoveTime": 0.95,
 		"MoveVec": [ 1.0, 0.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Pos": [ 0.0, 12.5, 39.5 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"SoundPath": "",
-		"Speed": 2.0,
+		"Speed": 1.0,
 		"StartPos": [ 0.0, 12.5, 39.5 ],
 		"Tag": 0,
-		"WaitTime": 1.05
+		"WaitTime": 6.05
 	},
 	{
 		"AnimPath": "",
@@ -153,17 +153,17 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Closure.gltf",
-		"MoveTime": 0.15,
+		"MoveTime": 0.95,
 		"MoveVec": [ 1.0, 0.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Pos": [ 0.0, 2.7, 65.4 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"SoundPath": "Asset\\Sounds\\SE\\CatapultHatch.wav",
-		"Speed": 2.0,
+		"Speed": 1.0,
 		"StartPos": [ 0.0, 2.7, 65.4 ],
 		"Tag": 0,
-		"WaitTime": 1.2
+		"WaitTime": 7.2
 	},
 	{
 		"AnimPath": "",
@@ -174,17 +174,17 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Closure.gltf",
-		"MoveTime": 0.15,
+		"MoveTime": 0.95,
 		"MoveVec": [ -1.0, 0.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Pos": [ 0.0, 12.5, 65.4 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"SoundPath": "",
-		"Speed": 2.0,
+		"Speed": 1.0,
 		"StartPos": [ 0.0, 12.5, 65.4 ],
 		"Tag": 0,
-		"WaitTime": 1.2
+		"WaitTime": 7.2
 	},
 	{
 		"AnimPath": "",
@@ -195,17 +195,17 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Closure.gltf",
-		"MoveTime": 0.15,
+		"MoveTime": 0.95,
 		"MoveVec": [ 0.0, -1.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Pos": [ 0.0, 2.7, 91.4 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"SoundPath": "Asset\\Sounds\\SE\\CatapultHatch.wav",
-		"Speed": 2.0,
+		"Speed": 1.0,
 		"StartPos": [ 0.0, 2.7, 91.4 ],
 		"Tag": 0,
-		"WaitTime": 1.35
+		"WaitTime": 8.55
 	},
 	{
 		"AnimPath": "",
@@ -216,17 +216,17 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Closure.gltf",
-		"MoveTime": 0.15,
+		"MoveTime": 0.95,
 		"MoveVec": [ 0.0, 1.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Pos": [ 0.0, 12.5, 91.4 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"SoundPath": "",
-		"Speed": 2.0,
+		"Speed": 1.0,
 		"StartPos": [ 0.0, 12.5, 91.4 ],
 		"Tag": 0,
-		"WaitTime": 1.35
+		"WaitTime": 8.55
 	},
 	{
 		"AnimPath": "",
@@ -237,17 +237,17 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Closure.gltf",
-		"MoveTime": 0.15,
+		"MoveTime": 0.95,
 		"MoveVec": [ 0.0, -1.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Pos": [ 0.0, 2.7, 117.4 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"SoundPath": "Asset\\Sounds\\SE\\CatapultHatch.wav",
-		"Speed": 2.0,
+		"Speed": 1.0,
 		"StartPos": [ 0.0, 2.7, 117.4 ],
 		"Tag": 0,
-		"WaitTime": 1.5
+		"WaitTime": 9.5
 	},
 	{
 		"AnimPath": "",
@@ -258,17 +258,17 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\Closure.gltf",
-		"MoveTime": 0.15,
+		"MoveTime": 0.95,
 		"MoveVec": [ 0.0, 1.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Pos": [ 0.0, 12.5, 117.4 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"SoundPath": "",
-		"Speed": 2.0,
+		"Speed": 1.0,
 		"StartPos": [ 0.0, 12.5, 117.4 ],
 		"Tag": 0,
-		"WaitTime": 1.5
+		"WaitTime": 9.5
 	},
 	{
 		"AnimPath": "",
@@ -279,7 +279,7 @@
 		"IsTarget": false,
 		"ModelColor": [ 1.0, 1.0, 1.0, 1.0 ],
 		"ModelPath": "Asset\\Models\\Stage\\Lab\\CatapultTail.gltf",
-		"MoveTime": 2.0,
+		"MoveTime": 2.4,
 		"MoveVec": [ 0.0, 1.0, 0.0 ],
 		"Name": "MoveTerrain",
 		"Points": [
@@ -338,9 +338,9 @@
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"SoundPath": "",
-		"Speed": 2.0,
+		"Speed": 1.0,
 		"StartPos": [ 0.0, -43.5, -48.0 ],
 		"Tag": 0,
-		"WaitTime": 0.2
+		"WaitTime": 1.1
 	}
 ]

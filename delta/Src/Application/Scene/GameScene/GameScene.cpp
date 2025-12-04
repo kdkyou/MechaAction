@@ -50,7 +50,7 @@ void GameScene::Init()
 	_character->SetThis(_character);
 	_character->SetThisBase(_character);
 	_character->Init();
-	_character->SetPos({ 0.0f,0.0f,-650.0f });
+	_character->SetPos({ 0.0f,5.0f,-650.0f });
 	AddPlayer(_character);
 
 
@@ -76,7 +76,7 @@ void GameScene::Init()
 		_shield->SetTag(KdGameObject::tPlayerAttack);
 		AddObject(_shield);
 		AddTerrain(_shield);
-
+		m_wpShield = _shield;
 
 		std::shared_ptr<Charge> charge;
 
@@ -89,7 +89,7 @@ void GameScene::Init()
 		charge->Init();
 		charge->SetTag(KdGameObject::tPlayerAttack);
 		charge->SetBulletsParam("Asset/Models/Weapon/Bullet/RaserBullet.gltf", 5.0f, 300, 530.0f, 200, 40.0f, 0.95f);
-		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Smoke2.png",Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
+		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png",Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
 		AddObject(charge);;
 		
 		std::shared_ptr<Missile> missile;
@@ -125,6 +125,7 @@ void GameScene::Init()
 	CameraManager::Instance().ResetAngle();
 
 	m_duration = 1.0f;
+	m_durationFade = 0.0f;
 	m_fade = false;
 	m_once = false;
 
@@ -155,12 +156,22 @@ void GameScene::Event()
 			break;
 		case Wave::First:
 			m_waveProgress = Second;
+			TerrainCreate("Asset/Data/Scene/Game2.scene");
+			PositionReset();
+			AddTerrain(m_wpShield.lock());
 			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Second.enemy");
+			KdAudioManager::Instance().Play("Asset/Sounds/Voice/Second.wav", false)->SetVolume(KdAudioManager::Instance().GetVoiceVolume());
+			m_isMovie = true;
 			m_num = First;
 			break;
 		case Wave::Second:
 			m_waveProgress = Last;
+			TerrainCreate("Asset/Data/Scene/Game3.scene");
+			PositionReset();
+			AddTerrain(m_wpShield.lock());
 			EnemyCreater::GetInstance().EnemysCreate("Asset/Data/Enemy/Last.enemy");
+			KdAudioManager::Instance().Play("Asset/Sounds/Voice/Last.wav", false)->SetVolume(KdAudioManager::Instance().GetVoiceVolume());
+			m_isMovie = true;
 			m_num = Second;
 			break;
 		case Wave::Last:
@@ -187,6 +198,24 @@ void GameScene::Event()
 			UIManager::GetInstance().SceneUICreate("Asset/Data/UI/CompleteUI.scene");
 		}
 	}
+
+	if (m_isMovie) {
+		auto sin = std::sinf(m_durationFade * DirectX::XM_2PI);
+
+		KdShaderManager::Instance().m_postProcessShader.SetRadialBlurInfo(8, sin, { 0.5f,0.5f }, 0.05f, 0, 0.0f);
+		UINT kind = KdShaderManager::Instance().m_postProcessShader.RadialBlur;
+		KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+		
+		m_durationFade += KdFPSController::GetInstance().GetDeltaTime();
+		if (m_durationFade > 0.5f)
+		{
+			m_durationFade = 0.0f;
+			m_isMovie = false;
+			kind = KdShaderManager::Instance().m_postProcessShader.Normal;
+			KdShaderManager::Instance().m_postProcessShader.SetCombine(kind);
+		}
+	}
+
 
 	if (m_once)
 	{

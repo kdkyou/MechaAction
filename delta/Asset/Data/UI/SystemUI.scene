@@ -1,6 +1,6 @@
 [
 	{
-		"AliveTime": 0.27,
+		"AliveTime": 1.27,
 		"Color": [ 0.2, 1.0, 0.25, 1.0 ],
 		"DrawHeight": 360,
 		"DrawWidth": 640,
@@ -16,7 +16,7 @@
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"UITag": "None",
 		"Ratio": 0.0,
-		"Time": 0.18,
+		"Time": 0.68,
 		"TimeRimit": true,
 		"IncDec": true,
 		"Auto": true

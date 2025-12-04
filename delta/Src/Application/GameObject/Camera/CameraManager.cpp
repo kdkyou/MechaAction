@@ -65,7 +65,7 @@ void CameraManager::PreDraw()
 
 }
 
-void CameraManager::MapPreDraw()
+void CameraManager::PreDrawMap()
 {
 	if (m_mapCamera == nullptr) { return; }
 	m_mapCamera->PreDraw();

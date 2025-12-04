@@ -31,7 +31,7 @@ private:
 
 	float m_WorstAlpha = 0.4f;
 
-	float m_time = 0.5f;
+	float m_time = 2.5f;
 	float m_durationTime = 0.0f;
 	int   m_plamai = 1;
 
