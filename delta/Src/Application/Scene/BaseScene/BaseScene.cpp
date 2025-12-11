@@ -563,35 +563,9 @@ void BaseScene::Edit_ImGui()
 			}
 		}
 	}
-
-	/* static std::string charaName = "";
-	if (ImGui::BeginCombo("SelectCharacter", charaName.empty() ? (const char*)u8"選択してください" : charaName.c_str()))
-	{
-		for (auto obj : KdGameObjectFactory::Instance().GetRegisterCharaList())
-		{
-			if (ImGui::Selectable(obj.c_str(), obj == charaName))
-			{
-				charaName = obj;
-			}
-		}
-
-		ImGui::EndCombo();
-	}*/
-
 	
 	EnemyCreater::GetInstance().Editor_ImGui();
 
-
-	/*for (auto obj : m_objList)
-	{
-		ImGui::PushID(obj.get());
-		if (ImGui::CollapsingHeader(obj->GetName().c_str()))
-		{
-			obj->Editor_ImGui();
-		}
-		ImGui::PopID();
-
-	}*/
 }
 
 

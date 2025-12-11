@@ -90,6 +90,7 @@ void GameScene::Init()
 		charge->SetTag(KdGameObject::tPlayerAttack);
 		charge->SetBulletsParam("Asset/Models/Weapon/Bullet/RaserBullet.gltf", 5.0f, 300, 530.0f, 200, 40.0f, 0.95f);
 		charge->SetBulletsTrailParam("Asset/Textures/GameObject/Prazma2.png",Math::Color(0.47f, 0.4f, 0.88f), 20.0f, 30);
+		charge->SetNodeMats("SP");
 		AddObject(charge);;
 		
 		std::shared_ptr<Missile> missile;
@@ -186,12 +187,7 @@ void GameScene::Event()
 		}
 	}
 
-	if (key.D7) {
-		m_enemyList.clear();
-		m_waveProgress = Second;
-	}
-
-	if (m_waveProgress == Complete || key.D9) {
+	if (m_waveProgress == Complete) {
 		if (!m_once)
 		{
 			m_once = true;

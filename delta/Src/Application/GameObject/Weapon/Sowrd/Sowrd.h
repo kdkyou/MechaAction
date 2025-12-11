@@ -23,6 +23,7 @@ public:
 	// このクラスの内容をJSONデータ化する
 	virtual void Serialize(nlohmann::json& outJson) const override;
 	
+	virtual bool Intersects(const KdCollider::BoxInfo& targetBox, std::list<KdCollider::CollisionResult>* pResults)override;
 
 private:
 

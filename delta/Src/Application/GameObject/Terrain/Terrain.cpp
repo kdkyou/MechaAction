@@ -64,8 +64,6 @@ void Terrain::Editor_ImGui()
 {
 	KdGameObject::Editor_ImGui();
 
-	//ImGui::Text((const char*)"アセットパス:%s", m_modelPath);
-
 	if (ImGui::Button((const char*)u8"モデルのロード"))
 	{
 		std::string filepath;

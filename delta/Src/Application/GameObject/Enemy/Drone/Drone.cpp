@@ -10,12 +10,10 @@
 void Drone::Init()
 {
 	m_limEnable = true;
-	m_limColor = { 0.12f,0.09f,0.08f };
-	m_limPow = 0.3f;
-						
-	m_correctionMat = Math::Matrix::CreateTranslation(m_correction);
+	m_limColor = { 0.52f,0.39f,0.38f };
+	m_limPow = 0.5f;
 
-	m_boxExtents = { 4.0f,3.0f,3.0f };
+	m_correctionMat = Math::Matrix::CreateTranslation(m_correction);
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -28,8 +26,6 @@ void Drone::Init()
 	m_name = "Drone";
 
 	m_viewAngle = 60.0f;
-
-	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 
 	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Enemy.gltf");
 }
@@ -62,7 +58,6 @@ void Drone::Update()
 
 	SetWeapon();
 
-
 }
 
 void Drone::PostUpdate()
@@ -85,11 +80,11 @@ void Drone::PostUpdate()
 		m_nowAction->PostUpdate(m_wpThis, spTarget);
 	}
 
-	m_pDebugWire->AddDebugBox(m_mWorld, m_boxExtents);
+	m_pDebugWire->AddDebugBox(m_mWorld, m_boxExtents,m_correction);
 
 	CharacterBase::PostUpdate();
 	auto pos = m_mMarker.Translation();
-	Application::Instance().m_log.AddLog("Drone:X.%.1fY.%.1fZ.%.1f\n",pos.x,pos.y,pos.z);
+	Application::Instance().m_log.AddLog("Drone:X.%.1fY.%.1fZ.%.1f\n", pos.x, pos.y, pos.z);
 
 }
 
@@ -212,8 +207,9 @@ bool Drone::Search(bool areaOnly)
 		}
 	}
 
-	if (retList.empty() == true) { 
-		return false; }
+	if (retList.empty() == true) {
+		return false;
+	}
 
 	Math::Vector3 hitPos = {};
 	m_overRap = 0.0f;
@@ -274,11 +270,11 @@ bool Drone::Search(bool areaOnly)
 					return true;
 				}
 			}
-			
+
 			Math::Vector3 vec = hitPos - m_mWorld.Translation();
 			vec.Normalize();
 
-			bool isClear = SeaarchObstacle(hitPos,vec, m_overRap);
+			bool isClear = SeaarchObstacle(hitPos, vec, m_overRap);
 
 			if (isClear) {
 				return true;
@@ -287,7 +283,7 @@ bool Drone::Search(bool areaOnly)
 			{
 				return false;
 			}
-			
+
 		}
 	}
 
@@ -357,9 +353,6 @@ void Drone::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Drone>& owner
 		return;
 	}
 	else {
-
-		//spOwner->SeaarchObstacle();
-
 		spOwner->ChangeActionState(std::make_shared<Backed>());
 		return;
 	}
@@ -378,25 +371,24 @@ bool Drone::ActionStateBase::ChangeStateObstacle(std::weak_ptr<Drone>& owner)
 		return false;
 	}
 
-		auto target = spOwner->GetCharacterTarget().lock();
+	auto target = spOwner->GetCharacterTarget().lock();
 
-		auto vec = target->GetPos() - spOwner->GetPos();
-		auto length = vec.Length();
-		vec.Normalize();
+	auto vec = target->GetPos() - spOwner->GetPos();
+	auto length = vec.Length();
+	vec.Normalize();
 
-		if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Left, length))
-		{
-			spOwner->ChangeActionState(std::make_shared<MoveMent>());
-			spOwner->m_nowAction->SetMoveDir(Left);
-			return true;
-		}
-		else if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Right, length))
-		{
-			spOwner->ChangeActionState(std::make_shared<MoveMent>());
-			spOwner->m_nowAction->SetMoveDir(Right);
-			return true;
-		}
-	
+	if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Left, length))
+	{
+		spOwner->ChangeActionState(std::make_shared<MoveMent>());
+		spOwner->m_nowAction->SetMoveDir(Left);
+		return true;
+	}
+	else if (spOwner->SeaarchObstacle(spOwner->GetPos(), vec.Right, length))
+	{
+		spOwner->ChangeActionState(std::make_shared<MoveMent>());
+		spOwner->m_nowAction->SetMoveDir(Right);
+		return true;
+	}
 
 	return false;
 }
@@ -410,8 +402,6 @@ void Drone::Idle::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameO
 	m_durationState = 1.0f;
 
 	m_speed = 0.0f;
-
-
 }
 
 void Drone::Idle::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
@@ -466,7 +456,7 @@ void Drone::MoveMent::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdG
 void Drone::MoveMent::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
-	
+
 	if (spOwner == nullptr) { return; }
 
 	auto spTarget = obj.lock();
@@ -497,7 +487,7 @@ void Drone::MoveMent::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 	}
 
 
-	spOwner->MoveSwept(m_speed,vec , KdCollider::TypeGround);
+	spOwner->MoveSwept(m_speed, vec, KdCollider::TypeGround);
 
 	if (m_durationState < 0)
 	{
@@ -612,7 +602,7 @@ void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<Kd
 	am.Play("Asset/Sounds/Sound/drone_explode.wav")->SetVolume(am.GetSEVolume());
 
 	auto pos = spOwner->m_mWorld.Translation();
-	KdEffekseerManager::GetInstance().Play("Expload.efkefc",pos, 1.0f, 3.0f, false);
+	KdEffekseerManager::GetInstance().Play("Expload.efkefc", pos, 1.0f, 3.0f, false);
 	spOwner->Burn();
 }
 

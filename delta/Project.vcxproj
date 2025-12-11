@@ -174,14 +174,12 @@
     <ClInclude Include="Src\Application\GameObject\Effect\Effect.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Fade\Fade.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.h" />
-    <ClInclude Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Balt\Balt.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Drone\Drone.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\EnemyCreater.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\FLAC\FLAC.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\MT\MT.h" />
-    <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h" />
     <ClInclude Include="Src\Application\GameObject\Enemy\Scarecrow\Scarecrow.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\AnimTerrain.h" />
     <ClInclude Include="Src\Application\GameObject\Terrain\DrawTerrain.h" />
@@ -208,7 +206,6 @@
     <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase.h" />
     <ClInclude Include="Src\Application\main.h" />
     <ClInclude Include="Src\Application\Scene\BaseScene\BaseScene.h" />
-    <ClInclude Include="Src\Application\Scene\GameMovieScene\GameMovieScene.h" />
     <ClInclude Include="Src\Application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="Src\Application\Scene\RetryScene\RetryScene.h" />
     <ClInclude Include="Src\Application\Scene\SceneManager.h" />
@@ -289,7 +286,6 @@
     <ClCompile Include="Src\Application\GameObject\Effect\Effect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Fade\Fade.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Polygon\PolygonEffect.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Balt\Balt.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Drone\Drone.cpp" />
     <ClCompile Include="Src\Application\GameObject\Enemy\Enemy.cpp" />
@@ -322,7 +318,6 @@
     <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase.cpp" />
     <ClCompile Include="Src\Application\main.cpp" />
     <ClCompile Include="Src\Application\Scene\BaseScene\BaseScene.cpp" />
-    <ClCompile Include="Src\Application\Scene\GameMovieScene\GameMovieScene.cpp" />
     <ClCompile Include="Src\Application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Src\Application\Scene\RetryScene\RetryScene.cpp" />
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp" />

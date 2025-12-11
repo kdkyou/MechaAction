@@ -117,8 +117,7 @@ private:
 	};
 
 	std::vector<std::shared_ptr<TargetUIf>> m_uis;
-	//std::list<std::shared_ptr<TargetUIf>> m_targetUIList;
-
+	
 private:
 
 

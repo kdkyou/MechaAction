@@ -25,7 +25,6 @@ void FLAC::Init()
 
 	m_name = "FLAC";
 
-	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 }
 
 void FLAC::Update()
@@ -45,16 +44,6 @@ void FLAC::Update()
 		m_nowAction->Update(m_wpThis, spTarget);
 
 	}
-	/*auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, false, true);
-
-	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
-
-	if (flg) {
-		Application::Instance().m_log.AddLog("AnotherGround\n");
-	}
-	else {
-		Application::Instance().m_log.AddLog("AnotherFallNow\n");
-	}*/
 
 	UpdateCollision();
 
@@ -732,39 +721,6 @@ void FLAC::Fly::Exit(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObjec
 
 	if (!spOwner->m_spModelWork) { return; }
 }
-
-//void FLAC::Boost::Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)
-//{
-//	auto spOwner = owner.lock();
-//	auto spTarget = spObj.lock();
-//	if (!spOwner) { return; }
-//
-//	m_type = FLACStateType::boost;
-//	
-//	if (spOwner->m_spModelWork) {
-//		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("Boost"), false);
-//	}
-//}
-//
-//void FLAC::Boost::Update(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)
-//{
-//	Application::Instance().m_log.AddLog("FLACnowState: Boost\n");
-//
-//	auto spOwner = owner.lock();
-//	auto spTarget = spObj.lock();
-//	if (!spOwner) { return; }
-//	
-//}
-//
-//void FLAC::Boost::PostUpdate(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)
-//{
-//
-//}
-//
-//void FLAC::Boost::Exit(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)
-//{
-//
-//}
 
 void FLAC::FrontMove::Enter(std::weak_ptr<FLAC>& owner, const std::weak_ptr<KdGameObject>& spObj)
 {

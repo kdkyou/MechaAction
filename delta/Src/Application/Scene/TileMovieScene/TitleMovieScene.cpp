@@ -51,11 +51,5 @@ void TitleMovieScene::Event()
 			);
 		}
 	}
-	if (key.T)
-	{
-		SceneManager::Instance().SetNextScene
-		(
-			SceneManager::SceneType::Title
-		);
-	}
+	
 }

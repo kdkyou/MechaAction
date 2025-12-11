@@ -1,0 +1,195 @@
+[
+	{
+		"States": [
+			{
+				"AnimName": "Start",
+				"AnimSpeed": 10.0,
+				"Speed": 0.0,
+				"StateNum": 0,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "Stand",
+				"AnimSpeed": 5.0,
+				"Speed": 0.0,
+				"StateNum": 1,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "StandUp",
+				"AnimSpeed": 10.0,
+				"Speed": 0.0,
+				"StateNum": 2,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "StandShield",
+				"AnimSpeed": 30.0,
+				"Speed": 0.0,
+				"StateNum": 3,
+				"Transition": 5.0
+			},
+			{
+				"AnimName": "Walk",
+				"AnimSpeed": 50.0,
+				"Speed": 65.0,
+				"StateNum": 4,
+				"Transition": 6.0
+			},
+			{
+				"AnimName": "WalkShield",
+				"AnimSpeed": 50.0,
+				"Speed": 65.0,
+				"StateNum": 5,
+				"Transition": 6.0
+			},
+			{
+				"AnimName": "Stand",
+				"AnimSpeed": 10.0,
+				"Speed": 40.0,
+				"StateNum": 6,
+				"Transition": 6.0
+			},
+			{
+				"AnimName": "Stand",
+				"AnimSpeed": 30.0,
+				"Speed": 40.0,
+				"StateNum": 7,
+				"Transition": 6.0
+			},
+			{
+				"AnimName": "StandShield",
+				"AnimSpeed": 30.0,
+				"Speed": 40.0,
+				"StateNum": 8,
+				"Transition": 5.0
+			},
+			{
+				"AnimName": "StandShield",
+				"AnimSpeed": 30.0,
+				"Speed": 40.0,
+				"StateNum": 9,
+				"Transition": 5.0
+			},
+			{
+				"AnimName": "Boost",
+				"AnimSpeed": 40.0,
+				"Speed": 340.0,
+				"StateNum": 10,
+				"Transition": 10.0
+			},
+			{
+				"AnimName": "Hoboor",
+				"AnimSpeed": 40.0,
+				"Speed": 240.0,
+				"StateNum": 11,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "BoostEnd",
+				"AnimSpeed": 40.0,
+				"Speed": 200.0,
+				"StateNum": 12,
+				"Transition": 10.0
+			},
+			{
+				"AnimName": "BoostDush",
+				"AnimSpeed": 40.0,
+				"Speed": 180.0,
+				"StateNum": 13,
+				"Transition": 2.0
+			},
+			{
+				"AnimName": "BoostDushShield",
+				"AnimSpeed": 40.0,
+				"Speed": 180.0,
+				"StateNum": 14,
+				"Transition": 8.0
+			},
+			{
+				"AnimName": "BoostDush",
+				"AnimSpeed": 10.0,
+				"Speed": 180.0,
+				"StateNum": 15,
+				"Transition": 5.0
+			},
+			{
+				"AnimName": "BoostDushShield",
+				"AnimSpeed": 10.0,
+				"Speed": 180.0,
+				"StateNum": 16,
+				"Transition": 5.0
+			},
+			{
+				"AnimName": "BoostDush",
+				"AnimSpeed": 20.0,
+				"Speed": 180.0,
+				"StateNum": 17,
+				"Transition": 6.0
+			},
+			{
+				"AnimName": "DushEnd",
+				"AnimSpeed": 60.0,
+				"Speed": 180.0,
+				"StateNum": 18,
+				"Transition": 10.0
+			},
+			{
+				"AnimName": "RightBladeAttackBef",
+				"AnimSpeed": 40.0,
+				"Speed": 240.0,
+				"StateNum": 19,
+				"Transition": 10.0
+			},
+			{
+				"AnimName": "RightSowrdMid",
+				"AnimSpeed": 10.0,
+				"Speed": 240.0,
+				"StateNum": 20,
+				"Transition": 10.0
+			},
+			{
+				"AnimName": "RightSowrd",
+				"AnimSpeed": 20.0,
+				"Speed": 240.0,
+				"StateNum": 21,
+				"Transition": 6.0
+			},
+			{
+				"AnimName": "RightBladeAttack2",
+				"AnimSpeed": 60.0,
+				"Speed": 240.0,
+				"StateNum": 22,
+				"Transition": 20.0
+			},
+			{
+				"AnimName": "BladeAccumulationAttack",
+				"AnimSpeed": 40.0,
+				"Speed": 240.0,
+				"StateNum": 23,
+				"Transition": 20.0
+			},
+			{
+				"AnimName": "Hited",
+				"AnimSpeed": 50.0,
+				"Speed": 40.0,
+				"StateNum": 24,
+				"Transition": 50.0
+			},
+			{
+				"AnimName": "Hited",
+				"AnimSpeed": 50.0,
+				"Speed": 30.0,
+				"StateNum": 25,
+				"Transition": 5.0
+			},
+			{
+				"AnimName": "Destroyed",
+				"AnimSpeed": 20.0,
+				"Speed": 3.0,
+				"StateNum": 26,
+				"Transition": 10.0
+			}
+		]
+	}
+]

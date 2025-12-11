@@ -21,11 +21,6 @@ void PolygonEffect::Update()
 		m_durationAlive -= KdFPSController::GetInstance().GetDeltaTime();
 
 	}
-
-	/*Math::Vector3 rad = KdToRadians * m_rot;
-
-	m_mWorld = Math::Matrix::CreateScale(m_scale) * Math::Matrix::CreateFromYawPitchRoll(rad) * Math::Matrix::CreateTranslation(m_pos);*/
-
 }
 
 void PolygonEffect::DrawUnLit()

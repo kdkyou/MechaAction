@@ -178,17 +178,11 @@
     <Filter Include="Src\Application\GameObject\Effect\Fade">
       <UniqueIdentifier>{c50fb562-d8f3-48d8-bc18-7addc35e2dc5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\Scene\GameMovieScene">
-      <UniqueIdentifier>{1e51cdc4-9c7c-4652-b837-5f4c4de1c2ad}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\UI\BlinkUI">
       <UniqueIdentifier>{c2d9c854-e10c-4ffa-b644-f64d6c6b0d5f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\Scene\RetryScene">
       <UniqueIdentifier>{454609f6-29d4-47de-9da5-915b6ce27f45}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Effect\ScaleEffect">
-      <UniqueIdentifier>{c84e1fd0-008c-4578-bf53-b775190aa09f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Camera\MapCamera">
       <UniqueIdentifier>{dec63e46-8483-4c60-8400-a1b153ebc7cf}</UniqueIdentifier>
@@ -402,9 +396,6 @@
     <ClInclude Include="Src\Application\GameObject\Camera\HitCamera\HitCamera.h">
       <Filter>Src\Application\GameObject\Camera\HitCamera</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Enemy\PlayerBehavior.h">
-      <Filter>Src\Application\GameObject\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Camera\LockCamera\LockCamera.h">
       <Filter>Src\Application\GameObject\Camera\LockCamera</Filter>
     </ClInclude>
@@ -434,36 +425,6 @@
     </ClInclude>
     <ClInclude Include="Src\Framework\RenderSetting\RenderSetting.h">
       <Filter>Src\Framework\RenderSetting</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imconfig.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imgui.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imgui_impl_dx11.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imgui_impl_win32.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imgui_internal.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imgui_stdlib.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\ImGuizmo.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imstb_rectpack.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imstb_textedit.h">
-      <Filter>Library\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Library\imgui\imstb_truetype.h">
-      <Filter>Library\imgui</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Enemy\Drone\Drone.h">
       <Filter>Src\Application\GameObject\Enemy\Drone</Filter>
@@ -522,9 +483,6 @@
     <ClInclude Include="Src\Application\GameObject\Effect\Fade\Fade.h">
       <Filter>Src\Application\GameObject\Effect\Fade</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\Scene\GameMovieScene\GameMovieScene.h">
-      <Filter>Src\Application\Scene\GameMovieScene</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.h">
       <Filter>Src\Application\GameObject\UI\BlinkUI</Filter>
     </ClInclude>
@@ -539,9 +497,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\TitleMovie.h">
       <Filter>Src\Application\GameObject\Character</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.h">
-      <Filter>Src\Application\GameObject\Effect\ScaleEffect</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Camera\MapCamera\MapCamera.h">
       <Filter>Src\Application\GameObject\Camera\MapCamera</Filter>
@@ -572,6 +527,36 @@
     </ClInclude>
     <ClInclude Include="Src\Framework\Shader\ParticleShader\ParticleShader.h">
       <Filter>Src\Framework\Shader\ParticleShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imconfig.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imgui.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imgui_impl_dx11.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imgui_impl_win32.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imgui_internal.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\ImGuizmo.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imstb_rectpack.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imstb_textedit.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imstb_truetype.h">
+      <Filter>Library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\imgui\imgui_stdlib.h">
+      <Filter>Library\imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -773,33 +758,6 @@
     <ClCompile Include="Src\Framework\RenderSetting\RenderSetting.cpp">
       <Filter>Src\Framework\RenderSetting</Filter>
     </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_demo.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_draw.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_impl_dx11.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_impl_win32.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_stdlib.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_tables.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\imgui_widgets.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Library\imgui\ImGuizmo.cpp">
-      <Filter>Library\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Enemy\Drone\Drone.cpp">
       <Filter>Src\Application\GameObject\Enemy\Drone</Filter>
     </ClCompile>
@@ -851,9 +809,6 @@
     <ClCompile Include="Src\Application\GameObject\Effect\Fade\Fade.cpp">
       <Filter>Src\Application\GameObject\Effect\Fade</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\Scene\GameMovieScene\GameMovieScene.cpp">
-      <Filter>Src\Application\Scene\GameMovieScene</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\BlinkUI\BlinkUI.cpp">
       <Filter>Src\Application\GameObject\UI\BlinkUI</Filter>
     </ClCompile>
@@ -868,9 +823,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\TitleMovie.cpp">
       <Filter>Src\Application\GameObject\Character</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Effect\ScaleEffect\ScaleEffect.cpp">
-      <Filter>Src\Application\GameObject\Effect\ScaleEffect</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\MapCamera\MapCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\MapCamera</Filter>
@@ -898,6 +850,33 @@
     </ClCompile>
     <ClCompile Include="Src\Framework\Shader\ParticleShader\ParticleShader.cpp">
       <Filter>Src\Framework\Shader\ParticleShader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_demo.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_draw.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_impl_dx11.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_impl_win32.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_tables.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_widgets.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\ImGuizmo.cpp">
+      <Filter>Library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Library\imgui\imgui_stdlib.cpp">
+      <Filter>Library\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,5 @@
 ﻿#include "Bullet.h"
 
-#include"../../../../main.h"
 #include"../../../Character/CharacterBase.h"
 
 #include "../../../../Scene/SceneManager.h"
@@ -103,7 +102,7 @@ void Bullet::Update()
 	m_mWorld = scale * m_mLocalRot * trans;
 
 
-	Intersects();
+//	Intersects();
 }
 
 void Bullet::PostUpdate()
@@ -130,8 +129,6 @@ void Bullet::Intersects()
 		{
 			OnHit();
 			obj->OnHit();
-			Application::Instance().m_log.Clear();
-			Application::Instance().m_log.AddLog("Bullet Ground Hit\n");
 		}
 	}
 

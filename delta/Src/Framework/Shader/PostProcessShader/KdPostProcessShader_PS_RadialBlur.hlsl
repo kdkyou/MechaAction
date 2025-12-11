@@ -44,7 +44,7 @@ float4 main(VSOutput input) : SV_Target0
 	//ディザリング
 	float dither = 0.0f;
 	
-	if(g_dither==1)
+	if(g_dither)
 	{
 		dither = InterleavedGradientNoise(input.Pos.xy, 0);
 	}
@@ -61,7 +61,7 @@ float4 main(VSOutput input) : SV_Target0
 	{
 		float uvOffset = 0.0f;
 		//ディザリングが有効時
-		if (g_dither==1)
+		if (g_dither)
 		{
 			uvOffset = (i + dither) * srcSampleCount ;
 			//サンプリング回数分中心点に向かって位置を変えながらテクスチャをサンプリング

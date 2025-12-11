@@ -31,18 +31,14 @@ void EmmisiveTerrain::Update()
 		float t = (m_durationWait / m_waitTime) * m_waitChangeSpeed;
 
 		Math::Vector3 zero = {};
-		m_emmisive = { 10.0f,10.0f,10.0f };
-
 	}
 	else
 	{
 		m_durationChange += delta;
 
-		//float t = (m_durationChange / m_changeTime) * m_changeSpeed;
-
-		//m_emmisive = Math::Vector3::Lerp(m_firstEmmisive, m_secondEmmisive, t);
-		m_emmisive = { 10.0f,10.0f,10.0f };
 	}
+	
+	m_emmisive = { 10.0f,10.0f,10.0f };
 
 	
 }

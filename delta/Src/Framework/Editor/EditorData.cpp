@@ -104,8 +104,6 @@ bool EditorData::SaveFileDialog(std::string& filepath, const std::string& title,
 }
 
 
-// 
-
 void EditorData::Initialize()
 {
 	
@@ -120,6 +118,7 @@ void EditorData::UpdateImGui()
 	if (key.F4) { m_editorMode = true;
 	CameraManager::Instance().SetNextType(CameraManager::None);
 	}
+	
 	
 	if (IsDebugMode() || IsEditorMode())
 	{
@@ -160,14 +159,7 @@ void EditorData::UpdateImGui()
 		ImGui::Checkbox((const char*)u8"エディター", &m_editorMode);
 		ImGui::Checkbox((const char*)u8"デバッグ", &m_debugMode);
 		
-		if (m_editorMode)
-		{
-			ImGui::Text((const char*)u8"エディターモード");
-		}
-		else
-		{
-			ImGui::Text((const char*)u8"ゲームモード");
-		}
+		
 		
 	}
 	ImGui::End();
@@ -225,7 +217,6 @@ void EditorData::UpdateImGui()
 		{
 
 		if (ImGui::BeginListBox((const char*)u8"カレントリスト"))
-		//	ImGui::Text((const char*)u8"カレントリスト");
 			{
 				for (auto& obj : SceneManager::Instance().GetObjList())
 				{
@@ -293,7 +284,6 @@ void EditorData::UpdateImGui()
 				for (auto& obj : SceneManager::Instance().GetTerrainList())
 				{
 					std::string str = obj->GetName();
-					//bool isSelected = (selectedObj.lock() == obj);  // 今の選択と同じか？
 
 					ImGui::PushID(obj.get());
 					if (ImGui::Selectable((const char*)str.c_str()))
@@ -330,32 +320,6 @@ void EditorData::UpdateImGui()
 	ImGui::End();
 
 	//===========================
-	// ログウィンドウ
-	//===========================
-	//m_logWindow.ImGuiUpdate("Log Window");
-
-	
-	
-
-	////===========================
-	//// GameViewウィンドウ
-	////===========================
-	//// エディターモード時は、ゲーム画面を表示
-	//if (EditorData::GetInstance().m_editorMode)
-	//{
-	//	if (ImGui::Begin("Game View", 0, 0))
-	//	{
-	//		auto tex = KdFramework::GetInstance().m_renderingData.m_resultTex;
-
-	//		ImVec2 wSize = ImGui::GetWindowSize();
-
-	//		wSize.y = wSize.x / tex->GetAspectRatio();
-	//		ImGui::Image((ImTextureID)tex->GetSRView().Get(), { wSize.x, wSize.y });
-	//	}
-	//	ImGui::End();
-	//}
-
-	//===========================
 	// シェーダーウィンドウ
 	//===========================
 	if (ImGui::Begin((const char*)u8"レンダー関係", 0, 0))
@@ -364,57 +328,5 @@ void EditorData::UpdateImGui()
 		RenderSetting::GetInstance().Editor_ImGui();
 	}
 	ImGui::End();
-
-	//===========================
-	// アセットウィンドウ
-	//===========================
-	//if (ImGui::Begin(u8"Asset Manager", 0, ImGuiWindowFlags_MenuBar))
-	//{
-	//	// メニューバー
-	//	if (ImGui::BeginMenuBar())
-	//	{
-	//		// メニュー一項目(横に並ぶ)
-	//		if (ImGui::BeginMenu(u8"ファイル操作"))
-	//		{
-	//			// メニュー項目(縦)
-	//			if (ImGui::MenuItem(u8"Metaファイル作成"))
-	//			{
-	//				KdAssetManager::GetInstance().CreateMetaFileForAllAssets();
-	//			}
-
-	//			// メニュー項目(縦)
-	//			if (ImGui::MenuItem(u8"実行時データ更新"))
-	//			{
-	//				KdAssetManager::GetInstance().CreateRuntimeData();
-	//			}
-
-	//			ImGui::Separator();
-
-	//			if (ImGui::MenuItem(u8"使用Assetのコピー"))
-	//			{
-	//				KdAssetManager::GetInstance().CopyAssetsKeepFolders();
-	//			}
-
-	//			// メニュー項目
-	//			if (ImGui::MenuItem(u8"Metaファイル削除"))
-	//			{
-	//				KdAssetManager::GetInstance().DeleteAllMetaFiles();
-	//			}
-
-
-
-
-	//			ImGui::EndMenu();
-	//		}
-
-	//		ImGui::EndMenuBar();
-	//	}
-
-
-	//	// 画面本体
-	//	KdAssetManager::GetInstance().Editor_ImGui();
-
-	//}
-	//ImGui::End();
 
 }

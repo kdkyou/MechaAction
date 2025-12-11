@@ -86,13 +86,6 @@ void TitleScene::Event()
 			
 		}
 	}
-
-	if (key.D0)
-	{
-			SceneManager::Instance().SetNextScene(
-				SceneManager::SceneType::Retry
-			);
-	}
 	
 	if (m_once)
 	{

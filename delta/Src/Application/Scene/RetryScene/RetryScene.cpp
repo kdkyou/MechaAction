@@ -13,9 +13,5 @@ void RetryScene::Init()
 
 void RetryScene::Event()
 {
-	auto& key = KeyInput::GetInstance().GetKeyboardState();
 
-	if (key.T) {
-		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
-	}
 }

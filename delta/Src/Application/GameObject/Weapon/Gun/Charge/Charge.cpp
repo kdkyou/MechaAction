@@ -172,18 +172,15 @@ void Charge::Trigger()
 
 void Charge::Shot()
 {
-	const KdModelWork::Node* pNode = m_spModelWork->FindWorkNode("SP");
 	Math::Vector3 startPos = Math::Vector3::Zero;
 	Math::Vector3 direct = Math::Vector3::Zero;
-	if (pNode)
 	{
-		auto trans = pNode->m_worldTransform * m_mWorld;
+		auto trans = m_nodeMats[m_numShot]->matrix * m_mWorld;
 		startPos = trans.Translation();
 
 		direct = trans.Backward();
 		direct.Normalize();
 
-	//	KdEffekseerManager::GetInstance().Play("Thruster.efkefc", trans.Translation(), 1.0f, 3.0f, false);
 	}
 
 

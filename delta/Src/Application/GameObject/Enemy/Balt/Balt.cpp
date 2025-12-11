@@ -40,7 +40,6 @@ void Balt::Init()
 		box.Center = m_mWorld.Translation();
 		box.Extents = { 3,5,3 };
 
-		//	m_pCollider->RegisterCollisionShape("Balt", box, KdCollider::TypeDamage);
 		m_pCollider->RegisterCollisionShape("Balt", m_spModelWork, KdCollider::TypeDamage);
 	}
 
@@ -396,8 +395,6 @@ void Balt::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 
 	auto spTarget = m_wpTarget.lock();
 
-	//if (spTarget == nullptr) { return; }
-
 	if (m_nowAction) {
 		m_nowAction->Exit(m_wpThis, spTarget);
 	}
@@ -418,7 +415,7 @@ void Balt::ActionStateBase::CreateEffect(std::weak_ptr<Balt>& owner, const std::
 			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 			effect->name = effectName;
 			effect->pNodeMat = pNode->m_worldTransform;
-			effect->wpEffect = KdEffekseerManager::GetInstance().Play(effectName, pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 3.0f);
+			effect->wpEffect = KdEffekseerManager::GetInstance().Play(effectName, pNode->m_worldTransform.Translation() * spOwner->m_mWorld.Translation(), 1.0f, 3.0f,false);
 			m_spEffects.push_back(effect);
 		}
 	}
@@ -440,7 +437,10 @@ void Balt::ActionStateBase::EffectUpdate(std::weak_ptr<Balt>& owner)
 			eff->handle = spefct->GetHandle();
 		}
 
-		KdEffekseerManager::GetInstance().SetWorldMatrix(eff->handle, mat * spOwner->m_mWorld);
+		if (spefct)
+		{
+			KdEffekseerManager::GetInstance().SetWorldMatrix(eff->handle, mat * spOwner->m_mWorld);
+		}
 	}
 }
 
@@ -1006,10 +1006,11 @@ void Balt::Boost::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameO
 	{
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Boost"), 60.0f, false);
 	}
-	m_speed = 170.0f;
-
+	m_speed = 270.0f;
 
 	m_type = tBoost;
+
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 }
 
 void Balt::Boost::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1062,12 +1063,10 @@ void Balt::BoostStop::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdG
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
-	//spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostStop"), 60.0f, false);
-
 	m_direct = spOwner->m_mWorld.Backward();
 	m_direct.Normalize();
 
-	m_speed = 100.0f;
+	m_speed = 240.0f;
 
 	m_type = tBoostStop;
 
@@ -1133,11 +1132,11 @@ void Balt::MoveForward::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<K
 	}
 	m_durationState = 1.0f;
 
-	m_speed = 90.0f;
+	m_speed = 190.0f;
 
 	m_type = tMoveForward;
 
-	//	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 }
 
 void Balt::MoveForward::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1202,11 +1201,11 @@ void Balt::MoveBack::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGa
 	}
 	m_durationState = 0.9f;
 
-	m_speed = 70.0f;
+	m_speed = 170.0f;
 
 	m_type = tMoveBack;
 
-	//CreateEffect(owner, "ThrusterE.efkefc", "CBP");
+	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 
 }
 
@@ -1227,7 +1226,7 @@ void Balt::MoveBack::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdG
 
 	auto vect = mat.Forward();
 
-	m_direct = mat.Forward();
+	m_direct = vect;
 
 	spOwner->MoveSwept(m_speed, m_direct, KdCollider::TypeGround, false, false);
 
@@ -1273,13 +1272,12 @@ void Balt::MoveRightRotate::Enter(std::weak_ptr<Balt>& owner, const  std::weak_p
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostRight"), 3.0f);
 	}
 
-	m_speed = 80.0f;
+	m_speed = 180.0f;
 
 	m_durationState = 1.0f;
 
 	m_type = tRotateRight;
 
-	//CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 }
 
 void Balt::MoveRightRotate::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1307,9 +1305,6 @@ void Balt::MoveRightRotate::Update(std::weak_ptr<Balt>& owner, const  std::weak_
 		ChangeStateWithPrev(owner, spObj);
 		return;
 	}
-
-	EffectUpdate(owner);
-
 }
 void Balt::MoveRightRotate::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
 {
@@ -1341,14 +1336,11 @@ void Balt::MoveLeftRotate::Enter(std::weak_ptr<Balt>& owner, const  std::weak_pt
 	{
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostLeft"), 3.0f);
 	}
-	m_speed = 70.0f;
+	m_speed = 170.0f;
 
 	m_durationState = 1.0f;
 
 	m_type = tRotateLeft;
-
-	//CreateEffect(owner, "ThrusterE.efkefc", "CBP");
-
 }
 
 void Balt::MoveLeftRotate::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1483,7 +1475,7 @@ void Balt::AttackForWard::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BladeAttack"), 6.0f, false);
 	}
 
-	m_speed = 150.0f;
+	m_speed = 180.0f;
 
 	m_type = tFrontAttack;
 
@@ -1567,7 +1559,7 @@ void Balt::AttackBack::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdG
 	{
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("AttackBack"), 3.0f);
 	}
-	m_speed = 90.0f;
+	m_speed = 150.0f;
 
 	m_type = tBackAttack;
 
@@ -1651,7 +1643,7 @@ void Balt::AttackLeft::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdG
 
 	m_durationState = 0.63f;
 
-	m_speed = 105.0f;
+	m_speed = 155.0f;
 
 	spOwner->ChangeEnableLeftAttack(true);
 
@@ -1729,7 +1721,7 @@ void Balt::AttackRight::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<Kd
 
 	m_durationState = 1.0f;
 
-	m_speed = 105.0f;
+	m_speed = 165.0f;
 
 	spOwner->ChangeEnableLeftAttack(true);
 	spOwner->ChangeEnableLeftShoulderAttack(true);
@@ -1798,7 +1790,7 @@ void Balt::Hited::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameO
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
-	m_speed = 40.0f;
+	m_speed = 90.0f;
 
 	m_direct = spOwner->GetHitDir();
 

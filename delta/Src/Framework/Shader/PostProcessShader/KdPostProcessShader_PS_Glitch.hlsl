@@ -111,12 +111,6 @@ float4 main(VSOutput In) : SV_Target0
 			float b = g_inputTex.Sample(g_ss, uv - float2(glitchOffset, 0)).b;
 		
 			color.rgb += float3(r, g, b) * 0.14f;
-
-			//狂わした色を反転
-			//color.rgb = lerp(color.rgb, 1.0 - color.rgb, glitch);
-
-			
-			
 		}
 		else
 		{

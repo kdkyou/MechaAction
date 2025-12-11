@@ -193,6 +193,7 @@ void CharacterBase::Deserialize(const nlohmann::json& jsonObj)
 	KdJsonUtility::GetValue(jsonObj, "HP", &m_hp);
 	KdJsonUtility::GetValue(jsonObj, "NockBackDamage", &m_nockBackDamage);
 	KdJsonUtility::GetArray(jsonObj, "Correction", &m_correction.x, 3);
+	KdJsonUtility::GetArray(jsonObj, "BoxExtent", &m_boxExtents.x, 3);
 
 	if (jsonObj.contains("Weapons"))
 	{
@@ -216,8 +217,8 @@ void CharacterBase::Deserialize(const nlohmann::json& jsonObj)
 						obj->SetTag(tEnemyAttack);
 					}
 					obj->SetParent(parent);
-					obj->Init();
 					obj->Deserialize(weaponsData);
+					obj->Init();
 					SceneManager::Instance().AddObject(obj);
 					m_wpWeapons.push_back(obj);
 				}
@@ -235,6 +236,7 @@ void CharacterBase::Serialize(nlohmann::json& outJson) const
 	outJson["NockBackDamage"] = m_nockBackDamage;
 	outJson["Correction"] = KdJsonUtility::CreateArray(&m_correction.x, 3);
 	outJson["ModelPath"] = m_modelPath;
+	outJson["BoxExtent"] = KdJsonUtility::CreateArray(&m_boxExtents.x, 3);
 
 	nlohmann::json weaponsArray = nlohmann::json::array();
 
@@ -694,8 +696,8 @@ const Math::Vector3 CharacterBase::LerpMove(float prog)
 	auto targetPos = m_vMove;
 	// 線形補間
 	auto move = Math::Vector3::Lerp(startPos, targetPos, prog);
+	move.Normalize();
 	m_preMove = move;
-	m_preMove.Normalize();
 	return move;
 }
 

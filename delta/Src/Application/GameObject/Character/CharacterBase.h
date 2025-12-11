@@ -115,6 +115,8 @@ protected:
 
 	const Math::Vector3 LerpMove(float prog);
 
+
+
 	std::string									m_modelPath;
 	std::shared_ptr<KdModelWork>				m_spModelWork;
 	std::shared_ptr<KdModelData>				m_spModelData;

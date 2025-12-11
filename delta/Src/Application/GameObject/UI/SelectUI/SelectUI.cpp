@@ -21,21 +21,21 @@ void SelectUI::Update()
 	if (m_type == MoveType::TopDown)
 	{
 
-		if (keyTrack.IsKeyPressed(key.W) || padTrack.rightStickUp == padTrack.PRESSED) {
+		if (keyTrack.IsKeyPressed(key.W) || padTrack.leftStickUp == padTrack.PRESSED) {
 			m_subscript -= 1;
 		}
 
-		if (keyTrack.IsKeyPressed(key.S) || padTrack.rightStickDown == padTrack.PRESSED) {
+		if (keyTrack.IsKeyPressed(key.S) || padTrack.leftStickDown == padTrack.PRESSED) {
 			m_subscript += 1;
 		}
 	}
 	else if (m_type == MoveType::LeftRight)
 	{
-		if (keyTrack.IsKeyPressed(key.D) || padTrack.rightStickRight == padTrack.PRESSED) {
+		if (keyTrack.IsKeyPressed(key.D) || padTrack.leftStickRight == padTrack.PRESSED) {
 			m_subscript += 1;
 		}
 
-		if (keyTrack.IsKeyPressed(key.A) || padTrack.rightStickLeft == padTrack.PRESSED) {
+		if (keyTrack.IsKeyPressed(key.A) || padTrack.leftStickLeft == padTrack.PRESSED) {
 			m_subscript -= 1;
 		}
 	}

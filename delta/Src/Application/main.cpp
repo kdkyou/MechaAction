@@ -23,7 +23,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR , _In_ int)
 	setlocale(LC_ALL, "japanese");
 
 	// DPI変換
-	SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+	//SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
 
 	//===================================================================
 	// 実行
@@ -293,6 +293,7 @@ void Application::Execute()
 		//入力管理
 		KeyInput::GetInstance().Update();
 
+	
 
 		//=========================================
 		//
@@ -371,18 +372,19 @@ void Application::ImGuiInit()
 	// Setup Dear ImGui style
 	// ImGui::StyleColorsDark();
 	ImGui::StyleColorsClassic();
+	
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;     // Enable GamePad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+//	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+
 	// Setup Platform/Renderer bindings
 	ImGui_ImplWin32_Init(m_window.GetWndHandle());
 	ImGui_ImplDX11_Init(
 		KdDirect3D::Instance().WorkDev(), KdDirect3D::Instance().WorkDevContext());
 
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.configFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-
 #include "imgui/ja_glyph_ranges.h"
-	ImGuiIO& io = ImGui::GetIO();
 	ImFontConfig config;
 	config.MergeMode = true;
 	io.Fonts->AddFontDefault();
@@ -400,7 +402,7 @@ void Application::ImGuiProcess()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-
+//	ImGui::DockSpaceOverViewport(0,ImGui::GetMainViewport()); // 簡単版（推奨）
 	EditorData::GetInstance().UpdateImGui();
 
 	//===========================================================
@@ -433,6 +435,14 @@ void Application::ImGuiProcess()
 	//===========================================================
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+	/*ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}*/
+
 }
 
 void Application::ImGuiRelease()

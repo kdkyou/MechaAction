@@ -37,6 +37,8 @@ void Sowrd::OnHit()
 		m_attackNum--;
 		m_pCollider->SetEnableAll(false);
 
+		KdEffekseerManager::GetInstance().Play("Slash.efkefc", pos, 1.0f, 1.0f, false);
+
 		CameraManager::Instance().SetNextType(CameraManager::Hit);
 	}
 }
@@ -54,6 +56,13 @@ void Sowrd::Deserialize(const nlohmann::json& jsonObj)
 void Sowrd::Serialize(nlohmann::json& outJson) const
 {
 	WeaponBase::Serialize(outJson);
+}
+
+bool Sowrd::Intersects(const KdCollider::BoxInfo& targetBox, std::list<KdCollider::CollisionResult>* pResults)
+{
+	if (!m_pCollider) { return false; }
+	auto mat = Math::Matrix::CreateTranslation(m_pos) * m_mWorld;
+	return m_pCollider->Intersects(targetBox, m_mWorld, pResults);
 }
 
 void Sowrd::Init()
@@ -82,11 +91,13 @@ void Sowrd::Init()
 
 	m_pCollider = std::make_unique<KdCollider>();
 
-	DirectX::BoundingBox box;
-	box.Center = { 0.0f,5.0f,9.0f };
-	box.Extents = { 10.0f, 9.0f, 10.0f };
+	DirectX::BoundingOrientedBox box;
+	box.Center = { 0.0f,0.0f,0.0f };
+	box.Extents = { 5.0f, 9.0f, 8.0f };
 
 	m_pCollider->RegisterCollisionShape("Sowrd", box, KdCollider::TypeDamage);
+
+	m_pos = { 0.0f,3.0f,9.0f };
 
 	m_pCollider->SetEnableAll(false);
 
@@ -177,11 +188,8 @@ void Sowrd::Update()
 		}
 	}
 
-	auto mat =  Math::Matrix::CreateTranslation({ 0.0f,5.0f,9.0f })*m_mWorld;
-	m_pDebugWire->AddDebugBox(mat, Math::Vector3(10.0f, 9.0f, 10.0f));
-
-	WeaponBase::Update();
-
+	auto mat = Math::Matrix::CreateTranslation(m_pos) * m_mWorld;
+	m_pDebugWire->AddDebugBox(mat, Math::Vector3(5.0f, 9.0f, 8.0f), {}, true);
 }
 
 void Sowrd::DrawUnLit()

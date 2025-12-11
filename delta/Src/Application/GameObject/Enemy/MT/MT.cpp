@@ -10,18 +10,14 @@
 void MT::Init()
 {
 	m_limEnable = true;
-	m_limColor = { 0.52f,0.5f,0.58f };
+	m_limColor = { 0.52f,0.35f,0.38f };
 	m_limPow = 1.0f;
 
 	m_spAnimator = std::make_shared<KdAnimator>();
 	
 	m_spMrkModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Marker/Enemy.gltf");
 
-	m_correction = { 0.0f,5.0f,0.0f };
-
 	m_correctionMat = Math::Matrix::CreateTranslation(m_correction);
-
-	m_boxExtents = { 4.0f,5.0f,3.0f };
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -37,8 +33,6 @@ void MT::Init()
 
 	m_viewAngle = 140.0f;
 
-
-	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 }
 
 void MT::Update()

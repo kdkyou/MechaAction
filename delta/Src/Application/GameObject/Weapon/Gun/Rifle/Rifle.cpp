@@ -9,11 +9,9 @@
 
 void Rifle::Init()
 {
-
 	m_muzzleFlashPath = "Asset/Textures/GameObject/MuzzleCross.png";
 
 	m_name = "Rifle";
-
 }
 
 
@@ -160,7 +158,6 @@ void Rifle::Shot()
 {
 	Math::Vector3 startPos = Math::Vector3::Zero;
 	Math::Vector3 direct = Math::Vector3::Zero;
-	//if (pNode)
 	{
 		auto trans = m_nodeMats[m_numShot]->matrix * m_mWorld;
 		startPos = trans.Translation();

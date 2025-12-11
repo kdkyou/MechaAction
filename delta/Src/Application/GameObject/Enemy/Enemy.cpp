@@ -33,7 +33,7 @@ void Enemy::Init()
 		DirectX::BoundingOrientedBox box;
 
 		box.Center = m_mWorld.Translation();
-		box.Extents = { 3,5,3 };
+		box.Extents = m_boxExtents;
 
 		m_pCollider->RegisterCollisionShape("Enemy", m_spModelWork, KdCollider::TypeDamage);
 	}
@@ -46,11 +46,12 @@ void Enemy::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
 
+	m_limColor = { 0.26f,0.25f,0.9f };
+	m_limPow = 0.3f;
+
 	m_dist = { 70.0f,750.0f };
 
 	m_clampSize = 20.0f;   
-
-	m_burnPath = "Asset/Textures/GameObject/Burn.png";
 
 }
 
@@ -118,8 +119,12 @@ void Enemy::PostUpdate()
 void Enemy::DrawLit()
 {
 	if (!m_spModelWork) return;
+	KdShaderManager::Instance().m_StandardShader.SetLimLightEnable(true);
+	KdShaderManager::Instance().m_StandardShader.SetLimlightParam(m_limColor, m_limPow);
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModelWork, m_mWorld,m_modelColor,m_emissiveColor);
+
+	KdShaderManager::Instance().m_StandardShader.SetLimLightEnable(false);
 }
 
 void Enemy::DrawParticle()
@@ -224,8 +229,8 @@ void Enemy::UpdateCollision()
 
 	DirectX::BoundingOrientedBox box;
 
-	box.Center = GetPos() + Math::Vector3(0.0f, 6.0f, 0.0f);
-	box.Extents = { 2.0f,5.0f,2.0f };
+	box.Center = GetPos() + m_correction;
+	box.Extents = m_boxExtents;
 	UINT type = KdCollider::TypeDamage;
 	KdCollider::BoxInfo boxInfo(type, box);
 

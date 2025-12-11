@@ -130,10 +130,10 @@ private:
 	float										m_boostEndSpeed = 180.0f;
 	float										m_boostDushSpeed = 180.0f;
 	float										m_bladeAttackSpeed = 240.0f;
-	float										m_hitedSpeed = 100.0f;
+	float										m_hitedSpeed = 30.0f;
 
-	float                                       m_boostFloatMeg = 0.6f;
-	float										m_boostLerpMeg = 0.2f;
+	float                                       m_boostFloatMag = 0.6f;
+	float										m_boostLerpMag = 0.2f;
 
 	// LockOn 関連タイマー
 	float m_lockOnFindTimer = 0.0f;
@@ -150,7 +150,17 @@ private:
 	bool										m_isWalkSounds =true;
 	bool										m_isParticle = false;
 	
+	struct StateParam
+	{
+		std::string Name;
+		float AnimSpeed;
+		float Speed;
+		float Transition;
+	};
 
+	// 名前　ステート値
+	std::map<UINT, StateParam> m_states;
+	bool LoadData(const std::string& path);
 
 
 	//トレイル
@@ -175,7 +185,7 @@ private:
 
 	std::weak_ptr<Character>					m_wpThis;
 
-	//ステートパターン管理系!
+	//ステートパターン管理系
 private:
 
 	class ActionStateBase
@@ -207,6 +217,9 @@ protected:
 		void EffectUpdate(std::weak_ptr<Character>& owner);
 		void EffectExit();
 
+		// パラメータセット
+		bool SetParam(std::weak_ptr<Character>& owner,const UINT stateNum);
+
 		bool m_isBoost = false;
 		bool m_isMove = false;
 		bool m_isFlow = false;
@@ -227,6 +240,9 @@ protected:
 	
 
 		float m_speed = 0.0f;
+		float m_animSpeed = 0.0f;
+		float m_animTransition = 0.0f;
+		
 		Math::Vector3 m_direction = Math::Vector3::Zero;
 
 		struct Effect
