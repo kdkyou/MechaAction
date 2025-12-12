@@ -98,7 +98,13 @@ public:
 
 	//現在のアニメーション位置を返す
 	const float GetAdvanceTime() const { return m_time; }
-	const float GetProgress()const { return m_time / m_spAnimation->m_maxLength; }
+	const float GetProgress()const {
+		float progress = 0.0f;
+		if (m_spAnimation->m_maxLength <= 0) {
+			progress = 1.0f;}
+		else { m_time / m_spAnimation->m_maxLength; }
+		return progress;
+	}
 	const float GetComp()const { return m_compCnt; }
 	const bool IsComp()const { return m_isComp; }
 	void SetAdvanceTime(const float advanceTime) { m_time = advanceTime; }

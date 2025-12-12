@@ -29,6 +29,15 @@ public:
 
 private:
 
+	enum DroneStateNum
+	{
+		ActionIdle,
+		ActionMovement,
+		ActionAttack,
+		ActionDestory,
+		ActionBack,
+
+	};
 
 
 	void UpdateRotate(const Math::Vector3& srcMoveVec)override;
@@ -39,6 +48,7 @@ private:
 
 	bool Search(bool areaOnly)override;
 
+	virtual bool LoadDataBayJson(const nlohmann::json& json)override;
 	
 	float									m_angle = 6.0f;
 
@@ -81,6 +91,7 @@ private:
 
 	protected:
 
+		void SetStatus(std::weak_ptr<Drone>& owner, const UINT num);
 
 		void EffectUpdate(std::weak_ptr<Drone>& owner);
 		void EffectExit();
@@ -99,6 +110,7 @@ private:
 		Math::Vector3					m_direct = {};
 		float							m_speed = 0.0f;
 
+		UINT							m_stateNum;
 
 		struct Effect
 		{

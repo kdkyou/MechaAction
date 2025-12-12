@@ -123,15 +123,7 @@ private:
 
 	//パラメータ
 	float										m_speedMag = NORMAL_SPEED;	//スピードの掛け算
-	float										m_stopSpeed = 0.0f;
-	float										m_walkSpeed = 65.0f;
-	float										m_jumpSpeed = 40.0f;
-	float										m_boostSpeed = 340.0f;
-	float										m_boostEndSpeed = 180.0f;
-	float										m_boostDushSpeed = 180.0f;
-	float										m_bladeAttackSpeed = 240.0f;
-	float										m_hitedSpeed = 30.0f;
-
+	
 	float                                       m_boostFloatMag = 0.6f;
 	float										m_boostLerpMag = 0.2f;
 
@@ -149,18 +141,6 @@ private:
 
 	bool										m_isWalkSounds =true;
 	bool										m_isParticle = false;
-	
-	struct StateParam
-	{
-		std::string Name;
-		float AnimSpeed;
-		float Speed;
-		float Transition;
-	};
-
-	// 名前　ステート値
-	std::map<UINT, StateParam> m_states;
-	bool LoadData(const std::string& path);
 
 
 	//トレイル

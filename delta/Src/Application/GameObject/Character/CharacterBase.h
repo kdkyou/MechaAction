@@ -168,6 +168,22 @@ protected:
 	Math::Vector3								m_hitDir = {};
 	float										m_nockBackDamage = 0.0f;
 
+	struct StateParam
+	{
+		std::string Name = "";
+		float AnimSpeed = 0.0f;
+		float Speed = 0.0f;
+		float Transition = 0.0f;
+		float DurationState = 0.0f;
+	};
+
+	// 名前　ステート値
+	std::map<UINT, StateParam> m_states;
+	virtual bool LoadDataByPath(const std::string& path);
+	virtual bool LoadDataBayJson(const nlohmann::json& json) { return false; }
+
+
+
 	//			追いかける範囲　x = Near　y = Far
 	Math::Vector2								m_dist = { 10.0f,180.0f };
 	float										m_viewRange = 0.0f;

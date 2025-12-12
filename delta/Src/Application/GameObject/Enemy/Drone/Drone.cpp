@@ -80,7 +80,7 @@ void Drone::PostUpdate()
 		m_nowAction->PostUpdate(m_wpThis, spTarget);
 	}
 
-	m_pDebugWire->AddDebugBox(m_mWorld, m_boxExtents,m_correction);
+	m_pDebugWire->AddDebugBox(m_mWorld, m_boxExtents, m_correction);
 
 	CharacterBase::PostUpdate();
 	auto pos = m_mMarker.Translation();
@@ -290,7 +290,29 @@ bool Drone::Search(bool areaOnly)
 	return false;
 }
 
+bool Drone::LoadDataBayJson(const nlohmann::json& json)
+{
+	if (json.empty()) { return false; }
 
+	if (json.contains("States"))
+	{
+		for (auto& obj : json["States"])
+		{
+			UINT state;
+
+			StateParam param;
+
+			KdJsonUtility::GetValue(obj, "StateNum", &state);
+			KdJsonUtility::GetValue(obj, "Speed", &param.Speed);
+			KdJsonUtility::GetValue(obj, "DurationState", &param.DurationState);
+
+			m_states[state] = param;
+		}
+		return true;
+	}
+	return false;
+
+}
 
 void Drone::Editor_ImGui()
 {
@@ -303,6 +325,7 @@ void Drone::Editor_ImGui()
 void Drone::Deserialize(const nlohmann::json& jsonObj)
 {
 	CharacterBase::Deserialize(jsonObj);
+	LoadDataBayJson(jsonObj);
 }
 
 void Drone::Serialize(nlohmann::json& outJson) const
@@ -318,6 +341,16 @@ void Drone::ChangeActionState(std::shared_ptr<ActionStateBase> nextAction)
 	m_prevAction = m_nowAction;
 	m_nowAction = nextAction;
 	m_nowAction->Enter(m_wpThis, m_wpTarget);
+}
+
+void Drone::ActionStateBase::SetStatus(std::weak_ptr<Drone>& owner, const UINT num)
+{
+	auto spOwner = owner.lock();
+	if (num > Drone::DroneStateNum::ActionBack) { return; }
+
+	auto param = spOwner->m_states.find(num);
+	m_speed = param->second.Speed;
+	m_durationState = param->second.DurationState;
 }
 
 void Drone::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Drone>& owner, float targetLength)
@@ -399,9 +432,9 @@ void Drone::Idle::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameO
 	auto spOwner = owner.lock();
 	auto spTarget = obj.lock();
 
-	m_durationState = 1.0f;
+	m_stateNum = spOwner->ActionIdle;
 
-	m_speed = 0.0f;
+	SetStatus(owner, m_stateNum);
 }
 
 void Drone::Idle::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
@@ -448,9 +481,8 @@ void Drone::MoveMent::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdG
 	auto spOwner = owner.lock();
 	auto spTarget = obj.lock();
 
-	m_speed = 30.0f;
-
-	m_durationState = 0.95f;
+	m_stateNum = spOwner->ActionMovement;
+	SetStatus(owner, m_stateNum);
 }
 
 void Drone::MoveMent::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
@@ -517,9 +549,9 @@ void Drone::Attack::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGam
 
 	if (spOwner == nullptr) { return; }
 
-	m_speed = 20.0f;
+	m_stateNum = spOwner->ActionAttack;
 
-	m_durationState = 0.36f;
+	SetStatus(owner, m_stateNum);
 
 	bool flg = ChangeStateObstacle(owner);
 	if (!flg)
@@ -586,12 +618,12 @@ void Drone::Attack::Exit(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGame
 
 void Drone::Destroyed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
-	m_speed = 30.0f;
-
-	m_durationState = 0.2f;
-
 	auto spOwner = owner.lock();
 	auto spTarget = obj.lock();
+
+	m_stateNum = spOwner->ActionDestory;
+
+	SetStatus(owner, m_stateNum);
 
 	spOwner->m_isDestroy = true;
 
@@ -642,9 +674,10 @@ void Drone::Backed::Enter(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGam
 	auto spOwner = owner.lock();
 	auto spTarget = obj.lock();
 
-	m_speed = 20.0f;
+	m_stateNum = spOwner->ActionBack;
 
-	m_durationState = 0.85f;
+	SetStatus(owner, m_stateNum);
+
 }
 
 void Drone::Backed::Update(std::weak_ptr<Drone>& owner, const std::weak_ptr<KdGameObject>& obj)

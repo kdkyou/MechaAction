@@ -701,6 +701,42 @@ const Math::Vector3 CharacterBase::LerpMove(float prog)
 	return move;
 }
 
+bool CharacterBase::LoadDataByPath(const std::string& path)
+{
+	if (path.empty()) { return false; }
+
+	std::ifstream ifs(path);
+	if (ifs.is_open())
+	{
+		nlohmann::json j;
+		ifs >> j;
+		for (auto json : j)
+		{
+			if (json.contains("States"))
+			{
+				for (auto& obj : json["States"])
+				{
+					UINT state;
+
+					StateParam param;
+
+					KdJsonUtility::GetValue(obj, "StateNum", &state);
+					KdJsonUtility::GetValue(obj, "AnimName", &param.Name);
+					KdJsonUtility::GetValue(obj, "AnimSpeed", &param.AnimSpeed);
+					KdJsonUtility::GetValue(obj, "Speed", &param.Speed);
+					KdJsonUtility::GetValue(obj, "Transition", &param.Transition);
+
+					m_states[state] = param;
+				}
+			}
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
 
 bool CharacterBase::SphereCast(const Math::Vector3& center, const float radius, const KdCollider::Type& type, Math::Vector3& resultPos)
 {

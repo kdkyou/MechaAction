@@ -40,7 +40,7 @@ void Character::Init()
 	InitTrail();
 	UnEnableTrail();
 
-	LoadData("Asset/Data/Player/State.data");
+	LoadDataByPath("Asset/Data/Player/State.data");
 
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<ActionStart>());
@@ -912,42 +912,6 @@ void Character::OverTrans(const std::string& nowAnimName, const float animProgre
 	std::string animpath = nowAnimName;
 	trans->SetTransACData(modelpath, animpath, animProgress, m_mWorld, m_TACProg, m_TACspeed, m_TACColor);
 	SceneManager::Instance().AddObject(trans);
-}
-
-bool Character::LoadData(const std::string& path)
-{
-	if (path.empty()) { return false; }
-
-	std::ifstream ifs(path);
-	if (ifs.is_open())
-	{
-		nlohmann::json j;
-		ifs >> j;
-		for (auto json : j)
-		{
-			if (json.contains("States"))
-			{
-				for (auto& obj : json["States"])
-				{
-					UINT state;
-
-					StateParam param;
-
-					KdJsonUtility::GetValue(obj, "StateNum", &state);
-					KdJsonUtility::GetValue(obj, "AnimName", &param.Name);
-					KdJsonUtility::GetValue(obj, "AnimSpeed", &param.AnimSpeed);
-					KdJsonUtility::GetValue(obj, "Speed", &param.Speed);
-					KdJsonUtility::GetValue(obj, "Transition", &param.Transition);
-
-					m_states[state] = param;
-				}
-			}
-			return true;
-		}
-	}
-	
-	return false;
-
 }
 
 void Character::InitTrail()
@@ -3854,6 +3818,7 @@ void Character::ActionRightAttackAf::Enter(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 	
 	m_stateNum = spOwner->CharacterStateName::RightSorwdAf;
+	SetParam(owner, m_stateNum);
 	
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition, false);
 
