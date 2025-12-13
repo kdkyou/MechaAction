@@ -335,7 +335,7 @@
 		"Scale": [ 1.0, 1.0, 1.0 ],
 		"Tag": 5,
 		"UnLit": false,
-		"path": "Asset\\Models\\ContenaCar\\ContenaCar.gltf"
+		"path": "Asset\\Models\\Stage\\ContenaCar\\ContenaCar.gltf"
 	},
 	{
 		"Bright": false,

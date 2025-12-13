@@ -338,8 +338,6 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 
 	auto deltaSpeed = speed * deltaTime;
 
-	auto empty = type;
-
 	if (step)
 	{
 		pos -= direction * 0.05f;

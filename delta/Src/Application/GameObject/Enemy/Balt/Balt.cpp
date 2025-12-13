@@ -357,6 +357,12 @@ bool Balt::Search(bool areaOnly)
 	return false;
 }
 
+bool Balt::LoadDataBayJson(const nlohmann::json& json)
+{
+
+	return false;
+}
+
 void Balt::AttackOff()
 {
 	ChangeEnableAttack(false);

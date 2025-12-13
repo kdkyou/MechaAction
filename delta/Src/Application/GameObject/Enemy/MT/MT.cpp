@@ -310,6 +310,32 @@ bool MT::Search(bool areaOnly)
 	return false;
 }
 
+bool MT::LoadDataBayJson(const nlohmann::json& json)
+{
+	if (json.empty()) { return false; }
+
+	if (json.contains("States"))
+	{
+		for (auto& obj : json["States"])
+		{
+			UINT state;
+
+			StateParam param;
+
+			KdJsonUtility::GetValue(obj, "StateNum", &state);
+			KdJsonUtility::GetValue(obj, "AnimName", &param.Name);
+			KdJsonUtility::GetValue(obj, "AnimSpeed", &param.AnimSpeed);
+			KdJsonUtility::GetValue(obj, "Transition", &param.Transition);
+			KdJsonUtility::GetValue(obj, "Speed", &param.Speed);
+			KdJsonUtility::GetValue(obj, "DurationState", &param.DurationState);
+
+			m_states[state] = param;
+		}
+		return true;
+	}
+	return false;
+}
+
 
 
 void MT::Editor_ImGui()
@@ -421,8 +447,6 @@ void MT::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<MT>& owner, floa
 	}
 	else {
 
-		//spOwner->SeaarchObstacle();
-
 		spOwner->ChangeActionState(std::make_shared<Backed>());
 		return;
 	}
@@ -466,18 +490,33 @@ bool MT::ActionStateBase::ChangeStateObstacle(std::weak_ptr<MT>& owner)
 
 }
 
+void MT::ActionStateBase::SetStatus(std::weak_ptr<MT>& owner, const UINT num)
+{
+	auto spOwner = owner.lock();
+	if (num > MT::StateType::backed) { return; }
+
+	auto param = spOwner->m_states.find(num);
+	m_animName = param->second.Name;
+	m_speed = param->second.Speed;
+	m_animSpeed = param->second.AnimSpeed;
+	m_animTransition = param->second.Transition;
+	m_durationState = param->second.DurationState;
+
+}
+
 
 void MT::StandUp::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
 	auto spOwner = owner.lock();
 	auto spObj = obj.lock();
-	m_durationState = 5.0f;
 
-	m_speed = 0.0f;
+	m_type = spOwner->standUp;
+
+	SetStatus(owner, m_type);
 
 	if (spOwner->m_spAnimator && spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("WakeUp"), 5.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation(m_animName), m_animTransition, false);
 	}
 }
 
@@ -521,7 +560,7 @@ void MT::StandUp::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGam
 	{
 		if (m_anyFlg)
 		{
-			animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 40.0f);
+			animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 		}
 
 	}
@@ -538,13 +577,11 @@ void MT::Idle::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>
 	auto spOwner = owner.lock();
 	auto spObj = obj.lock();
 
-	m_durationState = 1.0f;
-
-	m_speed = 0.0f;
+	m_type = spOwner->idle;
 
 	if (spOwner->m_spAnimator && spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("Stand"), 10.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation(m_animName), m_animTransition, false);
 	}
 }
 
@@ -582,7 +619,7 @@ void MT::Idle::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameOb
 	// おそらくエフェクト関連
 	if (animator && spOwner->m_spModelWork)
 	{
-		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 40.0f);
+		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 
 	}
 }
@@ -598,13 +635,9 @@ void MT::MoveMent::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObj
 	auto spOwner = owner.lock();
 	auto spObj = obj.lock();
 
-	m_speed = 30.0f;
-
-	m_durationState = 0.95f;
-
 	if (spOwner->m_spAnimator && spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("Move"), 10.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation(m_animName),m_animTransition, false);
 	}
 
 	 int i =spOwner->m_rand.GetInt(1, 3);
@@ -643,7 +676,7 @@ void MT::MoveMent::Update(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameOb
 	diff.Normalize();
 
 	diff.x = sin(DirectX::XMConvertToRadians(m_sin));
-	m_sin += 10 * KdFPSController::GetInstance().GetDeltaTime();
+	m_sin +=  KdFPSController::GetInstance().GetDeltaTime();
 
 	Math::Vector3 vec = diff;
 
@@ -677,7 +710,7 @@ void MT::MoveMent::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGa
 	// おそらくエフェクト関連
 	if (animator && spOwner->m_spModelWork)
 	{
-		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 40.0f);
+		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 
 	}
 }
@@ -695,9 +728,7 @@ void MT::Attack::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObjec
 
 	if (spOwner == nullptr) { return; }
 
-	m_speed = 20.0f;
-
-	m_durationState = 0.36f;
+	m_type = spOwner->attack;
 
 	bool flg = ChangeStateObstacle(owner);
 	if (!flg)
@@ -725,8 +756,7 @@ void MT::Attack::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObjec
 	}
 	if (spOwner->m_spModelWork)
 	{
-
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("Attack"), 10.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation(m_animName),m_animTransition, false);
 	}
 
 }
@@ -781,7 +811,7 @@ void MT::Attack::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGame
 	// おそらくエフェクト関連
 	if (animator && spOwner->m_spModelWork)
 	{
-		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 40.0f);
+		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 
 	}
 }
@@ -804,15 +834,15 @@ void MT::Hited::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject
 
 	if (spOwner == nullptr) { return; }
 
-	m_speed = 20.0f;
+	m_type = spOwner->hited;
 
-	m_durationState = 0.36f;
+	SetStatus(owner, m_type);
 
 	ChangeStateObstacle(owner);
 
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("Hited"), 10.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation(m_animName), m_animTransition, false);
 	}
 
 }
@@ -857,7 +887,7 @@ void MT::Hited::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameO
 	// おそらくエフェクト関連
 	if (animator && spOwner->m_spModelWork)
 	{
-		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 40.0f);
+		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 
 	}
 }
@@ -876,18 +906,17 @@ void MT::Hited::Exit(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>
 
 void MT::Destroyed::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)
 {
-	m_speed = 30.0f;
-
-	m_durationState = 2.0f;
-
 	auto spOwner = owner.lock();
 	auto spObj = obj.lock();
+
+	m_type = spOwner->destroy;
+
 
 	spOwner->m_isDestroy = true;
 	
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("Destroyed"), 10.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation(m_animName), m_animTransition, false);
 	}
 
 	auto& am = KdAudioManager::Instance();
@@ -928,7 +957,7 @@ void MT::Destroyed::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdG
 	// おそらくエフェクト関連
 	if (animator && spOwner->m_spModelWork)
 	{
-		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 40.0f);
+		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 
 	}
 }
@@ -944,13 +973,13 @@ void MT::Backed::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObjec
 	auto spOwner = owner.lock();
 	auto spObj = obj.lock();
 
-	m_speed = 20.0f;
+	m_type = spOwner->backed;
 
-	m_durationState = 0.85f;
+	SetStatus(owner, m_type);
 
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation("Move"), 10.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation(m_animName), m_animTransition, false);
 	}
 
 }
@@ -990,6 +1019,12 @@ void MT::Backed::PostUpdate(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGame
 {
 	auto spOwner = owner.lock();
 	auto spObj = obj.lock();
+	
+	auto& animator = spOwner->m_spAnimator;
+	if (animator && spOwner->m_spModelWork)
+	{
+		animator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
+	}
 }
 
 void MT::Backed::Exit(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>& obj)

@@ -29,7 +29,15 @@ public:
 
 private:
 
-
+	enum StateType {
+		standUp,
+		idle,
+		movement,
+		attack,
+		hited,
+		destroy,
+		backed,
+	};
 
 	void UpdateRotate(const Math::Vector3& srcMoveVec)override;
 
@@ -38,6 +46,8 @@ private:
 	void UpdateMatrix();
 
 	bool Search(bool areaOnly)override;
+
+	virtual bool LoadDataBayJson(const nlohmann::json& json)override;
 
 
 	float									m_angle = 6.0f;
@@ -91,13 +101,20 @@ private:
 
 		void SetMoveDir(TargetSide side) { m_side = side; }
 
+		void SetStatus(std::weak_ptr<MT>& owner, const UINT num);
+
 		// ステートの継続時間
 		float							m_durationState = 0.0f;
 
 		TargetSide						m_side = TargetSide::Front;
 
 		Math::Vector3					m_direct = {};
+
+		UINT							m_type;
+		std::string						m_animName = "";
 		float							m_speed = 0.0f;
+		float							m_animSpeed = 0.0f;
+		float							m_animTransition = 0.0f;
 
 		float							m_sin = 0.0f;
 

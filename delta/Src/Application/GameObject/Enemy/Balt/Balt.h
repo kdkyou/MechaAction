@@ -7,24 +7,6 @@ class Balt :public CharacterBase
 {
 public:
 
-	enum BaltStateType
-	{
-		tStart,
-		tStandUp,
-		tStand,
-		tStandAttack,
-		tBoost,
-		tBoostStop,
-		tMoveForward,
-		tRotateRight,
-		tRotateLeft,
-		tMoveBack,
-		tFrontAttack,
-		tRightAttack,
-		tLeftAttack,
-		tBackAttack,
-
-	};
 
 	void Init()override;
 
@@ -49,6 +31,26 @@ public:
 
 private:
 
+	enum BaltStateType
+	{
+		tStart,
+		tStandUp,
+		tStand,
+		tStandAttack,
+		tBoost,
+		tBoostStop,
+		tMoveForward,
+		tRotateRight,
+		tRotateLeft,
+		tMoveBack,
+		tFrontAttack,
+		tRightAttack,
+		tLeftAttack,
+		tBackAttack,
+
+	};
+
+
 	void UpdateRotate(const Math::Vector3& srcMoveVec)override;
 
 	void UpdateParticle();
@@ -61,6 +63,8 @@ private:
 
 
 	const BaltStateType GetPrevState()const { return m_prevAction->GetType(); }
+	
+	virtual bool LoadDataBayJson(const nlohmann::json& json)override;
 
 
 	float									m_angle = 6.0f;
@@ -114,6 +118,8 @@ private:
 		void ChangeStateWithPrev(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdGameObject>& spObj);
 		void ChangeStateWithDistance(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdGameObject>& spObj);
 
+		void SetStatus(std::weak_ptr<Balt>& owner, const UINT num);
+		
 		// ステートの継続時間
 		float m_durationState = 0.0f;
 

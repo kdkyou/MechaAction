@@ -6,24 +6,7 @@ class Enemy :public CharacterBase
 {
 public:
 
-	enum AnotherStateType
-	{
-		tStart,
-		tStandUp,
-		tStand,
-		tStandAttack,
-		tBoost,
-		tBoostStop,
-		tMoveForward,
-		tRotateRight,
-		tRotateLeft,
-		tMoveBack,
-		tFrontAttack,
-		tRightAttack,
-		tLeftAttack,
-		tBackAttack,
-
-	};
+	
 
 	void Init()override;
 
@@ -46,6 +29,25 @@ public:
 	virtual void Serialize(nlohmann::json& outJson) const override;
 
 private:
+	enum AnotherStateType
+	{
+		tStart,
+		tStandUp,
+		tStand,
+		tStandAttack,
+		tBoost,
+		tBoostStop,
+		tMoveForward,
+		tRotateRight,
+		tRotateLeft,
+		tMoveBack,
+		tFrontAttack,
+		tRightAttack,
+		tLeftAttack,
+		tBackAttack,
+		tHited,
+		tDestroy,
+	};
 
 	void UpdateRotate(const Math::Vector3& srcMoveVec)override;
 
@@ -60,6 +62,8 @@ private:
 
 	
 	const AnotherStateType GetPrevState()const { return m_prevAction->GetType(); }
+
+	virtual bool LoadDataBayJson(const nlohmann::json& json)override;
 
 
 	float									m_angle = 6.0f;
@@ -91,7 +95,7 @@ private:
 		virtual void PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj){}
 		virtual void Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj){}
 
-		void SetParam(float speed,const Math::Vector3& direct);
+		void SetParam(const Math::Vector3& direct);
 
 
 		enum TargetSide
@@ -114,6 +118,8 @@ private:
 		UINT Serch(const Math::Vector3& nowVec, const Math::Vector3& targetVec);
 		void ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj);
 		void ChangeStateWithDistance(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdGameObject>& spObj);
+		
+		void SetStatus(std::weak_ptr<Enemy>& owner, const UINT num);
 
 		// ステートの継続時間
 		float m_durationState = 0.0f;
@@ -123,6 +129,9 @@ private:
 
 		Math::Vector3 m_direct = {};
 		float					m_speed = 0.0f;
+		float					m_animSpeed = 0.0f;
+		float					m_animTransition = 0.0f;
+		std::string				m_animName = "";
 
 		struct Effect
 		{

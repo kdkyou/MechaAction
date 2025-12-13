@@ -1,12 +1,9 @@
 ﻿#include"Enemy.h"
 
-
 #include"../../main.h"
 
 #include "../../Scene/SceneManager.h"
-
 #include"../Character/CharacterBase.h"
-
 #include "../Camera/CameraManager.h"
 #include "../UI/Alert/Alert.h"
 
@@ -46,8 +43,8 @@ void Enemy::Init()
 	//初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<Start>());
 
-	m_limColor = { 0.26f,0.25f,0.9f };
-	m_limPow = 0.3f;
+	m_limColor = { 0.26f,0.25f,0.7f };
+	m_limPow = 0.2f;
 
 	m_dist = { 70.0f,750.0f };
 
@@ -360,6 +357,32 @@ bool Enemy::Search(bool areaOnly)
 	return false;
 }
 
+bool Enemy::LoadDataBayJson(const nlohmann::json& json)
+{
+	if (json.empty()) { return false; }
+
+	if (json.contains("States"))
+	{
+		for (auto& obj : json["States"])
+		{
+			UINT state;
+
+			StateParam param;
+
+			KdJsonUtility::GetValue(obj, "StateNum", &state);
+			KdJsonUtility::GetValue(obj, "AnimName", &param.Name);
+			KdJsonUtility::GetValue(obj, "AnimSpeed", &param.AnimSpeed);
+			KdJsonUtility::GetValue(obj, "Transition", &param.Transition);
+			KdJsonUtility::GetValue(obj, "Speed", &param.Speed);
+			KdJsonUtility::GetValue(obj, "DurationState", &param.DurationState);
+
+			m_states[state] = param;
+		}
+		return true;
+	}
+	return false;
+}
+
 
 
 void Enemy::Editor_ImGui()
@@ -375,6 +398,7 @@ void Enemy::Editor_ImGui()
 void Enemy::Deserialize(const nlohmann::json& jsonObj)
 {
 	CharacterBase::Deserialize(jsonObj);
+	LoadDataBayJson(jsonObj);
 }
 
 void Enemy::Serialize(nlohmann::json& outJson) const
@@ -548,7 +572,7 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 			spOwner->BoostRotate(vec);
 			spOwner->UpdateMatrix();
 
-			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Right());
+			spOwner->m_nowAction->SetParam(spOwner->m_mWorld.Right());
 			return;
 		}
 
@@ -595,7 +619,7 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 			spOwner->BoostRotate(vec);
 			spOwner->UpdateMatrix();
 
-			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Left());
+			spOwner->m_nowAction->SetParam(spOwner->m_mWorld.Left());
 			return;
 		}
 
@@ -630,7 +654,7 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 		if (spOwner->GetPrevState() == tRotateLeft)
 		{
 			spOwner->ChangeActionState(std::make_shared<Boost>());
-			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Right());
+			spOwner->m_nowAction->SetParam( spOwner->m_mWorld.Right());
 			return;
 		}
 
@@ -646,7 +670,7 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 			vec.Normalize();
 			spOwner->BoostRotate(vec);
 			spOwner->UpdateMatrix();
-			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Forward());
+			spOwner->m_nowAction->SetParam( spOwner->m_mWorld.Forward());
 			return;
 		}
 
@@ -678,7 +702,7 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 			vec.Normalize();
 			spOwner->BoostRotate(vec);
 			spOwner->UpdateMatrix();
-			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Forward());
+			spOwner->m_nowAction->SetParam(spOwner->m_mWorld.Forward());
 			return;
 		}
 
@@ -724,9 +748,8 @@ void Enemy::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Enemy>& owner, co
 
 }
 
-void Enemy::ActionStateBase::SetParam(float speed, const Math::Vector3& direct)
+void Enemy::ActionStateBase::SetParam(const Math::Vector3& direct)
 {
-	m_speed = speed;
 	m_direct = direct;
 }
 
@@ -765,7 +788,7 @@ void Enemy::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Enemy>& owner
 
 		auto direction = spOwner->m_mWorld.Backward();
 
-		spOwner->m_nowAction->SetParam(150, direction);
+		spOwner->m_nowAction->SetParam( direction);
 		return;
 	}
 	else if (length > halfOnwenrLength)
@@ -802,11 +825,26 @@ void Enemy::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Enemy>& owner
 
 		auto direction = spOwner->m_mWorld.Forward();
 
-		spOwner->m_nowAction->SetParam(100, direction);
+		spOwner->m_nowAction->SetParam( direction);
 		return;
 	}
 
 }
+
+void Enemy::ActionStateBase::SetStatus(std::weak_ptr<Enemy>& owner, const UINT num) {
+	
+	auto spOwner = owner.lock();
+	if (num > Enemy::AnotherStateType::tBackAttack) { return; }
+
+	auto param = spOwner->m_states.find(num);
+	m_animName = param->second.Name;
+	m_speed = param->second.Speed;
+	m_animSpeed = param->second.AnimSpeed;
+	m_animTransition = param->second.Transition;
+	m_durationState = param->second.DurationState;
+
+}
+
 
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -818,9 +856,12 @@ void Enemy::Start::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGam
 	if (!spOwner) { return; }
 	auto spTarget = spObj.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandUp"), 100.0f);
-
 	m_type = tStart;
+
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
+
 }
 
 void Enemy::Start::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -845,7 +886,7 @@ void Enemy::Start::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 0.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 void Enemy::Start::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -864,9 +905,12 @@ void Enemy::StandUp::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdG
 	auto spTarget = spObj.lock();
 	if (!spOwner) { return; }
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandUp"), 100.0f, false);
-
 	m_type = tStandUp;
+
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition, false);
+
 }
 
 void Enemy::StandUp::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -893,7 +937,7 @@ void Enemy::StandUp::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_pt
 	auto spTarget = spObj.lock();
 	if (!spOwner) { return; }
 
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 }
 
 void Enemy::StandUp::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -915,9 +959,12 @@ void Enemy::Stand::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGam
 
 	if (!spOwner) { return; }
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Stand"), 3.0f);
-
 	m_type = tStand;
+	
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
+
 }
 
 void Enemy::Stand::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -945,7 +992,7 @@ void Enemy::Stand::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<
 	if (!spOwner) { return; }
 
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 
@@ -965,14 +1012,15 @@ void Enemy::Boost::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGam
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
-	
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Boost"), 60.0f, false);
 
-	m_speed = 170.0f;
+	m_type = tBoost;
+
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition , false);
 
 	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 
-	m_type = tBoost;
 }
 
 void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -986,7 +1034,7 @@ void Enemy::Boost::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGa
 	if (spOwner->m_spAnimator->IsAnimationEnd() == true)
 	{
 		spOwner->ChangeActionState(std::make_shared<BoostStop>());
-		spOwner->m_nowAction->SetParam(m_speed / 2.0f, m_direct);
+		spOwner->m_nowAction->SetParam(m_direct);
 		return;
 	}
 
@@ -1003,7 +1051,7 @@ void Enemy::Boost::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 
 }
 
@@ -1023,14 +1071,16 @@ void Enemy::BoostStop::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<K
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostStop"), 60.0f, false);
+	m_type = tBoostStop;
+
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition, false);
 
 	m_direct = spOwner->m_mWorld.Backward();
 	m_direct.Normalize();
 
-	m_speed = 100.0f;
 
-	m_type = tBoostStop;
 }
 
 void Enemy::BoostStop::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1056,7 +1106,7 @@ void Enemy::BoostStop::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 void Enemy::BoostStop::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1077,13 +1127,11 @@ void Enemy::MoveForward::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostDush"), 10.0f);
-
-	m_durationState = 2.0f;
-
-	m_speed = 90.0f;
-
 	m_type = tMoveForward;
+
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
 
 	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 }
@@ -1124,7 +1172,7 @@ void Enemy::MoveForward::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::wea
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 30.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 void Enemy::MoveForward::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1143,13 +1191,11 @@ void Enemy::MoveBack::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<Kd
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostBack"), 4.0f);
-
-	m_durationState = 1.0f;
-
-	m_speed = 70.0f;
-
 	m_type = tMoveBack;
+
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition);
 
 	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 
@@ -1193,7 +1239,7 @@ void Enemy::MoveBack::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_p
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 void Enemy::MoveBack::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1212,13 +1258,11 @@ void Enemy::MoveRightRotate::Enter(std::weak_ptr<Enemy>& owner, const  std::weak
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostRight"), 3.0f);
-
-	m_speed = 80.0f;
-
-	m_durationState = 1.0f;
-
 	m_type = tRotateRight;
+
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
 
 	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 }
@@ -1257,7 +1301,7 @@ void Enemy::MoveRightRotate::PostUpdate(std::weak_ptr<Enemy>& owner, const  std:
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 void Enemy::MoveRightRotate::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1277,13 +1321,11 @@ void Enemy::MoveLeftRotate::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostLeft"), 3.0f);
-
-	m_speed = 70.0f;
-
-	m_durationState = 1.0f;
-
 	m_type = tRotateLeft;
+	
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition);
 
 	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 
@@ -1325,7 +1367,7 @@ void Enemy::MoveLeftRotate::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 void Enemy::MoveLeftRotate::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1344,17 +1386,14 @@ void Enemy::AttackStand::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandAttack"), 3.0f);
+	m_type = tStandAttack;
+	
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
 
 	spOwner->ChangeEnableRightAttack(true);
 	spOwner->ChangeEnableLeftShoulderAttack(true);
-
-	m_durationState = 0.7f;
-
-	m_type = tStandAttack;
-
-	m_speed = 0.0f;
-
 
 	auto alert = std::make_shared<Alert>();
 	auto pos = CameraManager::Instance().GetLocalDirectionTo(spOwner->GetMatrix().Translation());
@@ -1391,7 +1430,7 @@ void Enemy::AttackStand::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::wea
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 void Enemy::AttackStand::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1411,15 +1450,12 @@ void Enemy::AttackForWard::Enter(std::weak_ptr<Enemy>& owner, const std::weak_pt
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("FrontAttack"), 3.0f);
-
-	m_speed = 90.0f;
-
 	m_type = tFrontAttack;
 
-	m_durationState = 0.7f;
+	SetStatus(owner, m_type);
 
-	
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition);
+
 	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightAttack(true);
 	spOwner->ChangeEnableLeftAttack(true);
@@ -1473,7 +1509,7 @@ void Enemy::AttackForWard::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::w
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 void Enemy::AttackForWard::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1494,13 +1530,11 @@ void Enemy::AttackBack::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<K
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BackAttack"), 3.0f);
-
-	m_speed = 60.0f;
-
 	m_type = tBackAttack;
 
-	m_durationState = 0.5f;
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition);
 
 	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightShoulderAttack(true);
@@ -1553,7 +1587,7 @@ void Enemy::AttackBack::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 }
 
 void Enemy::AttackBack::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1574,12 +1608,12 @@ void Enemy::AttackLeft::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<K
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+
+	m_type = spOwner->tLeftAttack;
+
+	SetStatus(owner, m_type);
 	
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("LeftAttack"), 3.0f);
-
-	m_durationState = 0.63f;
-
-	m_speed = 70.0f;
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition);
 
 	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightAttack(true);
@@ -1629,7 +1663,7 @@ void Enemy::AttackLeft::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 void Enemy::AttackLeft::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1650,12 +1684,12 @@ void Enemy::AttackRight::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<
 {
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+
+	m_type = spOwner->tRightAttack;
+
+	SetStatus(owner, m_type);
 	
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("RightAttack"), 3.0f);
-
-	m_durationState = 0.4f;
-
-	m_speed = 70.0f;
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
 
 	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightAttack(true);
@@ -1703,7 +1737,7 @@ void Enemy::AttackRight::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::wea
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 }
 
 void Enemy::AttackRight::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1726,7 +1760,11 @@ void Enemy::Hited::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGam
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
-	m_speed = 40.0f;
+	m_type = spOwner->tHited;
+
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition, false);
 
 	m_direct = spOwner->GetHitDir();
 
@@ -1735,7 +1773,6 @@ void Enemy::Hited::Enter(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGam
 		m_direct = spOwner->GetMatrix().Forward();
 	}
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Hited"), 20.0f, false);
 }
 
 void Enemy::Hited::Update(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1760,7 +1797,7 @@ void Enemy::Hited::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 	
-	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f);
+	spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 }
 
 void Enemy::Hited::Exit(std::weak_ptr<Enemy>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1778,7 +1815,11 @@ void Enemy::Destoroy::Enter(std::weak_ptr<Enemy>& owner, const std::weak_ptr<KdG
 	std::shared_ptr<Enemy> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
-	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Destroyed"), 5.0f, false);
+	m_type = spOwner->tDestroy;
+
+	SetStatus(owner, m_type);
+
+	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition, false);
 
 	spOwner->m_isDestroy = true;
 
@@ -1812,9 +1853,9 @@ void Enemy::Destoroy::PostUpdate(std::weak_ptr<Enemy>& owner, const  std::weak_p
 	auto spTarget = spObj.lock();
 	
 	if (spOwner->m_spAnimator->GetProgress() <= 0.3)
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed*0.4f);
 	else {
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 	}
 }
 

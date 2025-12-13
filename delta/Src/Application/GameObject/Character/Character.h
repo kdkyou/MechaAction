@@ -77,6 +77,7 @@ private:
 	bool IsIgnoreGravityState()const;
 
 	bool IsBoostState()const;
+	bool IsSorwdState()const;
 
 	void ResetPrevMove() { m_preMove = m_vMove; }
 

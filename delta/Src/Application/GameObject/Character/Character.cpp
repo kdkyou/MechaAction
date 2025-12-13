@@ -166,7 +166,11 @@ void Character::Update()
 		CreatePolygon();
 	}
 
-	LockOn(true);
+	// ブレード攻撃時を除く状態で
+	if (!IsSorwdState())
+	{
+		LockOn(true);
+	}
 
 	UIManager::GetInstance().SetPlayerHP((int)m_hp);
 	if (m_hp <= m_maxHp *DENGERLINE) {
@@ -284,15 +288,6 @@ void Character::ResetPosition()
 void Character::Editor_ImGui()
 {
 	CharacterBase::Editor_ImGui();
-
-	ImGui::Text("CharacterSpeed");
-	ImGui::DragFloat("Walk", &m_walkSpeed,0.01f, 0.0f, 100.0f);
-	ImGui::DragFloat("Jump", &m_jumpSpeed, 0.01f, 0.0f, 100.0f);
-	ImGui::DragFloat("Boost", &m_boostSpeed, 0.01f, 0.0f, 300.0f);
-	ImGui::DragFloat("BoostEnd", &m_boostEndSpeed, 0.01f, 0.0f, 300.0f);
-	ImGui::DragFloat("BoostDush", &m_boostDushSpeed, 0.01f, 0.0f, 300.0f);
-	ImGui::DragFloat("BladeAttack", &m_bladeAttackSpeed, 0.01f, 0.0f, 500.0f);
-	ImGui::DragFloat("Hit", &m_hitedSpeed, 0.01f, 0.0f, 50.0f);
 
 	ImGui::DragFloat("BoostLerp", &m_boostLerpMag, 0.001f, 0.0f, 1.0f);
 
@@ -788,6 +783,19 @@ bool Character::IsBoostState() const
 		m_nowAction->GetState() == CharacterStateName::BoostFloat ||
 		m_nowAction->GetState() == CharacterStateName::BoostFloatGuard ||
 		m_nowAction->GetState() == CharacterStateName::RightSorwdBef ||
+		m_nowAction->GetState() == CharacterStateName::RightSorwdMid ||
+		m_nowAction->GetState() == CharacterStateName::RightSorwdAf ||
+		m_nowAction->GetState() == CharacterStateName::RightSorwdSeco ||
+		m_nowAction->GetState() == CharacterStateName::RightSorwdCharge
+		) {
+		return true;
+	}
+	return false;
+}
+
+bool Character::IsSorwdState() const
+{
+	if (m_nowAction->GetState() == CharacterStateName::RightSorwdBef ||
 		m_nowAction->GetState() == CharacterStateName::RightSorwdMid ||
 		m_nowAction->GetState() == CharacterStateName::RightSorwdAf ||
 		m_nowAction->GetState() == CharacterStateName::RightSorwdSeco ||
@@ -3565,6 +3573,8 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 	std::shared_ptr<Character> spOwner = owner.lock();
 
 	m_stateNum = spOwner->CharacterStateName::RightSorwdBef;
+
+	spOwner->LockOn();
 	
 	SetParam(owner, m_stateNum);
 	
@@ -3920,6 +3930,8 @@ void Character::ActionRightAttackSecond::Enter(std::weak_ptr<Character>& owner)
 	
 	m_stateNum = spOwner->CharacterStateName::RightSorwdSeco;
 	
+	spOwner->LockOn();
+
 	SetParam(owner, m_stateNum);
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition, false);
@@ -4144,11 +4156,7 @@ void Character::ActionHited::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition, false);
 
-	m_speed = spOwner->m_hitedSpeed;
-
 	m_direction = spOwner->m_mWorld.Forward();
-
-
 }
 
 void Character::ActionHited::Update(std::weak_ptr<Character>& owner)

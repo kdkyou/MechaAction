@@ -102,7 +102,7 @@ public:
 		float progress = 0.0f;
 		if (m_spAnimation->m_maxLength <= 0) {
 			progress = 1.0f;}
-		else { m_time / m_spAnimation->m_maxLength; }
+		else { progress = m_time / m_spAnimation->m_maxLength; }
 		return progress;
 	}
 	const float GetComp()const { return m_compCnt; }

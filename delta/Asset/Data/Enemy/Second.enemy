@@ -10,6 +10,136 @@
 		"Pos": [ 0.0, 0.5, 600.0 ],
 		"Rot": [ 0.0, 90.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
+		"States": [
+			{
+				"AnimName": "StandUp",
+				"AnimSpeed": 0.0,
+				"DurationState": 0.0,
+				"Speed": 0.0,
+				"StateNum": 0,
+				"Transition": 20.0
+			},
+			{
+				"AnimName": "StandUp",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.0,
+				"Speed": 0.0,
+				"StateNum": 1,
+				"Transition": 20.0
+			},
+			{
+				"AnimName": "Stand",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.0,
+				"Speed": 0.0,
+				"StateNum": 2,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "StandAttack",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.7,
+				"Speed": 0.0,
+				"StateNum": 3,
+				"Transition": 5.0
+			},
+			{
+				"AnimName": "Boost",
+				"AnimSpeed": 50.0,
+				"DurationState": 0.0,
+				"Speed": 250.0,
+				"StateNum": 4,
+				"Transition": 30.0
+			},
+			{
+				"AnimName": "BoostStop",
+				"AnimSpeed": 30.0,
+				"DurationState": 0.0,
+				"Speed": 65.0,
+				"StateNum": 5,
+				"Transition": 30.0
+			},
+			{
+				"AnimName": "BoostDush",
+				"AnimSpeed": 20.0,
+				"DurationState": 2.0,
+				"Speed": 140.0,
+				"StateNum": 6,
+				"Transition": 6.0
+			},
+			{
+				"AnimName": "BoostRight",
+				"AnimSpeed": 20.0,
+				"DurationState": 1.2,
+				"Speed": 130.0,
+				"StateNum": 7,
+				"Transition": 4.0
+			},
+			{
+				"AnimName": "BoostLeft",
+				"AnimSpeed": 20.0,
+				"DurationState": 1.05,
+				"Speed": 135.0,
+				"StateNum": 8,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "BoostBack",
+				"AnimSpeed": 20.0,
+				"DurationState": 1.0,
+				"Speed": 120.0,
+				"StateNum": 9,
+				"Transition": 4.0
+			},
+			{
+				"AnimName": "FrontAttack",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.64,
+				"Speed": 120.0,
+				"StateNum": 10,
+				"Transition": 4.0
+			},
+			{
+				"AnimName": "RightAttack",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.84,
+				"Speed": 115.0,
+				"StateNum": 11,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "LeftAttack",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.63,
+				"Speed": 110.0,
+				"StateNum": 12,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "BackAttack",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.64,
+				"Speed": 100.0,
+				"StateNum": 13,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "Hited",
+				"AnimSpeed": 45.0,
+				"DurationState": 0.64,
+				"Speed": 40.0,
+				"StateNum": 14,
+				"Transition": 10.0
+			},
+			{
+				"AnimName": "Destroyed",
+				"AnimSpeed": 50.0,
+				"DurationState": 0.64,
+				"Speed": 0.0,
+				"StateNum": 15,
+				"Transition": 5.0
+			}
+		],
 		"Tag": 2,
 		"Weapons": [
 			{
@@ -159,7 +289,7 @@
 		]
 	},
 	{
-		"BoxExtent": [ 5.0,2.0,4.0 ],
+		"BoxExtent": [ 5.0, 2.0, 4.0 ],
 		"Correction": [ 0.0, 4.0, 0.0 ],
 		"HP": 200.0,
 		"IsTarget": false,
@@ -169,6 +299,33 @@
 		"Pos": [ -200.0, 0.2, 100.5 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
+		"States": [
+			{
+				"Speed": 0.0,
+				"StateNum": 0,
+				"DurationState": 1.96
+			},
+			{
+				"Speed": 75.0,
+				"StateNum": 1,
+				"DurationState": 1.16
+			},
+			{
+				"Speed": 65.0,
+				"StateNum": 2,
+				"DurationState": 0.76
+			},
+			{
+				"Speed": 20.0,
+				"StateNum": 3,
+				"DurationState": 0.96
+			},
+			{
+				"Speed": 55.0,
+				"StateNum": 4,
+				"DurationState": 0.56
+			}
+		],
 		"Tag": 2,
 		"Weapons": [
 			{
@@ -250,6 +407,33 @@
 		"Pos": [ 300.0, 0.2, 100.5 ],
 		"Rot": [ 0.0, 0.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
+		"States": [
+			{
+				"Speed": 0.0,
+				"StateNum": 0,
+				"DurationState": 1.96
+			},
+			{
+				"Speed": 75.0,
+				"StateNum": 1,
+				"DurationState": 1.16
+			},
+			{
+				"Speed": 65.0,
+				"StateNum": 2,
+				"DurationState": 0.76
+			},
+			{
+				"Speed": 20.0,
+				"StateNum": 3,
+				"DurationState": 0.96
+			},
+			{
+				"Speed": 55.0,
+				"StateNum": 4,
+				"DurationState": 0.56
+			}
+		],
 		"Tag": 2,
 		"Weapons": [
 			{
@@ -331,6 +515,64 @@
 		"Pos": [ -7.0, 0.0, 140.0 ],
 		"Rot": [ 0.0, 180.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
+		"States": [
+			{
+				"AnimName": "WakeUp",
+				"AnimSpeed": 0.0,
+				"DurationState": 5.0,
+				"Speed": 0.0,
+				"StateNum": 0,
+				"Transition": 20.0
+			},
+			{
+				"AnimName": "Stand",
+				"AnimSpeed": 20.0,
+				"DurationState": 1.6,
+				"Speed": 0.0,
+				"StateNum": 1,
+				"Transition": 10.0
+			},
+			{
+				"AnimName": "Move",
+				"AnimSpeed": 30.0,
+				"DurationState": 0.95,
+				"Speed": 40.0,
+				"StateNum": 2,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "Attack",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.42,
+				"Speed": 30.0,
+				"StateNum": 3,
+				"Transition": 5.0
+			},
+			{
+				"AnimName": "Hited",
+				"AnimSpeed": 30.0,
+				"DurationState": 0.36,
+				"Speed": 20.0,
+				"StateNum": 4,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "Destroyed",
+				"AnimSpeed": 40.0,
+				"DurationState": 0.0,
+				"Speed": 5.0,
+				"StateNum": 5,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "Move",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.85,
+				"Speed": 20.0,
+				"StateNum": 6,
+				"Transition": 6.0
+			}
+		],
 		"Tag": 2,
 		"Weapons": [
 			{
@@ -378,6 +620,64 @@
 		"Pos": [ 70.0, 0.0, 140.0 ],
 		"Rot": [ 0.0, 180.0, 0.0 ],
 		"Scale": [ 1.0, 1.0, 1.0 ],
+		"States": [
+			{
+				"AnimName": "WakeUp",
+				"AnimSpeed": 0.0,
+				"DurationState": 5.0,
+				"Speed": 0.0,
+				"StateNum": 0,
+				"Transition": 20.0
+			},
+			{
+				"AnimName": "Stand",
+				"AnimSpeed": 20.0,
+				"DurationState": 1.6,
+				"Speed": 0.0,
+				"StateNum": 1,
+				"Transition": 10.0
+			},
+			{
+				"AnimName": "Move",
+				"AnimSpeed": 30.0,
+				"DurationState": 0.95,
+				"Speed": 40.0,
+				"StateNum": 2,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "Attack",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.42,
+				"Speed": 30.0,
+				"StateNum": 3,
+				"Transition": 5.0
+			},
+			{
+				"AnimName": "Hited",
+				"AnimSpeed": 30.0,
+				"DurationState": 0.36,
+				"Speed": 20.0,
+				"StateNum": 4,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "Destroyed",
+				"AnimSpeed": 40.0,
+				"DurationState": 0.0,
+				"Speed": 5.0,
+				"StateNum": 5,
+				"Transition": 3.0
+			},
+			{
+				"AnimName": "Move",
+				"AnimSpeed": 20.0,
+				"DurationState": 0.85,
+				"Speed": 20.0,
+				"StateNum": 6,
+				"Transition": 6.0
+			}
+		],
 		"Tag": 2,
 		"Weapons": [
 			{
