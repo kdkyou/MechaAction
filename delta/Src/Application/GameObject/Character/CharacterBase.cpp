@@ -278,7 +278,7 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 	Math::Vector3 move = Math::Vector3::Zero;
 
 	auto deltaSpeed = speed * deltaTime;
-	auto correc = 5.0f;
+	auto correc = 3.0f;
 	if (step == true)
 	{
 		pos -= direction * 0.006f;
@@ -303,7 +303,7 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 		}
 
 		auto center = pos + Math::Vector3(0.0f, 0.42f, 0.0f);
-		SphereCast(center, 0.419f, KdCollider::TypeGround, pos);
+		SphereCast(center, 0.42f, KdCollider::TypeGround, pos);
 	}
 	else
 	{
@@ -330,6 +330,10 @@ bool CharacterBase::Move(float speed, const Math::Vector3& dir, const KdCollider
 bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCollider::Type type, bool fly, bool rotate, bool isAttack, bool step)
 {
 	auto direction = dir;
+	if (m_isGround)
+	{
+		direction.y = 0.0f;
+	}
 	direction.Normalize();
 
 	auto pos = m_mWorld.Translation();
@@ -339,7 +343,7 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 	auto deltaSpeed = speed * deltaTime;
 
 	if (step)
-	{
+	{ 
 		pos -= direction * 0.05f;
 	}
 
@@ -354,7 +358,14 @@ bool CharacterBase::MoveSwept(float speed, const Math::Vector3& dir, const KdCol
 
 	float len = dir.Length();
 	float radius = 0.0f;
-	 radius =  len + 1.5f;
+	if (!isAttack)
+	{
+		radius =  len + 1.5f;
+	}
+	else {
+		radius = len;
+	}
+
 
 	KdCollider::CollisionResult hit;
 

@@ -359,9 +359,30 @@ bool Balt::Search(bool areaOnly)
 
 bool Balt::LoadDataBayJson(const nlohmann::json& json)
 {
+	if (json.empty()) { return false; }
 
+	if (json.contains("States"))
+	{
+		for (auto& obj : json["States"])
+		{
+			UINT state;
+
+			StateParam param;
+
+			KdJsonUtility::GetValue(obj, "StateNum", &state);
+			KdJsonUtility::GetValue(obj, "AnimName", &param.Name);
+			KdJsonUtility::GetValue(obj, "AnimSpeed", &param.AnimSpeed);
+			KdJsonUtility::GetValue(obj, "Transition", &param.Transition);
+			KdJsonUtility::GetValue(obj, "Speed", &param.Speed);
+			KdJsonUtility::GetValue(obj, "DurationState", &param.DurationState);
+
+			m_states[state] = param;
+		}
+		return true;
+	}
 	return false;
 }
+
 
 void Balt::AttackOff()
 {
@@ -387,6 +408,7 @@ void Balt::Editor_ImGui()
 void Balt::Deserialize(const nlohmann::json& jsonObj)
 {
 	CharacterBase::Deserialize(jsonObj);
+	LoadDataBayJson(jsonObj);
 }
 
 void Balt::Serialize(nlohmann::json& outJson) const
@@ -579,7 +601,7 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 			spOwner->BoostRotate(vec);
 			spOwner->UpdateMatrix();
 
-			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Right());
+			spOwner->m_nowAction->SetParam( spOwner->m_mWorld.Right());
 			return;
 		}
 
@@ -625,7 +647,7 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 			spOwner->BoostRotate(vec);
 			spOwner->UpdateMatrix();
 
-			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Left());
+			spOwner->m_nowAction->SetParam( spOwner->m_mWorld.Left());
 			return;
 		}
 
@@ -660,7 +682,7 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 		if (spOwner->GetPrevState() == tRotateLeft)
 		{
 			spOwner->ChangeActionState(std::make_shared<Boost>());
-			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Right());
+			spOwner->m_nowAction->SetParam(spOwner->m_mWorld.Right());
 			return;
 		}
 
@@ -676,7 +698,7 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 			vec.Normalize();
 			spOwner->BoostRotate(vec);
 			spOwner->UpdateMatrix();
-			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Forward());
+			spOwner->m_nowAction->SetParam( spOwner->m_mWorld.Forward());
 			return;
 		}
 
@@ -708,7 +730,7 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 			vec.Normalize();
 			spOwner->BoostRotate(vec);
 			spOwner->UpdateMatrix();
-			spOwner->m_nowAction->SetParam(100.0f, spOwner->m_mWorld.Forward());
+			spOwner->m_nowAction->SetParam(spOwner->m_mWorld.Forward());
 			return;
 		}
 
@@ -754,9 +776,8 @@ void Balt::ActionStateBase::ChangeStateWithPrev(std::weak_ptr<Balt>& owner, cons
 
 }
 
-void Balt::ActionStateBase::SetParam(float speed, const Math::Vector3& direct)
-{
-	m_speed = speed;
+void Balt::ActionStateBase::SetParam(const Math::Vector3& direct)
+{	
 	m_direct = direct;
 }
 
@@ -795,7 +816,7 @@ void Balt::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Balt>& owner, 
 
 		auto direction = spOwner->m_mWorld.Backward();
 
-		spOwner->m_nowAction->SetParam(150, direction);
+		spOwner->m_nowAction->SetParam( direction);
 		return;
 	}
 	else if (length > halfOnwenrLength)
@@ -832,9 +853,23 @@ void Balt::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Balt>& owner, 
 
 		auto direction = spOwner->m_mWorld.Forward();
 
-		spOwner->m_nowAction->SetParam(100, direction);
+		spOwner->m_nowAction->SetParam( direction);
 		return;
 	}
+
+}
+
+void Balt::ActionStateBase::SetStatus(std::weak_ptr<Balt>& owner, const UINT num) {
+
+	auto spOwner = owner.lock();
+	if (num > Balt::BaltStateType::tDestroyed) { return; }
+
+	auto param = spOwner->m_states.find(num);
+	m_animName = param->second.Name;
+	m_speed = param->second.Speed;
+	m_animSpeed = param->second.AnimSpeed;
+	m_animTransition = param->second.Transition;
+	m_durationState = param->second.DurationState;
 
 }
 
@@ -847,12 +882,15 @@ void Balt::Start::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameO
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	if (!spOwner) { return; }
 	auto spTarget = spObj.lock();
+	
+	m_type = tStart;
+
+	SetStatus(owner, m_type);
 
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandUp"), 100.0f);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition);
 	}
-	m_type = tStart;
 }
 
 void Balt::Start::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -878,7 +916,7 @@ void Balt::Start::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_ptr<Kd
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 0.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 	}
 }
 
@@ -898,12 +936,15 @@ void Balt::StandUp::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGam
 	auto spTarget = spObj.lock();
 	if (!spOwner) { return; }
 
+	m_type = tStandUp;
+
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("StandUp"), 100.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition, false);
 	}
 
-	m_type = tStandUp;
 }
 
 void Balt::StandUp::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -931,7 +972,7 @@ void Balt::StandUp::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_ptr<
 	if (!spOwner) { return; }
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 	}
 }
 
@@ -953,12 +994,15 @@ void Balt::Stand::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameO
 	auto spTarget = spObj.lock();
 
 	if (!spOwner) { return; }
+	m_type = tStand;
+	
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Stand"), 3.0f);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
 	}
 
-	m_type = tStand;
 }
 
 void Balt::Stand::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -987,7 +1031,7 @@ void Balt::Stand::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_ptr<Kd
 
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 	}
 }
 
@@ -1008,13 +1052,15 @@ void Balt::Boost::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameO
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	
+	m_type = tBoost;
+	
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Boost"), 60.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition, false);
 	}
-	m_speed = 270.0f;
-
-	m_type = tBoost;
 
 	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 }
@@ -1030,7 +1076,7 @@ void Balt::Boost::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGame
 	if (spOwner->m_spAnimator->IsAnimationEnd() == true)
 	{
 		spOwner->ChangeActionState(std::make_shared<BoostStop>());
-		spOwner->m_nowAction->SetParam(m_speed / 2.0f, m_direct);
+		spOwner->m_nowAction->SetParam( m_direct);
 		return;
 	}
 
@@ -1068,15 +1114,14 @@ void Balt::BoostStop::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdG
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	
+	m_type = tBoostStop;
+
+	SetStatus(owner, m_type);
 
 	m_direct = spOwner->m_mWorld.Backward();
 	m_direct.Normalize();
 
-	m_speed = 240.0f;
-
-	m_type = tBoostStop;
-
-	m_durationState = 0.3f;
 }
 
 void Balt::BoostStop::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1111,7 +1156,7 @@ void Balt::BoostStop::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_pt
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 	}
 }
 
@@ -1132,16 +1177,16 @@ void Balt::MoveForward::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<K
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	
+	m_type = tMoveForward;
+	
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Move"), 10.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition, false);
 	}
-	m_durationState = 1.0f;
-
-	m_speed = 190.0f;
-
-	m_type = tMoveForward;
-
+	
 	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 }
 
@@ -1182,7 +1227,7 @@ void Balt::MoveForward::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 30.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 	}
 }
 
@@ -1201,15 +1246,13 @@ void Balt::MoveBack::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGa
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	m_type = tMoveBack;
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostBack"), 4.0f);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
 	}
-	m_durationState = 0.9f;
-
-	m_speed = 170.0f;
-
-	m_type = tMoveBack;
 
 	CreateEffect(owner, "ThrusterE.efkefc", "CBP");
 
@@ -1254,7 +1297,7 @@ void Balt::MoveBack::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_ptr
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 	}
 }
 
@@ -1273,16 +1316,14 @@ void Balt::MoveRightRotate::Enter(std::weak_ptr<Balt>& owner, const  std::weak_p
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	m_type = tRotateRight;
+	
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostRight"), 3.0f);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition);
 	}
-
-	m_speed = 180.0f;
-
-	m_durationState = 1.0f;
-
-	m_type = tRotateRight;
 
 }
 
@@ -1318,7 +1359,7 @@ void Balt::MoveRightRotate::PostUpdate(std::weak_ptr<Balt>& owner, const  std::w
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 	}
 }
 
@@ -1338,15 +1379,15 @@ void Balt::MoveLeftRotate::Enter(std::weak_ptr<Balt>& owner, const  std::weak_pt
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	m_type = tRotateLeft;
+	
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BoostLeft"), 3.0f);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
 	}
-	m_speed = 170.0f;
-
-	m_durationState = 1.0f;
-
-	m_type = tRotateLeft;
+	
 }
 
 void Balt::MoveLeftRotate::Update(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj)
@@ -1386,7 +1427,7 @@ void Balt::MoveLeftRotate::PostUpdate(std::weak_ptr<Balt>& owner, const  std::we
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 	}
 }
 
@@ -1405,19 +1446,18 @@ void Balt::AttackStand::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<Kd
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	
+	m_type = tStandAttack;
+	
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Stand"), 3.0f);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition);
 	}
 
 	spOwner->ChangeEnableLeftShoulderAttack(true);
 	spOwner->ChangeEnableRightShoulderAttack(true);
-
-	m_durationState = 0.7f;
-
-	m_type = tStandAttack;
-
-	m_speed = 0.0f;
 
 
 	auto alert = std::make_shared<Alert>();
@@ -1456,7 +1496,7 @@ void Balt::AttackStand::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 	}
 }
 
@@ -1476,16 +1516,13 @@ void Balt::AttackForWard::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	m_type = tFrontAttack;
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("BladeAttack"), 6.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition, false);
 	}
-
-	m_speed = 180.0f;
-
-	m_type = tFrontAttack;
-
-	m_durationState = 0.7f;
 
 	spOwner->ChangeEnableAttack(true);
 	spOwner->ChangeEnableRightAttack(true);
@@ -1540,7 +1577,7 @@ void Balt::AttackForWard::PostUpdate(std::weak_ptr<Balt>& owner, const  std::wea
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 6.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 	}
 }
 
@@ -1561,16 +1598,14 @@ void Balt::AttackBack::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdG
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	m_type = tBackAttack;
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("AttackBack"), 3.0f);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
 	}
-	m_speed = 150.0f;
-
-	m_type = tBackAttack;
-
-	m_durationState = 0.5f;
-
+	
 	spOwner->ChangeEnableLeftAttack(true);
 	spOwner->ChangeEnableLeftShoulderAttack(true);
 	spOwner->ChangeEnableRightShoulderAttack(true);
@@ -1620,7 +1655,7 @@ void Balt::AttackBack::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_p
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 	}
 }
 
@@ -1642,15 +1677,16 @@ void Balt::AttackLeft::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdG
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+	m_type = tLeftAttack;
+
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("AttackLeft"), 3.0f);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
 	}
 
-	m_durationState = 0.63f;
-
-	m_speed = 155.0f;
-
+	
 	spOwner->ChangeEnableLeftAttack(true);
 
 
@@ -1698,7 +1734,7 @@ void Balt::AttackLeft::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_p
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 	}
 }
 
@@ -1720,14 +1756,15 @@ void Balt::AttackRight::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<Kd
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+
+	m_type = tRightAttack;
+
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("AttackRight"), 3.0f);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition);
 	}
-
-	m_durationState = 1.0f;
-
-	m_speed = 165.0f;
 
 	spOwner->ChangeEnableLeftAttack(true);
 	spOwner->ChangeEnableLeftShoulderAttack(true);
@@ -1773,7 +1810,7 @@ void Balt::AttackRight::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed);
 	}
 }
 
@@ -1796,8 +1833,9 @@ void Balt::Hited::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameO
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
 
-	m_speed = 90.0f;
-
+	m_type = tHited;
+	SetStatus(owner, m_type);
+	
 	m_direct = spOwner->GetHitDir();
 
 	if (m_direct.Length() == 1e-6f)
@@ -1806,7 +1844,7 @@ void Balt::Hited::Enter(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameO
 	}
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Hited"), 20.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName),m_animTransition, false);
 	}
 }
 
@@ -1833,7 +1871,7 @@ void Balt::Hited::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_ptr<Kd
 	auto spTarget = spObj.lock();
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f);
+		spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 	}
 }
 
@@ -1851,9 +1889,13 @@ void Balt::Destoroy::Enter(std::weak_ptr<Balt>& owner, const std::weak_ptr<KdGam
 {
 	std::shared_ptr<Balt> spOwner = owner.lock();
 	auto spTarget = spObj.lock();
+
+	m_type = tDestroyed;
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spModelWork)
 	{
-		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation("Destroyed"), 5.0f, false);
+		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition, false);
 	}
 
 	spOwner->m_isDestroy = true;
@@ -1887,9 +1929,9 @@ void Balt::Destoroy::PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_ptr
 	if (spOwner->m_spModelWork)
 	{
 		if (spOwner->m_spAnimator->GetProgress() <= 0.3)
-			spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 20.0f);
+			spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(),m_animSpeed*0.25f);
 		else {
-			spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), 50.0f);
+			spOwner->m_spAnimator->AdvanceTime(spOwner->m_spModelWork->WorkNodes(), m_animSpeed);
 		}
 	}
 }

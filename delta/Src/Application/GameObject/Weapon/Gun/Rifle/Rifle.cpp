@@ -86,7 +86,6 @@ void Rifle::Trigger()
 
 	// 発射可能か
 	if (!m_trigger) { 
-		int it = 0;
 		return; }
 
 	// 砲身調整

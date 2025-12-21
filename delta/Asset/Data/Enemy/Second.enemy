@@ -290,7 +290,7 @@
 	},
 	{
 		"BoxExtent": [ 5.0, 2.0, 4.0 ],
-		"Correction": [ 0.0, 4.0, 0.0 ],
+		"Correction": [ 0.0, 5.0, 0.0 ],
 		"HP": 200.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\4LegMT\\5LegMT.gltf",
@@ -398,7 +398,7 @@
 	},
 	{
 		"BoxExtent": [ 3.0, 4.0, 2.0 ],
-		"Correction": [ 0.0, 4.0, 0.0 ],
+		"Correction": [ 0.0, 5.0, 0.0 ],
 		"HP": 200.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\4LegMT\\5LegMT.gltf",
@@ -506,7 +506,7 @@
 	},
 	{
 		"BoxExtent": [ 2.0, 4.0, 2.0 ],
-		"Correction": [ 0.0, 5.0, 0.0 ],
+		"Correction": [ 0.0, 6.0, 0.0 ],
 		"HP": 2400.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\Leg\\Leg.gltf",
@@ -518,7 +518,7 @@
 		"States": [
 			{
 				"AnimName": "WakeUp",
-				"AnimSpeed": 0.0,
+				"AnimSpeed": 15.0,
 				"DurationState": 5.0,
 				"Speed": 0.0,
 				"StateNum": 0,
@@ -611,7 +611,7 @@
 	},
 	{
 		"BoxExtent": [ 2.0, 4.0, 2.0 ],
-		"Correction": [ 0.0, 5.0, 0.0 ],
+		"Correction": [ 0.0, 6.0, 0.0 ],
 		"HP": 2400.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\Leg\\Leg.gltf",
@@ -623,7 +623,7 @@
 		"States": [
 			{
 				"AnimName": "WakeUp",
-				"AnimSpeed": 0.0,
+				"AnimSpeed": 15.0,
 				"DurationState": 5.0,
 				"Speed": 0.0,
 				"StateNum": 0,

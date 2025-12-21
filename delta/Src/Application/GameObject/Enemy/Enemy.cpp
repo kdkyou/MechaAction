@@ -69,8 +69,7 @@ void Enemy::Update()
 		m_nowAction->Update(m_wpThis, spTarget);
 
 	}
-	auto pos = m_mWorld.Translation();
-	auto flg = Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, false, true);
+	Move(m_gravity, Math::Vector3::Down, KdCollider::TypeGround, false, false, false, true);
 
 	m_gravity += m_gravityPow * KdFPSController::GetInstance().GetDeltaTime();
 
@@ -834,7 +833,7 @@ void Enemy::ActionStateBase::ChangeStateWithDistance(std::weak_ptr<Enemy>& owner
 void Enemy::ActionStateBase::SetStatus(std::weak_ptr<Enemy>& owner, const UINT num) {
 	
 	auto spOwner = owner.lock();
-	if (num > Enemy::AnotherStateType::tBackAttack) { return; }
+	if (num > Enemy::AnotherStateType::tDestroy) { return; }
 
 	auto param = spOwner->m_states.find(num);
 	m_animName = param->second.Name;

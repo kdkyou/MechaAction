@@ -54,14 +54,13 @@ public:
 	void ResetMultiLocks() { m_wpMultiLocks.clear(); }
 	void SetMultiLockNum(int num) { m_multiLockNum = num; }
 	const int	 GetMultiLockNum()const { return m_multiLockNum; }
+	const std::weak_ptr<CharacterBase>& GetLockTarget()const { return m_wpLockTarget; }
 	const std::weak_ptr<CharacterBase> GetLockTarget(int num);
 	const std::vector<std::weak_ptr<CharacterBase>>& GetMultiLockList(){ return m_wpMultiLocks; }
 
 	void EnableChangedCamera(bool isEnablechanged) { m_isEnableChanged = isEnablechanged; }
 
 	const bool IsEnableChanged() const { return m_isEnableChanged; }
-
-	void AnimationChange(std::shared_ptr<CameraBase> next);
 
 	const std::weak_ptr<CameraBase> GetCurrentCamera() { return m_currentCamera; }
 	const std::weak_ptr<CameraBase> GetMapCamera() { return m_mapCamera; }

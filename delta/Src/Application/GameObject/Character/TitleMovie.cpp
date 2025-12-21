@@ -156,15 +156,6 @@ void TitleMovie::PostUpdate()
 		if (!m_spModel) { return; }
 		auto spefct = m_efk.lock();
 
-		/*if (!spefct)
-		{
-			KdModelWork::Node* pNode = m_spModel->FindWorkNode("CBP");
-			if (pNode) {
-				auto nodeMat = pNode->m_worldTransform;
-				auto mat = nodeMat.Translation() * m_mWorld.Translation();
-				m_efk = KdEffekseerManager::GetInstance().Play("MovieThruster.efkefc", mat, 0.5f, 1.0f, false);
-			}
-		}*/
 		
 		if (spefct)
 		{
@@ -174,9 +165,6 @@ void TitleMovie::PostUpdate()
 			if (pNode) {
 				mat = pNode->m_worldTransform;
 			}
-
-			Effekseer::Handle handle = 0;
-
 			auto matrix = mat * m_mWorld;
 			spefct->SetWorldMatrix(matrix);
 		}

@@ -17,12 +17,12 @@
 				"DurationState": 1.96
 			},
 			{
-				"Speed": 105.0,
+				"Speed": 75.0,
 				"StateNum": 1,
 				"DurationState": 1.46
 			},
 			{
-				"Speed": 85.0,
+				"Speed": 55.0,
 				"StateNum": 2,
 				"DurationState": 0.76
 			},
@@ -92,12 +92,12 @@
 				"DurationState": 1.96
 			},
 			{
-				"Speed": 85.0,
+				"Speed": 65.0,
 				"StateNum": 1,
 				"DurationState": 1.26
 			},
 			{
-				"Speed": 75.0,
+				"Speed": 45.0,
 				"StateNum": 2,
 				"DurationState": 0.76
 			},
@@ -151,7 +151,7 @@
 	},
 	{
 		"BoxExtent": [ 3.0, 5.0, 4.0 ],
-		"Correction": [ 0.0, 4.0, 0.0 ],
+		"Correction": [ 0.0, 6.0, 0.0 ],
 		"HP": 200.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\4LegMT\\5LegMT.gltf",
@@ -167,12 +167,12 @@
 				"DurationState": 1.96
 			},
 			{
-				"Speed": 75.0,
+				"Speed": 65.0,
 				"StateNum": 1,
 				"DurationState": 1.16
 			},
 			{
-				"Speed": 65.0,
+				"Speed": 45.0,
 				"StateNum": 2,
 				"DurationState": 0.76
 			},
@@ -259,7 +259,7 @@
 	},
 	{
 		"BoxExtent": [ 3.0, 5.0, 4.0 ],
-		"Correction": [ 0.0, 4.0, 0.0 ],
+		"Correction": [ 0.0, 6.0, 0.0 ],
 		"HP": 200.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\4LegMT\\5LegMT.gltf",
@@ -275,12 +275,12 @@
 				"DurationState": 1.96
 			},
 			{
-				"Speed": 125.0,
+				"Speed": 85.0,
 				"StateNum": 1,
 				"DurationState": 1.46
 			},
 			{
-				"Speed": 95.0,
+				"Speed": 55.0,
 				"StateNum": 2,
 				"DurationState": 0.76
 			},
@@ -290,7 +290,7 @@
 				"DurationState": 0.96
 			},
 			{
-				"Speed": 85.0,
+				"Speed": 45.0,
 				"StateNum": 4,
 				"DurationState": 0.56
 			}
@@ -383,12 +383,12 @@
 				"DurationState": 1.96
 			},
 			{
-				"Speed": 105.0,
+				"Speed": 95.0,
 				"StateNum": 1,
 				"DurationState": 1.76
 			},
 			{
-				"Speed": 85.0,
+				"Speed": 75.0,
 				"StateNum": 2,
 				"DurationState": 0.86
 			},
@@ -442,7 +442,7 @@
 	},
 	{
 		"BoxExtent": [ 5.0, 2.0, 4.0 ],
-		"Correction": [ 0.0, 1.0, 0.0 ],
+		"Correction": [ 0.0, 1.5, 0.0 ],
 		"HP": 200.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\Drone\\Drone.gltf",
@@ -458,12 +458,12 @@
 				"DurationState": 1.96
 			},
 			{
-				"Speed": 115.0,
+				"Speed": 95.0,
 				"StateNum": 1,
 				"DurationState": 1.06
 			},
 			{
-				"Speed": 85.0,
+				"Speed": 75.0,
 				"StateNum": 2,
 				"DurationState": 0.66
 			},
@@ -517,7 +517,7 @@
 	},
 	{
 		"BoxExtent": [ 3.0, 5.0, 4.0 ],
-		"Correction": [ 0.0, 4.0, 0.0 ],
+		"Correction": [ 0.0, 6.0, 0.0 ],
 		"HP": 200.0,
 		"IsTarget": false,
 		"ModelPath": "Asset\\Models\\4LegMT\\5LegMT.gltf",
@@ -533,7 +533,7 @@
 				"DurationState": 1.96
 			},
 			{
-				"Speed": 125.0,
+				"Speed": 95.0,
 				"StateNum": 1,
 				"DurationState": 1.36
 			},

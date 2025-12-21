@@ -47,6 +47,8 @@ private:
 		tRightAttack,
 		tLeftAttack,
 		tBackAttack,
+		tHited,
+		tDestroyed,
 
 	};
 
@@ -96,7 +98,7 @@ private:
 		virtual void PostUpdate(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj) {}
 		virtual void Exit(std::weak_ptr<Balt>& owner, const  std::weak_ptr<KdGameObject>& spObj) {}
 
-		void SetParam(float speed, const Math::Vector3& direct);
+		void SetParam(const Math::Vector3& direct);
 
 		enum TargetSide
 		{
@@ -127,7 +129,11 @@ private:
 		BaltStateType m_type = BaltStateType::tStart;
 
 		Math::Vector3 m_direct = {};
+
 		float					m_speed = 0.0f;
+		float					m_animSpeed = 0.0f;
+		float					m_animTransition = 0.0f;
+		std::string				m_animName = "";
 
 		struct Effect
 		{

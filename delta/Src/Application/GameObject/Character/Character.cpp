@@ -83,8 +83,6 @@ void Character::Update()
 
 	m_wpCamera = CameraManager::Instance().GetCurrentCamera();
 
-	auto& key = KeyInput::GetInstance().GetKeyboardState();
-	auto& pad = KeyInput::GetInstance().GetGamePadState();
 
 	if (IsRStick())
 	{
@@ -420,7 +418,6 @@ const bool Character::IsRStick()
 {
 	auto& key = KeyInput::GetInstance().GetKeyboardState();
 	auto& mouse = KeyInput::GetInstance().GetMouseState();
-	auto& pad = KeyInput::GetInstance().GetGamePadState();
 	auto& padTrack = KeyInput::GetInstance().GetPadButtonTracker();
 
 	if (key.I || mouse.middleButton || padTrack.rightStick == padTrack.PRESSED)
@@ -434,7 +431,6 @@ const bool Character::IsLStick()
 {
 	auto& key = KeyInput::GetInstance().GetKeyboard();
 	auto& keyTrack = KeyInput::GetInstance().GetKeyboardTracker();
-	auto& pad = KeyInput::GetInstance().GetGamePadState();
 	auto& padTrack = KeyInput::GetInstance().GetPadButtonTracker();
 
 	if (keyTrack.IsKeyPressed(key.LeftControl) || padTrack.leftStick == padTrack.PRESSED)
@@ -700,11 +696,14 @@ void Character::LockOn(bool force)
 		{
 			CameraManager::Instance().SetMultiLocks(vec[i]->wpLockTarget.lock());
 		}
-
-		m_wpCharacterTarget = vec[0]->wpLockTarget;
+		if (CameraManager::Instance().GetNowType() != CameraManager::CameraType::Lock){
+			m_wpCharacterTarget = vec[0]->wpLockTarget;}
+		else{
+			m_wpCharacterTarget = CameraManager::Instance().GetLockTarget();
+		}
 		// 新しいターゲットをキャッシュ
 		// スムース初期値はターゲット方向にしてスナップを防ぐ
-		auto newTarget = vec[0]->wpLockTarget.lock();
+		auto newTarget = m_wpCharacterTarget.lock();
 		if (newTarget)
 		{
 			auto targetPos = newTarget->GetMatrix().Translation();
@@ -886,7 +885,10 @@ const bool Character::SwordRangeCheck()
 {
 	DirectX::BoundingOrientedBox box;
 	auto trans = m_mWorld.Translation();
-	box.Center = { 0.0f ,6.0f,9.0f };
+	Math::Vector3 vec = { 0,0,1 };
+	vec	= vec.TransformNormal(vec, m_mWorld);
+	auto center = Math::Vector3(0.0f ,6.0f,9.0f)*vec;
+	box.Center =center;
 	box.Extents = { 9.0f, 10.0f, 9.0f };
 	auto type = KdCollider::TypeDamage;
 	KdCollider::BoxInfo boxInfo(type, m_mWorld, box.Extents, box.Center, true);
@@ -1063,14 +1065,8 @@ const Math::Vector3 Character::ActionStateBase::Direct(std::weak_ptr<Character>&
 	Math::Vector3 direction = Math::Vector3::Zero;
 	if (IsBoostDush())
 	{
-		auto delta = KdFPSController::GetInstance().GetDeltaTime();
 		direction = spOwner->LerpMove(spOwner->m_boostLerpMag);
-		
-		auto pre = spOwner->m_preMove;
-		auto now = spOwner->m_vMove;
-		Application::Instance().m_log.AddLog("Pre:X %.2f,Y %.2f,Z %.2f\n", pre.x, pre.y, pre.z);
-		Application::Instance().m_log.AddLog("Dir:X %.2f,Y %.2f,Z %.2f\n", direction.x, direction.y, direction.z);
-		Application::Instance().m_log.AddLog("Now:X %.2f,Y %.2f,Z %.2f\n", now.x, now.y, now.z);
+	
 	}
 	else {
 		direction = spOwner->m_vMove;
@@ -1186,7 +1182,6 @@ void Character::ActionStateBase::Checkkey(std::weak_ptr<Character>& owner)
 
 	spOwner->ChangeEnableRightAttack(false);
 	spOwner->ChangeEnableRightShoulderAttack(false);
-
 
 	m_isMove = spOwner->IsMove();
 	m_isBoost = spOwner->IsBoost();
@@ -3574,7 +3569,7 @@ void Character::ActionRightAttack::Enter(std::weak_ptr<Character>& owner)
 
 	m_stateNum = spOwner->CharacterStateName::RightSorwdBef;
 
-	spOwner->LockOn();
+	spOwner->LockOn(true);
 	
 	SetParam(owner, m_stateNum);
 	
@@ -3729,8 +3724,6 @@ void Character::ActionRightAttackMid::Enter(std::weak_ptr<Character>& owner)
 
 	spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetData()->GetAnimation(m_animName), m_animTransition, false);
 
-	m_direction = ActionStateBase::Direct(owner, false);
-
 	//エフェクト
 	{
 		KdModelWork::Node* pNode = spOwner->m_spModelWork->FindWorkNode("CBP");
@@ -3849,8 +3842,6 @@ void Character::ActionRightAttackAf::Update(std::weak_ptr<Character>& owner)
 	//エフェクト
 	EffectUpdate(owner);
 
-
-
 	if (spOwner->m_spAnimator->IsComp() == false)
 	{
 		spOwner->ChangeEnableAttack(false);
@@ -3930,7 +3921,8 @@ void Character::ActionRightAttackSecond::Enter(std::weak_ptr<Character>& owner)
 	
 	m_stateNum = spOwner->CharacterStateName::RightSorwdSeco;
 	
-	spOwner->LockOn();
+	spOwner->LockOn(true);
+
 
 	SetParam(owner, m_stateNum);
 

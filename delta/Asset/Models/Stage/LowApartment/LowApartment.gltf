@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.4.56",
+		"generator":"Khronos glTF Blender I/O v5.0.21",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -8,7 +8,8 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				0,
+				1
 			]
 		}
 	],
@@ -16,6 +17,20 @@
 		{
 			"mesh":0,
 			"name":"Cube"
+		},
+		{
+			"mesh":1,
+			"name":"COL",
+			"scale":[
+				26.099998474121094,
+				13.049999237060547,
+				42.04999923706055
+			],
+			"translation":[
+				0,
+				11.377083778381348,
+				0
+			]
 		}
 	],
 	"materials":[
@@ -39,10 +54,6 @@
 		{
 			"doubleSided":true,
 			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
-			"normalTexture":{
-				"index":3,
-				"scale":2.4000000953674316
-			},
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
 					0.2880912721157074,
@@ -52,34 +63,23 @@
 				],
 				"metallicFactor":0.15407857298851013,
 				"metallicRoughnessTexture":{
-					"index":4
+					"index":3
 				}
 			}
 		},
 		{
 			"doubleSided":true,
 			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.001",
-			"normalTexture":{
-				"index":5,
-				"scale":2.999999523162842
-			},
 			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":6
-				},
 				"metallicFactor":0.11178247630596161,
 				"metallicRoughnessTexture":{
-					"index":7
+					"index":4
 				}
 			}
 		},
 		{
 			"doubleSided":true,
 			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.002",
-			"normalTexture":{
-				"index":8,
-				"scale":2.4000000953674316
-			},
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
 					0.0016719342675060034,
@@ -89,7 +89,7 @@
 				],
 				"metallicFactor":0,
 				"metallicRoughnessTexture":{
-					"index":9
+					"index":5
 				}
 			}
 		}
@@ -135,6 +135,19 @@
 					"material":3
 				}
 			]
+		},
+		{
+			"name":"\u7acb\u65b9\u4f53",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":16,
+						"NORMAL":17,
+						"TEXCOORD_0":18
+					},
+					"indices":19
+				}
+			]
 		}
 	],
 	"textures":[
@@ -156,27 +169,11 @@
 		},
 		{
 			"sampler":0,
-			"source":4
-		},
-		{
-			"sampler":0,
-			"source":5
-		},
-		{
-			"sampler":0,
-			"source":6
-		},
-		{
-			"sampler":0,
 			"source":2
 		},
 		{
 			"sampler":0,
 			"source":3
-		},
-		{
-			"sampler":0,
-			"source":4
 		}
 	],
 	"images":[
@@ -197,23 +194,8 @@
 		},
 		{
 			"mimeType":"image/png",
-			"name":"Ice003_1K-PNG_NormalGL",
-			"uri":"Ice003_1K-PNG_NormalGL.png"
-		},
-		{
-			"mimeType":"image/png",
 			"name":"Ice003_1K-PNG_Roughness",
 			"uri":"Ice003_1K-PNG_Roughness.png"
-		},
-		{
-			"mimeType":"image/png",
-			"name":"PavingStones084_1K-PNG_NormalGL",
-			"uri":"PavingStones084_1K-PNG_NormalGL.png"
-		},
-		{
-			"mimeType":"image/png",
-			"name":"Plaster007_1K-PNG_Color",
-			"uri":"Plaster007_1K-PNG_Color-1.png"
 		}
 	],
 	"accessors":[
@@ -352,6 +334,40 @@
 			"componentType":5123,
 			"count":54,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":16,
+			"componentType":5126,
+			"count":96,
+			"max":[
+				1,
+				1.7170851230621338,
+				1.0367238521575928
+			],
+			"min":[
+				-1.034783124923706,
+				-1,
+				-1.0223093032836914
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":17,
+			"componentType":5126,
+			"count":96,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":18,
+			"componentType":5126,
+			"count":96,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":19,
+			"componentType":5123,
+			"count":144,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -450,6 +466,30 @@
 			"byteLength":108,
 			"byteOffset":55124,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":1152,
+			"byteOffset":55232,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1152,
+			"byteOffset":56384,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":768,
+			"byteOffset":57536,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":58304,
+			"target":34963
 		}
 	],
 	"samplers":[
@@ -460,7 +500,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":55232,
+			"byteLength":58592,
 			"uri":"LowApartment.bin"
 		}
 	]

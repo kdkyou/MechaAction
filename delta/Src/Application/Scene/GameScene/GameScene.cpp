@@ -145,7 +145,6 @@ void GameScene::SetNum(int num)
 
 void GameScene::Event()
 {
-	auto& key = KeyInput::GetInstance().GetKeyboardState();
 	if (m_enemyList.empty() == true)
 	{
 		switch (m_waveProgress)

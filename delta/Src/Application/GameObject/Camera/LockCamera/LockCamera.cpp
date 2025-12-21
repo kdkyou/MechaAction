@@ -63,7 +63,6 @@ void LockCamera::Update()
 		CameraManager::Instance().EnableChangedCamera(true);
 
 		auto& mouse = KeyInput::GetInstance().GetMouseState();
-		auto& key = KeyInput::GetInstance().GetKeyboardState();
 		if (mouse.middleButton) {
 			CameraManager::Instance().SetNextType(CameraManager::CameraType::Tracking);
 		}

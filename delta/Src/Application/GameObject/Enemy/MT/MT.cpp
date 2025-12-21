@@ -347,6 +347,7 @@ void MT::Editor_ImGui()
 void MT::Deserialize(const nlohmann::json& jsonObj)
 {
 	CharacterBase::Deserialize(jsonObj);
+	LoadDataBayJson(jsonObj);
 }
 
 void MT::Serialize(nlohmann::json& outJson) const
@@ -579,6 +580,8 @@ void MT::Idle::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObject>
 
 	m_type = spOwner->idle;
 
+	SetStatus(owner, m_type);
+
 	if (spOwner->m_spAnimator && spOwner->m_spModelWork)
 	{
 		spOwner->m_spAnimator->SetAnimation(spOwner->m_spModelWork->GetAnimation(m_animName), m_animTransition, false);
@@ -634,6 +637,11 @@ void MT::MoveMent::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObj
 {
 	auto spOwner = owner.lock();
 	auto spObj = obj.lock();
+
+	m_type = spOwner->movement;
+
+	SetStatus(owner, m_type);
+
 
 	if (spOwner->m_spAnimator && spOwner->m_spModelWork)
 	{
@@ -729,6 +737,8 @@ void MT::Attack::Enter(std::weak_ptr<MT>& owner, const std::weak_ptr<KdGameObjec
 	if (spOwner == nullptr) { return; }
 
 	m_type = spOwner->attack;
+
+	SetStatus(owner, m_type);
 
 	bool flg = ChangeStateObstacle(owner);
 	if (!flg)

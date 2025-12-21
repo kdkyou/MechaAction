@@ -301,12 +301,6 @@ const std::weak_ptr<CharacterBase> CameraManager::GetLockTarget(int num)
 	return m_wpMultiLocks[num];
 }
 
-void CameraManager::AnimationChange(std::shared_ptr<CameraBase> next)
-{
-	auto& camera = next;
-
-}
-
 const Math::Vector3& CameraManager::ToCameraVec(const Math::Vector3 nowPos)
 {
 	Math::Vector3 toVec = {};
@@ -319,7 +313,7 @@ const Math::Vector3& CameraManager::ToCameraVec(const Math::Vector3 nowPos)
 
 bool CameraManager::ChangeCamera(const CameraType& type)
 {
-	if (m_nextType == m_nowType) { return false; }
+	if (type == m_nowType) { return false; }
 
 	Math::Vector3 deg = Math::Vector3::Zero;
 	if (m_currentCamera != nullptr)
@@ -329,7 +323,7 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 
 	m_prevType = m_nowType;
 
-	switch (m_nextType)
+	switch (type)
 	{
 	case CameraManager::None:
 		m_currentCamera = std::make_shared<NoneCamera>();
@@ -367,7 +361,7 @@ bool CameraManager::ChangeCamera(const CameraType& type)
 		break;
 	}
 
-	m_nowType = m_nextType;
+	m_nowType = type;
 	m_currentCamera->SetLook(m_wpLookTarget);
 	m_currentCamera->SetTarget(m_wpCameraTarget);
 	m_currentCamera->SetLockTarget(m_wpLockTarget);

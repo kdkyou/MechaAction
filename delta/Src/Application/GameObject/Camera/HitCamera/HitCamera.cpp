@@ -26,14 +26,13 @@ void HitCamera::Init()
 		m_DegAng;
 	}
 
-
 	m_name = "Hit";
 
 	ShowCursor(false);
 
 	m_pos = {};
 
-	m_movePow = { 0.0f,0.6f };
+	m_movePow = { 0.0f,0.69f };
 
 	CameraManager::Instance().EnableChangedCamera(false);
 }
@@ -90,6 +89,8 @@ void HitCamera::PostUpdate()
 	auto targetMat = Math::Matrix::CreateTranslation(targetPos);
 
 	m_mWorld =  m_mLocalPos * m_mRotation * trans * targetMat;
+
+	TerrainCheck();
 
 	CameraBase::PostUpdate();
 
